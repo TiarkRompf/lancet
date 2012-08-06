@@ -22,4 +22,4 @@ Follow the installation instructions on the [SBT website](http://www.scala-sbt.o
 
    Alternatively, modify the `gsbt` file to reflect your paths and use that instead of the system-wide `sbt`.
 
-5. Run `sbt test` to run the test suite.
+5. Run `sbt` to start the sbt console, then `test` to run the test suite.

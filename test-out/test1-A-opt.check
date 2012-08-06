@@ -1,0 +1,68 @@
+===== AFTER_PARSING
+0|StartNode(3)
+1|Local(0)()
+2|Local(1)()
+3|FrameState@0(2)
+4|Const(Test1AHelper$@793249421)()
+5|MethodCallTarget(4)
+6|Invoke#foo(7,5)
+7|FrameState@6(2,6)
+9|MethodCallTarget(6,2)
+10|Invoke#apply$mcII$sp(11,9)
+11|FrameState@12(10)
+14|Return(10)
+----- AFTER_PARSING method calls 
+  invoke: 6|Invoke#foo
+    trgt: HotSpotMethod<Test1AHelper$.foo>
+    args: [4|Const(Test1AHelper$@793249421)]
+    info: exact Test1AHelper$.foo():Function1
+  invoke: 10|Invoke#apply$mcII$sp
+    trgt: HotSpotMethod<Function1.apply$mcII$sp>
+    args: [6|Invoke#foo, 2|Local(1)]
+    info: null
+===== try inlining ...
+  invoke:6|Invoke#foo
+    target:HotSpotMethod<Test1AHelper$.foo>
+    args:  [4|Const(Test1AHelper$@793249421)]
+  inlining:  exact Test1AHelper$.foo():Function1
+===== try inlining ...
+  invoke:10|Invoke#apply$mcII$sp
+    target:HotSpotMethod<Test1AHelper$$anonfun$1.apply$mcII$sp>
+    args:  [18|Const(Test1AHelper$.anonfun$1@1210959647), 2|Local(1)]
+  inlining:  exact Test1AHelper$$anonfun$1.apply$mcII$sp(int):int
+===== try inlining ...
+===== AFTER_INLINING
+0|StartNode(3)
+2|Local(1)()
+3|FrameState@0(2)
+14|Return(22)
+19|Const(3)()
+22|*(2,19)
+----- AFTER_INLINING method calls 
+===== HIGH_LEVEL
+0|StartNode(3)
+2|Local(1)()
+3|FrameState@0(2)
+14|Return(22)
+19|Const(3)()
+22|*(2,19)
+----- HIGH_LEVEL method calls 
+===== MID_LEVEL
+0|StartNode(3)
+2|Local(1)()
+3|FrameState@0(2)
+14|Return(22)
+19|Const(3)()
+22|*(2,19)
+----- MID_LEVEL method calls 
+===== FINAL
+0|StartNode(3)
+2|Local(1)()
+3|FrameState@0(2)
+14|Return(22)
+19|Const(3)()
+22|*(2,19)
+----- FINAL method calls 
+===== DONE
+<function1>
+21
