@@ -25,6 +25,19 @@ class Test3 extends FileDiffSuite {
       a.foo.bar      
     }
     
+    /*
+    ----- HIGH_LEVEL method calls 
+      invoke: 19|Invoke#bar
+        trgt: HotSpotMethod<B.bar>
+        args: [24|LoadField#foo]
+        info: null
+    ----- MID_LEVEL method calls 
+      invoke: 19|Invoke#bar
+        trgt: HotSpotMethod<C.bar>
+        args: [87|Phi(89 103)]
+        info: exact C.bar():int
+    */
+    
     println(f)
     println(f(7))
     
