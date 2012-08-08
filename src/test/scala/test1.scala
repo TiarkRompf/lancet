@@ -1,4 +1,4 @@
-object Test1AHelper {
+object Helper {
   val foo = (x:Int) => 3*x
 }
 
@@ -34,7 +34,7 @@ class Test1 extends FileDiffSuite {
         info: exact Test1AHelper$$anonfun$1.apply$mcII$sp(int):int
     */
     
-    val f = SimpleCompiler.compile((x:Int) => Test1AHelper.foo(x))
+    val f = SimpleCompiler.compile((x:Int) => Helper.foo(x))
     
     println(f)
     println(f(7))
@@ -56,7 +56,7 @@ class Test1 extends FileDiffSuite {
     ----- FINAL method calls
     */
     
-    val f = Compiler.compile((x:Int) => Test1AHelper.foo(x))
+    val f = Compiler.compile((x:Int) => Helper.foo(x))
     
     println(f)
     println(f(7))
