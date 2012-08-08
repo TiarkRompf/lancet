@@ -4,6 +4,9 @@ version := "0.1"
 
 scalaVersion := "2.9.2"
 
+// tests are not thread safe
+parallelExecution in Test := false
+
 libraryDependencies += "org.scalatest" % "scalatest_2.9.0" % "1.6.1" % "test"
 
 unmanagedClasspath in Compile <++= baseDirectory map { base =>
