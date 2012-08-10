@@ -61,3 +61,5 @@ unmanagedClasspath in Compile <++= baseDirectory map { base =>
     "com.oracle.truffle.serial.test"
   ) map (graal / _ / "bin")
 }
+
+unmanagedClasspath in Test <++= (unmanagedClasspath in Compile)
