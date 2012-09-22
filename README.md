@@ -7,9 +7,7 @@ Experiments with the Graal VM.
 
 ### How to run:
 
-1. Install the simple build tool ([SBT](http://www.scala-sbt.org/)). 
-You will need version 0.12-Beta2: [sbt-launch.jar](http://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.12.0-Beta2/sbt-launch.jar). 
-Follow the installation instructions on the [SBT website](http://www.scala-sbt.org/download.html#manual).
+1. Install the simple build tool ([SBT](http://www.scala-sbt.org/)), version 0.12. Follow the installation instructions on the [SBT website](http://www.scala-sbt.org/download.html).
 
 2. Make sure the sbt launcher script honors the `JAVA_HOME` and `JAVA_OPTS` environment variables.
 
