@@ -1,3 +1,6 @@
+package playground
+package inlining
+
 class Test2 extends FileDiffSuite {
 
   val prefix = "test-out/test2-"

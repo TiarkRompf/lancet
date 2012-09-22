@@ -1,3 +1,6 @@
+package playground
+package inlining
+
 object Helper {
   val foo = (x:Int) => 3*x
 }

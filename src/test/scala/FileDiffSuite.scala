@@ -1,3 +1,5 @@
+package playground
+
 import java.io.{PrintStream,File,FileInputStream,FileOutputStream,ByteArrayOutputStream}
 import org.scalatest._
 

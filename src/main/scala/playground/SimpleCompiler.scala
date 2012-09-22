@@ -1,3 +1,5 @@
+package playground
+
 import java.util.concurrent.Callable
 
 import com.oracle.graal.{java=>J,_}

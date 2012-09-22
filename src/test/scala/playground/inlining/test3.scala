@@ -1,3 +1,6 @@
+package playground
+package inlining
+
 class A(val foo: B)
 
 class B {

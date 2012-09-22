@@ -1,3 +1,6 @@
+package playground
+package staging
+
 class Test4 extends FileDiffSuite {
 
   val prefix = "test-out/test4-"
