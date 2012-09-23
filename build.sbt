@@ -9,6 +9,8 @@ parallelExecution in Test := false
 
 libraryDependencies += "org.scalatest" % "scalatest_2.9.0" % "1.6.1" % "test"
 
+libraryDependencies += "junit" % "junit" % "4.8.1" % "test"
+
 unmanagedClasspath in Compile <++= baseDirectory map { base =>
   val graal = new File(System.getenv("JAVA_HOME")) / ".." / ".." / "graal"
   Seq(

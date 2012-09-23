@@ -1,0 +1,1264 @@
+Executing root method HotSpotMethod<Test1$$anonfun$testA$1$Foo$1.bar>
+    Call HotSpotMethod<Test1$$anonfun$testA$1$Foo$1.bar> - (I)V
+    0: getstatic
+    3: new
+    6: dup
+    7: invokespecial
+      Call HotSpotMethod<StringBuilder.<init>> - ()V
+      0: aload_0
+      1: bipush
+      3: ldc_w
+      6: invokespecial
+        Call HotSpotMethod<StringBuilder.<init>> - (ILjava/lang/String;)V
+        0: aload_0
+        1: new
+        4: dup
+        5: aload_2
+        6: invokevirtual
+          Call HotSpotMethod<String.length> - ()I
+          0: aload_0
+          1: getfield
+          4: arraylength
+          5: ireturn
+          Ret HotSpotMethod<String.length> - ()I
+        9: iload_1
+        10: iadd
+        11: invokespecial
+          Call HotSpotMethod<StringBuilder.<init>> - (I)V
+          0: aload_0
+          1: iload_1
+          2: invokespecial
+            Call HotSpotMethod<AbstractStringBuilder.<init>> - (I)V
+            0: aload_0
+            1: invokespecial
+              Call HotSpotMethod<Object.<init>> - ()V
+              0: return
+              Ret HotSpotMethod<Object.<init>> - ()V
+            4: aload_0
+            5: iload_1
+            6: newarray
+            8: putfield
+            11: return
+            Ret HotSpotMethod<AbstractStringBuilder.<init>> - (I)V
+          5: return
+          Ret HotSpotMethod<StringBuilder.<init>> - (I)V
+        14: aload_2
+        15: invokevirtual
+          Call HotSpotMethod<StringBuilder.append> - (Ljava/lang/String;)Ljava/lang/StringBuilder;
+          0: aload_0
+          1: aload_1
+          2: invokespecial
+            Call HotSpotMethod<AbstractStringBuilder.append> - (Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;
+            0: aload_1
+            1: ifnonnull
+            7: aload_1
+            8: invokevirtual
+              Call HotSpotMethod<String.length> - ()I
+              0: aload_0
+              1: getfield
+              4: arraylength
+              5: ireturn
+              Ret HotSpotMethod<String.length> - ()I
+            11: istore_2
+            12: aload_0
+            13: aload_0
+            14: getfield
+            17: iload_2
+            18: iadd
+            19: invokespecial
+              Call HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal> - (I)V
+              0: iload_1
+              1: aload_0
+              2: getfield
+              5: arraylength
+              6: isub
+              7: ifle
+              15: return
+              Ret HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal> - (I)V
+            22: aload_1
+            23: iconst_0
+            24: iload_2
+            25: aload_0
+            26: getfield
+            29: aload_0
+            30: getfield
+            33: invokevirtual
+              Call HotSpotMethod<String.getChars> - (II[CI)V
+              0: iload_1
+              1: ifge
+              13: iload_2
+              14: aload_0
+              15: getfield
+              18: arraylength
+              19: if_icmple
+              31: iload_1
+              32: iload_2
+              33: if_icmple
+              47: aload_0
+              48: getfield
+              51: iload_1
+              52: aload_3
+              53: iload
+              55: iload_2
+              56: iload_1
+              57: isub
+              58: invokestatic
+              Native HotSpotMethod<System.arraycopy> HotSpotMethod<String.getChars> - (II[CI)V
+              61: return
+              Ret HotSpotMethod<String.getChars> - (II[CI)V
+            36: aload_0
+            37: dup
+            38: getfield
+            41: iload_2
+            42: iadd
+            43: putfield
+            46: aload_0
+            47: areturn
+            Ret HotSpotMethod<AbstractStringBuilder.append> - (Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;
+          5: pop
+          6: aload_0
+          7: areturn
+          Ret HotSpotMethod<StringBuilder.append> - (Ljava/lang/String;)Ljava/lang/StringBuilder;
+        18: invokespecial
+          Call HotSpotMethod<StringBuilder.<init>> - (Ljava/lang/StringBuilder;)V
+          0: aload_0
+          1: aload_1
+          2: putfield
+          5: aload_0
+          6: invokespecial
+            Call HotSpotMethod<Object.<init>> - ()V
+            0: return
+            Ret HotSpotMethod<Object.<init>> - ()V
+          9: aload_0
+          10: invokestatic
+            Call HotSpotMethod<GenTraversableOnce$class.$init$> - (Lscala/collection/GenTraversableOnce;)V
+            0: return
+            Ret HotSpotMethod<GenTraversableOnce$class.$init$> - (Lscala/collection/GenTraversableOnce;)V
+          13: aload_0
+          14: invokestatic
+            Call HotSpotMethod<TraversableOnce$class.$init$> - (Lscala/collection/TraversableOnce;)V
+            0: return
+            Ret HotSpotMethod<TraversableOnce$class.$init$> - (Lscala/collection/TraversableOnce;)V
+          17: aload_0
+          18: invokestatic
+            Call HotSpotMethod<Parallelizable$class.$init$> - (Lscala/collection/Parallelizable;)V
+            0: return
+            Ret HotSpotMethod<Parallelizable$class.$init$> - (Lscala/collection/Parallelizable;)V
+          21: aload_0
+          22: invokestatic
+            Call HotSpotMethod<GenTraversableLike$class.$init$> - (Lscala/collection/GenTraversableLike;)V
+            0: return
+            Ret HotSpotMethod<GenTraversableLike$class.$init$> - (Lscala/collection/GenTraversableLike;)V
+          25: aload_0
+          26: invokestatic
+            Call HotSpotMethod<TraversableLike$class.$init$> - (Lscala/collection/TraversableLike;)V
+            0: return
+            Ret HotSpotMethod<TraversableLike$class.$init$> - (Lscala/collection/TraversableLike;)V
+          29: aload_0
+          30: invokestatic
+            Call HotSpotMethod<GenericTraversableTemplate$class.$init$> - (Lscala/collection/generic/GenericTraversableTemplate;)V
+            0: return
+            Ret HotSpotMethod<GenericTraversableTemplate$class.$init$> - (Lscala/collection/generic/GenericTraversableTemplate;)V
+          33: aload_0
+          34: invokestatic
+            Call HotSpotMethod<GenTraversable$class.$init$> - (Lscala/collection/GenTraversable;)V
+            0: return
+            Ret HotSpotMethod<GenTraversable$class.$init$> - (Lscala/collection/GenTraversable;)V
+          37: aload_0
+          38: invokestatic
+            Call HotSpotMethod<Traversable$class.$init$> - (Lscala/collection/Traversable;)V
+            0: return
+            Ret HotSpotMethod<Traversable$class.$init$> - (Lscala/collection/Traversable;)V
+          41: aload_0
+          42: invokestatic
+            Call HotSpotMethod<Traversable$class.$init$> - (Lscala/collection/mutable/Traversable;)V
+            0: return
+            Ret HotSpotMethod<Traversable$class.$init$> - (Lscala/collection/mutable/Traversable;)V
+          45: aload_0
+          46: invokestatic
+            Call HotSpotMethod<GenIterableLike$class.$init$> - (Lscala/collection/GenIterableLike;)V
+            0: return
+            Ret HotSpotMethod<GenIterableLike$class.$init$> - (Lscala/collection/GenIterableLike;)V
+          49: aload_0
+          50: invokestatic
+            Call HotSpotMethod<GenIterable$class.$init$> - (Lscala/collection/GenIterable;)V
+            0: return
+            Ret HotSpotMethod<GenIterable$class.$init$> - (Lscala/collection/GenIterable;)V
+          53: aload_0
+          54: invokestatic
+            Call HotSpotMethod<IterableLike$class.$init$> - (Lscala/collection/IterableLike;)V
+            0: return
+            Ret HotSpotMethod<IterableLike$class.$init$> - (Lscala/collection/IterableLike;)V
+          57: aload_0
+          58: invokestatic
+            Call HotSpotMethod<Iterable$class.$init$> - (Lscala/collection/Iterable;)V
+            0: return
+            Ret HotSpotMethod<Iterable$class.$init$> - (Lscala/collection/Iterable;)V
+          61: aload_0
+          62: invokestatic
+            Call HotSpotMethod<Iterable$class.$init$> - (Lscala/collection/mutable/Iterable;)V
+            0: return
+            Ret HotSpotMethod<Iterable$class.$init$> - (Lscala/collection/mutable/Iterable;)V
+          65: aload_0
+          66: invokestatic
+            Call HotSpotMethod<Function1$class.$init$> - (Lscala/Function1;)V
+            0: return
+            Ret HotSpotMethod<Function1$class.$init$> - (Lscala/Function1;)V
+          69: aload_0
+          70: invokestatic
+            Call HotSpotMethod<PartialFunction$class.$init$> - (Lscala/PartialFunction;)V
+            0: return
+            Ret HotSpotMethod<PartialFunction$class.$init$> - (Lscala/PartialFunction;)V
+          73: aload_0
+          74: invokestatic
+            Call HotSpotMethod<GenSeqLike$class.$init$> - (Lscala/collection/GenSeqLike;)V
+            0: return
+            Ret HotSpotMethod<GenSeqLike$class.$init$> - (Lscala/collection/GenSeqLike;)V
+          77: aload_0
+          78: invokestatic
+            Call HotSpotMethod<GenSeq$class.$init$> - (Lscala/collection/GenSeq;)V
+            0: return
+            Ret HotSpotMethod<GenSeq$class.$init$> - (Lscala/collection/GenSeq;)V
+          81: aload_0
+          82: invokestatic
+            Call HotSpotMethod<SeqLike$class.$init$> - (Lscala/collection/SeqLike;)V
+            0: return
+            Ret HotSpotMethod<SeqLike$class.$init$> - (Lscala/collection/SeqLike;)V
+          85: aload_0
+          86: invokestatic
+            Call HotSpotMethod<Seq$class.$init$> - (Lscala/collection/Seq;)V
+            0: return
+            Ret HotSpotMethod<Seq$class.$init$> - (Lscala/collection/Seq;)V
+          89: aload_0
+          90: invokestatic
+            Call HotSpotMethod<Cloneable$class.$init$> - (Lscala/collection/mutable/Cloneable;)V
+            0: return
+            Ret HotSpotMethod<Cloneable$class.$init$> - (Lscala/collection/mutable/Cloneable;)V
+          93: aload_0
+          94: invokestatic
+            Call HotSpotMethod<SeqLike$class.$init$> - (Lscala/collection/mutable/SeqLike;)V
+            0: return
+            Ret HotSpotMethod<SeqLike$class.$init$> - (Lscala/collection/mutable/SeqLike;)V
+          97: aload_0
+          98: invokestatic
+            Call HotSpotMethod<Seq$class.$init$> - (Lscala/collection/mutable/Seq;)V
+            0: return
+            Ret HotSpotMethod<Seq$class.$init$> - (Lscala/collection/mutable/Seq;)V
+          101: aload_0
+          102: invokestatic
+            Call HotSpotMethod<IndexedSeqLike$class.$init$> - (Lscala/collection/IndexedSeqLike;)V
+            0: return
+            Ret HotSpotMethod<IndexedSeqLike$class.$init$> - (Lscala/collection/IndexedSeqLike;)V
+          105: aload_0
+          106: invokestatic
+            Call HotSpotMethod<IndexedSeq$class.$init$> - (Lscala/collection/IndexedSeq;)V
+            0: return
+            Ret HotSpotMethod<IndexedSeq$class.$init$> - (Lscala/collection/IndexedSeq;)V
+          109: aload_0
+          110: invokestatic
+            Call HotSpotMethod<IndexedSeqLike$class.$init$> - (Lscala/collection/mutable/IndexedSeqLike;)V
+            0: return
+            Ret HotSpotMethod<IndexedSeqLike$class.$init$> - (Lscala/collection/mutable/IndexedSeqLike;)V
+          113: aload_0
+          114: invokestatic
+            Call HotSpotMethod<IndexedSeq$class.$init$> - (Lscala/collection/mutable/IndexedSeq;)V
+            0: return
+            Ret HotSpotMethod<IndexedSeq$class.$init$> - (Lscala/collection/mutable/IndexedSeq;)V
+          117: aload_0
+          118: invokestatic
+            Call HotSpotMethod<IndexedSeqOptimized$class.$init$> - (Lscala/collection/IndexedSeqOptimized;)V
+            0: return
+            Ret HotSpotMethod<IndexedSeqOptimized$class.$init$> - (Lscala/collection/IndexedSeqOptimized;)V
+          121: aload_0
+          122: invokestatic
+            Call HotSpotMethod<Ordered$class.$init$> - (Lscala/math/Ordered;)V
+            0: return
+            Ret HotSpotMethod<Ordered$class.$init$> - (Lscala/math/Ordered;)V
+          125: aload_0
+          126: invokestatic
+            Call HotSpotMethod<StringLike$class.$init$> - (Lscala/collection/immutable/StringLike;)V
+            0: return
+            Ret HotSpotMethod<StringLike$class.$init$> - (Lscala/collection/immutable/StringLike;)V
+          129: aload_0
+          130: invokestatic
+            Call HotSpotMethod<Growable$class.$init$> - (Lscala/collection/generic/Growable;)V
+            0: return
+            Ret HotSpotMethod<Growable$class.$init$> - (Lscala/collection/generic/Growable;)V
+          133: aload_0
+          134: invokestatic
+            Call HotSpotMethod<Builder$class.$init$> - (Lscala/collection/mutable/Builder;)V
+            0: return
+            Ret HotSpotMethod<Builder$class.$init$> - (Lscala/collection/mutable/Builder;)V
+          137: return
+          Ret HotSpotMethod<StringBuilder.<init>> - (Ljava/lang/StringBuilder;)V
+        21: return
+        Ret HotSpotMethod<StringBuilder.<init>> - (ILjava/lang/String;)V
+      9: return
+      Ret HotSpotMethod<StringBuilder.<init>> - ()V
+    10: ldc
+    12: invokevirtual
+      Call HotSpotMethod<StringBuilder.append> - (Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder;
+      0: aload_0
+      1: invokespecial
+        Call HotSpotMethod<StringBuilder.underlying> - ()Ljava/lang/StringBuilder;
+        0: aload_0
+        1: getfield
+        4: areturn
+        Ret HotSpotMethod<StringBuilder.underlying> - ()Ljava/lang/StringBuilder;
+      4: aload_1
+      5: invokestatic
+        Call HotSpotMethod<String.valueOf> - (Ljava/lang/Object;)Ljava/lang/String;
+        0: aload_0
+        1: ifnonnull
+        9: aload_0
+        10: invokevirtual
+          Call HotSpotMethod<String.toString> - ()Ljava/lang/String;
+          0: aload_0
+          1: areturn
+          Ret HotSpotMethod<String.toString> - ()Ljava/lang/String;
+        13: areturn
+        Ret HotSpotMethod<String.valueOf> - (Ljava/lang/Object;)Ljava/lang/String;
+      8: invokevirtual
+        Call HotSpotMethod<StringBuilder.append> - (Ljava/lang/String;)Ljava/lang/StringBuilder;
+        0: aload_0
+        1: aload_1
+        2: invokespecial
+          Call HotSpotMethod<AbstractStringBuilder.append> - (Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;
+          0: aload_1
+          1: ifnonnull
+          7: aload_1
+          8: invokevirtual
+            Call HotSpotMethod<String.length> - ()I
+            0: aload_0
+            1: getfield
+            4: arraylength
+            5: ireturn
+            Ret HotSpotMethod<String.length> - ()I
+          11: istore_2
+          12: aload_0
+          13: aload_0
+          14: getfield
+          17: iload_2
+          18: iadd
+          19: invokespecial
+            Call HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal> - (I)V
+            0: iload_1
+            1: aload_0
+            2: getfield
+            5: arraylength
+            6: isub
+            7: ifle
+            15: return
+            Ret HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal> - (I)V
+          22: aload_1
+          23: iconst_0
+          24: iload_2
+          25: aload_0
+          26: getfield
+          29: aload_0
+          30: getfield
+          33: invokevirtual
+            Call HotSpotMethod<String.getChars> - (II[CI)V
+            0: iload_1
+            1: ifge
+            13: iload_2
+            14: aload_0
+            15: getfield
+            18: arraylength
+            19: if_icmple
+            31: iload_1
+            32: iload_2
+            33: if_icmple
+            47: aload_0
+            48: getfield
+            51: iload_1
+            52: aload_3
+            53: iload
+            55: iload_2
+            56: iload_1
+            57: isub
+            58: invokestatic
+            Native HotSpotMethod<System.arraycopy> HotSpotMethod<String.getChars> - (II[CI)V
+            61: return
+            Ret HotSpotMethod<String.getChars> - (II[CI)V
+          36: aload_0
+          37: dup
+          38: getfield
+          41: iload_2
+          42: iadd
+          43: putfield
+          46: aload_0
+          47: areturn
+          Ret HotSpotMethod<AbstractStringBuilder.append> - (Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;
+        5: pop
+        6: aload_0
+        7: areturn
+        Ret HotSpotMethod<StringBuilder.append> - (Ljava/lang/String;)Ljava/lang/StringBuilder;
+      11: pop
+      12: aload_0
+      13: areturn
+      Ret HotSpotMethod<StringBuilder.append> - (Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder;
+    15: iload_1
+    16: invokestatic
+      Call HotSpotMethod<BoxesRunTime.boxToInteger> - (I)Ljava/lang/Integer;
+      0: iload_0
+      1: invokestatic
+        Call HotSpotMethod<Integer.valueOf> - (I)Ljava/lang/Integer;
+        0: getstatic
+        3: ifne
+        22: iload_0
+        23: bipush
+        25: if_icmplt
+        28: iload_0
+        29: getstatic
+        32: if_icmpgt
+        35: getstatic
+        38: iload_0
+        39: sipush
+        42: iadd
+        43: aaload
+        44: areturn
+        Ret HotSpotMethod<Integer.valueOf> - (I)Ljava/lang/Integer;
+      4: areturn
+      Ret HotSpotMethod<BoxesRunTime.boxToInteger> - (I)Ljava/lang/Integer;
+    19: invokevirtual
+      Call HotSpotMethod<StringBuilder.append> - (Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder;
+      0: aload_0
+      1: invokespecial
+        Call HotSpotMethod<StringBuilder.underlying> - ()Ljava/lang/StringBuilder;
+        0: aload_0
+        1: getfield
+        4: areturn
+        Ret HotSpotMethod<StringBuilder.underlying> - ()Ljava/lang/StringBuilder;
+      4: aload_1
+      5: invokestatic
+        Call HotSpotMethod<String.valueOf> - (Ljava/lang/Object;)Ljava/lang/String;
+        0: aload_0
+        1: ifnonnull
+        9: aload_0
+        10: invokevirtual
+          Call HotSpotMethod<Integer.toString> - ()Ljava/lang/String;
+          0: aload_0
+          1: getfield
+          4: invokestatic
+            Call HotSpotMethod<Integer.toString> - (I)Ljava/lang/String;
+            0: iload_0
+            1: ldc
+            3: if_icmpne
+            9: iload_0
+            10: ifge
+            23: iload_0
+            24: invokestatic
+              Call HotSpotMethod<Integer.stringSize> - (I)I
+              0: iconst_0
+              1: istore_1
+              2: iload_0
+              3: getstatic
+              6: iload_1
+              7: iaload
+              8: if_icmpgt
+              11: iload_1
+              12: iconst_1
+              13: iadd
+              14: ireturn
+              Ret HotSpotMethod<Integer.stringSize> - (I)I
+            27: istore_1
+            28: iload_1
+            29: newarray
+            31: astore_2
+            32: iload_0
+            33: iload_1
+            34: aload_2
+            35: invokestatic
+              Call HotSpotMethod<Integer.getChars> - (II[C)V
+              0: iload_1
+              1: istore
+              3: iconst_0
+              4: istore
+              6: iload_0
+              7: ifge
+              17: iload_0
+              18: ldc
+              20: if_icmplt
+              75: iload_0
+              76: ldc
+              78: imul
+              79: bipush
+              81: iushr
+              82: istore_3
+              83: iload_0
+              84: iload_3
+              85: iconst_3
+              86: ishl
+              87: iload_3
+              88: iconst_1
+              89: ishl
+              90: iadd
+              91: isub
+              92: istore
+              94: aload_2
+              95: iinc
+              98: iload
+              100: getstatic
+              103: iload
+              105: caload
+              106: castore
+              107: iload_3
+              108: istore_0
+              109: iload_0
+              110: ifne
+              113: goto
+              116: iload
+              118: ifeq
+              130: return
+              Ret HotSpotMethod<Integer.getChars> - (II[C)V
+            38: new
+            41: dup
+            42: aload_2
+            43: iconst_1
+            44: invokespecial
+              Call HotSpotMethod<String.<init>> - ([CZ)V
+              0: aload_0
+              1: invokespecial
+                Call HotSpotMethod<Object.<init>> - ()V
+                0: return
+                Ret HotSpotMethod<Object.<init>> - ()V
+              4: aload_0
+              5: iconst_0
+              6: putfield
+              9: aload_0
+              10: aload_1
+              11: putfield
+              14: return
+              Ret HotSpotMethod<String.<init>> - ([CZ)V
+            47: areturn
+            Ret HotSpotMethod<Integer.toString> - (I)Ljava/lang/String;
+          7: areturn
+          Ret HotSpotMethod<Integer.toString> - ()Ljava/lang/String;
+        13: areturn
+        Ret HotSpotMethod<String.valueOf> - (Ljava/lang/Object;)Ljava/lang/String;
+      8: invokevirtual
+        Call HotSpotMethod<StringBuilder.append> - (Ljava/lang/String;)Ljava/lang/StringBuilder;
+        0: aload_0
+        1: aload_1
+        2: invokespecial
+          Call HotSpotMethod<AbstractStringBuilder.append> - (Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;
+          0: aload_1
+          1: ifnonnull
+          7: aload_1
+          8: invokevirtual
+            Call HotSpotMethod<String.length> - ()I
+            0: aload_0
+            1: getfield
+            4: arraylength
+            5: ireturn
+            Ret HotSpotMethod<String.length> - ()I
+          11: istore_2
+          12: aload_0
+          13: aload_0
+          14: getfield
+          17: iload_2
+          18: iadd
+          19: invokespecial
+            Call HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal> - (I)V
+            0: iload_1
+            1: aload_0
+            2: getfield
+            5: arraylength
+            6: isub
+            7: ifle
+            15: return
+            Ret HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal> - (I)V
+          22: aload_1
+          23: iconst_0
+          24: iload_2
+          25: aload_0
+          26: getfield
+          29: aload_0
+          30: getfield
+          33: invokevirtual
+            Call HotSpotMethod<String.getChars> - (II[CI)V
+            0: iload_1
+            1: ifge
+            13: iload_2
+            14: aload_0
+            15: getfield
+            18: arraylength
+            19: if_icmple
+            31: iload_1
+            32: iload_2
+            33: if_icmple
+            47: aload_0
+            48: getfield
+            51: iload_1
+            52: aload_3
+            53: iload
+            55: iload_2
+            56: iload_1
+            57: isub
+            58: invokestatic
+            Native HotSpotMethod<System.arraycopy> HotSpotMethod<String.getChars> - (II[CI)V
+            61: return
+            Ret HotSpotMethod<String.getChars> - (II[CI)V
+          36: aload_0
+          37: dup
+          38: getfield
+          41: iload_2
+          42: iadd
+          43: putfield
+          46: aload_0
+          47: areturn
+          Ret HotSpotMethod<AbstractStringBuilder.append> - (Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;
+        5: pop
+        6: aload_0
+        7: areturn
+        Ret HotSpotMethod<StringBuilder.append> - (Ljava/lang/String;)Ljava/lang/StringBuilder;
+      11: pop
+      12: aload_0
+      13: areturn
+      Ret HotSpotMethod<StringBuilder.append> - (Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder;
+    22: invokevirtual
+      Call HotSpotMethod<StringBuilder.toString> - ()Ljava/lang/String;
+      0: aload_0
+      1: invokespecial
+        Call HotSpotMethod<StringBuilder.underlying> - ()Ljava/lang/StringBuilder;
+        0: aload_0
+        1: getfield
+        4: areturn
+        Ret HotSpotMethod<StringBuilder.underlying> - ()Ljava/lang/StringBuilder;
+      4: invokevirtual
+        Call HotSpotMethod<StringBuilder.toString> - ()Ljava/lang/String;
+        0: new
+        3: dup
+        4: aload_0
+        5: getfield
+        8: iconst_0
+        9: aload_0
+        10: getfield
+        13: invokespecial
+          Call HotSpotMethod<String.<init>> - ([CII)V
+          0: aload_0
+          1: invokespecial
+            Call HotSpotMethod<Object.<init>> - ()V
+            0: return
+            Ret HotSpotMethod<Object.<init>> - ()V
+          4: aload_0
+          5: iconst_0
+          6: putfield
+          9: iload_2
+          10: ifge
+          22: iload_3
+          23: ifge
+          35: iload_2
+          36: aload_1
+          37: arraylength
+          38: iload_3
+          39: isub
+          40: if_icmple
+          54: aload_0
+          55: aload_1
+          56: iload_2
+          57: iload_2
+          58: iload_3
+          59: iadd
+          60: invokestatic
+            Call HotSpotMethod<Arrays.copyOfRange> - ([CII)[C
+            0: iload_2
+            1: iload_1
+            2: isub
+            3: istore_3
+            4: iload_3
+            5: ifge
+            39: iload_3
+            40: newarray
+            42: astore
+            44: aload_0
+            45: iload_1
+            46: aload
+            48: iconst_0
+            49: aload_0
+            50: arraylength
+            51: iload_1
+            52: isub
+            53: iload_3
+            54: invokestatic
+              Call HotSpotMethod<Math.min> - (II)I
+              0: iload_0
+              1: iload_1
+              2: if_icmpgt
+              9: iload_1
+              10: ireturn
+              Ret HotSpotMethod<Math.min> - (II)I
+            57: invokestatic
+            Native HotSpotMethod<System.arraycopy> HotSpotMethod<Arrays.copyOfRange> - ([CII)[C
+            60: aload
+            62: areturn
+            Ret HotSpotMethod<Arrays.copyOfRange> - ([CII)[C
+          63: putfield
+          66: return
+          Ret HotSpotMethod<String.<init>> - ([CII)V
+        16: areturn
+        Ret HotSpotMethod<StringBuilder.toString> - ()Ljava/lang/String;
+      7: areturn
+      Ret HotSpotMethod<StringBuilder.toString> - ()Ljava/lang/String;
+    25: invokevirtual
+      Call HotSpotMethod<Predef$.println> - (Ljava/lang/Object;)V
+      0: getstatic
+      3: aload_1
+      4: invokevirtual
+        Call HotSpotMethod<Console$.println> - (Ljava/lang/Object;)V
+        0: aload_0
+        1: invokevirtual
+          Call HotSpotMethod<Console$.out> - ()Ljava/io/PrintStream;
+          0: aload_0
+          1: invokespecial
+            Call HotSpotMethod<Console$.outVar> - ()Lscala/util/DynamicVariable;
+            0: aload_0
+            1: getfield
+            4: areturn
+            Ret HotSpotMethod<Console$.outVar> - ()Lscala/util/DynamicVariable;
+          4: invokevirtual
+            Call HotSpotMethod<DynamicVariable.value> - ()Ljava/lang/Object;
+            0: aload_0
+            1: invokespecial
+              Call HotSpotMethod<DynamicVariable.tl> - ()Ljava/lang/InheritableThreadLocal;
+              0: aload_0
+              1: getfield
+              4: areturn
+              Ret HotSpotMethod<DynamicVariable.tl> - ()Ljava/lang/InheritableThreadLocal;
+            4: invokevirtual
+              Call HotSpotMethod<ThreadLocal.get> - ()Ljava/lang/Object;
+              0: invokestatic
+              Native HotSpotMethod<Thread.currentThread> HotSpotMethod<ThreadLocal.get> - ()Ljava/lang/Object;
+              3: astore_1
+              4: aload_0
+              5: aload_1
+              6: invokevirtual
+                Call HotSpotMethod<InheritableThreadLocal.getMap> - (Ljava/lang/Thread;)Ljava/lang/ThreadLocal$ThreadLocalMap;
+                0: aload_1
+                1: getfield
+                4: areturn
+                Ret HotSpotMethod<InheritableThreadLocal.getMap> - (Ljava/lang/Thread;)Ljava/lang/ThreadLocal$ThreadLocalMap;
+              9: astore_2
+              10: aload_2
+              11: ifnull
+              14: aload_2
+              15: aload_0
+              16: invokestatic
+                Call HotSpotMethod<ThreadLocal$ThreadLocalMap.access$000> - (Ljava/lang/ThreadLocal$ThreadLocalMap;Ljava/lang/ThreadLocal;)Ljava/lang/ThreadLocal$ThreadLocalMap$Entry;
+                0: aload_0
+                1: aload_1
+                2: invokespecial
+                  Call HotSpotMethod<ThreadLocal$ThreadLocalMap.getEntry> - (Ljava/lang/ThreadLocal;)Ljava/lang/ThreadLocal$ThreadLocalMap$Entry;
+                  0: aload_1
+                  1: invokestatic
+                    Call HotSpotMethod<ThreadLocal.access$400> - (Ljava/lang/ThreadLocal;)I
+                    0: aload_0
+                    1: getfield
+                    4: ireturn
+                    Ret HotSpotMethod<ThreadLocal.access$400> - (Ljava/lang/ThreadLocal;)I
+                  4: aload_0
+                  5: getfield
+                  8: arraylength
+                  9: iconst_1
+                  10: isub
+                  11: iand
+                  12: istore_2
+                  13: aload_0
+                  14: getfield
+                  17: iload_2
+                  18: aaload
+                  19: astore_3
+                  20: aload_3
+                  21: ifnull
+                  24: aload_3
+                  25: invokevirtual
+                    Call HotSpotMethod<Reference.get> - ()Ljava/lang/Object;
+                    0: aload_0
+                    1: getfield
+                    4: areturn
+                    Ret HotSpotMethod<Reference.get> - ()Ljava/lang/Object;
+                  28: aload_1
+                  29: if_acmpne
+                  32: aload_3
+                  33: areturn
+                  Ret HotSpotMethod<ThreadLocal$ThreadLocalMap.getEntry> - (Ljava/lang/ThreadLocal;)Ljava/lang/ThreadLocal$ThreadLocalMap$Entry;
+                5: areturn
+                Ret HotSpotMethod<ThreadLocal$ThreadLocalMap.access$000> - (Ljava/lang/ThreadLocal$ThreadLocalMap;Ljava/lang/ThreadLocal;)Ljava/lang/ThreadLocal$ThreadLocalMap$Entry;
+              19: astore_3
+              20: aload_3
+              21: ifnull
+              24: aload_3
+              25: getfield
+              28: areturn
+              Ret HotSpotMethod<ThreadLocal.get> - ()Ljava/lang/Object;
+            7: areturn
+            Ret HotSpotMethod<DynamicVariable.value> - ()Ljava/lang/Object;
+          7: checkcast
+          10: areturn
+          Ret HotSpotMethod<Console$.out> - ()Ljava/io/PrintStream;
+        4: aload_1
+        5: invokevirtual
+          Call HotSpotMethod<PrintStream.println> - (Ljava/lang/Object;)V
+          0: aload_1
+          1: invokestatic
+            Call HotSpotMethod<String.valueOf> - (Ljava/lang/Object;)Ljava/lang/String;
+            0: aload_0
+            1: ifnonnull
+            9: aload_0
+            10: invokevirtual
+              Call HotSpotMethod<String.toString> - ()Ljava/lang/String;
+              0: aload_0
+              1: areturn
+              Ret HotSpotMethod<String.toString> - ()Ljava/lang/String;
+            13: areturn
+            Ret HotSpotMethod<String.valueOf> - (Ljava/lang/Object;)Ljava/lang/String;
+          4: astore_2
+          5: aload_0
+          6: dup
+          7: astore_3
+          8: monitorenter
+          9: aload_0
+          10: aload_2
+          11: invokevirtual
+            Call HotSpotMethod<PrintStream.print> - (Ljava/lang/String;)V
+            0: aload_1
+            1: ifnonnull
+            7: aload_0
+            8: aload_1
+            9: invokespecial
+              Call HotSpotMethod<PrintStream.write> - (Ljava/lang/String;)V
+              0: aload_0
+              1: dup
+              2: astore_2
+              3: monitorenter
+              4: aload_0
+              5: invokespecial
+                Call HotSpotMethod<PrintStream.ensureOpen> - ()V
+                0: aload_0
+                1: getfield
+                4: ifnonnull
+                17: return
+                Ret HotSpotMethod<PrintStream.ensureOpen> - ()V
+              8: aload_0
+              9: getfield
+              12: aload_1
+              13: invokevirtual
+                Call HotSpotMethod<Writer.write> - (Ljava/lang/String;)V
+                0: aload_0
+                1: aload_1
+                2: iconst_0
+                3: aload_1
+                4: invokevirtual
+                  Call HotSpotMethod<String.length> - ()I
+                  0: aload_0
+                  1: getfield
+                  4: arraylength
+                  5: ireturn
+                  Ret HotSpotMethod<String.length> - ()I
+                7: invokevirtual
+                  Call HotSpotMethod<BufferedWriter.write> - (Ljava/lang/String;II)V
+                  0: aload_0
+                  1: getfield
+                  4: dup
+                  5: astore
+                  7: monitorenter
+                  8: aload_0
+                  9: invokespecial
+                    Call HotSpotMethod<BufferedWriter.ensureOpen> - ()V
+                    0: aload_0
+                    1: getfield
+                    4: ifnonnull
+                    17: return
+                    Ret HotSpotMethod<BufferedWriter.ensureOpen> - ()V
+                  12: iload_2
+                  13: istore
+                  15: iload_2
+                  16: iload_3
+                  17: iadd
+                  18: istore
+                  20: iload
+                  22: iload
+                  24: if_icmpge
+                  27: aload_0
+                  28: aload_0
+                  29: getfield
+                  32: aload_0
+                  33: getfield
+                  36: isub
+                  37: iload
+                  39: iload
+                  41: isub
+                  42: invokespecial
+                    Call HotSpotMethod<BufferedWriter.min> - (II)I
+                    0: iload_1
+                    1: iload_2
+                    2: if_icmpge
+                    7: iload_2
+                    8: ireturn
+                    Ret HotSpotMethod<BufferedWriter.min> - (II)I
+                  45: istore
+                  47: aload_1
+                  48: iload
+                  50: iload
+                  52: iload
+                  54: iadd
+                  55: aload_0
+                  56: getfield
+                  59: aload_0
+                  60: getfield
+                  63: invokevirtual
+                    Call HotSpotMethod<String.getChars> - (II[CI)V
+                    0: iload_1
+                    1: ifge
+                    13: iload_2
+                    14: aload_0
+                    15: getfield
+                    18: arraylength
+                    19: if_icmple
+                    31: iload_1
+                    32: iload_2
+                    33: if_icmple
+                    47: aload_0
+                    48: getfield
+                    51: iload_1
+                    52: aload_3
+                    53: iload
+                    55: iload_2
+                    56: iload_1
+                    57: isub
+                    58: invokestatic
+                    Native HotSpotMethod<System.arraycopy> HotSpotMethod<String.getChars> - (II[CI)V
+                    61: return
+                    Ret HotSpotMethod<String.getChars> - (II[CI)V
+                  66: iload
+                  68: iload
+                  70: iadd
+                  71: istore
+                  73: aload_0
+                  74: dup
+                  75: getfield
+                  78: iload
+                  80: iadd
+                  81: putfield
+
+                         84: aload_0
+                  85: getfield
+                  88: aload_0
+                  89: getfield
+                  92: if_icmplt
+                  99: goto
+                  20: iload
+                  22: iload
+                  24: if_icmpge
+                  102: aload
+                  104: monitorexit
+                  105: goto
+                  116: return
+                  Ret HotSpotMethod<BufferedWriter.write> - (Ljava/lang/String;II)V
+                10: return
+                Ret HotSpotMethod<Writer.write> - (Ljava/lang/String;)V
+              16: aload_0
+              17: getfield
+              20: invokevirtual
+                Call HotSpotMethod<BufferedWriter.flushBuffer> - ()V
+                0: aload_0
+                1: getfield
+                4: dup
+                5: astore_1
+                6: monitorenter
+                7: aload_0
+                8: invokespecial
+                  Call HotSpotMethod<BufferedWriter.ensureOpen> - ()V
+                  0: aload_0
+                  1: getfield
+                  4: ifnonnull
+                  17: return
+                  Ret HotSpotMethod<BufferedWriter.ensureOpen> - ()V
+                11: aload_0
+                12: getfield
+                15: ifne
+                18: aload_1
+                19: monitorexit
+                20: return
+                Ret HotSpotMethod<BufferedWriter.flushBuffer> - ()V
+              23: aload_0
+              24: getfield
+              27: invokevirtual
+                Call HotSpotMethod<OutputStreamWriter.flushBuffer> - ()V
+                0: aload_0
+                1: getfield
+                4: invokevirtual
+                  Call HotSpotMethod<StreamEncoder.flushBuffer> - ()V
+                  0: aload_0
+                  1: getfield
+                  4: dup
+                  5: astore_1
+                  6: monitorenter
+                  7: aload_0
+                  8: invokespecial
+                    Call HotSpotMethod<StreamEncoder.isOpen> - ()Z
+                    0: aload_0
+                    1: getfield
+                    4: ireturn
+                    Ret HotSpotMethod<StreamEncoder.isOpen> - ()Z
+                  11: ifeq
+                  14: aload_0
+                  15: invokevirtual
+                    Call HotSpotMethod<StreamEncoder.implFlushBuffer> - ()V
+                    0: aload_0
+                    1: getfield
+                    4: invokevirtual
+                      Call HotSpotMethod<Buffer.position> - ()I
+                      0: aload_0
+                      1: getfield
+                      4: ireturn
+                      Ret HotSpotMethod<Buffer.position> - ()I
+                    7: ifle
+                    14: return
+                    Ret HotSpotMethod<StreamEncoder.implFlushBuffer> - ()V
+                  18: goto
+                  31: aload_1
+                  32: monitorexit
+                  33: goto
+                  41: return
+                  Ret HotSpotMethod<StreamEncoder.flushBuffer> - ()V
+                7: return
+                Ret HotSpotMethod<OutputStreamWriter.flushBuffer> - ()V
+              30: aload_0
+              31: getfield
+              34: ifeq
+              53: aload_2
+              54: monitorexit
+              55: goto
+              63: goto
+              82: return
+              Ret HotSpotMethod<PrintStream.write> - (Ljava/lang/String;)V
+            12: return
+            Ret HotSpotMethod<PrintStream.print> - (Ljava/lang/String;)V
+          14: aload_0
+          15: invokespecial
+            Call HotSpotMethod<PrintStream.newLine> - ()V
+            0: aload_0
+            1: dup
+            2: astore_1
+            3: monitorenter
+            4: aload_0
+            5: invokespecial
+              Call HotSpotMethod<PrintStream.ensureOpen> - ()V
+              0: aload_0
+              1: getfield
+              4: ifnonnull
+              17: return
+              Ret HotSpotMethod<PrintStream.ensureOpen> - ()V
+            8: aload_0
+            9: getfield
+            12: invokevirtual
+              Call HotSpotMethod<BufferedWriter.newLine> - ()V
+              0: aload_0
+              1: aload_0
+              2: getfield
+              5: invokevirtual
+                Call HotSpotMethod<Writer.write> - (Ljava/lang/String;)V
+                0: aload_0
+                1: aload_1
+                2: iconst_0
+                3: aload_1
+                4: invokevirtual
+                  Call HotSpotMethod<String.length> - ()I
+                  0: aload_0
+                  1: getfield
+                  4: arraylength
+                  5: ireturn
+                  Ret HotSpotMethod<String.length> - ()I
+                7: invokevirtual
+                  Call HotSpotMethod<BufferedWriter.write> - (Ljava/lang/String;II)V
+                  0: aload_0
+                  1: getfield
+                  4: dup
+                  5: astore
+                  7: monitorenter
+                  8: aload_0
+                  9: invokespecial
+                    Call HotSpotMethod<BufferedWriter.ensureOpen> - ()V
+                    0: aload_0
+                    1: getfield
+                    4: ifnonnull
+                    17: return
+                    Ret HotSpotMethod<BufferedWriter.ensureOpen> - ()V
+                  12: iload_2
+                  13: istore
+                  15: iload_2
+                  16: iload_3
+                  17: iadd
+                  18: istore
+                  20: iload
+                  22: iload
+                  24: if_icmpge
+                  27: aload_0
+                  28: aload_0
+                  29: getfield
+                  32: aload_0
+                  33: getfield
+                  36: isub
+                  37: iload
+                  39: iload
+                  41: isub
+                  42: invokespecial
+                    Call HotSpotMethod<BufferedWriter.min> - (II)I
+                    0: iload_1
+                    1: iload_2
+                    2: if_icmpge
+                    7: iload_2
+                    8: ireturn
+                    Ret HotSpotMethod<BufferedWriter.min> - (II)I
+                  45: istore
+                  47: aload_1
+                  48: iload
+                  50: iload
+                  52: iload
+                  54: iadd
+                  55: aload_0
+                  56: getfield
+                  59: aload_0
+                  60: getfield
+                  63: invokevirtual
+                    Call HotSpotMethod<String.getChars> - (II[CI)V
+                    0: iload_1
+                    1: ifge
+                    13: iload_2
+                    14: aload_0
+                    15: getfield
+                    18: arraylength
+                    19: if_icmple
+                    31: iload_1
+                    32: iload_2
+                    33: if_icmple
+                    47: aload_0
+                    48: getfield
+                    51: iload_1
+                    52: aload_3
+                    53: iload
+                    55: iload_2
+                    56: iload_1
+                    57: isub
+                    58: invokestatic
+                    Native HotSpotMethod<System.arraycopy> HotSpotMethod<String.getChars> - (II[CI)V
+                    61: return
+                    Ret HotSpotMethod<String.getChars> - (II[CI)V
+                  66: iload
+                  68: iload
+                  70: iadd
+                  71: istore
+                  73: aload_0
+                  74: dup
+                  75: getfield
+                  78: iload
+                  80: iadd
+                  81: putfield
+
+                  84: aload_0
+                  85: getfield
+                  88: aload_0
+                  89: getfield
+                  92: if_icmplt
+                  99: goto
+                  20: iload
+                  22: iload
+                  24: if_icmpge
+                  102: aload
+                  104: monitorexit
+                  105: goto
+                  116: return
+                  Ret HotSpotMethod<BufferedWriter.write> - (Ljava/lang/String;II)V
+                10: return
+                Ret HotSpotMethod<Writer.write> - (Ljava/lang/String;)V
+              8: return
+              Ret HotSpotMethod<BufferedWriter.newLine> - ()V
+            15: aload_0
+            16: getfield
+            19: invokevirtual
+              Call HotSpotMethod<BufferedWriter.flushBuffer> - ()V
+              0: aload_0
+              1: getfield
+              4: dup
+              5: astore_1
+              6: monitorenter
+              7: aload_0
+              8: invokespecial
+                Call HotSpotMethod<BufferedWriter.ensureOpen> - ()V
+                0: aload_0
+                1: getfield
+                4: ifnonnull
+                17: return
+                Ret HotSpotMethod<BufferedWriter.ensureOpen> - ()V
+              11: aload_0
+              12: getfield
+              15: ifne
+              18: aload_1
+              19: monitorexit
+              20: return
+              Ret HotSpotMethod<BufferedWriter.flushBuffer> - ()V
+            22: aload_0
+            23: getfield
+            26: invokevirtual
+              Call HotSpotMethod<OutputStreamWriter.flushBuffer> - ()V
+              0: aload_0
+              1: getfield
+              4: invokevirtual
+                Call HotSpotMethod<StreamEncoder.flushBuffer> - ()V
+                0: aload_0
+                1: getfield
+                4: dup
+                5: astore_1
+                6: monitorenter
+                7: aload_0
+                8: invokespecial
+                  Call HotSpotMethod<StreamEncoder.isOpen> - ()Z
+                  0: aload_0
+                  1: getfield
+                  4: ireturn
+                  Ret HotSpotMethod<StreamEncoder.isOpen> - ()Z
+                11: ifeq
+                14: aload_0
+                15: invokevirtual
+                  Call HotSpotMethod<StreamEncoder.implFlushBuffer> - ()V
+                  0: aload_0
+                  1: getfield
+                  4: invokevirtual
+                    Call HotSpotMethod<Buffer.position> - ()I
+                    0: aload_0
+                    1: getfield
+                    4: ireturn
+                    Ret HotSpotMethod<Buffer.position> - ()I
+                  7: ifle
+                  14: return
+                  Ret HotSpotMethod<StreamEncoder.implFlushBuffer> - ()V
+                18: goto
+                31: aload_1
+                32: monitorexit
+                33: goto
+                41: return
+                Ret HotSpotMethod<StreamEncoder.flushBuffer> - ()V
+              7: return
+              Ret HotSpotMethod<OutputStreamWriter.flushBuffer> - ()V
+            29: aload_0
+            30: getfield
+            33: ifeq
+            43: aload_1
+            44: monitorexit
+            45: goto
+            53: goto
+            72: return
+            Ret HotSpotMethod<PrintStream.newLine> - ()V
+          18: aload_3
+          19: monitorexit
+          20: goto
+          30: return
+          Ret HotSpotMethod<PrintStream.println> - (Ljava/lang/Object;)V
+        8: return
+        Ret HotSpotMethod<Console$.println> - (Ljava/lang/Object;)V
+      7: return
+      Ret HotSpotMethod<Predef$.println> - (Ljava/lang/Object;)V
+    28: return
+    Ret HotSpotMethod<Test1$$anonfun$testA$1$Foo$1.bar> - (I)V

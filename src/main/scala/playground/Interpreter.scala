@@ -33,7 +33,7 @@ import com.oracle.graal.hotspot.meta._;
 import com.oracle.graal.bytecode._;
 
 
-object RuntimeInterpreterInterface {
+object RuntimeIntf {
     final val unsafe: Unsafe = loadUnsafe();
     private def loadUnsafe(): Unsafe = {
         try {
@@ -53,11 +53,22 @@ object RuntimeInterpreterInterface {
 }
 
 
-class RuntimeInterpreterInterface(metaProvider: MetaAccessProvider) {
+class RuntimeIntf(metaProvider: MetaAccessProvider) {
 
-    import RuntimeInterpreterInterface._
+    //val delegate = Graal.getRuntime().getCapability(classOf[RuntimeInterpreterInterface]);
 
-    @native def invoke(metho: ResolvedJavaMethod, args: AnyRef*): AnyRef
+    import RuntimeIntf._
+
+    val toJava = classOf[HotSpotResolvedJavaMethod].getDeclaredMethod("toJava")
+    toJava.setAccessible(true)
+
+    def invoke(method: ResolvedJavaMethod, args: Array[AnyRef]): AnyRef = {
+      val m = toJava.invoke(method).asInstanceOf[java.lang.reflect.Method]
+
+      //println("invoking: " + m + " " + args.mkString("(",",",")") + "//" + args.length)
+      //println("types: " + m.getParameterTypes.mkString(",") + "//" + m.getParameterTypes.length)
+      m.invoke(null, args:_*) // FIXME:?? what about non-static method ??
+    }
 
     def monitorEnter(value: Object): Unit = {
         nullCheck(value);
@@ -352,8 +363,8 @@ class RuntimeInterpreterInterface(metaProvider: MetaAccessProvider) {
 
 object BytecodeInterpreter {
     private final val OPTION_MAX_STACK_SIZE = "maxStackSize";
-    private final val TRACE = false;
-    private final val TRACE_BYTE_CODE = false;
+    private final val TRACE = true;
+    private final val TRACE_BYTE_CODE = true;
 
     private final val DEFAULT_MAX_STACK_SIZE = 1500;
 
@@ -378,7 +389,7 @@ final class BytecodeInterpreter {
     private var maxStackFrames: Int = _;
 
     private var rootMethod: ResolvedJavaMethod = _;
-    private var runtimeInterface: RuntimeInterpreterInterface = _;
+    private var runtimeInterface: RuntimeIntf = _;
     private var metaAccessProvider: MetaAccessProvider = _;
 
     def initialize(args: String): Boolean = {
@@ -395,6 +406,7 @@ final class BytecodeInterpreter {
         if (this.metaAccessProvider == null) {
             throw new UnsupportedOperationException("The provided graal runtime does not support the required capability " + classOf[MetaAccessProvider].getName() + ".");
         }
+        this.runtimeInterface = new RuntimeIntf(metaAccessProvider)
 
         this.rootMethod = resolveRootMethod();
         registerDelegates();
@@ -471,7 +483,7 @@ final class BytecodeInterpreter {
     }
 
     //@Override
-    def execute(method: ResolvedJavaMethod, boxedArguments: Object*): Object = {// throws Throwable {
+    def execute(method: ResolvedJavaMethod, boxedArguments: Array[Object]): Object = {// throws Throwable {
         try {
             val receiver: Boolean = hasReceiver(method);
             val signature: Signature = method.signature();
@@ -479,39 +491,66 @@ final class BytecodeInterpreter {
             assert(signature.argumentCount(receiver) == boxedArguments.length);
 
             if (TRACE) {
-                trace(0, "Executing root method " + method);
+                //if (nativeFrame == null) {
+                    trace(0, "Executing root method " + method);
+                //} else {
+                //    trace(nativeFrame.depth(), "Executing from native " + method);
+                //}
             }
 
-            val rootFrame: InterpreterFrame = new InterpreterFrame(rootMethod, signature.argumentSlots(true));
-            rootFrame.pushObject(this);
-            rootFrame.pushObject(method);
-            rootFrame.pushObject(boxedArguments);
 
-            var index: Int = 0;
-            if (receiver) {
-                pushAsObject(rootFrame, Kind.Object, boxedArguments(index));
-                index += 1;
+            var rootFrame: InterpreterFrame = null // nativeFrame
+            if (rootFrame == null) {
+              rootFrame = new InterpreterFrame(rootMethod, signature.argumentSlots(true));
+              rootFrame.pushObject(this);
+              rootFrame.pushObject(method);
+              rootFrame.pushObject(boxedArguments);
             }
+            
 
-            var i = 0
-            while (index < boxedArguments.length) {
-                pushAsObject(rootFrame, signature.argumentKindAt(i), boxedArguments(index));
-                i += 1
-                index += 1
-            }
+            // TODO (chaeubl): invoke the first method in the same way as any other method (the method might be redirected!)
+            val firstFrame: InterpreterFrame = rootFrame.create(method, receiver, 0, false);
+            initializeLocals(firstFrame, method, boxedArguments);
+            executeRoot(rootFrame, firstFrame);
 
-            //val frame: InterpreterFrame = rootFrame.create(method, receiver); // TR FIXME
-            val frame: InterpreterFrame = rootFrame.create(method, receiver,0,true); // TR FIXME
-            executeRoot(rootFrame, frame);
+            /*if (TRACE) {
+                if (nativeFrame == null) {
+                    trace(0, "Returning to root method " + method);
+                } else {
+                    trace(nativeFrame.depth(), "Returning to native " + method);
+                }
+            }*/
+
             return popAsObject(rootFrame, signature.returnKind());
         } catch {
             case e: Exception =>
             // TODO (chaeubl): remove this exception handler (only used for debugging)
             throw e;
-        }
+        }/* finally {
+            nativeCallerFrame.set(nativeFrame);
+        }*/
     }
 
-    def execute(javaMethod: Method, boxedArguments: Object*): Object = {// throws Throwable {
+    def initializeLocals(rootFrame: InterpreterFrame, method: ResolvedJavaMethod, boxedArguments: Array[Object]) {
+        val receiver: Boolean = hasReceiver(method);
+        val signature: Signature = method.signature();
+        var index = 0;
+        if (receiver) {
+            pushAsObject(rootFrame, Kind.Object, boxedArguments(index));
+            index += 1;
+        }
+
+        var i = 0
+        while (index < boxedArguments.length) {
+            pushAsObject(rootFrame, signature.argumentKindAt(i), boxedArguments(index));
+            i += 1
+            index += 1
+        }
+        // push the remaining locals
+        rootFrame.pushVoid(rootFrame.stackTos() - rootFrame.getStackTop());
+    }
+
+    def execute(javaMethod: Method, boxedArguments: Array[Object]): Object = {// throws Throwable {
         return execute(metaAccessProvider.getResolvedJavaMethod(javaMethod), boxedArguments);
     }
 
@@ -563,6 +602,7 @@ final class BytecodeInterpreter {
             case t: Throwable =>
             if (TRACE) {
                 traceOp(frame, "Exception " + t.toString());
+                t.printStackTrace
             }
             updateStackTrace(frame, t);
 
@@ -1515,8 +1555,31 @@ final class BytecodeInterpreter {
 
     private def invokeOptimized(parent: InterpreterFrame, method: ResolvedJavaMethod, hasReceiver: Boolean): InterpreterFrame = {// throws Throwable {
         //return parent.create(method, hasReceiver);
-        return parent.create(method, hasReceiver, 0, false); // TR FIXME
+        return parent.create(method, hasReceiver, 0, true);
     }
+
+    /*
+    private void enterMethod(InterpreterFrame calleeFrame) {
+        ResolvedJavaMethod method = calleeFrame.getMethod();
+        if (TRACE) {
+            traceCall(calleeFrame, "Call");
+        }
+
+        if (Modifier.isSynchronized(method.accessFlags())) {
+            if (TRACE) {
+                traceOp(calleeFrame, "Method monitor enter");
+            }
+            if (Modifier.isStatic(method.accessFlags())) {
+                runtimeInterface.monitorEnter(method.holder().toJava());
+            } else {
+                Object enterObject = calleeFrame.getObject(calleeFrame.resolveLocalIndex(0));
+                assert enterObject != null;
+                runtimeInterface.monitorEnter(enterObject);
+            }
+        }
+    }*/
+
+
 
     private def allocateMultiArray(frame: InterpreterFrame, cpi: Char, dimension: Int): Object = {
         val typ: ResolvedJavaType = getLastDimensionType(resolveType(frame, Bytecodes.MULTIANEWARRAY, cpi));
