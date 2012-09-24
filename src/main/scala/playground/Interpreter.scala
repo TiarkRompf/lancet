@@ -51,13 +51,89 @@ class HasUnsafe {
     }
 }
 
-object RuntimeIntf extends HasUnsafe
 
-class RuntimeIntf(metaProvider: MetaAccessProvider) {
+trait Base {
+  type Rep[T]
+
+  implicit def unit(x: Int): Rep[Int]
+  implicit def unit(x: Short): Rep[Short]
+  implicit def unit(x: Long): Rep[Long]
+  implicit def unit(x: Float): Rep[Float]
+  implicit def unit(x: Double): Rep[Double]
+  implicit def unit(x: Boolean): Rep[Boolean]
+  implicit def unit(x: Byte): Rep[Byte]
+  implicit def unit(x: Char): Rep[Char]
+}
+
+trait Base_Impl extends Base {
+  type Rep[T] = T
+
+  def unit(x: Int) = x
+  def unit(x: Short) = x
+  def unit(x: Long) = x
+  def unit(x: Float) = x
+  def unit(x: Double) = x
+  def unit(x: Boolean) = x
+  def unit(x: Byte) = x
+  def unit(x: Char) = x
+
+}
+
+
+
+
+trait Runtime extends Base {
+  def invoke(method: ResolvedJavaMethod, args: Array[Object]): Object
+  def monitorEnter(value: Object): Unit
+  def monitorExit(value: Object): Unit
+  def newObject(typ: ResolvedJavaType): Object // throws InstantiationException {
+  def getFieldObject(base: Object, field: ResolvedJavaField): Object
+  def getFieldBoolean(base: Object, field: ResolvedJavaField): Boolean
+  def getFieldByte(base: Object, field: ResolvedJavaField): Byte
+  def getFieldChar(base: Object, field: ResolvedJavaField): Char
+  def getFieldShort(base: Object, field: ResolvedJavaField): Short
+  def getFieldInt(base: Object, field: ResolvedJavaField): Int
+  def getFieldLong(base: Object, field: ResolvedJavaField): Long
+  def getFieldDouble(base: Object, field: ResolvedJavaField): Double
+  def getFieldFloat(base: Object, field: ResolvedJavaField): Float
+  def setFieldObject(value: Object, base: Object, field: ResolvedJavaField): Unit
+  def setFieldInt(value: Int, base: Object, field: ResolvedJavaField): Unit
+  def setFieldFloat(value: Float, base: Object, field: ResolvedJavaField): Unit
+  def setFieldDouble(value: Double, base: Object, field: ResolvedJavaField): Unit
+  def setFieldLong(value: Long, base: Object, field: ResolvedJavaField): Unit
+  def getArrayByte(index: Long, array: Object): Byte
+  def getArrayChar(index: Long, array: Object): Char
+  def getArrayShort(index: Long, array: Object): Short
+  def getArrayInt(index: Long, array: Object): Int
+  def getArrayLong(index: Long, array: Object): Long
+  def getArrayDouble(index: Long, array: Object): Double
+  def getArrayFloat(index: Long, array: Object): Float
+  def getArrayObject(index: Long, array: Object): Object
+  def setArrayByte(value: Byte, index: Long, array: Object): Unit
+  def setArrayChar(value: Char, index: Long, array: Object): Unit
+  def setArrayShort(value: Short, index: Long, array: Object): Unit
+  def setArrayInt(value: Int, index: Long, array: Object): Unit
+  def setArrayLong(value: Long, index: Long, array: Object): Unit
+  def setArrayFloat(value: Float, index: Long, array: Object): Unit
+  def setArrayDouble(value: Double, index: Long, array: Object): Unit
+  def setArrayObject(value: Object, index: Long, array: Object): Unit
+  def nullCheck(value: Object): Unit
+  def checkArrayType(array: Object, arrayType: Class[_]): Unit
+  def checkArray(array: Object, index: Long): Unit
+  def arrayLength(array: Object): Int
+  def isVolatile(field: ResolvedJavaField): Boolean
+  def resolveOffset(field: ResolvedJavaField): Long
+  def resolveBase(base: Object, field: ResolvedJavaField): Object
+}
+
+
+object Runtime extends HasUnsafe
+
+class Runtime_Impl(metaProvider: MetaAccessProvider) extends Base_Impl with Runtime {
 
     //val delegate = Graal.getRuntime().getCapability(classOf[RuntimeInterpreterInterface]);
 
-    import RuntimeIntf._
+    import Runtime._
 
     val toJava = classOf[HotSpotResolvedJavaMethod].getDeclaredMethod("toJava")
     toJava.setAccessible(true)
@@ -354,6 +430,24 @@ class RuntimeIntf(metaProvider: MetaAccessProvider) {
 }
 
 
+
+trait Frame extends Base {
+  def getObject(index: Int): Object
+  def setObject(index: Int, value: Object): Unit
+  def getFloat(index: Int): Float
+  def setFloat(index: Int, value: Float): Unit
+  def getLong(index: Int): Long
+  def setLong(index: Int, value: Long): Unit
+  def getInt(index: Int): Int
+  def setInt(index: Int, value: Int): Unit
+  def getDouble(index: Int): Double
+  def setDouble(index: Int, value: Double): Unit
+  def getParentFrame(level: Int): Frame
+  def getTopFrame(): Frame
+  def getArguments(argOffset: Int): Array[Object]
+  def size: Int
+}
+
 object Frame extends HasUnsafe {
     final val EMPTY_ARRAY = new Array[Object](0)
     final val PARENT_FRAME_SLOT = 0;
@@ -362,7 +456,7 @@ object Frame extends HasUnsafe {
 
 
 
-class Frame(numLocals: Int, parent: Frame) {
+class Frame_Impl(numLocals: Int, parent: Frame) extends Base_Impl with Frame {
     import Frame._
     assert(numLocals >= MIN_FRAME_SIZE);
 
@@ -442,6 +536,53 @@ class Frame(numLocals: Int, parent: Frame) {
 }
 
 
+trait InterpreterFrame extends Frame {
+  def create(method: ResolvedJavaMethod, hasReceiver: Boolean, additionalStackSpace: Int, useParentArguments: Boolean): InterpreterFrame
+  def resolveLocalIndex(index: Int): Int
+  def depth(): Int
+  def stackTos(): Int
+  def peekReceiver(method: ResolvedJavaMethod): Object
+  def pushBoth(oValue: Object, intValue: Int): Unit
+  def pushBoth(oValue: Object, longValue: Long): Unit
+  def pushObject(value: Object): Unit
+  def pushBoolean(value: Boolean): Unit
+  def pushByte(value: Byte): Unit
+  def pushShort(value: Short): Unit
+  def pushChar(value: Char): Unit
+  def pushInt(value: Int): Unit
+  def pushDouble(value: Double): Unit
+  def pushFloat(value: Float): Unit
+  def pushLong(value: Long): Unit
+  def popBoolean(): Boolean
+  def popByte(): Byte
+  def popChar(): Char
+  def popShort(): Short
+  def popInt(): Int
+  def popDouble(): Double
+  def popFloat(): Float
+  def popLong(): Long
+  def popObject(): Object
+  def swapSingle(): Unit
+  def dupx1(): Unit
+  def dup2x1(): Unit
+  def dup2x2(): Unit
+  def dupx2(): Unit
+  def dup(length: Int): Unit
+  def tosSingle(offset: Int): Int
+  def getStackTop(): Int
+  def pushVoid(count: Int): Unit
+  def popVoid(count: Int): Unit
+  def getConstantPool(): ConstantPool
+  def setMethod(method: ResolvedJavaMethod): Unit
+  def getMethod(): ResolvedJavaMethod
+  def setBCI(bci: Int): Unit
+  def getBCI(): Int
+  def getParentFrame(): InterpreterFrame
+  def dispose(): Unit
+  def popStack(): Unit
+}
+
+
 object InterpreterFrame {
     final val BASE_LENGTH = 3;
 
@@ -453,8 +594,9 @@ object InterpreterFrame {
 }
 
 
-class InterpreterFrame(method: ResolvedJavaMethod, parent: InterpreterFrame, additionalStackSpace: Int) 
-extends Frame(method.maxLocals() + method.maxStackSize() + InterpreterFrame.BASE_LENGTH + additionalStackSpace, parent) {
+class InterpreterFrame_Impl(method: ResolvedJavaMethod, parent: InterpreterFrame, additionalStackSpace: Int) 
+extends Frame_Impl(method.maxLocals() + method.maxStackSize() + InterpreterFrame.BASE_LENGTH + additionalStackSpace, parent) 
+with InterpreterFrame {
 
     import Frame._
     import InterpreterFrame._
@@ -473,7 +615,7 @@ extends Frame(method.maxLocals() + method.maxStackSize() + InterpreterFrame.BASE
     }
 
     def create(method: ResolvedJavaMethod, hasReceiver: Boolean, additionalStackSpace: Int, useParentArguments: Boolean): InterpreterFrame = {
-        val frame = new InterpreterFrame(method, this, additionalStackSpace);
+        val frame = new InterpreterFrame_Impl(method, this, additionalStackSpace);
 
         if (useParentArguments) {
             val length = method.signature().argumentSlots(hasReceiver);
@@ -496,7 +638,7 @@ extends Frame(method.maxLocals() + method.maxStackSize() + InterpreterFrame.BASE
 
     def depth(): Int = {
         var depth = 1;
-        var frame = this;
+        var frame: InterpreterFrame = this;
         while ({ frame = frame.getParentFrame(); frame != null}) {
             depth+=1;
         }
@@ -507,7 +649,7 @@ extends Frame(method.maxLocals() + method.maxStackSize() + InterpreterFrame.BASE
         return BASE_LENGTH + getMethod().maxLocals();
     }
 
-    private def copyArguments(dest: InterpreterFrame, length: Int): Unit = {
+    private def copyArguments(dest: InterpreterFrame_Impl, length: Int): Unit = {
         System.arraycopy(locals, tosSingle(length - 1), dest.locals,
                         BASE_LENGTH, length);
         System.arraycopy(primitiveLocals, tosSingle(length - 1), dest.primitiveLocals,
@@ -771,14 +913,14 @@ extends Frame(method.maxLocals() + method.maxStackSize() + InterpreterFrame.BASE
         return getInt(BCI_FRAME_SLOT);
     }
 
-    def pushTo(childFrame: InterpreterFrame, argumentSlots: Int): Unit = {
+    /*def pushTo(childFrame: InterpreterFrame, argumentSlots: Int): Unit = {
         System.arraycopy(locals, tos - argumentSlots, childFrame.locals,
                         Frame.MIN_FRAME_SIZE, argumentSlots);
 
         System.arraycopy(primitiveLocals, tos - argumentSlots, childFrame.primitiveLocals,
                         Frame.MIN_FRAME_SIZE, argumentSlots);
         popVoid(argumentSlots);
-    }
+    }*/
 
     def getParentFrame(): InterpreterFrame = {
         return getObject(PARENT_FRAME_SLOT).asInstanceOf[InterpreterFrame];
@@ -867,22 +1009,27 @@ class InterpreterException(cause: Throwable) extends RuntimeException(cause) {
  * are executed using the {@link com.oracle.graal.api.interpreter.RuntimeInterpreterInterface}.
  */
 
+
+trait BytecodeInterpreter extends Base {
+
+}
+
 object BytecodeInterpreter {
-    private final val OPTION_MAX_STACK_SIZE = "maxStackSize";
-    private final val TRACE = true;
-    private final val TRACE_BYTE_CODE = true;
+    final val OPTION_MAX_STACK_SIZE = "maxStackSize";
+    final val TRACE = true;
+    final val TRACE_BYTE_CODE = true;
 
-    private final val DEFAULT_MAX_STACK_SIZE = 1500;
+    final val DEFAULT_MAX_STACK_SIZE = 1500;
 
-    private final val NEXT = -1;
-    private final val BRANCH = -2;
-    private final val RETURN = -3;
-    private final val CALL = -4;
+    final val NEXT = -1;
+    final val BRANCH = -2;
+    final val RETURN = -3;
+    final val CALL = -4;
 }
 
 
 //@SuppressWarnings("static-method")
-final class BytecodeInterpreter {
+final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter {
 
     import BytecodeInterpreter._
 
@@ -893,7 +1040,7 @@ final class BytecodeInterpreter {
     private var maxStackFrames: Int = _;
 
     private var rootMethod: ResolvedJavaMethod = _;
-    private var runtimeInterface: RuntimeIntf = _;
+    private var runtimeInterface: Runtime = _;
     private var metaAccessProvider: MetaAccessProvider = _;
 
     def initialize(args: String): Boolean = {
@@ -910,7 +1057,7 @@ final class BytecodeInterpreter {
         if (this.metaAccessProvider == null) {
             throw new UnsupportedOperationException("The provided graal runtime does not support the required capability " + classOf[MetaAccessProvider].getName() + ".");
         }
-        this.runtimeInterface = new RuntimeIntf(metaAccessProvider)
+        this.runtimeInterface = new Runtime_Impl(metaAccessProvider)
 
         this.rootMethod = resolveRootMethod();
         registerDelegates();
@@ -1003,9 +1150,9 @@ final class BytecodeInterpreter {
             }
 
 
-            var rootFrame: InterpreterFrame = null // nativeFrame
+            var rootFrame: InterpreterFrame_Impl = null // nativeFrame
             if (rootFrame == null) {
-              rootFrame = new InterpreterFrame(rootMethod, signature.argumentSlots(true));
+              rootFrame = new InterpreterFrame_Impl(rootMethod, signature.argumentSlots(true));
               rootFrame.pushObject(this);
               rootFrame.pushObject(method);
               rootFrame.pushObject(boxedArguments);
@@ -2273,7 +2420,7 @@ final class BytecodeInterpreter {
 
     private def resolveRootMethod(): ResolvedJavaMethod = {
         try {
-            return metaAccessProvider.getResolvedJavaMethod(classOf[BytecodeInterpreter].getDeclaredMethod("execute", classOf[Method], classOf[Array[Object]]));
+            return metaAccessProvider.getResolvedJavaMethod(classOf[BytecodeInterpreter_Impl].getDeclaredMethod("execute", classOf[Method], classOf[Array[Object]]));
         } catch {
             case e: Exception =>
             throw new RuntimeException(e);

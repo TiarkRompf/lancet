@@ -41,7 +41,7 @@ import com.oracle.graal.compiler.phases.PhasePlan.PhasePosition
     val reflectMeth = cls.getDeclaredMethod("bar", classOf[Int])
     val method = runtime.getResolvedJavaMethod(reflectMeth)
 
-    val it = new BytecodeInterpreter
+    val it = new BytecodeInterpreter_Impl
 
     it.initialize("")
     it.execute(method, Array[Object](o, 8:Integer))
