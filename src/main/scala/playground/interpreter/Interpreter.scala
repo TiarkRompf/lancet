@@ -36,6 +36,19 @@ import com.oracle.graal.bytecode._;
 
 
 
+
+
+// bytecode interpreter
+
+/**
+ * High-level bytecode interpreter that executes on top of Java. Java native methods
+ * are executed using the {@link com.oracle.graal.api.interpreter.RuntimeInterpreterInterface}.
+ */
+
+
+trait BytecodeInterpreter extends InterpreterUniverse {
+  
+
 trait InterpreterCallable {
     // methods
     def invoke(caller: InterpreterFrame, method: ResolvedJavaMethod, arguments: Array[Object]): Object // throws Throwable;
@@ -60,15 +73,7 @@ class InterpreterException(cause: Throwable) extends RuntimeException(cause) {
 
 
 
-// bytecode interpreter
 
-/**
- * High-level bytecode interpreter that executes on top of Java. Java native methods
- * are executed using the {@link com.oracle.graal.api.interpreter.RuntimeInterpreterInterface}.
- */
-
-
-trait BytecodeInterpreter extends Base {
   def addDelegate(method: Method, callable: InterpreterCallable): Unit
 }
 
@@ -81,13 +86,14 @@ object BytecodeInterpreter {
 
     final val NEXT = -1;
     final val BRANCH = -2;
-    final val RETURN = -3;
-    final val CALL = -4;
+    final val BRANCH_COND = -3;
+    final val RETURN = -4;
+    final val CALL = -5;
 }
 
 
 
-trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
+trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
 
   import BytecodeInterpreter._
 
@@ -117,6 +123,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
 
 
   var callFrame: InterpreterFrame = null
+  var branchCondition: Rep[Boolean] = true
 
 
 
@@ -428,68 +435,42 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
       case Bytecodes.DCMPG =>
           compareDoubleGreater(frame);
       case Bytecodes.IFEQ =>
-          if (frame.popInt() == 0) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popInt() == 0)
       case Bytecodes.IFNE =>
-          if (frame.popInt() != 0) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popInt() != 0)
       case Bytecodes.IFLT =>
-          if (frame.popInt() < 0) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popInt() < 0)
       case Bytecodes.IFGE =>
-          if (frame.popInt() >= 0) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popInt() >= 0)
       case Bytecodes.IFGT =>
-          if (frame.popInt() > 0) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popInt() > 0)
       case Bytecodes.IFLE =>
-          if (frame.popInt() <= 0) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popInt() <= 0)
       case Bytecodes.IF_ICMPEQ =>
-          if (frame.popInt() == frame.popInt()) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popInt() == frame.popInt())
       case Bytecodes.IF_ICMPNE =>
-          if (frame.popInt() != frame.popInt()) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popInt() != frame.popInt())
       case Bytecodes.IF_ICMPLT =>
-          if (frame.popInt() > frame.popInt()) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popInt() > frame.popInt())
       case Bytecodes.IF_ICMPGE =>
-          if (frame.popInt() <= frame.popInt()) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popInt() <= frame.popInt())
       case Bytecodes.IF_ICMPGT =>
-          if (frame.popInt() < frame.popInt()) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popInt() < frame.popInt())
       case Bytecodes.IF_ICMPLE =>
-          if (frame.popInt() >= frame.popInt()) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popInt() >= frame.popInt())
       case Bytecodes.IF_ACMPEQ =>
-          if (frame.popObject() == frame.popObject()) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popObject() == frame.popObject())
       case Bytecodes.IF_ACMPNE =>
-          if (frame.popObject() != frame.popObject()) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popObject() != frame.popObject())
       case Bytecodes.GOTO | Bytecodes.GOTO_W =>
           return BRANCH;
       case Bytecodes.JSR | Bytecodes.JSR_W =>
           frame.pushInt(bs.currentBCI());
           return BRANCH;
       case Bytecodes.RET =>
-          return frame.getInt(frame.resolveLocalIndex(bs.readLocalIndex()));
+          assert(false, "RET not implemented")
+          //bs.setBCI(frame.getInt(frame.resolveLocalIndex(bs.readLocalIndex())));
+          return NEXT // TR should return BRANCH??
       case Bytecodes.TABLESWITCH =>
           return tableSwitch(frame, bs);
       case Bytecodes.LOOKUPSWITCH =>
@@ -521,24 +502,16 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
           putField(frame, bs.readCPI());
       case Bytecodes.INVOKEVIRTUAL =>
           callFrame = invokeVirtual(frame, bs.readCPI());
-          if (callFrame != null) {
-              return CALL
-          }
+          return CALL
       case Bytecodes.INVOKESPECIAL =>
           callFrame = invokeSpecial(frame, bs.readCPI());
-          if (callFrame != null) {
-              return CALL
-          }
+          return CALL
       case Bytecodes.INVOKESTATIC =>
           callFrame = invokeStatic(frame, bs.readCPI());
-          if (callFrame != null) {
-              return CALL
-          }
+          return CALL
       case Bytecodes.INVOKEINTERFACE =>
           callFrame = invokeInterface(frame, bs.readCPI());
-          if (callFrame != null) {
-              return CALL
-          }
+          return CALL
       case Bytecodes.XXXUNUSEDXXX =>
           assert(false, "unused bytecode used. behaviour unspecified.");
           // nop
@@ -549,12 +522,9 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
       case Bytecodes.ANEWARRAY =>
           frame.pushObject(allocateArray(frame, bs.readCPI()));
       case Bytecodes.ARRAYLENGTH =>
-          frame.pushInt(java.lang.reflect.Array.getLength(nullCheck(frame.popObject())));
+          frame.pushInt(runtimeInterface.arrayLength(nullCheck(frame.popObject())));
       case Bytecodes.ATHROW =>
           val t = frame.popObject().asInstanceOf[Throwable];
-          if ("break".equals(t.getMessage())) {
-              t.printStackTrace();
-          }
           throw t;
       case Bytecodes.CHECKCAST =>
           checkCast(frame, bs.readCPI());
@@ -569,20 +539,21 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
       case Bytecodes.MULTIANEWARRAY =>
           frame.pushObject(allocateMultiArray(frame, bs.readCPI(), bs.readUByte(bs.currentBCI() + 3)));
       case Bytecodes.IFNULL =>
-          if (frame.popObject() == null) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popObject() == null)
       case Bytecodes.IFNONNULL =>
-          if (frame.popObject() != null) {
-              return BRANCH;
-          }
+          return conditionalBranch(frame.popObject() != null)
       case Bytecodes.BREAKPOINT =>
           assert(false, "no breakpoints supported at this time.");
     }
     return NEXT;
   }
 
-    
+    private def conditionalBranch(c: Rep[Boolean]): Int = {
+      branchCondition = c
+      return BRANCH_COND
+    }
+
+
     private def divInt(frame: InterpreterFrame) {
         val dividend = frame.popInt();
         val divisor = frame.popInt();
@@ -668,13 +639,16 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
     }
 
     private def lookupSwitch(frame: InterpreterFrame, bs: BytecodeStream): Int = {
-        return lookupSearch(new BytecodeLookupSwitch(bs, bs.currentBCI()), frame.popInt());
+        return lookupSearch(bs, frame.popInt());
     }
 
-    /**
-     * Binary search implementation for the lookup switch.
-     */
-    private def lookupSearch(switchHelper: BytecodeLookupSwitch, key: Int): Int = {
+    private def tableSwitch(frame: InterpreterFrame, bs: BytecodeStream): Int = {
+        return tableSearch(bs, frame.popInt())
+    }
+
+    def lookupSearch(bs: BytecodeStream, key: Rep[Int]): Int /*= {
+        val switchHelper = new BytecodeLookupSwitch(bs, bs.currentBCI())
+
         var low = 0;
         var high = switchHelper.numberOfCases() - 1;
         while (low <= high) {
@@ -690,9 +664,9 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
             }
         }
         return switchHelper.defaultTarget(); // key not found.
-    }
+    }*/
 
-    private def tableSwitch(frame: InterpreterFrame, bs: BytecodeStream): Int = {
+    def tableSearch(bs: BytecodeStream, index: Rep[Int]): Int /*= {
         val switchHelper = new BytecodeTableSwitch(bs, bs.currentBCI());
 
         val low = switchHelper.lowKey();
@@ -700,18 +674,17 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
 
         assert(low <= high);
 
-        val index = frame.popInt();
         if (index < low || index > high) {
             return switchHelper.defaultTarget();
         } else {
             return switchHelper.targetAt(index - low);
         }
-    }
+    }*/
 
-    private def checkCast(frame: InterpreterFrame, cpi: Char): Unit = {
+    def checkCast(frame: InterpreterFrame, cpi: Char): Unit /*= {
         val typ = resolveType(frame, Bytecodes.CHECKCAST, cpi).toJava()
         frame.pushObject(typ.cast(frame.popObject()).asInstanceOf[Object]);
-    }
+    }*/
 
     private def resolveType(frame: InterpreterFrame, opcode: Int, cpi: Char): ResolvedJavaType = {
         val constantPool: ConstantPool = frame.getConstantPool();
@@ -751,7 +724,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
                 case Kind.Float =>
                     frame.pushFloat(c.asFloat());
                 case Kind.Object =>
-                    frame.pushObject(c.asObject());
+                    frame.pushObject(unit(c.asObject()));
                 case Kind.Double =>
                     frame.pushDouble(c.asDouble());
                 case Kind.Long =>
@@ -760,7 +733,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
                     assert(false, "unspecified case")
             }
         } else if (constant.isInstanceOf[JavaType]) {
-            frame.pushObject((constant.asInstanceOf[JavaType]).resolve(method.holder()).toJava());
+            frame.pushObject(unit((constant.asInstanceOf[JavaType]).resolve(method.holder()).toJava()));
         } else {
             assert(false, "unexpected case");
         }
@@ -769,38 +742,35 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
     private def compareLong(frame: InterpreterFrame) {
         val y = frame.popLong();
         val x = frame.popLong();
-        frame.pushInt(if (x < y) -1 else if (x == y) 0 else 1);
+        frame.pushInt(if_ (x < y) (-1) (if_ (x === y) (0) (1)));
     }
 
     private def compareDoubleGreater(frame: InterpreterFrame) {
         val y = frame.popDouble();
         val x = frame.popDouble();
-        frame.pushInt(if (x < y) -1 else if (x == y) 0 else 1);
+        frame.pushInt(if_ (x < y) (-1) (if_ (x === y) (0) (1)));
     }
 
     private def compareDoubleLess(frame: InterpreterFrame) {
         val y = frame.popDouble();
         val x = frame.popDouble();
-        frame.pushInt(if (x > y) 1 else if (x == y) 0 else -1);
+        frame.pushInt(if_ (x > y) (1) (if_ (x === y) (0) (-1)));
     }
 
     private def compareFloatGreater(frame: InterpreterFrame) {
         val y = frame.popFloat();
         val x = frame.popFloat();
-        frame.pushInt(if (x < y) -1 else if (x == y) 0 else 1);
+        frame.pushInt(if_ (x < y) (-1) (if_ (x === y) (0) (1)));
     }
 
     private def compareFloatLess(frame: InterpreterFrame) {
         val y = frame.popFloat();
         val x = frame.popFloat();
-        frame.pushInt(if (x > y) 1 else if (x == y) 0 else -1);
+        frame.pushInt(if_ (x > y) (1) (if_ (x === y) (0) (-1)));
     }
 
-    private def nullCheck(value: Object): Object = {
-        if (value == null) {
-            throw new NullPointerException(); // FIXME: throw in interpreter ...
-        }
-        return value;
+    def nullCheck(value: Rep[Object]): Rep[Object] = {
+        runtimeInterface.nullCheck(value)
     }
 
     private def invokeStatic(frame: InterpreterFrame, cpi: Char): InterpreterFrame = {// throws Throwable {
@@ -811,7 +781,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
         return resolveAndInvoke(frame, resolveMethod(frame, Bytecodes.INVOKEINTERFACE, cpi));
     }
 
-    private def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame = {// throws Throwable {
+    def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame /*= {// throws Throwable {
         val receiver: Object = nullCheck(parent.peekReceiver(m));
 
         val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethodImpl(m);
@@ -821,7 +791,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
         }
 
         return invoke(parent, method, receiver);
-    }
+    }*/
 
     private def invokeVirtual(frame: InterpreterFrame, cpi: Char): InterpreterFrame = {// throws Throwable {
         val m: ResolvedJavaMethod = resolveMethod(frame, Bytecodes.INVOKEVIRTUAL, cpi);
@@ -838,11 +808,11 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
     }
 
 
-    def invoke(caller: InterpreterFrame, method: ResolvedJavaMethod, receiver: Object): InterpreterFrame
+    def invoke(caller: InterpreterFrame, method: ResolvedJavaMethod, receiver: Rep[Object]): InterpreterFrame
 
 
     // should move to runtime??
-    def allocateMultiArray(frame: InterpreterFrame, cpi: Char, dimension: Int): Object = {
+    def allocateMultiArray(frame: InterpreterFrame, cpi: Char, dimension: Int): Rep[Object] /*= {
         val typ: ResolvedJavaType = getLastDimensionType(resolveType(frame, Bytecodes.MULTIANEWARRAY, cpi));
 
         val dimensions = new Array[Int](dimension);
@@ -852,22 +822,22 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
             i -= 1
         }
         return java.lang.reflect.Array.newInstance(typ.toJava(), dimensions:_*);
-    }
+    }*/
 
-    def getLastDimensionType(typ: ResolvedJavaType): ResolvedJavaType = {
+    def getLastDimensionType(typ: ResolvedJavaType): ResolvedJavaType /*= {
         var result: ResolvedJavaType = typ;
         while (result.isArrayClass()) {
             result = result.componentType();
         }
         return result;
-    }
+    }*/
 
-    def allocateArray(frame: InterpreterFrame, cpi: Char): Object = {
+    def allocateArray(frame: InterpreterFrame, cpi: Char): Rep[Object] /*= {
         val typ: ResolvedJavaType = resolveType(frame, Bytecodes.ANEWARRAY, cpi);
         return java.lang.reflect.Array.newInstance(typ.toJava(), frame.popInt());
-    }
+    }*/
 
-    def allocateNativeArray(frame: InterpreterFrame, cpi: Byte): Object = {
+    def allocateNativeArray(frame: InterpreterFrame, cpi: Byte): Rep[Object] /*= {
         // the constants for the cpi are loosely defined and no real cpi indices.
         cpi match {
             case 4 =>
@@ -890,9 +860,9 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
                 assert(false, "unexpected case");
                 return null;
         }
-    }
+    }*/
 
-    def allocateInstance(frame: InterpreterFrame, cpi: Char): Object = {// throws InstantiationException {
+    def allocateInstance(frame: InterpreterFrame, cpi: Char): Rep[Object] = {// throws InstantiationException {
         return runtimeInterface.newObject(resolveType(frame, Bytecodes.NEW, cpi));
     }
 
@@ -909,7 +879,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
         putFieldVirtual(frame, resolveField(frame, Bytecodes.PUTFIELD, cpi));
     }
 
-    def putFieldStatic(frame: InterpreterFrame, field: ResolvedJavaField): Unit = {
+    def putFieldStatic(frame: InterpreterFrame, field: ResolvedJavaField): Unit /*= {
         field.kind() match {
             case Kind.Boolean | Kind.Byte | Kind.Char | Kind.Short | Kind.Int =>
                 runtimeInterface.setFieldInt(frame.popInt(), null, field);                
@@ -924,9 +894,9 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
             case _ =>
                 assert(false, "unexpected case");
         }
-    }
+    }*/
 
-    def putFieldVirtual(frame: InterpreterFrame, field: ResolvedJavaField): Unit = {
+    def putFieldVirtual(frame: InterpreterFrame, field: ResolvedJavaField): Unit /*= {
         field.kind() match {
             case Kind.Boolean | Kind.Byte | Kind.Char | Kind.Short | Kind.Int =>
                 runtimeInterface.setFieldInt(frame.popInt(), nullCheck(frame.popObject()), field);
@@ -941,9 +911,9 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
             case _ =>
                 assert(false, "unexpected case");
         }
-    }
+    }*/
 
-    def getField(frame: InterpreterFrame, base: Object, opcode: Int, cpi: Char): Unit = {
+    def getField(frame: InterpreterFrame, base: Rep[Object], opcode: Int, cpi: Char): Unit /*= {
         val field: ResolvedJavaField = resolveField(frame, opcode, cpi);
         field.kind() match {
             case Kind.Boolean =>
@@ -967,9 +937,9 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
             case _ =>
                 assert(false, "unexpected case");
         }
-    }
+    }*/
 
-    def pushAsObject(frame: InterpreterFrame, typeKind: Kind, value: Object): Int = {
+    def pushAsObject(frame: InterpreterFrame, typeKind: Kind, value: Object): Int /*= {
         typeKind match {
             case Kind.Int =>
                 frame.pushInt(value.asInstanceOf[Int]);
@@ -997,9 +967,9 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
                 assert(false, "case not specified");
         }
         return 1;
-    }
+    }*/
 
-    def popAsObject(frame: InterpreterFrame, typeKind: Kind): Object = {
+    def popAsObject(frame: InterpreterFrame, typeKind: Kind): Object /*= {
         typeKind match {
             case Kind.Boolean =>
                 return (frame.popInt() == 1): java.lang.Boolean
@@ -1025,7 +995,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
                 assert(false, "unexpected case")
         }
         return null;
-    }
+    }*/
 
     
 
@@ -1037,7 +1007,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter {
 
 
 //@SuppressWarnings("static-method")
-final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_Abstract {
+final class BytecodeInterpreter_Impl extends InterpreterUniverse_Impl with BytecodeInterpreter_Abstract {
 
     import BytecodeInterpreter._
 
@@ -1103,7 +1073,7 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
                 if (elements != null) {
                     val index: Integer = arguments(0).asInstanceOf[Integer];
                     if (index != null) {
-                        return elements(index);
+                        return elements(index.intValue);
                     }
                 }
                 return null;
@@ -1414,10 +1384,9 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
     }
 
 
-/**
-     * Binary search implementation for the lookup switch.
-     */
-    private def lookupSearch(switchHelper: BytecodeLookupSwitch, key: Int): Int = {
+    def lookupSearch(bs: BytecodeStream, key: Int): Int = {
+        val switchHelper = new BytecodeLookupSwitch(bs, bs.currentBCI())
+
         var low = 0;
         var high = switchHelper.numberOfCases() - 1;
         while (low <= high) {
@@ -1435,7 +1404,7 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
         return switchHelper.defaultTarget(); // key not found.
     }
 
-    private def tableSwitch(frame: InterpreterFrame, bs: BytecodeStream): Int = {
+    def tableSearch(bs: BytecodeStream, index: Int): Int = {
         val switchHelper = new BytecodeTableSwitch(bs, bs.currentBCI());
 
         val low = switchHelper.lowKey();
@@ -1443,7 +1412,6 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
 
         assert(low <= high);
 
-        val index = frame.popInt();
         if (index < low || index > high) {
             return switchHelper.defaultTarget();
         } else {
@@ -1451,38 +1419,38 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
         }
     }
 
-    private def checkCast(frame: InterpreterFrame, cpi: Char): Unit = {
+    def checkCast(frame: InterpreterFrame, cpi: Char): Unit = {
         val typ = resolveType(frame, Bytecodes.CHECKCAST, cpi).toJava()
         frame.pushObject(typ.cast(frame.popObject()).asInstanceOf[Object]);
     }
 
-    private def resolveType(frame: InterpreterFrame, opcode: Int, cpi: Char): ResolvedJavaType = {
+    def resolveType(frame: InterpreterFrame, opcode: Int, cpi: Char): ResolvedJavaType = {
         val constantPool: ConstantPool = frame.getConstantPool();
         constantPool.loadReferencedType(cpi, opcode);
         return constantPool.lookupType(cpi, opcode).resolve(frame.getMethod().holder());
     }
 
-    private def resolveType(frame: InterpreterFrame, javaClass: Class[_]): ResolvedJavaType = {
+    def resolveType(frame: InterpreterFrame, javaClass: Class[_]): ResolvedJavaType = {
         return metaAccessProvider.getResolvedJavaType(javaClass).resolve(frame.getMethod().holder());
     }
 
-    private def resolveMethod(frame: InterpreterFrame, opcode: Int, cpi: Char): ResolvedJavaMethod = {
+    def resolveMethod(frame: InterpreterFrame, opcode: Int, cpi: Char): ResolvedJavaMethod = {
         val constantPool: ConstantPool = frame.getConstantPool();
         constantPool.loadReferencedType(cpi, opcode);
         return constantPool.lookupMethod(cpi, opcode).asInstanceOf[ResolvedJavaMethod];
     }
 
-    private def resolveField(frame: InterpreterFrame, opcode: Int, cpi: Char): ResolvedJavaField = {
+    def resolveField(frame: InterpreterFrame, opcode: Int, cpi: Char): ResolvedJavaField = {
         val constantPool: ConstantPool = frame.getConstantPool();
         constantPool.loadReferencedType(cpi, opcode);
         return constantPool.lookupField(cpi, opcode).asInstanceOf[ResolvedJavaField];
     }
 
-    private def instanceOf(frame: InterpreterFrame, cpi: Char): Unit = {
+    def instanceOf(frame: InterpreterFrame, cpi: Char): Unit = {
         frame.pushInt(if (resolveType(frame, Bytecodes.INSTANCEOF, cpi).toJava().isInstance(frame.popObject())) 1 else 0);
     }
 
-    private def pushCPConstant(frame: InterpreterFrame, cpi: Char): Unit = {
+    def pushCPConstant(frame: InterpreterFrame, cpi: Char): Unit = {
         val method: ResolvedJavaMethod = frame.getMethod();
         val constant: Object = method.getConstantPool().lookupConstant(cpi);
 
@@ -1509,7 +1477,7 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
         }
     }
 
-    private def compareLong(frame: InterpreterFrame) {
+    /*private def compareLong(frame: InterpreterFrame) {
         val y = frame.popLong();
         val x = frame.popLong();
         frame.pushInt(if (x < y) -1 else if (x == y) 0 else 1);
@@ -1544,17 +1512,18 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
             throw new NullPointerException();
         }
         return value;
-    }
+    }*/
 
-    /*private def invokeStatic(frame: InterpreterFrame, cpi: Char): InterpreterFrame = {// throws Throwable {
+/*
+    private def invokeStatic(frame: InterpreterFrame, cpi: Char): InterpreterFrame = {// throws Throwable {
         return invoke(frame, resolveMethod(frame, Bytecodes.INVOKESTATIC, cpi), null);
     }
 
     private def invokeInterface(frame: InterpreterFrame, cpi: Char): InterpreterFrame = {// throws Throwable {
         return resolveAndInvoke(frame, resolveMethod(frame, Bytecodes.INVOKEINTERFACE, cpi));
     }
-
-    private def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame = {// throws Throwable {
+*/
+    def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame = {// throws Throwable {
         val receiver: Object = nullCheck(parent.peekReceiver(m));
 
         val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethodImpl(m);
@@ -1565,7 +1534,7 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
 
         return invoke(parent, method, receiver);
     }
-
+/*
     private def invokeVirtual(frame: InterpreterFrame, cpi: Char): InterpreterFrame = {// throws Throwable {
         val m: ResolvedJavaMethod = resolveMethod(frame, Bytecodes.INVOKEVIRTUAL, cpi);
         if (Modifier.isFinal(m.accessFlags())) {
@@ -1673,7 +1642,7 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
 
 
 
-    /*private def allocateMultiArray(frame: InterpreterFrame, cpi: Char, dimension: Int): Object = {
+    def allocateMultiArray(frame: InterpreterFrame, cpi: Char, dimension: Int): Object = {
         val typ: ResolvedJavaType = getLastDimensionType(resolveType(frame, Bytecodes.MULTIANEWARRAY, cpi));
 
         val dimensions = new Array[Int](dimension);
@@ -1685,7 +1654,7 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
         return java.lang.reflect.Array.newInstance(typ.toJava(), dimensions:_*);
     }
 
-    private def getLastDimensionType(typ: ResolvedJavaType): ResolvedJavaType = {
+    def getLastDimensionType(typ: ResolvedJavaType): ResolvedJavaType = {
         var result: ResolvedJavaType = typ;
         while (result.isArrayClass()) {
             result = result.componentType();
@@ -1693,12 +1662,12 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
         return result;
     }
 
-    private def allocateArray(frame: InterpreterFrame, cpi: Char): Object = {
+    def allocateArray(frame: InterpreterFrame, cpi: Char): Object = {
         val typ: ResolvedJavaType = resolveType(frame, Bytecodes.ANEWARRAY, cpi);
         return java.lang.reflect.Array.newInstance(typ.toJava(), frame.popInt());
     }
 
-    private def allocateNativeArray(frame: InterpreterFrame, cpi: Byte): Object = {
+    def allocateNativeArray(frame: InterpreterFrame, cpi: Byte): Object = {
         // the constants for the cpi are loosely defined and no real cpi indices.
         cpi match {
             case 4 =>
@@ -1723,24 +1692,24 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
         }
     }
 
-    private def allocateInstance(frame: InterpreterFrame, cpi: Char): Object = {// throws InstantiationException {
+    def allocateInstance(frame: InterpreterFrame, cpi: Char): Object = {// throws InstantiationException {
         return runtimeInterface.newObject(resolveType(frame, Bytecodes.NEW, cpi));
     }
 
-    private def iinc(frame: InterpreterFrame, bs: BytecodeStream): Unit = {
+    def iinc(frame: InterpreterFrame, bs: BytecodeStream): Unit = {
         val index: Int = frame.resolveLocalIndex(bs.readLocalIndex());
         frame.setInt(index, frame.getInt(index) + bs.readIncrement());
     }
 
-    private def putStatic(frame: InterpreterFrame, cpi: Char): Unit = {
+    def putStatic(frame: InterpreterFrame, cpi: Char): Unit = {
         putFieldStatic(frame, resolveField(frame, Bytecodes.PUTSTATIC, cpi));
     }
 
-    private def putField(frame: InterpreterFrame, cpi: Char): Unit = {
+    def putField(frame: InterpreterFrame, cpi: Char): Unit = {
         putFieldVirtual(frame, resolveField(frame, Bytecodes.PUTFIELD, cpi));
     }
 
-    private def putFieldStatic(frame: InterpreterFrame, field: ResolvedJavaField): Unit = {
+    def putFieldStatic(frame: InterpreterFrame, field: ResolvedJavaField): Unit = {
         field.kind() match {
             case Kind.Boolean | Kind.Byte | Kind.Char | Kind.Short | Kind.Int =>
                 runtimeInterface.setFieldInt(frame.popInt(), null, field);                
@@ -1757,7 +1726,7 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
         }
     }
 
-    private def putFieldVirtual(frame: InterpreterFrame, field: ResolvedJavaField): Unit = {
+    def putFieldVirtual(frame: InterpreterFrame, field: ResolvedJavaField): Unit = {
         field.kind() match {
             case Kind.Boolean | Kind.Byte | Kind.Char | Kind.Short | Kind.Int =>
                 runtimeInterface.setFieldInt(frame.popInt(), nullCheck(frame.popObject()), field);
@@ -1774,7 +1743,7 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
         }
     }
 
-    private def getField(frame: InterpreterFrame, base: Object, opcode: Int, cpi: Char): Unit = {
+    def getField(frame: InterpreterFrame, base: Object, opcode: Int, cpi: Char): Unit = {
         val field: ResolvedJavaField = resolveField(frame, opcode, cpi);
         field.kind() match {
             case Kind.Boolean =>
@@ -1800,7 +1769,7 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
         }
     }
 
-    private def pushAsObject(frame: InterpreterFrame, typeKind: Kind, value: Object): Int = {
+    def pushAsObject(frame: InterpreterFrame, typeKind: Kind, value: Object): Int = {
         typeKind match {
             case Kind.Int =>
                 frame.pushInt(value.asInstanceOf[Int]);
@@ -1830,7 +1799,7 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
         return 1;
     }
 
-    private def popAsObject(frame: InterpreterFrame, typeKind: Kind): Object = {
+    def popAsObject(frame: InterpreterFrame, typeKind: Kind): Object = {
         typeKind match {
             case Kind.Boolean =>
                 return (frame.popInt() == 1): java.lang.Boolean
@@ -1856,7 +1825,7 @@ final class BytecodeInterpreter_Impl extends Base_Impl with BytecodeInterpreter_
                 assert(false, "unexpected case")
         }
         return null;
-    }*/
+    }
 
     private def resolveRootMethod(): ResolvedJavaMethod = {
         try {

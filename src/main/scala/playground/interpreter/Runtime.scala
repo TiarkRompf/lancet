@@ -56,81 +56,419 @@ class HasUnsafe {
 trait Base {
   type Rep[T]
 
-  implicit def unit(x: Int): Rep[Int]
-  implicit def unit(x: Short): Rep[Short]
-  implicit def unit(x: Long): Rep[Long]
-  implicit def unit(x: Float): Rep[Float]
-  implicit def unit(x: Double): Rep[Double]
+  /*implicit def unitWiden[T <% Boolean](x: T): Rep[Boolean]
+  implicit def unitWiden[T <% Byte](x: T): Rep[Byte]
+  implicit def unitWiden[T <% Char](x: T): Rep[Char]
+  implicit def unitWiden[T <% Short](x: T): Rep[Short]
+  implicit def unitWiden[T <% Int](x: T): Rep[Int]
+  implicit def unitWiden[T <% Long](x: T): Rep[Long]
+  implicit def unitWiden[T <% Float](x: T): Rep[Float]
+  implicit def unitWiden[T <% Double](x: T): Rep[Double]*/
+
   implicit def unit(x: Boolean): Rep[Boolean]
   implicit def unit(x: Byte): Rep[Byte]
   implicit def unit(x: Char): Rep[Char]
+  implicit def unit(x: Short): Rep[Short]
+  implicit def unit(x: Int): Rep[Int]
+  implicit def unit(x: Long): Rep[Long]
+  implicit def unit(x: Float): Rep[Float]
+  implicit def unit(x: Double): Rep[Double]
+
+
+  implicit def unit(x: Null): Rep[Object]
+  def unit(x: Object): Rep[Object]
+
+
+  implicit def widen[T <% Boolean](x: Rep[T]): Rep[Boolean]
+  implicit def widen[T <% Byte](x: Rep[T]): Rep[Byte]
+  implicit def widen[T <% Char](x: Rep[T]): Rep[Char]
+  implicit def widen[T <% Int](x: Rep[T]): Rep[Int]
+  //implicit def widen[T <% Short](x: Rep[T]): Rep[Short]
+  implicit def widen[T <% Long](x: Rep[T]): Rep[Long]
+  implicit def widen[T <% Float](x: Rep[T]): Rep[Float]
+  implicit def widen[T <% Double](x: Rep[T]): Rep[Double]
+
+
+  implicit def intOps(x: Rep[Int]) = new IntOps(x)
+  class IntOps(x: Rep[Int]) {
+    def toByte: Rep[Byte] = intToByte(x)
+    def toChar: Rep[Char] = intToChar(x)
+    def toShort: Rep[Short] = intToShort(x)
+    def toInt: Rep[Int] = intToInt(x)
+    def toLong: Rep[Long] = intToLong(x)
+    def toFloat: Rep[Float] = intToFloat(x)
+    def toDouble: Rep[Double] = intToDouble(x)
+    def unary_- : Rep[Int] = intNegate(x)
+    def +(y: Rep[Int]): Rep[Int] = intPlus(x,y)
+    def -(y: Rep[Int]): Rep[Int] = intMinus(x,y)
+    def *(y: Rep[Int]): Rep[Int] = intTimes(x,y)
+    def /(y: Rep[Int]): Rep[Int] = intDiv(x,y)
+    def %(y: Rep[Int]): Rep[Int] = intMod(x,y)
+    def &(y: Rep[Int]): Rep[Int] = intAnd(x,y)
+    def |(y: Rep[Int]): Rep[Int] = intOr(x,y)
+    def ^(y: Rep[Int]): Rep[Int] = intXor(x,y)
+    def <<(y: Rep[Int]): Rep[Int] = intShiftLeft(x,y)
+    def >>(y: Rep[Int]): Rep[Int] = intShiftRight(x,y)
+    def >>>(y: Rep[Int]): Rep[Int] = intShiftRightUnsigned(x,y)
+    def <(y: Rep[Int]): Rep[Boolean] = intLess(x,y)
+    def <=(y: Rep[Int]): Rep[Boolean] = intLessEqual(x,y)
+    def >(y: Rep[Int]): Rep[Boolean] = intGreater(x,y)
+    def >=(y: Rep[Int]): Rep[Boolean] = intGreaterEqual(x,y)
+    def ===(y: Rep[Int]): Rep[Boolean] = intEqual(x,y)
+    def !==(y: Rep[Int]): Rep[Boolean] = intNotEqual(x,y)
+  }
+
+  def intToByte(x: Rep[Int]): Rep[Byte]
+  def intToChar(x: Rep[Int]): Rep[Char]
+  def intToShort(x: Rep[Int]): Rep[Short]
+  def intToInt(x: Rep[Int]): Rep[Int]
+  def intToLong(x: Rep[Int]): Rep[Long]
+  def intToFloat(x: Rep[Int]): Rep[Float]
+  def intToDouble(x: Rep[Int]): Rep[Double]
+
+  def intNegate(x: Rep[Int]): Rep[Int]
+  def intPlus(x: Rep[Int], y: Rep[Int]): Rep[Int]
+  def intMinus(x: Rep[Int], y: Rep[Int]): Rep[Int]
+  def intTimes(x: Rep[Int], y: Rep[Int]): Rep[Int]
+  def intDiv(x: Rep[Int], y: Rep[Int]): Rep[Int]
+  def intMod(x: Rep[Int], y: Rep[Int]): Rep[Int]
+  def intAnd(x: Rep[Int], y: Rep[Int]): Rep[Int]
+  def intOr(x: Rep[Int], y: Rep[Int]): Rep[Int]
+  def intXor(x: Rep[Int], y: Rep[Int]): Rep[Int]
+  def intShiftLeft(x: Rep[Int], y: Rep[Int]): Rep[Int]
+  def intShiftRight(x: Rep[Int], y: Rep[Int]): Rep[Int]
+  def intShiftRightUnsigned(x: Rep[Int], y: Rep[Int]): Rep[Int]
+  def intLess(x: Rep[Int], y: Rep[Int]): Rep[Boolean]
+  def intLessEqual(x: Rep[Int], y: Rep[Int]): Rep[Boolean]
+  def intGreater(x: Rep[Int], y: Rep[Int]): Rep[Boolean]
+  def intGreaterEqual(x: Rep[Int], y: Rep[Int]): Rep[Boolean]
+  def intEqual(x: Rep[Int], y: Rep[Int]): Rep[Boolean]
+  def intNotEqual(x: Rep[Int], y: Rep[Int]): Rep[Boolean]
+
+
+
+  implicit def longOps(x: Rep[Long]) = new LongOps(x)
+  class LongOps(x: Rep[Long]) {
+    def toByte: Rep[Byte] = longToByte(x)
+    def toChar: Rep[Char] = longToChar(x)
+    def toShort: Rep[Short] = longToShort(x)
+    def toInt: Rep[Int] = longToInt(x)
+    def toLong: Rep[Long] = longToLong(x)
+    def toFloat: Rep[Float] = longToFloat(x)
+    def toDouble: Rep[Double] = longToDouble(x)
+    def unary_- : Rep[Long] = longNegate(x)
+    def +(y: Rep[Long]): Rep[Long] = longPlus(x,y)
+    def -(y: Rep[Long]): Rep[Long] = longMinus(x,y)
+    def *(y: Rep[Long]): Rep[Long] = longTimes(x,y)
+    def /(y: Rep[Long]): Rep[Long] = longDiv(x,y)
+    def %(y: Rep[Long]): Rep[Long] = longMod(x,y)
+    def &(y: Rep[Long]): Rep[Long] = longAnd(x,y)
+    def |(y: Rep[Long]): Rep[Long] = longOr(x,y)
+    def ^(y: Rep[Long]): Rep[Long] = longXor(x,y)
+    def <<(y: Rep[Long]): Rep[Long] = longShiftLeft(x,y)
+    def >>(y: Rep[Long]): Rep[Long] = longShiftRight(x,y)
+    def >>>(y: Rep[Long]): Rep[Long] = longShiftRightUnsigned(x,y)
+    def <(y: Rep[Long]): Rep[Boolean] = longLess(x,y)
+    def <=(y: Rep[Long]): Rep[Boolean] = longLessEqual(x,y)
+    def >(y: Rep[Long]): Rep[Boolean] = longGreater(x,y)
+    def >=(y: Rep[Long]): Rep[Boolean] = longGreaterEqual(x,y)
+    def ===(y: Rep[Long]): Rep[Boolean] = longEqual(x,y)
+    def !==(y: Rep[Long]): Rep[Boolean] = longNotEqual(x,y)
+  }
+
+  def longToByte(x: Rep[Long]): Rep[Byte]
+  def longToChar(x: Rep[Long]): Rep[Char]
+  def longToShort(x: Rep[Long]): Rep[Short]
+  def longToInt(x: Rep[Long]): Rep[Int]
+  def longToLong(x: Rep[Long]): Rep[Long]
+  def longToFloat(x: Rep[Long]): Rep[Float]
+  def longToDouble(x: Rep[Long]): Rep[Double]
+
+  def longNegate(x: Rep[Long]): Rep[Long]
+  def longPlus(x: Rep[Long], y: Rep[Long]): Rep[Long]
+  def longMinus(x: Rep[Long], y: Rep[Long]): Rep[Long]
+  def longTimes(x: Rep[Long], y: Rep[Long]): Rep[Long]
+  def longDiv(x: Rep[Long], y: Rep[Long]): Rep[Long]
+  def longMod(x: Rep[Long], y: Rep[Long]): Rep[Long]
+  def longAnd(x: Rep[Long], y: Rep[Long]): Rep[Long]
+  def longOr(x: Rep[Long], y: Rep[Long]): Rep[Long]
+  def longXor(x: Rep[Long], y: Rep[Long]): Rep[Long]
+  def longShiftLeft(x: Rep[Long], y: Rep[Long]): Rep[Long]
+  def longShiftRight(x: Rep[Long], y: Rep[Long]): Rep[Long]
+  def longShiftRightUnsigned(x: Rep[Long], y: Rep[Long]): Rep[Long]
+  def longLess(x: Rep[Long], y: Rep[Long]): Rep[Boolean]
+  def longLessEqual(x: Rep[Long], y: Rep[Long]): Rep[Boolean]
+  def longGreater(x: Rep[Long], y: Rep[Long]): Rep[Boolean]
+  def longGreaterEqual(x: Rep[Long], y: Rep[Long]): Rep[Boolean]
+  def longEqual(x: Rep[Long], y: Rep[Long]): Rep[Boolean]
+  def longNotEqual(x: Rep[Long], y: Rep[Long]): Rep[Boolean]
+
+  implicit def floatOps(x: Rep[Float]) = new FloatOps(x)
+  class FloatOps(x: Rep[Float]) {
+    def toByte: Rep[Byte] = floatToByte(x)
+    def toChar: Rep[Char] = floatToChar(x)
+    def toShort: Rep[Short] = floatToShort(x)
+    def toInt: Rep[Int] = floatToInt(x)
+    def toLong: Rep[Long] = floatToLong(x)
+    def toFloat: Rep[Float] = floatToFloat(x)
+    def toDouble: Rep[Double] = floatToDouble(x)
+    def unary_- : Rep[Float] = floatNegate(x)
+    def +(y: Rep[Float]): Rep[Float] = floatPlus(x,y)
+    def -(y: Rep[Float]): Rep[Float] = floatMinus(x,y)
+    def *(y: Rep[Float]): Rep[Float] = floatTimes(x,y)
+    def /(y: Rep[Float]): Rep[Float] = floatDiv(x,y)
+    def %(y: Rep[Float]): Rep[Float] = floatMod(x,y)
+    def <(y: Rep[Float]): Rep[Boolean] = floatLess(x,y)
+    def <=(y: Rep[Float]): Rep[Boolean] = floatLessEqual(x,y)
+    def >(y: Rep[Float]): Rep[Boolean] = floatGreater(x,y)
+    def >=(y: Rep[Float]): Rep[Boolean] = floatGreaterEqual(x,y)
+    def ===(y: Rep[Float]): Rep[Boolean] = floatEqual(x,y)
+    def !==(y: Rep[Float]): Rep[Boolean] = floatNotEqual(x,y)
+}
+
+  def floatToByte(x: Rep[Float]): Rep[Byte]
+  def floatToChar(x: Rep[Float]): Rep[Char]
+  def floatToShort(x: Rep[Float]): Rep[Short]
+  def floatToInt(x: Rep[Float]): Rep[Int]
+  def floatToLong(x: Rep[Float]): Rep[Long]
+  def floatToFloat(x: Rep[Float]): Rep[Float]
+  def floatToDouble(x: Rep[Float]): Rep[Double]
+
+  def floatNegate(x: Rep[Float]): Rep[Float]
+  def floatPlus(x: Rep[Float], y: Rep[Float]): Rep[Float]
+  def floatMinus(x: Rep[Float], y: Rep[Float]): Rep[Float]
+  def floatTimes(x: Rep[Float], y: Rep[Float]): Rep[Float]
+  def floatDiv(x: Rep[Float], y: Rep[Float]): Rep[Float]
+  def floatMod(x: Rep[Float], y: Rep[Float]): Rep[Float]
+  def floatLess(x: Rep[Float], y: Rep[Float]): Rep[Boolean]
+  def floatLessEqual(x: Rep[Float], y: Rep[Float]): Rep[Boolean]
+  def floatGreater(x: Rep[Float], y: Rep[Float]): Rep[Boolean]
+  def floatGreaterEqual(x: Rep[Float], y: Rep[Float]): Rep[Boolean]
+  def floatEqual(x: Rep[Float], y: Rep[Float]): Rep[Boolean]
+  def floatNotEqual(x: Rep[Float], y: Rep[Float]): Rep[Boolean]
+
+  implicit def doubleOps(x: Rep[Double]) = new DoubleOps(x)
+  class DoubleOps(x: Rep[Double]) {
+    def toByte: Rep[Byte] = doubleToByte(x)
+    def toChar: Rep[Char] = doubleToChar(x)
+    def toShort: Rep[Short] = doubleToShort(x)
+    def toInt: Rep[Int] = doubleToInt(x)
+    def toLong: Rep[Long] = doubleToLong(x)
+    def toFloat: Rep[Float] = doubleToFloat(x)
+    def toDouble: Rep[Double] = doubleToDouble(x)
+    def unary_- : Rep[Double] = doubleNegate(x)
+    def +(y: Rep[Double]): Rep[Double] = doublePlus(x,y)
+    def -(y: Rep[Double]): Rep[Double] = doubleMinus(x,y)
+    def *(y: Rep[Double]): Rep[Double] = doubleTimes(x,y)
+    def /(y: Rep[Double]): Rep[Double] = doubleDiv(x,y)
+    def %(y: Rep[Double]): Rep[Double] = doubleMod(x,y)
+    def <(y: Rep[Double]): Rep[Boolean] = doubleLess(x,y)
+    def <=(y: Rep[Double]): Rep[Boolean] = doubleLessEqual(x,y)
+    def >(y: Rep[Double]): Rep[Boolean] = doubleGreater(x,y)
+    def >=(y: Rep[Double]): Rep[Boolean] = doubleGreaterEqual(x,y)
+    def ===(y: Rep[Double]): Rep[Boolean] = doubleEqual(x,y)
+    def !==(y: Rep[Double]): Rep[Boolean] = doubleNotEqual(x,y)
+  }
+
+  def doubleToByte(x: Rep[Double]): Rep[Byte]
+  def doubleToChar(x: Rep[Double]): Rep[Char]
+  def doubleToShort(x: Rep[Double]): Rep[Short]
+  def doubleToInt(x: Rep[Double]): Rep[Int]
+  def doubleToLong(x: Rep[Double]): Rep[Long]
+  def doubleToFloat(x: Rep[Double]): Rep[Float]
+  def doubleToDouble(x: Rep[Double]): Rep[Double]
+
+  def doubleNegate(x: Rep[Double]): Rep[Double]
+  def doublePlus(x: Rep[Double], y: Rep[Double]): Rep[Double]
+  def doubleMinus(x: Rep[Double], y: Rep[Double]): Rep[Double]
+  def doubleTimes(x: Rep[Double], y: Rep[Double]): Rep[Double]
+  def doubleDiv(x: Rep[Double], y: Rep[Double]): Rep[Double]
+  def doubleMod(x: Rep[Double], y: Rep[Double]): Rep[Double]
+  def doubleLess(x: Rep[Double], y: Rep[Double]): Rep[Boolean]
+  def doubleLessEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean]
+  def doubleGreater(x: Rep[Double], y: Rep[Double]): Rep[Boolean]
+  def doubleGreaterEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean]
+  def doubleEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean]
+  def doubleNotEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean]
+
+
+  def if_[T](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T]
+
 }
 
 trait Base_Impl extends Base {
   type Rep[T] = T
 
-  def unit(x: Int) = x
-  def unit(x: Short) = x
-  def unit(x: Long) = x
-  def unit(x: Float) = x
-  def unit(x: Double) = x
-  def unit(x: Boolean) = x
-  def unit(x: Byte) = x
-  def unit(x: Char) = x
+  /*def unit[T <% Boolean](x: T): Boolean = x
+  def unit[T <% Byte](x: T): Byte = x
+  def unit[T <% Char](x: T): Char = x
+  def unit[T <% Short](x: T): Short = x
+  def unit[T <% Int](x: T): Int = x
+  def unit[T <% Long](x: T): Long = x
+  def unit[T <% Float](x: T): Float = x
+  def unit[T <% Double](x: T): Double = x*/
+  
+  def unit(x: Null): Object = x
 
+  //def widen[T <% Boolean](x: T): Rep[Boolean] = x
+  //def widen[T <% Byte](x: T): Rep[Byte] = x
+  //def widen[T <% Char](x: T): Rep[Char] = x
+  //def widen[T <% Short](x: T): Rep[Short] = x
+  def widen[T <% Int](x: T): Rep[Int] = x
+  def widen[T <% Long](x: T): Rep[Long] = x
+  def widen[T <% Float](x: T): Rep[Float] = x
+  def widen[T <% Double](x: T): Rep[Double] = x
+
+  def intToByte(x: Int): Byte = x.toByte
+  def intToChar(x: Int): Char = x.toChar
+  def intToShort(x: Int): Short = x.toShort
+
+  def intNegate(x: Int): Int = -x
+  def intPlus(x: Int, y: Int): Int = x + y
+  def intTimes(x: Int, y: Int): Int = x * y
+  def intAnd(x: Int, y: Int): Int = x & y
+  def intOr(x: Int, y: Int): Int = x | y
+  def intXor(x: Int, y: Int): Int = x ^ y
+
+  def longNegate(x: Long): Long = -x
+  def longPlus(x: Long, y: Long): Long = x + y
+  def longTimes(x: Long, y: Long): Long = x * y
+  def longAnd(x: Long, y: Long): Long = x & y
+  def longOr(x: Long, y: Long): Long = x | y
+  def longXor(x: Long, y: Long): Long = x ^ y
+  
+  def floatNegate(x: Float): Float = -x
+  def floatPlus(x: Float, y: Float): Float = x + y
+  def floatTimes(x: Float, y: Float): Float = x * y
+
+  def doubleNegate(x: Double): Double = -x
+  def doublePlus(x: Double, y: Double): Double = x + y
+  def doubleTimes(x: Double, y: Double): Double = x * y
 }
 
 
 
+trait InterpreterUniverse extends Base {
 
-trait Runtime extends Base {
-  def invoke(method: ResolvedJavaMethod, args: Array[Object]): Object
-  def monitorEnter(value: Object): Unit
-  def monitorExit(value: Object): Unit
-  def newObject(typ: ResolvedJavaType): Object // throws InstantiationException {
-  def getFieldObject(base: Object, field: ResolvedJavaField): Object
-  def getFieldBoolean(base: Object, field: ResolvedJavaField): Boolean
-  def getFieldByte(base: Object, field: ResolvedJavaField): Byte
-  def getFieldChar(base: Object, field: ResolvedJavaField): Char
-  def getFieldShort(base: Object, field: ResolvedJavaField): Short
-  def getFieldInt(base: Object, field: ResolvedJavaField): Int
-  def getFieldLong(base: Object, field: ResolvedJavaField): Long
-  def getFieldDouble(base: Object, field: ResolvedJavaField): Double
-  def getFieldFloat(base: Object, field: ResolvedJavaField): Float
-  def setFieldObject(value: Object, base: Object, field: ResolvedJavaField): Unit
-  def setFieldInt(value: Int, base: Object, field: ResolvedJavaField): Unit
-  def setFieldFloat(value: Float, base: Object, field: ResolvedJavaField): Unit
-  def setFieldDouble(value: Double, base: Object, field: ResolvedJavaField): Unit
-  def setFieldLong(value: Long, base: Object, field: ResolvedJavaField): Unit
-  def getArrayByte(index: Long, array: Object): Byte
-  def getArrayChar(index: Long, array: Object): Char
-  def getArrayShort(index: Long, array: Object): Short
-  def getArrayInt(index: Long, array: Object): Int
-  def getArrayLong(index: Long, array: Object): Long
-  def getArrayDouble(index: Long, array: Object): Double
-  def getArrayFloat(index: Long, array: Object): Float
-  def getArrayObject(index: Long, array: Object): Object
-  def setArrayByte(value: Byte, index: Long, array: Object): Unit
-  def setArrayChar(value: Char, index: Long, array: Object): Unit
-  def setArrayShort(value: Short, index: Long, array: Object): Unit
-  def setArrayInt(value: Int, index: Long, array: Object): Unit
-  def setArrayLong(value: Long, index: Long, array: Object): Unit
-  def setArrayFloat(value: Float, index: Long, array: Object): Unit
-  def setArrayDouble(value: Double, index: Long, array: Object): Unit
-  def setArrayObject(value: Object, index: Long, array: Object): Unit
-  def nullCheck(value: Object): Unit
-  def checkArrayType(array: Object, arrayType: Class[_]): Unit
-  def checkArray(array: Object, index: Long): Unit
-  def arrayLength(array: Object): Int
+trait Runtime {
+  def invoke(method: ResolvedJavaMethod, args: Array[Rep[Object]]): Rep[Object]
+  def monitorEnter(value: Rep[Object]): Unit
+  def monitorExit(value: Rep[Object]): Unit
+  def newObject(typ: ResolvedJavaType): Rep[Object] // throws InstantiationException {
+  def getFieldObject(base: Rep[Object], field: ResolvedJavaField): Rep[Object]
+  def getFieldBoolean(base: Rep[Object], field: ResolvedJavaField): Rep[Boolean]
+  def getFieldByte(base: Rep[Object], field: ResolvedJavaField): Rep[Byte]
+  def getFieldChar(base: Rep[Object], field: ResolvedJavaField): Rep[Char]
+  def getFieldShort(base: Rep[Object], field: ResolvedJavaField): Rep[Short]
+  def getFieldInt(base: Rep[Object], field: ResolvedJavaField): Rep[Int]
+  def getFieldLong(base: Rep[Object], field: ResolvedJavaField): Rep[Long]
+  def getFieldDouble(base: Rep[Object], field: ResolvedJavaField): Rep[Double]
+  def getFieldFloat(base: Rep[Object], field: ResolvedJavaField): Rep[Float]
+  def setFieldObject(value: Rep[Object], base: Rep[Object], field: ResolvedJavaField): Unit
+  def setFieldInt(value: Rep[Int], base: Rep[Object], field: ResolvedJavaField): Unit
+  def setFieldFloat(value: Rep[Float], base: Rep[Object], field: ResolvedJavaField): Unit
+  def setFieldDouble(value: Rep[Double], base: Rep[Object], field: ResolvedJavaField): Unit
+  def setFieldLong(value: Rep[Long], base: Rep[Object], field: ResolvedJavaField): Unit
+  def getArrayByte(index: Rep[Long], array: Rep[Object]): Rep[Byte]
+  def getArrayChar(index: Rep[Long], array: Rep[Object]): Rep[Char]
+  def getArrayShort(index: Rep[Long], array: Rep[Object]): Rep[Short]
+  def getArrayInt(index: Rep[Long], array: Rep[Object]): Rep[Int]
+  def getArrayLong(index: Rep[Long], array: Rep[Object]): Rep[Long]
+  def getArrayDouble(index: Rep[Long], array: Rep[Object]): Rep[Double]
+  def getArrayFloat(index: Rep[Long], array: Rep[Object]): Rep[Float]
+  def getArrayObject(index: Rep[Long], array: Rep[Object]): Rep[Object]
+  def setArrayByte(value: Rep[Byte], index: Rep[Long], array: Rep[Object]): Unit
+  def setArrayChar(value: Rep[Char], index: Rep[Long], array: Rep[Object]): Unit
+  def setArrayShort(value: Rep[Short], index: Rep[Long], array: Rep[Object]): Unit
+  def setArrayInt(value: Rep[Int], index: Rep[Long], array: Rep[Object]): Unit
+  def setArrayLong(value: Rep[Long], index: Rep[Long], array: Rep[Object]): Unit
+  def setArrayFloat(value: Rep[Float], index: Rep[Long], array: Rep[Object]): Unit
+  def setArrayDouble(value: Rep[Double], index: Rep[Long], array: Rep[Object]): Unit
+  def setArrayObject(value: Rep[Object], index: Rep[Long], array: Rep[Object]): Unit
+  def nullCheck(value: Rep[Object]): Rep[Object]
+  def checkArrayType(array: Rep[Object], arrayType: Class[_]): Unit
+  def checkArray(array: Rep[Object], index: Rep[Long]): Unit
+  def arrayLength(array: Rep[Object]): Rep[Int]
   def isVolatile(field: ResolvedJavaField): Boolean
   def resolveOffset(field: ResolvedJavaField): Long
-  def resolveBase(base: Object, field: ResolvedJavaField): Object
+  def resolveBase(base: Rep[Object], field: ResolvedJavaField): Rep[Object] //used?
 }
 
+
+
+
+trait Frame {
+  def getObject(index: Int): Rep[Object]
+  def setObject(index: Int, value: Rep[Object]): Unit
+  def getFloat(index: Int): Rep[Float]
+  def setFloat(index: Int, value: Rep[Float]): Unit
+  def getLong(index: Int): Rep[Long]
+  def setLong(index: Int, value: Rep[Long]): Unit
+  def getInt(index: Int): Rep[Int]
+  def setInt(index: Int, value: Rep[Int]): Unit
+  def getDouble(index: Int): Rep[Double]
+  def setDouble(index: Int, value: Rep[Double]): Unit
+  def getParentFrame(level: Int): Frame
+  def getTopFrame(): Frame
+  def getArguments(argOffset: Int): Array[Rep[Object]]
+  def size: Int
+}
+
+trait InterpreterFrame extends Frame {
+  def create(method: ResolvedJavaMethod, hasReceiver: Boolean, additionalStackSpace: Int, useParentArguments: Boolean): InterpreterFrame
+  def resolveLocalIndex(index: Int): Int
+  def depth(): Int
+  def stackTos(): Int
+  def peekReceiver(method: ResolvedJavaMethod): Rep[Object]
+  //def pushBoth(oValue: Rep[Object], intValue: Rep[Int]): Unit
+  //def pushBoth(oValue: Rep[Object], longValue: Rep[Long]): Unit
+  def pushObject(value: Rep[Object]): Unit
+  def pushBoolean(value: Rep[Boolean]): Unit
+  def pushByte(value: Rep[Byte]): Unit
+  def pushShort(value: Rep[Short]): Unit
+  def pushChar(value: Rep[Char]): Unit
+  def pushInt(value: Rep[Int]): Unit
+  def pushDouble(value: Rep[Double]): Unit
+  def pushFloat(value: Rep[Float]): Unit
+  def pushLong(value: Rep[Long]): Unit
+  def popBoolean(): Rep[Boolean]
+  def popByte(): Rep[Byte]
+  def popChar(): Rep[Char]
+  def popShort(): Rep[Short]
+  def popInt(): Rep[Int]
+  def popDouble(): Rep[Double]
+  def popFloat(): Rep[Float]
+  def popLong(): Rep[Long]
+  def popObject(): Rep[Object]
+  def swapSingle(): Unit
+  def dupx1(): Unit
+  def dup2x1(): Unit
+  def dup2x2(): Unit
+  def dupx2(): Unit
+  def dup(length: Int): Unit
+  def tosSingle(offset: Int): Int
+  def getStackTop(): Int
+  def pushVoid(count: Int): Unit
+  def popVoid(count: Int): Unit
+  def getConstantPool(): ConstantPool
+  def setMethod(method: ResolvedJavaMethod): Unit
+  def getMethod(): ResolvedJavaMethod
+  def setBCI(bci: Int): Unit
+  def getBCI(): Int
+  def getParentFrame(): InterpreterFrame
+  def dispose(): Unit
+  def popStack(): Unit
+}
+
+}
+
+
+
+trait InterpreterUniverse_Impl extends Base_Impl with InterpreterUniverse {
 
 object Runtime extends HasUnsafe
 
-class Runtime_Impl(metaProvider: MetaAccessProvider) extends Base_Impl with Runtime {
+class Runtime_Impl(metaProvider: MetaAccessProvider) extends Runtime {
 
     //val delegate = Graal.getRuntime().getCapability(classOf[RuntimeInterpreterInterface]);
 
@@ -380,10 +718,11 @@ class Runtime_Impl(metaProvider: MetaAccessProvider) extends Base_Impl with Runt
         unsafe.putObject(array, Unsafe.ARRAY_OBJECT_BASE_OFFSET + Unsafe.ARRAY_OBJECT_INDEX_SCALE * index, value);
     }
 
-    def nullCheck(value: Object): Unit = {
+    def nullCheck(value: Object): Object = {
         if (value == null) {
             throw new NullPointerException();
         }
+        value
     }
 
     def checkArrayType(array: Object, arrayType: Class[_]): Unit = {
@@ -432,23 +771,6 @@ class Runtime_Impl(metaProvider: MetaAccessProvider) extends Base_Impl with Runt
 
 
 
-trait Frame extends Base {
-  def getObject(index: Int): Object
-  def setObject(index: Int, value: Object): Unit
-  def getFloat(index: Int): Float
-  def setFloat(index: Int, value: Float): Unit
-  def getLong(index: Int): Long
-  def setLong(index: Int, value: Long): Unit
-  def getInt(index: Int): Int
-  def setInt(index: Int, value: Int): Unit
-  def getDouble(index: Int): Double
-  def setDouble(index: Int, value: Double): Unit
-  def getParentFrame(level: Int): Frame
-  def getTopFrame(): Frame
-  def getArguments(argOffset: Int): Array[Object]
-  def size: Int
-}
-
 object Frame extends HasUnsafe {
     final val EMPTY_ARRAY = new Array[Object](0)
     final val PARENT_FRAME_SLOT = 0;
@@ -457,7 +779,7 @@ object Frame extends HasUnsafe {
 
 
 
-class Frame_Impl(numLocals: Int, parent: Frame) extends Base_Impl with Frame {
+class Frame_Impl(numLocals: Int, parent: Frame) extends Frame {
     import Frame._
     assert(numLocals >= MIN_FRAME_SIZE);
 
@@ -534,53 +856,6 @@ class Frame_Impl(numLocals: Int, parent: Frame) extends Base_Impl with Frame {
         return locals.length;
     }
     
-}
-
-
-trait InterpreterFrame extends Frame {
-  def create(method: ResolvedJavaMethod, hasReceiver: Boolean, additionalStackSpace: Int, useParentArguments: Boolean): InterpreterFrame
-  def resolveLocalIndex(index: Int): Int
-  def depth(): Int
-  def stackTos(): Int
-  def peekReceiver(method: ResolvedJavaMethod): Object
-  def pushBoth(oValue: Object, intValue: Int): Unit
-  def pushBoth(oValue: Object, longValue: Long): Unit
-  def pushObject(value: Object): Unit
-  def pushBoolean(value: Boolean): Unit
-  def pushByte(value: Byte): Unit
-  def pushShort(value: Short): Unit
-  def pushChar(value: Char): Unit
-  def pushInt(value: Int): Unit
-  def pushDouble(value: Double): Unit
-  def pushFloat(value: Float): Unit
-  def pushLong(value: Long): Unit
-  def popBoolean(): Boolean
-  def popByte(): Byte
-  def popChar(): Char
-  def popShort(): Short
-  def popInt(): Int
-  def popDouble(): Double
-  def popFloat(): Float
-  def popLong(): Long
-  def popObject(): Object
-  def swapSingle(): Unit
-  def dupx1(): Unit
-  def dup2x1(): Unit
-  def dup2x2(): Unit
-  def dupx2(): Unit
-  def dup(length: Int): Unit
-  def tosSingle(offset: Int): Int
-  def getStackTop(): Int
-  def pushVoid(count: Int): Unit
-  def popVoid(count: Int): Unit
-  def getConstantPool(): ConstantPool
-  def setMethod(method: ResolvedJavaMethod): Unit
-  def getMethod(): ResolvedJavaMethod
-  def setBCI(bci: Int): Unit
-  def getBCI(): Int
-  def getParentFrame(): InterpreterFrame
-  def dispose(): Unit
-  def popStack(): Unit
 }
 
 
@@ -973,4 +1248,4 @@ with InterpreterFrame {
 
 }
 
-
+}
