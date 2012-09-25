@@ -1214,9 +1214,17 @@ final class BytecodeInterpreter_Impl extends InterpreterUniverse_Impl with Bytec
                     case RETURN =>
                         return popFrame(frame);
                     case CALL =>
-                        return allocateFrame(frame, bs);
+                        if (callFrame != null) // null for native calls
+                          return allocateFrame(frame, bs);
+                        else
+                          bs.next()
                     case BRANCH =>
                         bs.setBCI(bs.readBranchDest());
+                    case BRANCH_COND =>
+                        if (branchCondition)
+                          bs.setBCI(bs.readBranchDest());
+                        else
+                          bs.next()
                     case _ =>
                         // the outcome depends on stack values
                         assert(result >= 0, "negative branch target");
@@ -1692,7 +1700,7 @@ final class BytecodeInterpreter_Impl extends InterpreterUniverse_Impl with Bytec
         }
     }
 
-    def allocateInstance(frame: InterpreterFrame, cpi: Char): Object = {// throws InstantiationException {
+    /*def allocateInstance(frame: InterpreterFrame, cpi: Char): Object = {// throws InstantiationException {
         return runtimeInterface.newObject(resolveType(frame, Bytecodes.NEW, cpi));
     }
 
@@ -1707,7 +1715,7 @@ final class BytecodeInterpreter_Impl extends InterpreterUniverse_Impl with Bytec
 
     def putField(frame: InterpreterFrame, cpi: Char): Unit = {
         putFieldVirtual(frame, resolveField(frame, Bytecodes.PUTFIELD, cpi));
-    }
+    }*/
 
     def putFieldStatic(frame: InterpreterFrame, field: ResolvedJavaField): Unit = {
         field.kind() match {
