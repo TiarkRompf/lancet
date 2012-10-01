@@ -4,6 +4,7 @@ package playground.interpreter
 
 trait Base {
   type Rep[+T]
+  def repManifest[T:Manifest]: Manifest[Rep[T]]
 
   /*implicit def unitWiden[T <% Boolean](x: T): Rep[Boolean]
   implicit def unitWiden[T <% Byte](x: T): Rep[Byte]
@@ -256,6 +257,7 @@ trait Base {
 
 trait Base_Impl extends Base {
   type Rep[+T] = T
+  def repManifest[T:Manifest]: Manifest[T] = manifest[T]
 
   implicit def unit(x: Boolean): Boolean = x
   implicit def unit(x: Byte): Byte = x
@@ -377,6 +379,7 @@ trait Base_Impl extends Base {
 trait Base_Str extends Base {
 
   case class Rep[+T](s: String) { override def toString = s; def +(s: String) = toString+s }
+  def repManifest[T:Manifest]: Manifest[Rep[T]] = manifest[Rep[T]]
 
   var nSyms = 0
   def fresh = { nSyms += 1; "x" + (nSyms - 1) }

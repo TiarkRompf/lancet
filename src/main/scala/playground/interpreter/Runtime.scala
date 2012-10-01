@@ -57,9 +57,14 @@ trait InterpreterUniverse extends Base {
 
 trait Runtime {
   def invoke(method: ResolvedJavaMethod, args: Array[Rep[Object]]): Rep[Object]
+  def typeIsInstance(typ: ResolvedJavaType, value: Rep[Object]): Rep[Boolean]
   def monitorEnter(value: Rep[Object]): Unit
   def monitorExit(value: Rep[Object]): Unit
   def newObject(typ: ResolvedJavaType): Rep[Object] // throws InstantiationException {
+  def newArray(typ: ResolvedJavaType, size: Rep[Int]): Rep[Object] // throws InstantiationException {
+  // TODO: should have primitive array constructors
+  def newArray(typ: Class[_], size: Rep[Int]): Rep[Object] // throws InstantiationException {
+  def newMultiArray(typ: ResolvedJavaType, dimensions: Array[Rep[Int]]): Rep[Object] // throws InstantiationException {
   def getFieldObject(base: Rep[Object], field: ResolvedJavaField): Rep[Object]
   def getFieldBoolean(base: Rep[Object], field: ResolvedJavaField): Rep[Boolean]
   def getFieldByte(base: Rep[Object], field: ResolvedJavaField): Rep[Byte]
@@ -196,6 +201,10 @@ class Runtime_Impl(metaProvider: MetaAccessProvider) extends Runtime {
       m.invoke(null, args:_*) // FIXME:?? what about non-static method ??
     }
 
+    def typeIsInstance(typ: ResolvedJavaType, value: Object): Boolean = {
+      typ.toJava().isInstance(value)
+    }
+
     def monitorEnter(value: Object): Unit = {
         nullCheck(value);
         unsafe.monitorEnter(value);
@@ -208,6 +217,18 @@ class Runtime_Impl(metaProvider: MetaAccessProvider) extends Runtime {
 
     def newObject(typ: ResolvedJavaType): AnyRef = { //} throws InstantiationException {
         return unsafe.allocateInstance(typ.toJava());
+    }
+
+    def newArray(typ: ResolvedJavaType, size: Int): Object = { // throws InstantiationException {
+        return java.lang.reflect.Array.newInstance(typ.toJava(), size);
+    }
+
+    def newArray(typ: Class[_], size: Int): Object = { // throws InstantiationException {
+        return java.lang.reflect.Array.newInstance(typ, size);
+    }
+
+    def newMultiArray(typ: ResolvedJavaType, dimensions: Array[Int]): Object = { // throws InstantiationException {
+        return java.lang.reflect.Array.newInstance(typ.toJava(), dimensions:_*);
     }
 
     def getFieldObject(base: Object, field: ResolvedJavaField): AnyRef = {
@@ -1100,6 +1121,10 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
     def invoke(method: ResolvedJavaMethod, args: Array[Rep[Object]]): Rep[Object] =
         reflect(""+method+".invoke("+args.mkString(",")+")")
 
+    def typeIsInstance(typ: ResolvedJavaType, value: Rep[Object]): Rep[Boolean] = {
+        reflect(""+value+".isInstanceOf["+typ.toJava+"]")
+    }
+
     def monitorEnter(value: Rep[Object]): Unit = {
         nullCheck(value)
         unsafe.monitorEnter(value)
@@ -1112,6 +1137,18 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
 
     def newObject(typ: ResolvedJavaType): Rep[Object] = { //} throws InstantiationException {
         unsafe.allocateInstance(typ.toJava());
+    }
+
+    def newArray(typ: ResolvedJavaType, size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
+        reflect("new Array["+typ.toJava()+"]("+size+")");
+    }
+
+    def newArray(typ: Class[_], size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
+        reflect("new Array["+typ+"]("+size+")");
+    }
+
+    def newMultiArray(typ: ResolvedJavaType, dimensions: Array[Rep[Int]]): Rep[Object] = { // throws InstantiationException {
+        reflect("new Array["+typ.toJava()+"]("+dimensions.mkString(",")+")");
     }
 
     def getFieldObject(base: Rep[Object], field: ResolvedJavaField): Rep[AnyRef] = {
