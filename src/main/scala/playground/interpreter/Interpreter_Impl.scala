@@ -40,7 +40,9 @@ final class BytecodeInterpreter_Impl extends InterpreterUniverse_Impl with Bytec
 
     def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Impl(m)
 
-    //@Override
+
+    // ---------- high level execution loop ----------
+
     def execute(method: ResolvedJavaMethod, boxedArguments: Array[Object]): Object = {// throws Throwable {
         try {
             val receiver: Boolean = hasReceiver(method);
@@ -222,7 +224,7 @@ final class BytecodeInterpreter_Impl extends InterpreterUniverse_Impl with Bytec
 
 
 
-
+    // ---------- statement level ----------
 
     def lookupSearch(bs: BytecodeStream, key: Int): Int = {
         val switchHelper = new BytecodeLookupSwitch(bs, bs.currentBCI())

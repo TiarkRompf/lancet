@@ -41,6 +41,7 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
 
     def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Str(m)
 
+    // ---------- high level execution loop ----------
 
     //@Override
     def execute(method: ResolvedJavaMethod, boxedArguments: Array[Object]): Object = {// throws Throwable {
@@ -150,9 +151,9 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
             }
             null
     }
-    
 
 
+    // ---------- block / statement level ----------
 
     override def executeBlock(frame: InterpreterFrame, bs: BytecodeStream, bci: Int): Rep[Unit] = {
       val r = reflect("block_"+bci+"()")
@@ -160,9 +161,7 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
       super.executeBlock(frame, bs, bci)
       println("} // *** end block " + bci)
       r
-    }
-
- 
+    } 
 
     def lookupSearch(bs: BytecodeStream, key: Rep[Int]): Int = {reflect("lookupSearch");0}/*{
         val switchHelper = new BytecodeLookupSwitch(bs, bs.currentBCI())
@@ -202,8 +201,9 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
 
     def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] =
       reflect("checkCast("+typ.toJava+","+value+")")
-
  
+    // called by invokeVirtual
+
     def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame = {// throws Throwable {
         val receiver = nullCheck(parent.peekReceiver(m));
 
@@ -212,11 +212,9 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
         val parameters = popArgumentsAsObject(parent, m, true);
         val returnValue = runtimeInterface.invoke(m, parameters);
         pushAsObject(parent, m.signature().returnKind(), returnValue);
-
         null
 
-        /*
-        val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethodImpl(m);
+        /*val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethodImpl(m);
 
         if (method == null) {
             throw new AbstractMethodError();
@@ -225,9 +223,11 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
         return invoke(parent, method, receiver);*/
     }
 
+
+    // called internally by invoke
+    
     def invokeDirect(parent: InterpreterFrame, method: ResolvedJavaMethod, hasReceiver: Boolean): InterpreterFrame = {// throws Throwable {
         //return parent.create(method, hasReceiver);
         return parent.create(method, hasReceiver, 0, true);
     }
-
 }
