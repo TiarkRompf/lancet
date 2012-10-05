@@ -384,14 +384,16 @@ trait Base_Str extends Base {
   var nSyms = 0
   def fresh = { nSyms += 1; "x" + (nSyms - 1) }
 
-  def reflect[T](s: String): Rep[T] = { val x = fresh; println("val "+x+" = "+s); Rep(x) }
+  def emit(s: String) = println("          "+s)
+
+  def reflect[T](s: String): Rep[T] = { val x = fresh; emit("val "+x+" = "+s); Rep(x) }
   def reify[T](x: => Rep[T]): String = "{" + captureOutput(x.s) + "}"
 
   import java.io._
-  def captureOutput(func: => Unit): String = {
+  def captureOutput(func: => Any): String = {
     val bstream = new ByteArrayOutputStream
-    withOutput(new PrintStream(bstream))(func)
-    bstream.toString
+    val r = withOutput(new PrintStream(bstream))(func)
+    bstream.toString + r
   }
   def withOutput(out: PrintStream)(func: => Unit): Unit = {
     val oldStdOut = System.out

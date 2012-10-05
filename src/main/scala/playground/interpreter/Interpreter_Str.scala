@@ -23,13 +23,30 @@
 package playground.interpreter
 
 import java.lang.reflect.{Array=>jlrArray,_};
-import java.util._;
+import java.util.{Vector=>_,_};
 import sun.misc._;
 
 import com.oracle.graal.api._;
 import com.oracle.graal.api.meta._;
 import com.oracle.graal.hotspot.meta._;
 import com.oracle.graal.bytecode._;
+
+/* TODO:
+
+  loops/blocks
+    evaluate each block only once -- worklist
+  
+  method calls
+    either inline (default) or compile separately
+
+
+  generate executable code
+    private fields? --> unsafe ops
+
+
+  abstract interpretation / lattice ops
+
+*/
 
 
 
@@ -62,7 +79,10 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
 
             var rootFrame: InterpreterFrame_Str = null // nativeFrame
             if (rootFrame == null) {
+              val numLocals = 
               rootFrame = new InterpreterFrame_Str(rootMethod, signature.argumentSlots(true));
+              rootFrame.locals = reflect("new Array[Object]("+numLocals+")")
+              rootFrame.primitiveLocals = reflect("new Array[Long]("+numLocals+")")
               rootFrame.pushObject(unit(this));
               rootFrame.pushObject(unit(method));
               rootFrame.pushObject(unit(boxedArguments));
@@ -120,48 +140,53 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
     }
 
     def executeRoot(root: InterpreterFrame, frame: InterpreterFrame): Unit = { // throws Throwable {
-        // TODO reflection redirection
-        var prevFrame: InterpreterFrame = frame;
-        var currentFrame: InterpreterFrame = frame;
-        var bs: BytecodeStream = new BytecodeStream(currentFrame.getMethod().code());
         if (TRACE) {
             traceCall(frame, "RootCall");
         }
-        while (currentFrame != root && currentFrame != null) {
-            if (prevFrame != currentFrame) {
-                bs = new BytecodeStream(currentFrame.getMethod().code());
-            }
-            bs.setBCI(0)//TR currentFrame.getBCI());
-
-            prevFrame = currentFrame;
-            currentFrame = loop(root, prevFrame, bs);
-        }
-        assert(callFrame == null);
+        exec(frame)
+        loop(root);
     }
 
-    private def loop(root: InterpreterFrame, frame: InterpreterFrame, bs: BytecodeStream): InterpreterFrame = {// throws Throwable {
-            var result: Any = executeBlock(frame, bs, bs.currentBCI())
-            while (true) {
-                result match {
-                    case ctrl: Control =>
-                        result = ctrl(frame, bs)
-                    case _ =>
-                        return null
-                }
-            }
-            null
+
+    var worklist: IndexedSeq[InterpreterFrame] = Vector.empty
+
+    def exec(frame: InterpreterFrame): Rep[Unit] = { // called internally to initiate control transfer
+      
+      // decision to make: explore block afresh or generate call to existing one
+
+      worklist = worklist :+ frame.asInstanceOf[InterpreterFrame_Str]//.copy
+      reflect("block_"+frame.getBCI()+"()")
+      //unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
+    }
+
+
+
+    // TODO: can't translate blocks just like that to Scala methods: 
+    // next block may refer to stuff defined in earlier block (need nesting, 
+    // but problem with back edges)
+
+    // may need different treatment for intra-procedural blocks and function
+    // calls: want to inline functions but not generally duplicate local blocks
+
+    private def loop(root: InterpreterFrame): Unit = {// throws Throwable {
+      while (worklist.nonEmpty) {
+        var frame = worklist.head
+        worklist = worklist.tail
+
+        if (frame != root) {
+          val bci = frame.getBCI()
+          val bs = new BytecodeStream(frame.getMethod.code())
+          //bs.setBCI(globalFrame.getBCI())
+//          println("def block_"+bci+"() { // *** begin block " + bci + " " + frame.getMethod + " - " + frame.getMethod().signature().asString())
+          println("// *** begin block " + bci + " " + frame.getMethod + " - " + frame.getMethod().signature().asString())          
+          executeBlock(frame, bs, bci)
+//          println("} // *** end block " + bci + " " + frame.getMethod + " - " + frame.getMethod().signature().asString())
+        }
+      }
     }
 
 
     // ---------- block / statement level ----------
-
-    override def executeBlock(frame: InterpreterFrame, bs: BytecodeStream, bci: Int): Rep[Unit] = {
-      val r = reflect("block_"+bci+"()")
-      println("def block_"+bci+"() { // *** begin block " + bci)
-      super.executeBlock(frame, bs, bci)
-      println("} // *** end block " + bci)
-      r
-    } 
 
     def lookupSearch(bs: BytecodeStream, key: Rep[Int]): Int = {reflect("lookupSearch");0}/*{
         val switchHelper = new BytecodeLookupSwitch(bs, bs.currentBCI())
@@ -225,7 +250,7 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
 
 
     // called internally by invoke
-    
+
     def invokeDirect(parent: InterpreterFrame, method: ResolvedJavaMethod, hasReceiver: Boolean): InterpreterFrame = {// throws Throwable {
         //return parent.create(method, hasReceiver);
         return parent.create(method, hasReceiver, 0, true);

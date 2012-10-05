@@ -126,6 +126,7 @@ trait Frame {
 
 trait InterpreterFrame extends Frame {
   def create(method: ResolvedJavaMethod, hasReceiver: Boolean, additionalStackSpace: Int, useParentArguments: Boolean): InterpreterFrame
+  def copy: InterpreterFrame
   def resolveLocalIndex(index: Int): Int
   def depth(): Int
   def stackTos(): Int
@@ -641,6 +642,8 @@ with InterpreterFrame {
 
         return frame;
     }
+
+    def copy = this
 
     def resolveLocalIndex(index: Int): Int = {
         assert(index >= 0);
@@ -1422,12 +1425,12 @@ object Frame {
 
 
 
-class Frame_Str(numLocals: Int, parent: Frame) extends Frame {
+class Frame_Str(val numLocals: Int, parent: Frame) extends Frame {
     import Frame._
     assert(numLocals >= MIN_FRAME_SIZE);
 
-    val locals: Rep[Array[Object]] = reflect("new Array[Object]("+numLocals+")")
-    val primitiveLocals: Rep[Array[Long]] = reflect("new Array[Long]("+numLocals+")")
+    var locals: Rep[Array[Object]] = _//reflect("new Array[Object]("+numLocals+")")
+    var primitiveLocals: Rep[Array[Long]] = _//reflect("new Array[Long]("+numLocals+")")
 
     //reflect("locals(PARENT_FRAME_SLOT) = parent")
 
@@ -1502,6 +1505,11 @@ class Frame_Str(numLocals: Int, parent: Frame) extends Frame {
 }
 
 
+
+
+
+
+
 object InterpreterFrame {
     final val BASE_LENGTH = 3;
 
@@ -1521,6 +1529,7 @@ with InterpreterFrame {
     import InterpreterFrame._
 
     var bci: Int = _
+    var parentFrame: InterpreterFrame = parent
 
     assert(additionalStackSpace >= 0);
 
@@ -1538,6 +1547,9 @@ with InterpreterFrame {
     def create(method: ResolvedJavaMethod, hasReceiver: Boolean, additionalStackSpace: Int, useParentArguments: Boolean): InterpreterFrame = {
         val frame = new InterpreterFrame_Str(method, this, additionalStackSpace);
 
+        frame.locals = reflect("new Array[Object]("+frame.numLocals+")")
+        frame.primitiveLocals = reflect("new Array[Long]("+frame.numLocals+")")
+
         if (useParentArguments) {
             val length = method.signature().argumentSlots(hasReceiver);
             assert(length >= 0);
@@ -1552,19 +1564,29 @@ with InterpreterFrame {
         return frame;
     }
 
+    def copy() = {
+      val frame = new InterpreterFrame_Str(method, parent, additionalStackSpace);
+      frame.locals = locals
+      frame.primitiveLocals = primitiveLocals
+      frame bci = bci
+      frame.tos = tos
+      frame
+    }
+
+
     def resolveLocalIndex(index: Int): Int = {
         assert(index >= 0);
         return BASE_LENGTH + index;
     }
 
-    def depth(): Int = 0 /*{
+    def depth(): Int = {
         var depth = 1;
         var frame: InterpreterFrame = this;
         while ({ frame = frame.getParentFrame(); frame != null}) {
             depth+=1;
         }
         return depth;
-    }*/
+    }
 
     def stackTos(): Int = {
         return BASE_LENGTH + getMethod().maxLocals();
@@ -1865,7 +1887,8 @@ with InterpreterFrame {
 
     def getParentFrame(): InterpreterFrame = {
         //return getObject(PARENT_FRAME_SLOT).asInstanceOf[InterpreterFrame];
-        throw new Exception("not supported")
+        //throw new Exception("not supported")
+        parentFrame
     }
 
     def dispose(): Unit = {

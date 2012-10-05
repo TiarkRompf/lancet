@@ -23,7 +23,7 @@
 package playground.interpreter
 
 import java.lang.reflect.{Array=>jlrArray,_};
-import java.util._;
+import java.util.{Vector=>_,_};
 import sun.misc._;
 
 import com.oracle.graal.api._;
@@ -44,33 +44,26 @@ import com.oracle.graal.bytecode._;
 
 trait BytecodeInterpreter extends InterpreterUniverse {
   
+  trait InterpreterCallable {
+      // methods
+      def invoke(caller: InterpreterFrame, method: ResolvedJavaMethod, arguments: Array[Rep[Object]]): Rep[Object] // throws Throwable;
+  }
 
-trait InterpreterCallable {
-    // methods
-    def invoke(caller: InterpreterFrame, method: ResolvedJavaMethod, arguments: Array[Rep[Object]]): Rep[Object] // throws Throwable;
-}
-
-object InterpreterCallable {
-  val INTERPRETER_CALLABLE_INVOKE_NAME = "invoke";
-  val INTERPRETER_CALLABLE_INVOKE_SIGNATURE = Array[Class[_]](classOf[InterpreterFrame], classOf[ResolvedJavaMethod], classOf[Array[Object]]);
-}
-
-
-/**
- * Thrown if executed byte code caused an error in {@link BytecodeInterpreter}. The actual execution exception is
- * accessible using {@link #getCause()} or {@link #getExecutionThrowable()}.
- */
-class InterpreterException(cause: Throwable) extends RuntimeException(cause) {
-    //private static final long serialVersionUID = 1L;
-    def getExecutionThrowable() = getCause()
-}
+  object InterpreterCallable {
+    val INTERPRETER_CALLABLE_INVOKE_NAME = "invoke";
+    val INTERPRETER_CALLABLE_INVOKE_SIGNATURE = Array[Class[_]](classOf[InterpreterFrame], classOf[ResolvedJavaMethod], classOf[Array[Object]]);
+  }
 
 
+  /**
+   * Thrown if executed byte code caused an error in {@link BytecodeInterpreter}. The actual execution exception is
+   * accessible using {@link #getCause()} or {@link #getExecutionThrowable()}.
+   */
+  class InterpreterException(cause: Throwable) extends RuntimeException(cause) {
+      //private static final long serialVersionUID = 1L;
+      def getExecutionThrowable() = getCause()
+  }
 
-
-
-
-  def addDelegate(method: Method, callable: InterpreterCallable): Unit
 }
 
 object BytecodeInterpreter {
@@ -88,6 +81,11 @@ object BytecodeInterpreter {
 }
 
 
+/* 
+  two conceptual concerns: 
+    1) traversal / bytecode reading (state: bci)
+    2) generation / frame construction
+*/
 
 trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
 
@@ -101,18 +99,6 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
   protected class MethodRedirectionInfo(val receiver: InterpreterCallable)
   def methodDelegates: Map[ResolvedJavaMethod, MethodRedirectionInfo];
 
-  def addDelegate(method: Method, callable: InterpreterCallable): Unit = {
-      val resolvedMethod: ResolvedJavaMethod = metaAccessProvider.getResolvedJavaMethod(method);
-      if (methodDelegates.containsKey(resolvedMethod)) {
-          throw new IllegalArgumentException("Delegate for method " + method + " already added.");
-      }
-
-      methodDelegates.put(resolvedMethod, new MethodRedirectionInfo(callable));
-  }
-
-  def removeDelegate(method: Method): Unit = {
-      methodDelegates.remove(metaAccessProvider.getResolvedJavaMethod(method));
-  }
 
 
   def traceOp(frame: InterpreterFrame, opName: String): Unit = {
@@ -135,52 +121,139 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
   }
 
 
-  var callFrame: InterpreterFrame = null
+  def exec(frame: InterpreterFrame): Rep[Unit]
 
-  type Control = (InterpreterFrame, BytecodeStream) => Any
-
-  def branch(): Control = { (frame, bs) =>
-    executeBlock(frame, bs, bs.readBranchDest())
+  def exec(frame: InterpreterFrame, bci: Int): Rep[Unit] = {
+    frame.setBCI(bci)
+    exec(frame)
   }
 
-  def conditionalBranch(c: Rep[Boolean]): Control = { (frame, bs) =>
+
+
+  type Control = (InterpreterFrame, BytecodeStream) => Rep[Unit]
+  def local(ctrl: Control) = ctrl
+
+
+  def branch() = local { (frame, bs) =>
+    frame.setBCI(bs.readBranchDest())
+    exec(frame)
+  }
+
+  def conditionalBranch(c: Rep[Boolean]) = local { (frame, bs) =>
     val a = bs.readBranchDest()
     val b = bs.nextBCI()
     // need to retain stack !!!
     val tos = frame.stackTos
     if_ (c) {
-      assert(tos ==frame.stackTos, "illegal stack change (then branch)")
-      executeBlock(frame, bs, a)
+      assert(tos == frame.stackTos, "illegal stack change (then branch)")
+      exec(frame.copy, a)
     }{
-      assert(tos ==frame.stackTos, "illegal stack change (else branch)")
-      executeBlock(frame, bs, b)
+      assert(tos == frame.stackTos, "illegal stack change (else branch)")
+      exec(frame.copy, b)
     }
   }
 
 
-  def call(callFrame: InterpreterFrame): Control = { (frame, bs) =>
+
+  def call(callFrame: InterpreterFrame) = local { (frame, bs) =>
+    frame.setBCI(bs.nextBCI()); // continue after call
+
     if (callFrame != null) {
-      this.callFrame = callFrame
-      allocateFrame(frame, bs)
-      val method = callFrame.getMethod()
-      val bs1 = new BytecodeStream(method.code())
-      executeBlock(callFrame, bs1, callFrame.getBCI());
-      val returnValue = callFrame.getReturnValue()
-      pushAsObjectInternal(frame, method.signature().returnKind(), returnValue);
+      allocateFrame(frame, bs, callFrame)
+      //globalFrame = callFrame
+      //frame.setBCI(bs.nextBCI())
+      //println("set return bci "+frame.getBCI())
+      //println("set return bci "+bs.nextBCI())
+      //executeBlock(callFrame, bs1, callFrame.getBCI());
+      exec(callFrame)
     } else {      
+      exec(frame)
+      //executeBlock(frame, bs, bs.nextBCI())
       // trampoline executeBlock instead of falling through?
     }
-    executeBlock(frame, bs, bs.nextBCI())
   }
 
-  def retn(): Control = { (frame, bs) =>
+  def retn() = local { (frame, bs) =>
 
+    val parentFrame = frame.getParentFrame    
+
+    //println(frame.getMethod)
+    //println(frame)
+    //println(globalFrame)
+
+    val returnValue = frame.getReturnValue()
     popFrame(frame)
+    
+    pushAsObjectInternal(parentFrame, frame.getMethod.signature().returnKind(), returnValue);
+
+    exec(parentFrame)
   }
 
-  def thrw(t: Rep[Throwable]): Control = { (frame, bs) =>
+  def thrw(t: Rep[Throwable]) = local { (frame, bs) =>
 
+    val parentFrame = frame.getParentFrame
     popFrame(frame) // FIXME
+    
+    pushAsObjectInternal(parentFrame, frame.getMethod.signature().returnKind(), t);
+
+    exec(parentFrame)
+  }
+
+
+
+  def allocateFrame(frame: InterpreterFrame, bs: BytecodeStream, nextFrame: InterpreterFrame): InterpreterFrame = {
+      try {
+          assert(nextFrame != null);
+          //TRassert(nextFrame.getParentFrame() == frame);
+
+          // store bci when leaving method
+          //TRframe.setBCI(bs.currentBCI());
+          //frame.setBCI(bs.nextBCI());
+
+          if (TRACE) {
+              traceCall(nextFrame, "Call");
+          }
+          if (Modifier.isSynchronized(nextFrame.getMethod().accessFlags())) {
+              if (TRACE) {
+                  traceOp(frame, "Method monitor enter");
+              }
+              if (Modifier.isStatic(nextFrame.getMethod().accessFlags())) {
+                  runtimeInterface.monitorEnter(unit(nextFrame.getMethod().holder().toJava()));
+              } else {
+                  val enterObject = nextFrame.getObject(frame.resolveLocalIndex(0));
+                  //assert(enterObject =!= null);
+                  runtimeInterface.monitorEnter(enterObject);
+              }
+          }
+
+          return nextFrame;
+      } finally {
+          //callFrame = null;
+          //bs.next();
+      }
+  }
+
+  def popFrame(frame: InterpreterFrame): InterpreterFrame = {
+      //val parent: InterpreterFrame = frame.getParentFrame();
+      if (Modifier.isSynchronized(frame.getMethod().accessFlags())) {
+          if (TRACE) {
+              traceOp(frame, "Method monitor exit");
+          }
+          if (Modifier.isStatic(frame.getMethod().accessFlags())) {
+              runtimeInterface.monitorExit(unit(frame.getMethod().holder().toJava()));
+          } else {
+              val exitObject = frame.getObject(frame.resolveLocalIndex(0));
+              //if (exitObject =!= null) {
+                  runtimeInterface.monitorExit(exitObject);
+              //}
+          }
+      }
+      if (TRACE) {
+          traceCall(frame, "Ret");
+      }
+
+      frame.dispose();
+      return null//parent;
   }
 
 
@@ -202,10 +275,12 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
       if (ctrl == null)
         bs.next()
     } while (ctrl == null)
-    val r = ctrl(frame, bs).asInstanceOf[Rep[Unit]]
+    frame.setBCI(bs.currentBCI())
+    ctrl(frame, bs)
+    //val r = ctrl(frame, bs).asInstanceOf[Rep[Unit]]
     //println("--- res " + r.getClass)
     //bs.next()
-    r
+    //r
   }
 
 
@@ -632,62 +707,6 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
     return null
   }
 
-    def allocateFrame(frame: InterpreterFrame, bs: BytecodeStream): InterpreterFrame = {
-        try {
-            val nextFrame: InterpreterFrame = this.callFrame;
-
-            assert(nextFrame != null);
-            //TRassert(nextFrame.getParentFrame() == frame);
-
-            // store bci when leaving method
-            //TRframe.setBCI(bs.currentBCI());
-            frame.setBCI(bs.nextBCI());
-
-            if (TRACE) {
-                traceCall(nextFrame, "Call");
-            }
-            if (Modifier.isSynchronized(nextFrame.getMethod().accessFlags())) {
-                if (TRACE) {
-                    traceOp(frame, "Method monitor enter");
-                }
-                if (Modifier.isStatic(nextFrame.getMethod().accessFlags())) {
-                    runtimeInterface.monitorEnter(unit(nextFrame.getMethod().holder().toJava()));
-                } else {
-                    val enterObject = nextFrame.getObject(frame.resolveLocalIndex(0));
-                    //assert(enterObject =!= null);
-                    runtimeInterface.monitorEnter(enterObject);
-                }
-            }
-
-            return nextFrame;
-        } finally {
-            callFrame = null;
-            //bs.next();
-        }
-    }
-
-    def popFrame(frame: InterpreterFrame): InterpreterFrame = {
-        //val parent: InterpreterFrame = frame.getParentFrame();
-        if (Modifier.isSynchronized(frame.getMethod().accessFlags())) {
-            if (TRACE) {
-                traceOp(frame, "Method monitor exit");
-            }
-            if (Modifier.isStatic(frame.getMethod().accessFlags())) {
-                runtimeInterface.monitorExit(unit(frame.getMethod().holder().toJava()));
-            } else {
-                val exitObject = frame.getObject(frame.resolveLocalIndex(0));
-                //if (exitObject =!= null) {
-                    runtimeInterface.monitorExit(exitObject);
-                //}
-            }
-        }
-        if (TRACE) {
-            traceCall(frame, "Ret");
-        }
-
-        frame.dispose();
-        return null//parent;
-    }
 
     private def divInt(frame: InterpreterFrame) {
         val dividend = frame.popInt();
@@ -773,12 +792,14 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
         frame.pushLong(value >>> bits);
     }
 
-    private def lookupSwitch(frame: InterpreterFrame, bs: BytecodeStream): Int = {
-        return lookupSearch(bs, frame.popInt());
+    private def lookupSwitch(frame: InterpreterFrame, bs: BytecodeStream): Rep[Unit] = {
+        val idx = lookupSearch(bs, frame.popInt());
+        exec(frame, idx)
     }
 
-    private def tableSwitch(frame: InterpreterFrame, bs: BytecodeStream): Int = {
-        return tableSearch(bs, frame.popInt())
+    private def tableSwitch(frame: InterpreterFrame, bs: BytecodeStream): Rep[Unit] = {
+        val idx = tableSearch(bs, frame.popInt())
+        exec(frame, idx)
     }
 
     protected def lookupSearch(bs: BytecodeStream, key: Rep[Int]): Int /*= {
@@ -1259,6 +1280,9 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
 }
 
 
+
+
+
 trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
 
     import BytecodeInterpreter._
@@ -1297,6 +1321,19 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
         if (name != null && name.equals(OPTION_MAX_STACK_SIZE)) {
             this.maxStackFrames = Integer.parseInt(value);
         }
+    }
+
+    def addDelegate(method: Method, callable: InterpreterCallable): Unit = {
+        val resolvedMethod: ResolvedJavaMethod = metaAccessProvider.getResolvedJavaMethod(method);
+        if (methodDelegates.containsKey(resolvedMethod)) {
+            throw new IllegalArgumentException("Delegate for method " + method + " already added.");
+        }
+
+        methodDelegates.put(resolvedMethod, new MethodRedirectionInfo(callable));
+    }
+
+    def removeDelegate(method: Method): Unit = {
+        methodDelegates.remove(metaAccessProvider.getResolvedJavaMethod(method));
     }
 
     def registerDelegates(): Unit = {

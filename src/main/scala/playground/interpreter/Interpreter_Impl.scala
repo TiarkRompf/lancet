@@ -119,24 +119,25 @@ final class BytecodeInterpreter_Impl extends InterpreterUniverse_Impl with Bytec
     }
 
     def executeRoot(root: InterpreterFrame, frame: InterpreterFrame): Unit = { // throws Throwable {
-        val bs: BytecodeStream = new BytecodeStream(frame.getMethod().code());
-        bs.setBCI(frame.getBCI());
         if (TRACE) {
             traceCall(frame, "RootCall");
         }
-        loop(root, frame, bs);
+        exec(frame)
+        loop(root);
     }
 
-    private def loop(root: InterpreterFrame, frame: InterpreterFrame, bs: BytecodeStream): Unit = {// throws Throwable {
-            var result: Any = executeBlock(frame, bs, bs.currentBCI())
-            while (true) {
-                result match {
-                    case ctrl: Control =>
-                        result = ctrl(frame, bs)
-                    case _ =>
-                        return
-                }
-            }
+    var globalFrame: InterpreterFrame = _
+
+    def exec(frame: InterpreterFrame): Unit = { // called internally to initiate control transfer
+      globalFrame = frame // will continue execution at `frame`
+    }
+
+    private def loop(root: InterpreterFrame): Unit = {// throws Throwable {
+      while (globalFrame != root) {
+        val bs = new BytecodeStream(globalFrame.getMethod.code())
+        //bs.setBCI(globalFrame.getBCI())
+        executeBlock(globalFrame, bs, globalFrame.getBCI())
+      }
     }
 
 
