@@ -1424,8 +1424,9 @@ object Frame {
 }
 
 
+// local array is staged
 
-class Frame_Str(val numLocals: Int, parent: Frame) extends Frame {
+class Frame_Str0(val numLocals: Int, parent: Frame) extends Frame {
     import Frame._
     assert(numLocals >= MIN_FRAME_SIZE);
 
@@ -1505,7 +1506,85 @@ class Frame_Str(val numLocals: Int, parent: Frame) extends Frame {
 }
 
 
+// local array contains staged values
 
+class Frame_Str(val numLocals: Int, val parent: Frame) extends Frame {
+    import Frame._
+    assert(numLocals >= MIN_FRAME_SIZE);
+
+    val locals: Array[Rep[Object]] = new Array[Rep[Object]](numLocals)
+
+    //reflect("locals(PARENT_FRAME_SLOT) = parent")
+
+    def this(numLocals: Int) = this(numLocals, null);
+
+    def getObject(index: Int): Rep[Object] = {
+        locals(index)
+    }
+
+    def setObject(index: Int, value: Rep[Object]): Unit = {
+        locals(index) = value
+    }
+
+    def getFloat(index: Int): Rep[Float] = {
+        locals(index).asInstanceOf[Rep[Float]]
+    }
+
+    def setFloat(index: Int, value: Rep[Float]): Unit = {
+        locals(index) = value.asInstanceOf[Rep[Object]]
+    }
+
+    def getLong(index: Int): Rep[Long] = {
+        locals(index).asInstanceOf[Rep[Long]]
+    }
+
+    def setLong(index: Int, value: Rep[Long]): Unit = {
+        locals(index) = value.asInstanceOf[Rep[Object]]
+    }
+
+    def getInt(index: Int): Rep[Int] = {
+        locals(index).asInstanceOf[Rep[Int]]
+    }
+
+    def setInt(index: Int, value: Rep[Int]): Unit = {
+        locals(index) = value.asInstanceOf[Rep[Object]]
+    }
+
+    def getDouble(index: Int): Rep[Double] = {
+        locals(index).asInstanceOf[Rep[Double]]
+    }
+
+    def setDouble(index: Int, value: Rep[Double]): Unit = {
+        locals(index) = value.asInstanceOf[Rep[Object]]
+    }
+
+    def getParentFrame(level: Int): Frame = {
+        assert(level >= 0);
+        if (level == 0) {
+            return this;
+        } else {
+            return parent.getParentFrame(level - 1);
+        }
+    }
+
+    def getTopFrame(): Frame = {
+        val parentFrame = parent
+        if (parentFrame == null) {
+            return this;
+        } else {
+            return parentFrame.getTopFrame();
+        }
+    }
+
+    def getArguments(argOffset: Int): Rep[Array[Object]] = {
+        return getObject(argOffset).asInstanceOf[Rep[Array[Object]]]; // TODO: dynamic cast
+    }
+
+    def size: Int = {
+        return numLocals//locals.length;
+    }
+    
+}
 
 
 
@@ -1529,7 +1608,8 @@ with InterpreterFrame {
     import InterpreterFrame._
 
     var bci: Int = _
-    var parentFrame: InterpreterFrame = parent
+
+    var returnValue: Rep[Object] = _
 
     assert(additionalStackSpace >= 0);
 
@@ -1547,9 +1627,6 @@ with InterpreterFrame {
     def create(method: ResolvedJavaMethod, hasReceiver: Boolean, additionalStackSpace: Int, useParentArguments: Boolean): InterpreterFrame = {
         val frame = new InterpreterFrame_Str(method, this, additionalStackSpace);
 
-        frame.locals = reflect("new Array[Object]("+frame.numLocals+")")
-        frame.primitiveLocals = reflect("new Array[Long]("+frame.numLocals+")")
-
         if (useParentArguments) {
             val length = method.signature().argumentSlots(hasReceiver);
             assert(length >= 0);
@@ -1566,9 +1643,11 @@ with InterpreterFrame {
 
     def copy() = {
       val frame = new InterpreterFrame_Str(method, parent, additionalStackSpace);
-      frame.locals = locals
-      frame.primitiveLocals = primitiveLocals
-      frame bci = bci
+      System.arraycopy(locals, 0, frame.locals, 0, locals.length)
+      //frame.locals = locals
+      //frame.primitiveLocals = primitiveLocals
+      frame.returnValue = returnValue
+      frame.bci = bci
       frame.tos = tos
       frame
     }
@@ -1593,28 +1672,27 @@ with InterpreterFrame {
     }
 
     private def copyArguments(dest: InterpreterFrame_Str, length: Int): Unit = {
-        reflect("{ System.arraycopy("+locals+", "+tosSingle(length - 1)+", "+dest.locals+", "+BASE_LENGTH+", "+length+"); " +
-          "System.arraycopy("+primitiveLocals+", "+tosSingle(length - 1)+", "+dest.primitiveLocals+", "+BASE_LENGTH+", "+length+") }")
+        System.arraycopy(locals, tosSingle(length - 1), dest.locals, BASE_LENGTH, length)
     }
 
 
     def getReturnValue(): Rep[Object] = {
-      reflect("returnValue")
+      returnValue
     }
     def setReturnValueObject(value: Rep[Object]): Unit = {
-      reflect("returnValue = " + value)
+      returnValue = value
     }
     def setReturnValueInt(value: Rep[Int]): Unit = {
-      reflect("returnValue = " + value)
+      returnValue = value.asInstanceOf[Rep[Object]]
     }
     def setReturnValueLong(value: Rep[Long]): Unit = {
-      reflect("returnValue = " + value)
+      returnValue = value.asInstanceOf[Rep[Object]]
     }
     def setReturnValueFloat(value: Rep[Float]): Unit = {
-      reflect("returnValue = " + value)
+      returnValue = value.asInstanceOf[Rep[Object]]
     }
     def setReturnValueDouble(value: Rep[Double]): Unit = {
-      reflect("returnValue = " + value)
+      returnValue = value.asInstanceOf[Rep[Object]]
     }
 
     def peekReceiver(method: ResolvedJavaMethod): Rep[Object] = {
@@ -1888,12 +1966,13 @@ with InterpreterFrame {
     def getParentFrame(): InterpreterFrame = {
         //return getObject(PARENT_FRAME_SLOT).asInstanceOf[InterpreterFrame];
         //throw new Exception("not supported")
-        parentFrame
+        parent.asInstanceOf[InterpreterFrame]
     }
 
     def dispose(): Unit = {
         // Clear out references in locals array.
-        reflect("Arrays.fill("+locals+", null)")
+        Arrays.fill(locals.asInstanceOf[Array[Object]], null)
+        returnValue = null
     }
 
 /*    override def toString(): String = {

@@ -146,10 +146,10 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
     val tos = frame.stackTos
     if_ (c) {
       assert(tos == frame.stackTos, "illegal stack change (then branch)")
-      exec(frame.copy, a)
+      exec(frame, a)
     }{
       assert(tos == frame.stackTos, "illegal stack change (else branch)")
-      exec(frame.copy, b)
+      exec(frame, b)
     }
   }
 
@@ -175,7 +175,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
 
   def retn() = local { (frame, bs) =>
 
-    val parentFrame = frame.getParentFrame    
+    val parentFrame = frame.getParentFrame
 
     //println(frame.getMethod)
     //println(frame)

@@ -422,7 +422,7 @@ trait Base_Str extends Base {
 
 
   def unit(x: Null): Rep[Object] = Rep("null")
-  def unit(x: Object): Rep[Object] = Rep(x.toString)
+  def unit(x: Object): Rep[Object] = Rep("Const("+x.toString+")")
 
 
   def byteToInt(x: Rep[Byte]): Rep[Int] = reflect(x+".toInt")

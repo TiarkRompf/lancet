@@ -79,10 +79,7 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
 
             var rootFrame: InterpreterFrame_Str = null // nativeFrame
             if (rootFrame == null) {
-              val numLocals = 
               rootFrame = new InterpreterFrame_Str(rootMethod, signature.argumentSlots(true));
-              rootFrame.locals = reflect("new Array[Object]("+numLocals+")")
-              rootFrame.primitiveLocals = reflect("new Array[Long]("+numLocals+")")
               rootFrame.pushObject(unit(this));
               rootFrame.pushObject(unit(method));
               rootFrame.pushObject(unit(boxedArguments));
@@ -154,8 +151,8 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
       
       // decision to make: explore block afresh or generate call to existing one
 
-      worklist = worklist :+ frame.asInstanceOf[InterpreterFrame_Str]//.copy
-      reflect("block_"+frame.getBCI()+"()")
+      worklist = worklist :+ (frame.asInstanceOf[InterpreterFrame_Str].copy)
+      reflect("block_"+frame.getBCI()+"() // "+frame.getMethod + " - " + frame.getMethod().signature().asString())
       //unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
     }
 
@@ -173,17 +170,45 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
         var frame = worklist.head
         worklist = worklist.tail
 
-        if (frame != root) {
+        if (frame.getParentFrame != null) {
           val bci = frame.getBCI()
           val bs = new BytecodeStream(frame.getMethod.code())
           //bs.setBCI(globalFrame.getBCI())
 //          println("def block_"+bci+"() { // *** begin block " + bci + " " + frame.getMethod + " - " + frame.getMethod().signature().asString())
           println("// *** begin block " + bci + " " + frame.getMethod + " - " + frame.getMethod().signature().asString())          
-          executeBlock(frame, bs, bci)
+          println("// *** stack " + frame.asInstanceOf[InterpreterFrame_Str].locals.mkString(","))
+            executeBlock(frame, bs, bci)
 //          println("} // *** end block " + bci + " " + frame.getMethod + " - " + frame.getMethod().signature().asString())
         }
       }
     }
+
+
+  override def retn() = local { (frame, bs) =>
+
+    // create copy -- will be pushing values into parent frame !!
+
+    val parentFrame = frame.getParentFrame.asInstanceOf[InterpreterFrame_Str].copy
+
+
+    //println(frame.getMethod)
+    //println(frame)
+    //println(globalFrame)
+
+    val returnValue = frame.getReturnValue()
+    popFrame(frame)
+/*    
+    println("returning from " + frame.getMethod + " to " + parentFrame.getMethod + 
+      " bci " + parentFrame.getBCI + 
+      " tos " + parentFrame.getStackTop + 
+      " space " + parentFrame.numLocals + 
+      " value " + returnValue + 
+      " kind " + frame.getMethod.signature().returnKind)
+*/
+    pushAsObjectInternal(parentFrame, frame.getMethod.signature().returnKind(), returnValue);
+
+    exec(parentFrame)
+  }
 
 
     // ---------- block / statement level ----------
