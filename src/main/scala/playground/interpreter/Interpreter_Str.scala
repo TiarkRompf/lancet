@@ -58,6 +58,9 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
 
     def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Str(m)
 
+    override def trace(level: Int, message: String)  = super.trace(level, "// " + message)
+
+
     // ---------- high level execution loop ----------
 
     //@Override
