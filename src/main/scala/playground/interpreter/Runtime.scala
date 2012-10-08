@@ -53,7 +53,7 @@ class HasUnsafe {
 }
 
 
-trait InterpreterUniverse extends Base {
+trait RuntimeUniverse extends Base {
 
 trait Runtime {
   def invoke(method: ResolvedJavaMethod, args: Array[Rep[Object]]): Rep[Object]
@@ -104,77 +104,6 @@ trait Runtime {
   def resolveBase(base: Rep[Object], field: ResolvedJavaField): Rep[Object] //used?
 }
 
+} 
 
 
-
-trait Frame {
-  def getObject(index: Int): Rep[Object]
-  def setObject(index: Int, value: Rep[Object]): Unit
-  def getFloat(index: Int): Rep[Float]
-  def setFloat(index: Int, value: Rep[Float]): Unit
-  def getLong(index: Int): Rep[Long]
-  def setLong(index: Int, value: Rep[Long]): Unit
-  def getInt(index: Int): Rep[Int]
-  def setInt(index: Int, value: Rep[Int]): Unit
-  def getDouble(index: Int): Rep[Double]
-  def setDouble(index: Int, value: Rep[Double]): Unit
-  def getParentFrame(level: Int): Frame // will not work! (dynamic)
-  def getTopFrame(): Frame
-  def getArguments(argOffset: Int): Rep[Array[Object]]
-  def size: Int
-}
-
-trait InterpreterFrame extends Frame {
-  def create(method: ResolvedJavaMethod, hasReceiver: Boolean, additionalStackSpace: Int, useParentArguments: Boolean): InterpreterFrame
-  def copy: InterpreterFrame
-  def resolveLocalIndex(index: Int): Int
-  def depth(): Int
-  def stackTos(): Int
-  def getReturnValue(): Rep[Object]
-  def setReturnValueObject(value: Rep[Object]): Unit
-  def setReturnValueInt(value: Rep[Int]): Unit
-  def setReturnValueLong(value: Rep[Long]): Unit
-  def setReturnValueFloat(value: Rep[Float]): Unit
-  def setReturnValueDouble(value: Rep[Double]): Unit
-  def peekReceiver(method: ResolvedJavaMethod): Rep[Object]
-  //def pushBoth(oValue: Rep[Object], intValue: Rep[Int]): Unit
-  //def pushBoth(oValue: Rep[Object], longValue: Rep[Long]): Unit
-  def pushObject(value: Rep[Object]): Unit
-  def pushBoolean(value: Rep[Boolean]): Unit
-  def pushByte(value: Rep[Byte]): Unit
-  def pushShort(value: Rep[Short]): Unit
-  def pushChar(value: Rep[Char]): Unit
-  def pushInt(value: Rep[Int]): Unit
-  def pushDouble(value: Rep[Double]): Unit
-  def pushFloat(value: Rep[Float]): Unit
-  def pushLong(value: Rep[Long]): Unit
-  def popBoolean(): Rep[Boolean]
-  def popByte(): Rep[Byte]
-  def popChar(): Rep[Char]
-  def popShort(): Rep[Short]
-  def popInt(): Rep[Int]
-  def popDouble(): Rep[Double]
-  def popFloat(): Rep[Float]
-  def popLong(): Rep[Long]
-  def popObject(): Rep[Object]
-  def swapSingle(): Unit
-  def dupx1(): Unit
-  def dup2x1(): Unit
-  def dup2x2(): Unit
-  def dupx2(): Unit
-  def dup(length: Int): Unit
-  def tosSingle(offset: Int): Int
-  def getStackTop(): Int
-  def pushVoid(count: Int): Unit
-  def popVoid(count: Int): Unit
-  def getConstantPool(): ConstantPool
-  def setMethod(method: ResolvedJavaMethod): Unit
-  def getMethod(): ResolvedJavaMethod
-  def setBCI(bci: Int): Unit
-  def getBCI(): Int
-  def getParentFrame(): InterpreterFrame // will not work! (dynamic)
-  def dispose(): Unit
-  def popStack(): Unit
-}
-
-}

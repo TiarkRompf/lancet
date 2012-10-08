@@ -46,6 +46,19 @@ import com.oracle.graal.bytecode._;
 
   abstract interpretation / lattice ops
 
+
+  - unique ids for blocks (including inlined)
+  - support exceptions
+
+
+  - generate and compile working scala
+  - compile to js, koch snowflake
+  - generate graal ir
+
+  - lms: structured nodes, simplify, object abstraction
+  - join control flow, lattice ops
+
+
 */
 
 
