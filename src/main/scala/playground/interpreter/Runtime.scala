@@ -53,7 +53,7 @@ class HasUnsafe {
 }
 
 
-trait RuntimeUniverse extends Base {
+trait RuntimeUniverse extends Core {
 
 trait Runtime {
   def invoke(method: ResolvedJavaMethod, args: Array[Rep[Object]]): Rep[Object]

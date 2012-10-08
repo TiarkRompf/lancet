@@ -34,7 +34,7 @@ import com.oracle.graal.bytecode._;
 
 
 
-trait RuntimeUniverse_Str extends Base_Str with RuntimeUniverse {
+trait RuntimeUniverse_Str extends Core_Str with RuntimeUniverse {
 
 object unsafe {
 

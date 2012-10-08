@@ -34,7 +34,7 @@ import com.oracle.graal.bytecode._;
 
 
 
-trait RuntimeUniverse_Impl extends Base_Impl with RuntimeUniverse {
+trait RuntimeUniverse_Impl extends Core_Impl with RuntimeUniverse {
 
 object Runtime extends HasUnsafe
 
