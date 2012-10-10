@@ -124,6 +124,9 @@ trait Core_Impl extends Base_Impl with Core {
   def doubleEqual(x: Double, y: Double): Boolean = x == y
   def doubleNotEqual(x: Double, y: Double): Boolean = x != y
 
+  def objectEqual(x: Object, y: Object): Boolean = x eq y
+  def objectNotEqual(x: Object, y: Object): Boolean = x ne y
+
   def if_[T](x: Boolean)(y: =>T)(z: =>T): T = if (x) y else z
 
 }

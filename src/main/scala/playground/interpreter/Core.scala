@@ -245,6 +245,15 @@ trait Core extends Base {
   def doubleNotEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean]
 
 
+  implicit def objectOps(x: Rep[Object]) = new ObjectOps(x)
+  class ObjectOps(x: Rep[Object]) {
+    def ===(y: Rep[Object]): Rep[Boolean] = objectEqual(x,y)
+    def !==(y: Rep[Object]): Rep[Boolean] = objectNotEqual(x,y)
+  }
+
+  def objectEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean]
+  def objectNotEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean]
+
   def if_[T](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T]
 
 }

@@ -161,6 +161,8 @@ trait Core_StrCommon extends Core {
   def doubleEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect(x," == ",y)
   def doubleNotEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect(x," != ",y)
 
+  def objectEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflect(x," eq ",y)
+  def objectNotEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflect(x," ne ",y)
 
   def if_[T](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] =
     reflect("if (",x,") ",reify(y)," else ",reify(z))
@@ -191,7 +193,7 @@ trait Base_Opt extends Base {
     val r = withOutput(new PrintStream(bstream))(func)
     bstream.toString + r
   }
-  def withOutput(out: PrintStream)(func: => Unit): Unit = {
+  def withOutput(out: PrintStream)(func: => Any): Any = {
     val oldStdOut = System.out
     val oldStdErr = System.err
     try {
@@ -608,8 +610,19 @@ trait Core_Opt extends Base_Opt with Core_StrCommon {
   }
 
 
-  override def if_[T](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] =
-    reflect("if ("+x+") "+reify(y)+" else "+reify(z))
+  // object ops
+  override def objectEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = (x,y) match {
+    case (Const(x), Const(y)) => x eq y
+    case _ => super.objectEqual(x,y)
+  }
+  override def objectNotEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = (x,y) match {
+    case (Const(x), Const(y)) => x ne y
+    case _ => super.objectNotEqual(x,y)
+  }
 
+  override def if_[T](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] = x match {
+    case Const(x) => if (x) y else z
+    case _ => super.if_(x)(y)(z)
+  }
 }
 

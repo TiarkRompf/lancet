@@ -401,7 +401,7 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
     }
 
     def nullCheck(value: Rep[Object]): Rep[Object] = 
-      reflect("if ("+value+" == null) throw new NullPointerException() else "+value)
+      if_(value === unit(null)) (reflect[Object]("throw new NullPointerException()")) (value)
 
     def checkArrayType(array: Rep[Object], arrayType: Class[_]): Unit = reflect("""{
         if (arrayType == null) {
@@ -438,7 +438,7 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
     }
 
     def resolveBase(base: Rep[Object], field: ResolvedJavaField): Rep[Object] = 
-      reflect("if ("+base+" == null) "+field.holder().toJava()+" else "+base)
+      if_ (base === unit(null)) (unit(field.holder().toJava())) (base)
 
 }
 
