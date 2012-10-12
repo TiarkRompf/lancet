@@ -33,26 +33,30 @@ import com.oracle.graal.hotspot.meta._;
 import com.oracle.graal.bytecode._;
 
 
-trait RuntimeUniverse_Simple extends Core_Simple with RuntimeUniverse_Str {
 
-  trait Unsafe_Simple extends Unsafe_Str
-  object unsafe extends Unsafe_Simple
-}
+trait RuntimeUniverse_Opt extends Core_Opt with RuntimeUniverse_Str {
+
+object static extends HasUnsafe
+object unsafe extends Unsafe_Opt
 
 
-trait RuntimeUniverse_Str extends Core_Str with RuntimeUniverse {
+trait Unsafe_Opt extends Unsafe_Str {
 
-def unsafe: Unsafe_Str
-
-trait Unsafe_Str {
-
+  /*
   def monitorEnter(value: Rep[Object]): Rep[Unit] = 
     reflect("unsafe.monitorEnter("+value+")")
   def monitorExit(value: Rep[Object]): Rep[Unit] = 
     reflect("unsafe.monitorExit("+value+")")
+  */
 
-  def getObject(base: Rep[Object], offset: Rep[Long]): Rep[Object] = 
-    reflect("unsafe.getObject("+base+","+offset+")")
+  // TODO: static reads only safe for final fields
+  override def getObject(base: Rep[Object], offset: Rep[Long]): Rep[Object] = (eval(base), eval(offset)) match {
+    case (Const(base), Const(offset)) => unit(static.unsafe.getObject(base,offset))
+    case (Partial(fs), Const(offset)) => fs.getOrElse(offset.toString, unit(null)).asInstanceOf[Rep[Object]]
+    case _ => super.getObject(base,offset)
+  }
+    
+/*
   def getObjectVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Object] = 
     reflect("unsafe.getObjectVolatile("+base+","+offset+")")
 
@@ -75,9 +79,16 @@ trait Unsafe_Str {
     reflect("unsafe.getShort("+base+","+offset+")")
   def getShortVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Short] = 
     reflect("unsafe.getShortVolatile("+base+","+offset+")")
+*/
 
-  def getInt(base: Rep[Object], offset: Rep[Long]): Rep[Int] = 
-    reflect("unsafe.getInt("+base+","+offset+")")
+  // TODO: static reads only safe for final fields
+  override def getInt(base: Rep[Object], offset: Rep[Long]): Rep[Int] = (eval(base), eval(offset)) match {
+    case (Const(base), Const(offset)) => unit(static.unsafe.getInt(base,offset))
+    case (Partial(fs), Const(offset)) => fs.getOrElse(offset.toString, unit(0)).asInstanceOf[Rep[Int]]
+    case _ => super.getInt(base, offset)
+  }
+
+/*
   def getIntVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Int] = 
     reflect("unsafe.getIntVolatile("+base+","+offset+")")
 
@@ -95,10 +106,18 @@ trait Unsafe_Str {
     reflect("unsafe.getDouble("+base+","+offset+")")
   def getDoubleVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Double] = 
     reflect("unsafe.getDoubleVolatile("+base+","+offset+")")
+*/
 
+  override def putObject(base: Rep[Object], offset: Rep[Long], value: Rep[Object]): Rep[Unit] = {
+    val r = super.putObject(base, offset, value)
 
-  def putObject(base: Rep[Object], offset: Rep[Long], value: Rep[Object]): Rep[Unit] = 
-    reflect("unsafe.putObject("+base+","+offset+", "+value+")")
+    val s = base match { case Dyn(s) => s }
+    val Partial(fs) = store(s)
+    store += (s -> Partial(fs + (offset.toString -> value)))
+    r
+
+  }
+/*
   def putObjectVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Object]): Rep[Unit] = 
     reflect("unsafe.putObjectVolatile("+base+","+offset+", "+value+")")
 
@@ -141,17 +160,24 @@ trait Unsafe_Str {
     reflect("unsafe.putDouble("+base+","+offset+", "+value+")")
   def putDoubleVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Double]): Rep[Unit] = 
     reflect("unsafe.putDoubleVolatile("+base+","+offset+", "+value+")")
+*/
 
 
-  def allocateInstance(clazz: Class[_]): Rep[Object] = 
-    reflect("unsafe.allocateInstance("+clazz+")")
+
+  override def allocateInstance(clazz: Class[_]): Rep[Object] = {
+    import scala.collection.immutable.Map
+
+    val r@Dyn(s) = super.allocateInstance(clazz)
+    //rewrite(s+" eq null", Static(false))
+    store += (s -> Partial(Map("alloc" -> r, "clazz" -> unit(clazz))))
+    r
+  }
 
 }
 
+class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProvider) {
 
-class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
-
-    def invoke(method: ResolvedJavaMethod, args: Array[Rep[Object]]): Rep[Object] =
+    /*def invoke(method: ResolvedJavaMethod, args: Array[Rep[Object]]): Rep[Object] =
         reflect(""+method+".invoke("+args.mkString(",")+")")
 
     def typeIsInstance(typ: ResolvedJavaType, value: Rep[Object]): Rep[Boolean] = {
@@ -170,21 +196,35 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
 
     def newObject(typ: ResolvedJavaType): Rep[Object] = { //} throws InstantiationException {
         unsafe.allocateInstance(typ.toJava());
+    }*/
+
+    override def newArray(typ: ResolvedJavaType, size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
+      import scala.collection.immutable.Map
+
+      val r@Dyn(s) = super.newArray(typ, size)
+      store += (s -> Partial(Map("alloc" -> r, "clazz" -> unit(typ.arrayOf.toJava), "size" -> size)))
+      r
     }
 
-    def newArray(typ: ResolvedJavaType, size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
-        reflect("new Array["+typ.toJava()+"]("+size+")");
+    override def newArray(typ: Class[_], size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
+      import scala.collection.immutable.Map
+
+      val r@Dyn(s) = super.newArray(typ, size)
+      //rewrite(s+" eq null", Static(false))
+      store += (s -> Partial(Map("alloc" -> r, "clazz" -> unit(java.lang.reflect.Array.newInstance(typ, 0).getClass), "size" -> size)))
+      r
     }
 
-    def newArray(typ: Class[_], size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
-        reflect("new Array["+typ+"]("+size+")");
+    override def newMultiArray(typ: ResolvedJavaType, dimensions: Array[Rep[Int]]): Rep[Object] = { // throws InstantiationException {
+      import scala.collection.immutable.Map
+
+      val r@Dyn(s) = super.newMultiArray(typ, dimensions)
+      //rewrite(s+" eq null", Static(false))
+      store += (s -> Partial(Map("alloc" -> r, "clazz" -> unit(java.lang.reflect.Array.newInstance(typ.toJava, dimensions.map(_=>0):_*).getClass))))
+      r
     }
 
-    def newMultiArray(typ: ResolvedJavaType, dimensions: Array[Rep[Int]]): Rep[Object] = { // throws InstantiationException {
-        reflect("new Array["+typ.toJava()+"]("+dimensions.mkString(",")+")");
-    }
-
-    def getFieldObject(base: Rep[Object], field: ResolvedJavaField): Rep[AnyRef] = {
+    /*def getFieldObject(base: Rep[Object], field: ResolvedJavaField): Rep[AnyRef] = {
         val offset = resolveOffset(field);
         if (isVolatile(field)) {
             unsafe.getObjectVolatile(resolveBase(base, field), offset)
@@ -406,39 +446,34 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
     def nullCheck(value: Rep[Object]): Rep[Object] = 
       if_(value === unit(null)) (reflect[Object]("throw new NullPointerException()")) (value)
 
-    def checkArrayType(array: Rep[Object], arrayType: Class[_]): Unit = {
-        val cond = reflect[Boolean]("!array.getClass().getComponentType().isAssignableFrom("+arrayType+")")
-        if_(cond) (reflect[Unit]("throw new ArrayStoreException("+arrayType.getName()+")")) (liftConst())
-    }
+    def checkArrayType(array: Rep[Object], arrayType: Class[_]): Unit = reflect("""{
+        if (arrayType == null) {
+            return;
+        }
+        val typ: ResolvedJavaType = metaProvider.getResolvedJavaType(array.getClass()).componentType();
+        if (!typ.toJava().isAssignableFrom(arrayType)) {
+            throw new ArrayStoreException(arrayType.getName());
+        }
+    }""")
 
-    def checkArray(array: Rep[Object], index: Rep[Long]): Unit = {
-        nullCheck(array)
-        val typ = reflect[Class[_]](""+array+".getClass()")
-        val cond = reflect[Boolean]("!"+typ+".isArrayClass()")
-        if_(cond) (reflect[Unit]("throw new ArrayStoreException("+typ+".getName()")) (liftConst());
-        if_(index < 0 || index >= arrayLength(array)) {
-            reflect[Unit]("throw new ArrayIndexOutOfBoundsException("+index.toInt+")");
-        } (liftConst())
-    }
+    def checkArray(array: Rep[Object], index: Rep[Long]): Unit = reflect("""{
+        nullCheck(array);
+        val typ: ResolvedJavaType = metaProvider.getResolvedJavaType(array.getClass());
+        if (!typ.isArrayClass()) {
+            throw new ArrayStoreException(array.getClass().getName());
+        }
+        if (index < 0 || index >= arrayLength(array)) {
+            throw new ArrayIndexOutOfBoundsException(index.toInt);
+        }
+    }""")
+    */
 
-    def arrayLength(array: Rep[Object]): Rep[Int] = {
-        assert(array != null);
-        return reflect("java.lang.reflect.Array.getLength("+array+")");
+    override def arrayLength(array: Rep[Object]): Rep[Int] = eval(array) match {
+      case Const(array) => java.lang.reflect.Array.getLength(array)
+      case Partial(fs) => fs("size").asInstanceOf[Rep[Int]]
+      case _ => super.arrayLength(array)
     }
-
-    def isVolatile(field: ResolvedJavaField): Boolean = {
-        return Modifier.isVolatile(field.accessFlags());
-    }
-
-    def resolveOffset(field: ResolvedJavaField): Long = {
-        return field.asInstanceOf[HotSpotResolvedJavaField].offset();
-    }
-
-    def resolveBase(base: Rep[Object], field: ResolvedJavaField): Rep[Object] = 
-      if_ (base === unit(null)) (unit(field.holder().toJava())) (base)
 
 }
-
-
 
 }

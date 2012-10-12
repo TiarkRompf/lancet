@@ -592,7 +592,7 @@ with InterpreterFrame {
     def dispose(): Unit = {
         // Clear out references in locals array.
         Arrays.fill(locals.asInstanceOf[Array[Object]], null)
-        returnValue = null
+        returnValue = null.asInstanceOf[Rep[Object]]
     }
 
 /*    override def toString(): String = {

@@ -62,10 +62,30 @@ import com.oracle.graal.bytecode._;
 */
 
 
+final class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniverse_Opt {
+    override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m)
+    override def objectGetClass(receiver: Rep[Object]): Option[Class[_]] = {
+      eval(receiver) match {
+        case Partial(fs) => 
+          val Const(clazz: Class[_]) = eval(fs("clazz"))
+          Some(clazz)
+        case Const(x) =>
+          val clazz = x.getClass
+          Some(clazz)
+        case _ =>
+          None
+      }        
+    }
+
+}
+
+
+final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with RuntimeUniverse_Simple
+
 
 
 //@SuppressWarnings("static-method")
-final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInterpreter_Common {
+trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInterpreter_Common {
 
     import BytecodeInterpreter._
 
@@ -163,16 +183,42 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
 
     var worklist: IndexedSeq[InterpreterFrame] = Vector.empty
 
+    var budget = 50000
+
+    var emitControlFlow = true
+
     def exec(frame: InterpreterFrame): Rep[Unit] = { // called internally to initiate control transfer
+      
+      if (budget <= 0) {
+        println("*** BUDGET EXCEEDED ***")
+        return unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
+      }
+
+      val method = frame.getMethod()
+      if (getContext(frame).drop(1).exists(_.getMethod() == method)) { // recursive (TODO: faster test)
+        println("*** RECURSIVE: "+method+" ***")
+        return unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
+      }
+
+      budget -= 1
       
       // decision to make: explore block afresh or generate call to existing one
 
       worklist = worklist :+ (frame.asInstanceOf[InterpreterFrame_Str].copy)
-      reflect("block_"+frame.getBCI()+"() // "+frame.getMethod + " - " + frame.getMethod().signature().asString())
-      //unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
+
+      if (emitControlFlow && worklist.tail.nonEmpty)
+        reflect("goto "+contextKey(frame))
+      else
+        unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
     }
 
 
+    def getContext(frame: InterpreterFrame): scala.List[InterpreterFrame] =
+      if (frame == null) Nil else frame :: getContext(frame.getParentFrame)
+
+    def contextKey(frame: InterpreterFrame) = getContext(frame).map(frameKey).mkString(" // ")
+
+    def frameKey(frame: InterpreterFrame) = ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().signature().asString()).replace("HotSpotMethod","")
 
     // TODO: can't translate blocks just like that to Scala methods: 
     // next block may refer to stuff defined in earlier block (need nesting, 
@@ -182,19 +228,36 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
     // calls: want to inline functions but not generally duplicate local blocks
 
     private def loop(root: InterpreterFrame): Unit = {// throws Throwable {
+
+      val info = new scala.collection.mutable.HashMap[String, Int]
+
       while (worklist.nonEmpty) {
         var frame = worklist.head
         worklist = worklist.tail
 
-        if (frame.getParentFrame != null) {
+        val key = contextKey(frame)
+        val seen = info.getOrElse(contextKey(frame), 0)
+
+        info(key) = seen + 1
+
+        if (seen > 0) {
+          println("*** SEEN " + seen + ": " + key)
+        }
+
+        val seenEnough = seen > 3  // TODO: this is just a random cutoff, need to do fixpoint iteration
+
+        if (!seenEnough && frame.getParentFrame != null) {
           val bci = frame.getBCI()
           val bs = new BytecodeStream(frame.getMethod.code())
           //bs.setBCI(globalFrame.getBCI())
-//          println("def block_"+bci+"() { // *** begin block " + bci + " " + frame.getMethod + " - " + frame.getMethod().signature().asString())
-          println("// *** begin block " + bci + " " + frame.getMethod + " - " + frame.getMethod().signature().asString())          
-          println("// *** stack " + frame.asInstanceOf[InterpreterFrame_Str].locals.mkString(","))
-            executeBlock(frame, bs, bci)
-//          println("} // *** end block " + bci + " " + frame.getMethod + " - " + frame.getMethod().signature().asString())
+
+          def frameStr(frame: InterpreterFrame) = getContext(frame).map(frame => ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().signature().asString()).replace("HotSpotMethod",""))
+
+          if (emitControlFlow) {
+            println("// *** begin block " + key)
+            //println("// *** stack " + frame.asInstanceOf[InterpreterFrame_Str].locals.mkString(","))
+          }
+          executeBlock(frame, bs, bci)
         }
       }
     }
@@ -205,24 +268,9 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
     // create copy -- will be pushing values into parent frame !!
 
     val parentFrame = frame.getParentFrame.asInstanceOf[InterpreterFrame_Str].copy
-
-
-    //println(frame.getMethod)
-    //println(frame)
-    //println(globalFrame)
-
     val returnValue = frame.getReturnValue()
     popFrame(frame)
-/*    
-    println("returning from " + frame.getMethod + " to " + parentFrame.getMethod + 
-      " bci " + parentFrame.getBCI + 
-      " tos " + parentFrame.getStackTop + 
-      " space " + parentFrame.numLocals + 
-      " value " + returnValue + 
-      " kind " + frame.getMethod.signature().returnKind)
-*/
     pushAsObjectInternal(parentFrame, frame.getMethod.signature().returnKind(), returnValue);
-
     exec(parentFrame)
   }
 
@@ -270,10 +318,23 @@ final class BytecodeInterpreter_Str extends InterpreterUniverse_Str with Bytecod
  
     // called by invokeVirtual
 
+    def objectGetClass(receiver: Rep[Object]): Option[Class[_]] = None
+
     def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame = {// throws Throwable {
         val receiver = nullCheck(parent.peekReceiver(m));
 
         // TODO/FIXME
+
+        // get the receiver's class, if possible
+
+        objectGetClass(receiver) match {
+          case Some(clazz) => 
+            val method = resolveType(parent, clazz).resolveMethodImpl(m);
+            return invokeDirect(parent, method, true)
+          case _ =>
+        }
+
+        //val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethodImpl(m);
 
         val parameters = popArgumentsAsObject(parent, m, true);
         val returnValue = runtimeInterface.invoke(m, parameters);

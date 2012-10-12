@@ -68,8 +68,8 @@ trait BytecodeInterpreter extends InterpreterUniverse {
 
 object BytecodeInterpreter {
     final val OPTION_MAX_STACK_SIZE = "maxStackSize";
-    final val TRACE = true;
-    final val TRACE_BYTE_CODE = true;
+    //final val TRACE = false;
+    //final val TRACE_BYTE_CODE = false;
 
     final val DEFAULT_MAX_STACK_SIZE = 1500;
 
@@ -94,6 +94,9 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
   def runtimeInterface: Runtime
   def metaAccessProvider: MetaAccessProvider
   def maxStackFrames: Int
+
+  var TRACE = false;
+  var TRACE_BYTE_CODE = false;
 
 
   protected class MethodRedirectionInfo(val receiver: InterpreterCallable)
