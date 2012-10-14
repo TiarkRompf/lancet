@@ -1225,7 +1225,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
     def pushAsObject(frame: InterpreterFrame, typeKind: Kind, value: Rep[Object]): Int = {
         typeKind match {
             case Kind.Int =>
-                frame.pushInt(value.asInstanceOf[Rep[Int]]);
+                frame.pushInt(value.asInstanceOfRep[Int]); // TODO
             case Kind.Long =>
                 frame.pushLong(value.asInstanceOf[Rep[Long]]);
                 return 2;

@@ -14,7 +14,7 @@ trait Base_Opt extends Base_Str {
 
   def emit(s: String) = println("          "+s)
 
-  def reflect[T](s: Any*): Rep[T] = { 
+  def reflect[T:TypeRep](s: Any*): Rep[T] = { 
     val rhs = s.mkString("")
     exprs.getOrElse(rhs, {
       val x = fresh; emit("val "+x+" = "+s.mkString("")); Dyn[T](x)
@@ -73,7 +73,7 @@ trait Base_Opt extends Base_Str {
 
 trait Core_Opt extends Base_Opt with Core_Str {
 
-  def liftConst[T](x:T): Rep[T] = Static(x)
+  def liftConst[T:TypeRep](x:T): Rep[T] = Static(x)
 
   // byte/char/short conversion
 
@@ -479,7 +479,7 @@ trait Core_Opt extends Base_Opt with Core_Str {
     case _ => super.objectNotEqual(x,y)
   }
 
-  override def if_[T](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] = eval(x) match {
+  override def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] = eval(x) match {
     case Const(x) => if (x) y else z
     case _ => super.if_(x)(y)(z)
   }

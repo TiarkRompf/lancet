@@ -3,18 +3,38 @@ package playground.interpreter
 
 trait Base_Str extends Base {
 
-  def reflect[T](s: Any*): Rep[T]
+  def reflect[T:TypeRep](s: Any*): Rep[T]
   def reify[T](x: => Rep[T]): String
 
-  def liftConst[T](x:T): Rep[T]
+  def liftConst[T:TypeRep](x:T): Rep[T]
 
-  implicit def repManifest[T:Manifest]: Manifest[Rep[T]]
+  def repManifest[T:Manifest]: Manifest[Rep[T]]
+
+
+  case class TypeRep[T](s: String) { override def toString = s }
+
+  implicit def anyType[T:Manifest] = new TypeRep[T](manifest[T].toString)
+
+  implicit object booleanType extends TypeRep[Boolean]("Boolean")
+  implicit object byteType extends TypeRep[Byte]("Byte")
+  implicit object charType extends TypeRep[Char]("Char")
+  implicit object shortType extends TypeRep[Short]("Short")
+  implicit object intType extends TypeRep[Int]("Int")
+  implicit object longType extends TypeRep[Long]("Long")
+  implicit object floatType extends TypeRep[Float]("Float")
+  implicit object doubleType extends TypeRep[Double]("Double")
+  implicit object objectType extends TypeRep[Object]("Object")
+
+  implicit object unitType extends TypeRep[Unit]("Unit")
+
+  def typeRep[T:TypeRep]: TypeRep[T] = implicitly[TypeRep[T]]
+
 }
 
 
 trait Base_Simple extends Base_Str {
 
-  case class Rep[+T](s: String) { override def toString = s; def +(s: String) = toString+s }
+  case class Rep[+T:TypeRep](s: String) { override def toString = s; def typ: TypeRep[_] = implicitly[TypeRep[T]] }
   def repManifest[T:Manifest]: Manifest[Rep[T]] = manifest[Rep[T]]
 
   var nSyms = 0
@@ -22,10 +42,20 @@ trait Base_Simple extends Base_Str {
 
   def emit(s: String) = println("          "+s)
 
-  def reflect[T](s: Any*): Rep[T] = { val x = fresh; emit("val "+x+" = "+s.mkString("")); Rep(x) }
+  def reflect[T:TypeRep](s: Any*): Rep[T] = { val x = fresh; emit("val "+x+": "+typeRep[T]+" = "+s.mkString("")); Rep[T](x) }
   def reify[T](x: => Rep[T]): String = "{" + captureOutput(x.s) + "}"
 
-  def liftConst[T](x:T): Rep[T] = Rep(""+x)
+  def liftConst[T:TypeRep](x:T): Rep[T] = x match {
+    case x: Int => Rep[T](""+x)
+    case x: Long => Rep[T](""+x)
+    case x: Double => Rep[T](""+x)
+    // TODO: primitives, arrays
+    case s: String => Rep[T]("\""+s+"\"")
+    case o: Array[Object] => Rep[T]("(null:Array[Object])/*"+x+"*/") // TODO
+    case c: Class[_] => Rep[T]("Class.forName(\""+c.getName+"\")")//Rep[T]("classOf["+c.getName+"]")
+    case o: Object => Rep[T]("(null:"+o.getClass.getName+")/*"+x+"*/")
+    case _ => Rep[T](""+x)
+  }
 
   import java.io._
   def captureOutput(func: => Any): String = {
@@ -33,7 +63,7 @@ trait Base_Simple extends Base_Str {
     val r = withOutput(new PrintStream(bstream))(func)
     bstream.toString + r
   }
-  def withOutput(out: PrintStream)(func: => Unit): Unit = {
+  def withOutput(out: PrintStream)(func: => Any): Any = {
     val oldStdOut = System.out
     val oldStdErr = System.err
     try {
@@ -70,112 +100,113 @@ trait Core_Str extends Base_Str {
   def unit(x: Object): Rep[Object] = liftConst(x)
 
 
-  def byteToInt(x: Rep[Byte]): Rep[Int] = reflect(x,".toInt")
-  def charToInt(x: Rep[Char]): Rep[Int] = reflect(x,".toInt")
-  def shortToInt(x: Rep[Short]): Rep[Int] = reflect(x,".toInt")
+  def byteToInt(x: Rep[Byte]): Rep[Int] = reflect[Int](x,".toInt")
+  def charToInt(x: Rep[Char]): Rep[Int] = reflect[Int](x,".toInt")
+  def shortToInt(x: Rep[Short]): Rep[Int] = reflect[Int](x,".toInt")
 
 
-  def intToByte(x: Rep[Int]): Rep[Byte] = reflect(x,".toByte")
-  def intToChar(x: Rep[Int]): Rep[Char] = reflect(x,".toChar")
-  def intToShort(x: Rep[Int]): Rep[Short] = reflect(x,".toShort")
-  def intToInt(x: Rep[Int]): Rep[Int] = reflect(x,".toInt")
-  def intToLong(x: Rep[Int]): Rep[Long] = reflect(x,".toLong")
-  def intToFloat(x: Rep[Int]): Rep[Float] = reflect(x,".toFloat")
-  def intToDouble(x: Rep[Int]): Rep[Double] = reflect(x,".toDouble")
+  def intToByte(x: Rep[Int]): Rep[Byte] = reflect[Byte](x,".toByte")
+  def intToChar(x: Rep[Int]): Rep[Char] = reflect[Char](x,".toChar")
+  def intToShort(x: Rep[Int]): Rep[Short] = reflect[Short](x,".toShort")
+  def intToInt(x: Rep[Int]): Rep[Int] = reflect[Int](x,".toInt")
+  def intToLong(x: Rep[Int]): Rep[Long] = reflect[Long](x,".toLong")
+  def intToFloat(x: Rep[Int]): Rep[Float] = reflect[Float](x,".toFloat")
+  def intToDouble(x: Rep[Int]): Rep[Double] = reflect[Double](x,".toDouble")
 
-  def intNegate(x: Rep[Int]): Rep[Int] = reflect("-",x)
-  def intPlus(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect(x," + ",y)
-  def intMinus(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect(x," - ",y)
-  def intTimes(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect(x," * ",y)
-  def intDiv(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect(x," / ",y)
-  def intMod(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect(x," % ",y)
-  def intAnd(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect(x," & ",y)
-  def intOr(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect(x," | ",y)
-  def intXor(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect(x," ^ ",y)
-  def intShiftLeft(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect(x," << ",y)
-  def intShiftRight(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect(x," >> ",y)
-  def intShiftRightUnsigned(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect(x," >>> ",y)
-  def intLess(x: Rep[Int], y: Rep[Int]): Rep[Boolean] = reflect(x," < ",y)
-  def intLessEqual(x: Rep[Int], y: Rep[Int]): Rep[Boolean] = reflect(x," <= ",y)
-  def intGreater(x: Rep[Int], y: Rep[Int]): Rep[Boolean] = reflect(x," > ",y)
-  def intGreaterEqual(x: Rep[Int], y: Rep[Int]): Rep[Boolean] = reflect(x," >= ",y)
-  def intEqual(x: Rep[Int], y: Rep[Int]): Rep[Boolean] = reflect(x," == ",y)
-  def intNotEqual(x: Rep[Int], y: Rep[Int]): Rep[Boolean] = reflect(x," != ",y)
+  def intNegate(x: Rep[Int]): Rep[Int] = reflect[Int]("-",x)
+  def intPlus(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect[Int](x," + ",y)
+  def intMinus(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect[Int](x," - ",y)
+  def intTimes(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect[Int](x," * ",y)
+  def intDiv(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect[Int](x," / ",y)
+  def intMod(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect[Int](x," % ",y)
+  def intAnd(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect[Int](x," & ",y)
+  def intOr(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect[Int](x," | ",y)
+  def intXor(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect[Int](x," ^ ",y)
+  def intShiftLeft(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect[Int](x," << ",y)
+  def intShiftRight(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect[Int](x," >> ",y)
+  def intShiftRightUnsigned(x: Rep[Int], y: Rep[Int]): Rep[Int] = reflect[Int](x," >>> ",y)
+  def intLess(x: Rep[Int], y: Rep[Int]): Rep[Boolean] = reflect[Boolean](x," < ",y)
+  def intLessEqual(x: Rep[Int], y: Rep[Int]): Rep[Boolean] = reflect[Boolean](x," <= ",y)
+  def intGreater(x: Rep[Int], y: Rep[Int]): Rep[Boolean] = reflect[Boolean](x," > ",y)
+  def intGreaterEqual(x: Rep[Int], y: Rep[Int]): Rep[Boolean] = reflect[Boolean](x," >= ",y)
+  def intEqual(x: Rep[Int], y: Rep[Int]): Rep[Boolean] = reflect[Boolean](x," == ",y)
+  def intNotEqual(x: Rep[Int], y: Rep[Int]): Rep[Boolean] = reflect[Boolean](x," != ",y)
 
-  def longToByte(x: Rep[Long]): Rep[Byte] = reflect(x,".toByte")
-  def longToChar(x: Rep[Long]): Rep[Char] = reflect(x,".toChar")
-  def longToShort(x: Rep[Long]): Rep[Short] = reflect(x,".toShort")
-  def longToInt(x: Rep[Long]): Rep[Int] = reflect(x,".toInt")
-  def longToLong(x: Rep[Long]): Rep[Long] = reflect(x,".toLong")
-  def longToFloat(x: Rep[Long]): Rep[Float] = reflect(x,".toFloat")
-  def longToDouble(x: Rep[Long]): Rep[Double] = reflect(x,".toDouble")
+  def longToByte(x: Rep[Long]): Rep[Byte] = reflect[Byte](x,".toByte")
+  def longToChar(x: Rep[Long]): Rep[Char] = reflect[Char](x,".toChar")
+  def longToShort(x: Rep[Long]): Rep[Short] = reflect[Short](x,".toShort")
+  def longToInt(x: Rep[Long]): Rep[Int] = reflect[Int](x,".toInt")
+  def longToLong(x: Rep[Long]): Rep[Long] = reflect[Long](x,".toLong")
+  def longToFloat(x: Rep[Long]): Rep[Float] = reflect[Float](x,".toFloat")
+  def longToDouble(x: Rep[Long]): Rep[Double] = reflect[Double](x,".toDouble")
 
-  def longNegate(x: Rep[Long]): Rep[Long] = reflect("-",x)
-  def longPlus(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect(x," + ",y)
-  def longMinus(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect(x," - ",y)
-  def longTimes(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect(x," * ",y)
-  def longDiv(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect(x," / ",y)
-  def longMod(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect(x," % ",y)
-  def longAnd(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect(x," & ",y)
-  def longOr(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect(x," | ",y)
-  def longXor(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect(x," ^ ",y)
-  def longShiftLeft(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect(x," << ",y)
-  def longShiftRight(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect(x," >> ",y)
-  def longShiftRightUnsigned(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect(x," >>> ",y)
-  def longLess(x: Rep[Long], y: Rep[Long]): Rep[Boolean] = reflect(x," < ",y)
-  def longLessEqual(x: Rep[Long], y: Rep[Long]): Rep[Boolean] = reflect(x," <= ",y)
-  def longGreater(x: Rep[Long], y: Rep[Long]): Rep[Boolean] = reflect(x," > ",y)
-  def longGreaterEqual(x: Rep[Long], y: Rep[Long]): Rep[Boolean] = reflect(x," >= ",y)
-  def longEqual(x: Rep[Long], y: Rep[Long]): Rep[Boolean] = reflect(x," == ",y)
-  def longNotEqual(x: Rep[Long], y: Rep[Long]): Rep[Boolean] = reflect(x," != ",y)
+  def longNegate(x: Rep[Long]): Rep[Long] = reflect[Long]("-",x)
+  def longPlus(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect[Long](x," + ",y)
+  def longMinus(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect[Long](x," - ",y)
+  def longTimes(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect[Long](x," * ",y)
+  def longDiv(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect[Long](x," / ",y)
+  def longMod(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect[Long](x," % ",y)
+  def longAnd(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect[Long](x," & ",y)
+  def longOr(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect[Long](x," | ",y)
+  def longXor(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect[Long](x," ^ ",y)
+  def longShiftLeft(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect[Long](x," << ",y)
+  def longShiftRight(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect[Long](x," >> ",y)
+  def longShiftRightUnsigned(x: Rep[Long], y: Rep[Long]): Rep[Long] = reflect[Long](x," >>> ",y)
+  def longLess(x: Rep[Long], y: Rep[Long]): Rep[Boolean] = reflect[Boolean](x," < ",y)
+  def longLessEqual(x: Rep[Long], y: Rep[Long]): Rep[Boolean] = reflect[Boolean](x," <= ",y)
+  def longGreater(x: Rep[Long], y: Rep[Long]): Rep[Boolean] = reflect[Boolean](x," > ",y)
+  def longGreaterEqual(x: Rep[Long], y: Rep[Long]): Rep[Boolean] = reflect[Boolean](x," >= ",y)
+  def longEqual(x: Rep[Long], y: Rep[Long]): Rep[Boolean] = reflect[Boolean](x," == ",y)
+  def longNotEqual(x: Rep[Long], y: Rep[Long]): Rep[Boolean] = reflect[Boolean](x," != ",y)
 
-  def floatToByte(x: Rep[Float]): Rep[Byte] = reflect(x,".toByte")
-  def floatToChar(x: Rep[Float]): Rep[Char] = reflect(x,".toChar")
-  def floatToShort(x: Rep[Float]): Rep[Short] = reflect(x,".toShort")
-  def floatToInt(x: Rep[Float]): Rep[Int] = reflect(x,".toInt")
-  def floatToLong(x: Rep[Float]): Rep[Long] = reflect(x,".toLong")
-  def floatToFloat(x: Rep[Float]): Rep[Float] = reflect(x,".toFloat")
-  def floatToDouble(x: Rep[Float]): Rep[Double] = reflect(x,".toDouble")
+  def floatToByte(x: Rep[Float]): Rep[Byte] = reflect[Byte](x,".toByte")
+  def floatToChar(x: Rep[Float]): Rep[Char] = reflect[Char](x,".toChar")
+  def floatToShort(x: Rep[Float]): Rep[Short] = reflect[Short](x,".toShort")
+  def floatToInt(x: Rep[Float]): Rep[Int] = reflect[Int](x,".toInt")
+  def floatToLong(x: Rep[Float]): Rep[Long] = reflect[Long](x,".toLong")
+  def floatToFloat(x: Rep[Float]): Rep[Float] = reflect[Float](x,".toFloat")
+  def floatToDouble(x: Rep[Float]): Rep[Double] = reflect[Double](x,".toDouble")
 
-  def floatNegate(x: Rep[Float]): Rep[Float] = reflect("-",x)
-  def floatPlus(x: Rep[Float], y: Rep[Float]): Rep[Float] = reflect(x," + ",y)
-  def floatMinus(x: Rep[Float], y: Rep[Float]): Rep[Float] = reflect(x," - ",y)
-  def floatTimes(x: Rep[Float], y: Rep[Float]): Rep[Float] = reflect(x," * ",y)
-  def floatDiv(x: Rep[Float], y: Rep[Float]): Rep[Float] = reflect(x," / ",y)
-  def floatMod(x: Rep[Float], y: Rep[Float]): Rep[Float] = reflect(x," % ",y)
-  def floatLess(x: Rep[Float], y: Rep[Float]): Rep[Boolean] = reflect(x," < ",y)
-  def floatLessEqual(x: Rep[Float], y: Rep[Float]): Rep[Boolean] = reflect(x," <= ",y)
-  def floatGreater(x: Rep[Float], y: Rep[Float]): Rep[Boolean] = reflect(x," > ",y)
-  def floatGreaterEqual(x: Rep[Float], y: Rep[Float]): Rep[Boolean] = reflect(x," >= ",y)
-  def floatEqual(x: Rep[Float], y: Rep[Float]): Rep[Boolean] = reflect(x," == ",y)
-  def floatNotEqual(x: Rep[Float], y: Rep[Float]): Rep[Boolean] = reflect(x," != ",y)
+  def floatNegate(x: Rep[Float]): Rep[Float] = reflect[Float]("-",x)
+  def floatPlus(x: Rep[Float], y: Rep[Float]): Rep[Float] = reflect[Float](x," + ",y)
+  def floatMinus(x: Rep[Float], y: Rep[Float]): Rep[Float] = reflect[Float](x," - ",y)
+  def floatTimes(x: Rep[Float], y: Rep[Float]): Rep[Float] = reflect[Float](x," * ",y)
+  def floatDiv(x: Rep[Float], y: Rep[Float]): Rep[Float] = reflect[Float](x," / ",y)
+  def floatMod(x: Rep[Float], y: Rep[Float]): Rep[Float] = reflect[Float](x," % ",y)
+  def floatLess(x: Rep[Float], y: Rep[Float]): Rep[Boolean] = reflect[Boolean](x," < ",y)
+  def floatLessEqual(x: Rep[Float], y: Rep[Float]): Rep[Boolean] = reflect[Boolean](x," <= ",y)
+  def floatGreater(x: Rep[Float], y: Rep[Float]): Rep[Boolean] = reflect[Boolean](x," > ",y)
+  def floatGreaterEqual(x: Rep[Float], y: Rep[Float]): Rep[Boolean] = reflect[Boolean](x," >= ",y)
+  def floatEqual(x: Rep[Float], y: Rep[Float]): Rep[Boolean] = reflect[Boolean](x," == ",y)
+  def floatNotEqual(x: Rep[Float], y: Rep[Float]): Rep[Boolean] = reflect[Boolean](x," != ",y)
 
-  def doubleToByte(x: Rep[Double]): Rep[Byte] = reflect(x,".toByte")
-  def doubleToChar(x: Rep[Double]): Rep[Char] = reflect(x,".toChar")
-  def doubleToShort(x: Rep[Double]): Rep[Short] = reflect(x,".toShort")
-  def doubleToInt(x: Rep[Double]): Rep[Int] = reflect(x,".toInt")
-  def doubleToLong(x: Rep[Double]): Rep[Long] = reflect(x,".toLong")
-  def doubleToFloat(x: Rep[Double]): Rep[Float] = reflect(x,".toFloat")
-  def doubleToDouble(x: Rep[Double]): Rep[Double] = reflect(x,".toDouble")
+  def doubleToByte(x: Rep[Double]): Rep[Byte] = reflect[Byte](x,".toByte")
+  def doubleToChar(x: Rep[Double]): Rep[Char] = reflect[Char](x,".toChar")
+  def doubleToShort(x: Rep[Double]): Rep[Short] = reflect[Short](x,".toShort")
+  def doubleToInt(x: Rep[Double]): Rep[Int] = reflect[Int](x,".toInt")
+  def doubleToLong(x: Rep[Double]): Rep[Long] = reflect[Long](x,".toLong")
+  def doubleToFloat(x: Rep[Double]): Rep[Float] = reflect[Float](x,".toFloat")
+  def doubleToDouble(x: Rep[Double]): Rep[Double] = reflect[Double](x,".toDouble")
 
-  def doubleNegate(x: Rep[Double]): Rep[Double] = reflect("-",x)
-  def doublePlus(x: Rep[Double], y: Rep[Double]): Rep[Double] = reflect(x," + ",y)
-  def doubleMinus(x: Rep[Double], y: Rep[Double]): Rep[Double] = reflect(x," - ",y)
-  def doubleTimes(x: Rep[Double], y: Rep[Double]): Rep[Double] = reflect(x," * ",y)
-  def doubleDiv(x: Rep[Double], y: Rep[Double]): Rep[Double] = reflect(x," / ",y)
-  def doubleMod(x: Rep[Double], y: Rep[Double]): Rep[Double] = reflect(x," % ",y)
-  def doubleLess(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect(x," < ",y)
-  def doubleLessEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect(x," <= ",y)
-  def doubleGreater(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect(x," > ",y)
-  def doubleGreaterEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect(x," >= ",y)
-  def doubleEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect(x," == ",y)
-  def doubleNotEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect(x," != ",y)
+  def doubleNegate(x: Rep[Double]): Rep[Double] = reflect[Double]("-",x)
+  def doublePlus(x: Rep[Double], y: Rep[Double]): Rep[Double] = reflect[Double](x," + ",y)
+  def doubleMinus(x: Rep[Double], y: Rep[Double]): Rep[Double] = reflect[Double](x," - ",y)
+  def doubleTimes(x: Rep[Double], y: Rep[Double]): Rep[Double] = reflect[Double](x," * ",y)
+  def doubleDiv(x: Rep[Double], y: Rep[Double]): Rep[Double] = reflect[Double](x," / ",y)
+  def doubleMod(x: Rep[Double], y: Rep[Double]): Rep[Double] = reflect[Double](x," % ",y)
+  def doubleLess(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect[Boolean](x," < ",y)
+  def doubleLessEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect[Boolean](x," <= ",y)
+  def doubleGreater(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect[Boolean](x," > ",y)
+  def doubleGreaterEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect[Boolean](x," >= ",y)
+  def doubleEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect[Boolean](x," == ",y)
+  def doubleNotEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect[Boolean](x," != ",y)
 
-  def objectEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflect(x," eq ",y)
-  def objectNotEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflect(x," ne ",y)
+  def objectEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflect[Boolean](x," eq ",y)
+  def objectNotEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflect[Boolean](x," ne ",y)
+  def objectAsInstanceOf[T:TypeRep](x: Rep[Object]): Rep[T] = reflect[T](x,".asInstanceOf[",typeRep[T],"]")
 
-  def if_[T](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] =
-    reflect("if (",x,") ",reify(y)," else ",reify(z))
+  def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] =
+    reflect[T]("if (",x,") ",reify(y)," else ",reify(z))
 
 }
 

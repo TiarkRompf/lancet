@@ -77,10 +77,163 @@ final class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with Runtime
       }        
     }
 
+
+
+
+    var worklist: IndexedSeq[InterpreterFrame] = Vector.empty
+
+    var budget = 50000
+
+    var emitControlFlow = true
+
+    def exec(frame: InterpreterFrame): Rep[Unit] = { // called internally to initiate control transfer
+      
+      if (budget <= 0) {
+        println("// *** BUDGET EXCEEDED ***")
+        return unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
+      }
+
+      val method = frame.getMethod()
+      if (getContext(frame).drop(1).exists(_.getMethod() == method)) { // recursive (TODO: faster test)
+        println("// *** RECURSIVE: "+method+" ***")
+        return unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
+      }
+
+      budget -= 1
+      
+      // decision to make: explore block afresh or generate call to existing one
+
+      worklist = worklist :+ (frame.asInstanceOf[InterpreterFrame_Str].copy)
+
+      if (emitControlFlow && worklist.tail.nonEmpty)
+        reflect[Unit]("goto "+contextKey(frame))
+      else
+        unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
+    }
+
+
+    // TODO: can't translate blocks just like that to Scala methods: 
+    // next block may refer to stuff defined in earlier block (need nesting, 
+    // but problem with back edges)
+
+    // may need different treatment for intra-procedural blocks and function
+    // calls: want to inline functions but not generally duplicate local blocks
+
+    def loop(root: InterpreterFrame): Unit = {// throws Throwable {
+
+      val info = new scala.collection.mutable.HashMap[String, Int]
+
+      while (worklist.nonEmpty) {
+        var frame = worklist.head
+        worklist = worklist.tail
+
+        val key = contextKey(frame)
+        val seen = info.getOrElse(contextKey(frame), 0)
+
+        info(key) = seen + 1
+
+        if (seen > 0) {
+          println("// *** SEEN " + seen + ": " + key)
+        }
+
+        val seenEnough = seen > 3  // TODO: this is just a random cutoff, need to do fixpoint iteration
+
+        if (!seenEnough && frame.getParentFrame != null) {
+          val bci = frame.getBCI()
+          val bs = new BytecodeStream(frame.getMethod.code())
+          //bs.setBCI(globalFrame.getBCI())
+
+          def frameStr(frame: InterpreterFrame) = getContext(frame).map(frame => ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().signature().asString()).replace("HotSpotMethod",""))
+
+          if (emitControlFlow) {
+            println("// *** begin block " + key)
+            //println("// *** stack " + frame.asInstanceOf[InterpreterFrame_Str].locals.mkString(","))
+          }
+          executeBlock(frame, bs, bci)
+        }
+      }
+    }
+
+
+
 }
 
 
-final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with RuntimeUniverse_Simple
+// TODO: straightforward compilation
+
+final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with RuntimeUniverse_Simple {
+
+
+    var worklist: IndexedSeq[InterpreterFrame] = Vector.empty
+
+    var emitControlFlow = true
+
+    val info = new scala.collection.mutable.HashMap[String, Int]
+    var count = 0
+
+    def exec(frame: InterpreterFrame): Rep[Unit] = { // called internally to initiate control transfer
+
+      val key = contextKey(frame)
+      val id = info.getOrElseUpdate(key, {
+        val id = count
+        count += 1
+
+        // TODO: not ideal that we copy the whole stack ...
+
+        def freshFrame(frame: InterpreterFrame): InterpreterFrame_Str = if (frame eq null) null else {
+          val frame2 = frame.asInstanceOf[InterpreterFrame_Str].copy2(freshFrame(frame.getParentFrame))
+          val depth = frame2.depth
+          
+          // use fresh argument symbols
+          for (i <- 0 until frame2.locals.length)
+            frame2.locals(i) = new Rep[Object]("p"+depth+"_"+i)((frame2.locals(i) match 
+              { case null => typeRep[Any] case x => x.typ }).asInstanceOf[TypeRep[AnyRef]])
+          frame2
+        }
+
+
+        val frame2 = freshFrame(frame)
+
+        worklist = worklist :+ frame2
+        id
+      })
+
+
+
+      val args = getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
+      reflect[Unit]("block_"+id+"("+args.mkString(","),") // "+key)
+    }
+
+
+    def loop(root: InterpreterFrame): Unit = {
+
+      while (worklist.nonEmpty) {
+        var frame = worklist.head
+        worklist = worklist.tail
+
+        val key = contextKey(frame)
+        println("// *** begin block " + key)
+        val id = info(key)
+
+
+        println("// *** begin block " + key)
+        val params = getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
+        val paramsStr = params.map(x => if (x eq null) "?" else x.toString+":"+x.typ)
+        println("def block_"+id+"("+paramsStr.mkString(",")+"): Any = {")
+
+        if (frame.getParentFrame != null) { // don't eval root frame
+          val bci = frame.getBCI()
+          val bs = new BytecodeStream(frame.getMethod.code())
+          //bs.setBCI(globalFrame.getBCI())
+          executeBlock(frame, bs, bci)
+        }
+
+        println("}")
+      }
+    }
+
+
+}
 
 
 
@@ -173,44 +326,21 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
     }
 
     def executeRoot(root: InterpreterFrame, frame: InterpreterFrame): Unit = { // throws Throwable {
+        println("object Generated {")
+        println("val unsafe = null.asInstanceOf[sun.misc.Unsafe]")
+        println("type char = Char")
+
         if (TRACE) {
             traceCall(frame, "RootCall");
         }
         exec(frame)
         loop(root);
+        println("}")
     }
 
+    def loop(root: InterpreterFrame): Unit
 
-    var worklist: IndexedSeq[InterpreterFrame] = Vector.empty
 
-    var budget = 50000
-
-    var emitControlFlow = true
-
-    def exec(frame: InterpreterFrame): Rep[Unit] = { // called internally to initiate control transfer
-      
-      if (budget <= 0) {
-        println("*** BUDGET EXCEEDED ***")
-        return unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
-      }
-
-      val method = frame.getMethod()
-      if (getContext(frame).drop(1).exists(_.getMethod() == method)) { // recursive (TODO: faster test)
-        println("*** RECURSIVE: "+method+" ***")
-        return unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
-      }
-
-      budget -= 1
-      
-      // decision to make: explore block afresh or generate call to existing one
-
-      worklist = worklist :+ (frame.asInstanceOf[InterpreterFrame_Str].copy)
-
-      if (emitControlFlow && worklist.tail.nonEmpty)
-        reflect("goto "+contextKey(frame))
-      else
-        unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
-    }
 
 
     def getContext(frame: InterpreterFrame): scala.List[InterpreterFrame] =
@@ -220,64 +350,25 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
 
     def frameKey(frame: InterpreterFrame) = ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().signature().asString()).replace("HotSpotMethod","")
 
-    // TODO: can't translate blocks just like that to Scala methods: 
-    // next block may refer to stuff defined in earlier block (need nesting, 
-    // but problem with back edges)
 
-    // may need different treatment for intra-procedural blocks and function
-    // calls: want to inline functions but not generally duplicate local blocks
+    override def retn() = local { (frame, bs) =>
 
-    private def loop(root: InterpreterFrame): Unit = {// throws Throwable {
+      // create copy -- will be pushing values into parent frame !!
 
-      val info = new scala.collection.mutable.HashMap[String, Int]
+      val parentFrame = frame.getParentFrame.asInstanceOf[InterpreterFrame_Str].copy
+      val returnValue = frame.getReturnValue()
+      popFrame(frame)
+      pushAsObjectInternal(parentFrame, frame.getMethod.signature().returnKind(), returnValue);
 
-      while (worklist.nonEmpty) {
-        var frame = worklist.head
-        worklist = worklist.tail
+      //println("### return "+contextKey(frame))
 
-        val key = contextKey(frame)
-        val seen = info.getOrElse(contextKey(frame), 0)
-
-        info(key) = seen + 1
-
-        if (seen > 0) {
-          println("*** SEEN " + seen + ": " + key)
-        }
-
-        val seenEnough = seen > 3  // TODO: this is just a random cutoff, need to do fixpoint iteration
-
-        if (!seenEnough && frame.getParentFrame != null) {
-          val bci = frame.getBCI()
-          val bs = new BytecodeStream(frame.getMethod.code())
-          //bs.setBCI(globalFrame.getBCI())
-
-          def frameStr(frame: InterpreterFrame) = getContext(frame).map(frame => ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().signature().asString()).replace("HotSpotMethod",""))
-
-          if (emitControlFlow) {
-            println("// *** begin block " + key)
-            //println("// *** stack " + frame.asInstanceOf[InterpreterFrame_Str].locals.mkString(","))
-          }
-          executeBlock(frame, bs, bci)
-        }
-      }
+      exec(parentFrame)
     }
-
-
-  override def retn() = local { (frame, bs) =>
-
-    // create copy -- will be pushing values into parent frame !!
-
-    val parentFrame = frame.getParentFrame.asInstanceOf[InterpreterFrame_Str].copy
-    val returnValue = frame.getReturnValue()
-    popFrame(frame)
-    pushAsObjectInternal(parentFrame, frame.getMethod.signature().returnKind(), returnValue);
-    exec(parentFrame)
-  }
 
 
     // ---------- block / statement level ----------
 
-    def lookupSearch(bs: BytecodeStream, key: Rep[Int]): Int = {reflect("lookupSearch");0}/*{
+    def lookupSearch(bs: BytecodeStream, key: Rep[Int]): Int = {reflect[Int]("lookupSearch");0}/*{
         val switchHelper = new BytecodeLookupSwitch(bs, bs.currentBCI())
 
         var low = 0;
@@ -297,7 +388,7 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
         return switchHelper.defaultTarget(); // key not found.
     }*/
 
-    def tableSearch(bs: BytecodeStream, index: Rep[Int]): Int = {reflect("tableSearch");0}/*{
+    def tableSearch(bs: BytecodeStream, index: Rep[Int]): Int = {reflect[Int]("tableSearch");0}/*{
         val switchHelper = new BytecodeTableSwitch(bs, bs.currentBCI());
 
         val low = switchHelper.lowKey();
@@ -314,7 +405,7 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
 
 
     def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] =
-      reflect("checkCast("+typ.toJava+","+value+")")
+      reflect[Object]("checkCast("+typ.toJava+","+value+")")
  
     // called by invokeVirtual
 

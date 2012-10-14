@@ -10,6 +10,10 @@ trait Base_Impl extends Base {
 
 
 trait Core_Impl extends Base_Impl with Core {
+  type TypeRep[T] = Manifest[T]
+  implicit def anyType[T:Manifest]: TypeRep[T] = manifest[T]
+  implicit def booleanType = manifest[Boolean]
+
 
   implicit def unit(x: Boolean): Boolean = x
   implicit def unit(x: Byte): Byte = x
@@ -126,8 +130,9 @@ trait Core_Impl extends Base_Impl with Core {
 
   def objectEqual(x: Object, y: Object): Boolean = x eq y
   def objectNotEqual(x: Object, y: Object): Boolean = x ne y
+  def objectAsInstanceOf[T:TypeRep](x: Object): T = x.asInstanceOf[T]
 
-  def if_[T](x: Boolean)(y: =>T)(z: =>T): T = if (x) y else z
+  def if_[T:TypeRep](x: Boolean)(y: =>T)(z: =>T): T = if (x) y else z
 
 }
 

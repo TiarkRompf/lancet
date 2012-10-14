@@ -4,11 +4,19 @@ package playground.interpreter
 
 trait Base {
   type Rep[+T]
+  type TypeRep[T]
   def repManifest[T:Manifest]: Manifest[Rep[T]]
 }
 
 
 trait Core extends Base {
+
+  implicit def booleanType: TypeRep[Boolean]
+
+  implicit def anyType[T:Manifest]: TypeRep[T]
+
+
+
 
   implicit def unit(x: Boolean): Rep[Boolean]
   implicit def unit(x: Byte): Rep[Byte]
@@ -256,11 +264,13 @@ trait Core extends Base {
   class ObjectOps(x: Rep[Object]) {
     def ===(y: Rep[Object]): Rep[Boolean] = objectEqual(x,y)
     def !==(y: Rep[Object]): Rep[Boolean] = objectNotEqual(x,y)
+    def asInstanceOfRep[T:TypeRep]: Rep[T] = objectAsInstanceOf[T](x)
   }
 
   def objectEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean]
   def objectNotEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean]
+  def objectAsInstanceOf[T:TypeRep](x: Rep[Object]): Rep[T]
 
-  def if_[T](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T]
+  def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T]
 
 }

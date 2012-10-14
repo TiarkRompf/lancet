@@ -58,11 +58,11 @@ class Frame_Str0(val numLocals: Int, parent: Frame) extends Frame {
     def this(numLocals: Int) = this(numLocals, null);
 
     def getObject(index: Int): Rep[Object] = {
-        reflect(locals+"("+index+")")
+        reflect[Object](locals+"("+index+")")
     }
 
     def setObject(index: Int, value: Rep[Object]): Unit = {
-        reflect(locals+"("+index+") = "+value)
+        reflect[Unit](locals+"("+index+") = "+value)
     }
 
     def getFloat(index: Int): Rep[Float] = {
@@ -132,7 +132,10 @@ class Frame_Str(val numLocals: Int, val parent: Frame) extends Frame {
     import Frame._
     assert(numLocals >= MIN_FRAME_SIZE);
 
-    val locals: Array[Rep[Object]] = new Array[Rep[Object]](numLocals)
+    val locals: Array[Rep[Object]] = {
+        implicit val m = repManifest[Object]
+        new Array[Rep[Object]](numLocals)
+    }
 
     //reflect("locals(PARENT_FRAME_SLOT) = parent")
 
@@ -262,6 +265,17 @@ with InterpreterFrame {
     }
 
     def copy() = {
+      val frame = new InterpreterFrame_Str(method, parent, additionalStackSpace);
+      System.arraycopy(locals, 0, frame.locals, 0, locals.length)
+      //frame.locals = locals
+      //frame.primitiveLocals = primitiveLocals
+      frame.returnValue = returnValue
+      frame.bci = bci
+      frame.tos = tos
+      frame
+    }
+
+    def copy2(parent: InterpreterFrame_Str) = { // TODO
       val frame = new InterpreterFrame_Str(method, parent, additionalStackSpace);
       System.arraycopy(locals, 0, frame.locals, 0, locals.length)
       //frame.locals = locals
