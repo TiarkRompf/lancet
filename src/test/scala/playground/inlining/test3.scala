@@ -17,7 +17,7 @@ class C extends B {
 // stores executed in their constructors). Write propagation
 // happens only later.
 
-class Test3 extends FileDiffSuite {
+class TestInline3 extends FileDiffSuite {
 
   val prefix = "test-out/test3-"
 

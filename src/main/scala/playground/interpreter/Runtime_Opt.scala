@@ -101,10 +101,14 @@ trait Unsafe_Opt extends Unsafe_Str {
     reflect("unsafe.getFloat("+base+","+offset+")")
   def getFloatVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Float] = 
     reflect("unsafe.getFloatVolatile("+base+","+offset+")")
-
-  def getDouble(base: Rep[Object], offset: Rep[Long]): Rep[Double] = 
-    reflect("unsafe.getDouble("+base+","+offset+")")
-  def getDoubleVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Double] = 
+*/
+  // TODO: static reads only safe for final fields
+  override def getDouble(base: Rep[Object], offset: Rep[Long]): Rep[Double] = (eval(base), eval(offset)) match {
+    case (Const(base), Const(offset)) => unit(static.unsafe.getDouble(base,offset))
+    case (Partial(fs), Const(offset)) => fs.getOrElse(offset.toString, unit(0)).asInstanceOf[Rep[Double]]
+    case _ => super.getInt(base, offset)
+  }
+/*  def getDoubleVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Double] = 
     reflect("unsafe.getDoubleVolatile("+base+","+offset+")")
 */
 

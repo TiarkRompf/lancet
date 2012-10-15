@@ -1,5 +1,5 @@
-Executing root method HotSpotMethod<Test1$$anonfun$testA$1$Foo$1.bar>
-    RootCall HotSpotMethod<Test1$$anonfun$testA$1$Foo$1.bar> - (I)V
+Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
+    RootCall HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar> - (I)V
     0: getstatic
     3: new
     6: dup
@@ -1261,4 +1261,4 @@ Executing root method HotSpotMethod<Test1$$anonfun$testA$1$Foo$1.bar>
       7: return
       Ret HotSpotMethod<Predef$.println> - (Ljava/lang/Object;)V
     28: return
-    Ret HotSpotMethod<Test1$$anonfun$testA$1$Foo$1.bar> - (I)V
+    Ret HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar> - (I)V

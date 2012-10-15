@@ -62,7 +62,7 @@ import com.oracle.graal.bytecode._;
 */
 
 
-final class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniverse_Opt {
+class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniverse_Opt {
     override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m)
     override def objectGetClass(receiver: Rep[Object]): Option[Class[_]] = {
       eval(receiver) match {
@@ -85,6 +85,7 @@ final class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with Runtime
     var budget = 50000
 
     var emitControlFlow = true
+    var emitRecursive = false
 
     def exec(frame: InterpreterFrame): Rep[Unit] = { // called internally to initiate control transfer
       
@@ -94,7 +95,7 @@ final class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with Runtime
       }
 
       val method = frame.getMethod()
-      if (getContext(frame).drop(1).exists(_.getMethod() == method)) { // recursive (TODO: faster test)
+      if (!emitRecursive && getContext(frame).drop(1).exists(_.getMethod() == method)) { // recursive (TODO: faster test)
         println("// *** RECURSIVE: "+method+" ***")
         return unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
       }

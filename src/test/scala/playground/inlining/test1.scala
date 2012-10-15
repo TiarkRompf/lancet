@@ -5,7 +5,7 @@ object Helper {
   val foo = (x:Int) => 3*x
 }
 
-class Test1 extends FileDiffSuite {
+class TestInline1 extends FileDiffSuite {
 
   val prefix = "test-out/test1-"
 
