@@ -156,12 +156,17 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
         val holder = method.holder.toJava.getName
         val name = method.name
 
-        //val static = method.isStatic
-
-        // TODO: may not be accurate for invokespecial: generated code performs invokevirtual
         // TODO: static methods
-        // TODO: result type info
-        reflect[Object](args(0)+".asInstanceOf["+holder+"]."+name+"("+args.drop(1).mkString(",")+").asInstanceOf[Object]")
+        val static = Modifier.isStatic(method.accessFlags)
+
+        if (!static) {
+            // TODO: may not be accurate for invokespecial: generated code performs invokevirtual
+            reflect[Object](args(0)+".asInstanceOf["+holder+"]."+name+"("+args.drop(1).mkString(",")+").asInstanceOf[Object]")
+        } else {
+            reflect[Object](holder+"."+name+"("+args.mkString(",")+").asInstanceOf[Object]")
+        }
+
+        // TODO: actual class as result type info?
 
         //reflect(""+method+".invoke("+args.mkString(",")+")")
 
