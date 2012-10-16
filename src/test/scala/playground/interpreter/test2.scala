@@ -12,8 +12,6 @@ class TestInterpreter2 extends FileDiffSuite {
 
   object Program {
 
-    def ??? = throw new Exception("not implemented")
-
     trait JS
 
     object Dom extends JS {
@@ -98,10 +96,6 @@ class TestInterpreter2 extends FileDiffSuite {
   }
 
 
-  // TODO: html header / footer, val def syntax
-  // TODO: remove null receiver for document var
-  // TODO: generate `snowflake` and `leg` as JS methods instead of unfolding everything
-
   class BytecodeInterpreter_JS extends BytecodeInterpreter_Opt {
     override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m) {
       override def isVolatile(field: ResolvedJavaField) = false // don't honor volatile
@@ -122,24 +116,6 @@ class TestInterpreter2 extends FileDiffSuite {
     override def invokeDirect(parent: InterpreterFrame, m: ResolvedJavaMethod, hasReceiver: Boolean): InterpreterFrame =
       if (handleJsMethod(parent,m)) null else super.invokeDirect(parent, m, hasReceiver)
     override def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = value // no casts in JavaScript
-
-
-    val header =
-"""<html>
-  <head>
-    <title>Koch</title>
-    <script type="text/javascript" src="koch.js"></script>
-    <script type="text/javascript">
-      function run(){"""
-
-    val footer =
-"""      }
-    </script>
-  </head>
-  <body onLoad="run();">
-    <canvas id="canvas" width="1000" height="500"></canvas>
-  </body>
-</html>"""
 
   }
 
@@ -163,5 +139,30 @@ class TestInterpreter2 extends FileDiffSuite {
     
   }
 
+  // TODO: html header / footer, val def syntax
+  // TODO: remove null receiver for `document` var
+  // TODO: generate `snowflake` and `leg` as JS methods instead of unfolding everything
+
+    val header =
+"""<html>
+  <head>
+    <title>Koch</title>
+    <script type="text/javascript" src="koch.js"></script>
+    <script type="text/javascript">
+      function run(){"""
+
+    val footer =
+"""      }
+    </script>
+  </head>
+  <body onLoad="run();">
+    <canvas id="canvas" width="1000" height="500"></canvas>
+  </body>
+</html>"""
+
+
+
+
+  def ??? = throw new Exception("not implemented")
 
 }

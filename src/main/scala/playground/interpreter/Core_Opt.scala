@@ -4,7 +4,7 @@ trait Base_Opt extends Base_Str {
 
   abstract class Rep[+T] { def +(s: String) = toString+s }
 
-  case class Static[+T](x: T) extends Rep[T] { override def toString = "" + x }
+  case class Static[+T](x: T) extends Rep[T] { override def toString = constToString(x) }
   case class Dyn[+T](s: String) extends Rep[T] { override def toString = s }
 
   def repManifest[T:Manifest]: Manifest[Rep[T]] = manifest[Rep[T]]
@@ -21,6 +21,8 @@ trait Base_Opt extends Base_Str {
     }).asInstanceOf[Rep[T]]
   }
   def reify[T](x: => Rep[T]): String = "{" + captureOutput(x) + "}"
+
+
 
   def rewrite(s: String, x: Rep[Any]): Unit = {
     exprs += (s -> x)

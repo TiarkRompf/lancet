@@ -29,6 +29,19 @@ trait Base_Str extends Base {
 
   def typeRep[T:TypeRep]: TypeRep[T] = implicitly[TypeRep[T]]
 
+
+  def constToString[T](x:T): String = x match {
+    case x: Int => (""+x)
+    case x: Long => (""+x)
+    case x: Double => (""+x)
+    // TODO: primitives, arrays
+    case s: String => ("\""+s+"\"")
+    case o: Array[Object] => ("(null:Array[Object])/*"+x+"*/") // TODO
+    case c: Class[_] => ("Class.forName(\""+c.getName+"\")")//("classOf["+c.getName+"]")
+    case o: Object => ("(null:"+o.getClass.getName+")/*"+x+"*/")
+    case _ => (""+x)
+  }
+
 }
 
 
@@ -45,17 +58,7 @@ trait Base_Simple extends Base_Str {
   def reflect[T:TypeRep](s: Any*): Rep[T] = { val x = fresh; emit("val "+x+": "+typeRep[T]+" = "+s.mkString("")); Rep[T](x) }
   def reify[T](x: => Rep[T]): String = "{" + captureOutput(x.s) + "}"
 
-  def liftConst[T:TypeRep](x:T): Rep[T] = x match {
-    case x: Int => Rep[T](""+x)
-    case x: Long => Rep[T](""+x)
-    case x: Double => Rep[T](""+x)
-    // TODO: primitives, arrays
-    case s: String => Rep[T]("\""+s+"\"")
-    case o: Array[Object] => Rep[T]("(null:Array[Object])/*"+x+"*/") // TODO
-    case c: Class[_] => Rep[T]("Class.forName(\""+c.getName+"\")")//Rep[T]("classOf["+c.getName+"]")
-    case o: Object => Rep[T]("(null:"+o.getClass.getName+")/*"+x+"*/")
-    case _ => Rep[T](""+x)
-  }
+  def liftConst[T:TypeRep](x:T): Rep[T] = Rep[T](constToString(x))
 
   import java.io._
   def captureOutput(func: => Any): String = {
