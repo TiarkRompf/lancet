@@ -101,6 +101,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
 
   protected class MethodRedirectionInfo(val receiver: InterpreterCallable)
   def methodDelegates: Map[ResolvedJavaMethod, MethodRedirectionInfo];
+  def classDelegates: Map[Class[_], MethodRedirectionInfo];
 
 
 
@@ -1291,6 +1292,7 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
     import BytecodeInterpreter._
 
     var methodDelegates: Map[ResolvedJavaMethod, MethodRedirectionInfo] = _;
+    var classDelegates: Map[Class[_], MethodRedirectionInfo] = _;
 
     var maxStackFrames: Int = DEFAULT_MAX_STACK_SIZE;
 
@@ -1302,6 +1304,7 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
 
     def initialize(args: String): Boolean = {
         methodDelegates = new HashMap
+        classDelegates = new HashMap
 
         val runtime: GraalRuntime = Graal.getRuntime();
         //TR
@@ -1338,6 +1341,15 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
     def removeDelegate(method: Method): Unit = {
         methodDelegates.remove(metaAccessProvider.getResolvedJavaMethod(method));
     }
+
+    def addClassDelegate(clazz: Class[_], callable: InterpreterCallable): Unit = {
+        classDelegates.put(clazz, new MethodRedirectionInfo(callable));
+    }
+
+    def addClassDelegate(clazz: Class[_])(f: (InterpreterFrame, ResolvedJavaMethod, Array[Rep[Object]]) => Rep[Object]): Unit ={
+//TODO        classDelegates.put(clazz, new MethodRedirectionInfo(new InterpreterCallable { def invoke}));
+    }
+
 
     def registerDelegates(): Unit = {
         addDelegate(findMethod(classOf[Throwable], "fillInStackTrace"), new InterpreterCallable() {

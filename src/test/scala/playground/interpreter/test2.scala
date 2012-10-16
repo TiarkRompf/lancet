@@ -100,23 +100,14 @@ class TestInterpreter2 extends FileDiffSuite {
     override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m) {
       override def isVolatile(field: ResolvedJavaField) = false // don't honor volatile
     }
-    def handleJsMethod(parent: InterpreterFrame, m: ResolvedJavaMethod): Boolean = {
-      val holder = m.holder
-      if (classOf[Program.JS].isAssignableFrom(holder.toJava())) {
-        //println("*** XXX JSM " + classOf[Program.JS] + " / " + holder.toJava)
-        val receiver = parent.peekReceiver(m)
-        val parameters = popArgumentsAsObject(parent, m, true)
-        val returnValue = reflect[Object](""+receiver+"."+m.name+"("+parameters.mkString(",")+")")
-        pushAsObject(parent, m.signature().returnKind(), returnValue)
-        true
-      } else false
-    }
-    override def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame =
-      if (handleJsMethod(parent,m)) null else super.resolveAndInvoke(parent, m)
-    override def invokeDirect(parent: InterpreterFrame, m: ResolvedJavaMethod, hasReceiver: Boolean): InterpreterFrame =
-      if (handleJsMethod(parent,m)) null else super.invokeDirect(parent, m, hasReceiver)
     override def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = value // no casts in JavaScript
 
+    addClassDelegate(classOf[Program.JS]) { (frame, method, arguments) =>
+
+      val (receiver, args) = (arguments(0), arguments.drop(1))
+
+      reflect[Object](""+receiver+"."+method.name+"("+args.mkString(",")+")")
+    }
   }
 
 
@@ -125,11 +116,10 @@ class TestInterpreter2 extends FileDiffSuite {
     val runtime = HotSpotGraalRuntime.getInstance().getRuntime();
     val compiler = HotSpotGraalRuntime.getInstance().getCompiler();
 
-    val cls = Program.getClass
-    val reflectMeth = cls.getDeclaredMethod("draw")
+    val reflectMeth = Program.getClass.getDeclaredMethod("draw")
     val method = runtime.getResolvedJavaMethod(reflectMeth)
 
-    val it = new BytecodeInterpreter_JS
+    val it = new BytecodeInterpreter_JS2
     //it.TRACE = true
     //it.TRACE_BYTE_CODE = true
     it.emitControlFlow = false
@@ -161,7 +151,29 @@ class TestInterpreter2 extends FileDiffSuite {
 </html>"""
 
 
+  class BytecodeInterpreter_JS2 extends BytecodeInterpreter_Opt {
+    override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m) {
+      override def isVolatile(field: ResolvedJavaField) = false // don't honor volatile
+    }
 
+    def handleJsMethod(parent: InterpreterFrame, m: ResolvedJavaMethod): Boolean = {
+      val holder = m.holder
+      if (classOf[Program.JS].isAssignableFrom(holder.toJava())) {
+        //println("*** XXX JSM " + classOf[Program.JS] + " / " + holder.toJava)
+        val receiver = parent.peekReceiver(m)
+        val parameters = popArgumentsAsObject(parent, m, true)
+        val returnValue = reflect[Object](""+receiver+"."+m.name+"("+parameters.mkString(",")+")")
+        pushAsObject(parent, m.signature().returnKind(), returnValue)
+        true
+      } else false
+    }
+    override def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame =
+      if (handleJsMethod(parent,m)) null else super.resolveAndInvoke(parent, m)
+    override def invokeDirect(parent: InterpreterFrame, m: ResolvedJavaMethod, hasReceiver: Boolean): InterpreterFrame =
+      if (handleJsMethod(parent,m)) null else super.invokeDirect(parent, m, hasReceiver)
+    override def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = value // no casts in JavaScript
+
+  }
 
   def ??? = throw new Exception("not implemented")
 
