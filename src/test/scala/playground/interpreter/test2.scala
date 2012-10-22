@@ -57,7 +57,7 @@ class TestInterpreter2 extends FileDiffSuite {
 
     // Draw a level-n Koch Snowflake fractal on the canvas context c,
     // with lower-left corner at (x,y) and side length len.
-    def snowflake(c: Context, n: Int, x: Int, y: Int, len: Int) = {
+    @noinline def snowflake(c: Context, n: Int, x: Int, y: Int, len: Int) = {
         c.save();           // Save current transformation
         c.translate(x,y);   // Translate origin to starting point
         c.moveTo(0,0);      // Begin a new subpath at the new origin
@@ -102,7 +102,7 @@ class TestInterpreter2 extends FileDiffSuite {
     }
     override def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = value // no casts in JavaScript
 
-    addClassDelegate(classOf[Program.JS]) { (frame, method, arguments) =>
+    addClassDelegate(classOf[Program.JS]) { (frame, method, arguments) =>  // args: Array[Rep[Object]]
 
       val (receiver, args) = (arguments(0), arguments.drop(1))
 
@@ -132,8 +132,11 @@ class TestInterpreter2 extends FileDiffSuite {
   // TODO: html header / footer, val def syntax
   // TODO: remove null receiver for `document` var
   // TODO: generate `snowflake` and `leg` as JS methods instead of unfolding everything
+  // TODO: remove null receiver for `document` var
 
-    val header =
+  def ??? = throw new Exception("not implemented")
+
+  val header =
 """<html>
   <head>
     <title>Koch</title>
@@ -141,7 +144,7 @@ class TestInterpreter2 extends FileDiffSuite {
     <script type="text/javascript">
       function run(){"""
 
-    val footer =
+  val footer =
 """      }
     </script>
   </head>
@@ -174,7 +177,5 @@ class TestInterpreter2 extends FileDiffSuite {
     override def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = value // no casts in JavaScript
 
   }
-
-  def ??? = throw new Exception("not implemented")
 
 }
