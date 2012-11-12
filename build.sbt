@@ -7,6 +7,8 @@ scalaVersion := "2.9.2"
 // tests are not thread safe
 parallelExecution in Test := false
 
+libraryDependencies += "org.scala-lang" % "scala-compiler" % "2.9.2"
+
 libraryDependencies += "org.scalatest" % "scalatest_2.9.0" % "1.6.1" % "test"
 
 libraryDependencies += "junit" % "junit" % "4.8.1" % "test"

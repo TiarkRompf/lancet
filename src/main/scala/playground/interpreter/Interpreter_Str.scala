@@ -59,6 +59,10 @@ import com.oracle.graal.bytecode._;
   - join control flow, lattice ops
 
 
+  - run compiled scala code
+  - constant pool
+  - OptiML api
+
 */
 
 
@@ -179,16 +183,19 @@ final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with Runt
         val id = count
         count += 1
 
-        // TODO: not ideal that we copy the whole stack ...
+        // TODO: copy the whole stack: not ideal
 
         def freshFrame(frame: InterpreterFrame): InterpreterFrame_Str = if (frame eq null) null else {
           val frame2 = frame.asInstanceOf[InterpreterFrame_Str].copy2(freshFrame(frame.getParentFrame))
           val depth = frame2.depth
           
+          def copyTypeRep(x: Rep[AnyRef]): TypeRep[AnyRef] = (x match { case null => typeRep[Any] case x => x.typ }).asInstanceOf[TypeRep[AnyRef]]
+
           // use fresh argument symbols
           for (i <- 0 until frame2.locals.length)
-            frame2.locals(i) = new Rep[Object]("p"+depth+"_"+i)((frame2.locals(i) match 
-              { case null => typeRep[Any] case x => x.typ }).asInstanceOf[TypeRep[AnyRef]])
+            frame2.locals(i) = new Rep[Object]("p"+depth+"_"+i)(copyTypeRep(frame2.locals(i)))
+
+          frame2.returnValue = new Rep[Object]("r")(copyTypeRep(frame2.returnValue))
           frame2
         }
 
@@ -201,7 +208,7 @@ final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with Runt
 
 
 
-      val args = getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
+      val args = frame.getReturnValue()::getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
       reflect[Unit]("block_"+id+"("+args.mkString(","),") // "+key)
     }
 
@@ -213,12 +220,10 @@ final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with Runt
         worklist = worklist.tail
 
         val key = contextKey(frame)
-        println("// *** begin block " + key)
         val id = info(key)
 
-
         println("// *** begin block " + key)
-        val params = getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
+        val params = frame.getReturnValue()::getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
         val paramsStr = params.map(x => if (x eq null) "?" else x.toString+":"+x.typ)
         println("def block_"+id+"("+paramsStr.mkString(",")+"): Any = {")
 
@@ -226,7 +231,10 @@ final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with Runt
           val bci = frame.getBCI()
           val bs = new BytecodeStream(frame.getMethod.code())
           //bs.setBCI(globalFrame.getBCI())
-          executeBlock(frame, bs, bci)
+          val res = executeBlock(frame, bs, bci)
+          println(res)
+        } else {
+          println("// returned to root")
         }
 
         println("}")
@@ -250,8 +258,50 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
 
     // ---------- high level execution loop ----------
 
+    def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
+
+      val (src0, res) = ("", {//captureOutputResult { 
+
+        val arg = reflect[A]("ARG")
+
+        execute(f.getClass.getMethod("apply", manifest[A].erasure), Array[Rep[Object]](unit(f),arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
+
+      })
+
+      val (source, _) = captureOutputResult {
+      
+        def classStr(x: Class[_]): String = if (x.isArray()) "Array["+classStr(x.getComponentType)+"]" else x.getName match {
+          case "int" => "Int"
+          case "char" => "Char"
+          case "long" => "Long"
+          //TODO
+          case s => s
+        }
+
+        val cst = constantPool.zipWithIndex.map(p=>"CONST_"+p._2+": "+classStr(p._1.getClass)).mkString(",")
+
+        println("// constants: " + constantPool.toArray.deep.mkString(","))
+        println("class Generated("+ cst +") extends ("+manifest[A]+"=>"+manifest[B]+"){")
+        println("import sun.misc.Unsafe")
+        println("val unsafe = { val fld = classOf[Unsafe].getDeclaredField(\"theUnsafe\"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }")
+        println("type char = Char")
+
+        println("def apply(ARG: "+manifest[A]+"): "+manifest[B]+" = { object BODY {")
+
+        println(src0)
+
+        println("val RES = " + res)
+        println("}; BODY.RES }")
+        println("}")
+      }
+
+      println(source)
+
+      ScalaCompile.compile[A,B](source, "Generated", constantPool.toList)
+    }
+
     //@Override
-    def execute(method: ResolvedJavaMethod, boxedArguments: Array[Object]): Object = {// throws Throwable {
+    def execute(method: ResolvedJavaMethod, boxedArguments: Array[Rep[Object]]): Rep[Object] = {// throws Throwable {
         try {
             val receiver: Boolean = hasReceiver(method);
             val signature: Signature = method.signature();
@@ -269,7 +319,7 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
 
             var rootFrame: InterpreterFrame_Str = null // nativeFrame
             if (rootFrame == null) {
-              rootFrame = new InterpreterFrame_Str(rootMethod, signature.argumentSlots(true));
+              rootFrame = new InterpreterFrame_Str(rootMethod, signature.argumentSlots(true)+1);
               rootFrame.pushObject(unit(this));
               rootFrame.pushObject(unit(method));
               rootFrame.pushObject(unit(boxedArguments));
@@ -289,7 +339,10 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
                 }
             }*/
 
-            return popAsObject(rootFrame, signature.returnKind());
+
+            // why
+
+            return popAsObject(rootFrame, signature.returnKind()); // DOESN'T WORK???
         } catch {
             case e: Exception =>
             // TODO (chaeubl): remove this exception handler (only used for debugging)
@@ -299,18 +352,18 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
         }*/
     }
 
-    def initializeLocals(rootFrame: InterpreterFrame, method: ResolvedJavaMethod, boxedArguments: Array[Object]) {
+    def initializeLocals(rootFrame: InterpreterFrame, method: ResolvedJavaMethod, boxedArguments: Array[Rep[Object]]) {
         val receiver: Boolean = hasReceiver(method);
         val signature: Signature = method.signature();
         var index = 0;
         if (receiver) {
-            pushAsObject(rootFrame, Kind.Object, unit(boxedArguments(index)));
+            pushAsObject(rootFrame, Kind.Object, boxedArguments(index));
             index += 1;
         }
 
         var i = 0
         while (index < boxedArguments.length) {
-            pushAsObject(rootFrame, signature.argumentKindAt(i), unit(boxedArguments(index)));
+            pushAsObject(rootFrame, signature.argumentKindAt(i), boxedArguments(index));
             i += 1
             index += 1
         }
@@ -318,7 +371,7 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
         rootFrame.pushVoid(rootFrame.stackTos() - rootFrame.getStackTop());
     }
 
-    def execute(javaMethod: Method, boxedArguments: Array[Object]): Object = {// throws Throwable {
+    def execute(javaMethod: Method, boxedArguments: Array[Rep[Object]]): Rep[Object] = {// throws Throwable {
         return execute(metaAccessProvider.getResolvedJavaMethod(javaMethod), boxedArguments);
     }
 
@@ -327,16 +380,11 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
     }
 
     def executeRoot(root: InterpreterFrame, frame: InterpreterFrame): Unit = { // throws Throwable {
-        println("object Generated {")
-        println("val unsafe = null.asInstanceOf[sun.misc.Unsafe]")
-        println("type char = Char")
-
         if (TRACE) {
             traceCall(frame, "RootCall");
         }
         exec(frame)
         loop(root);
-        println("}")
     }
 
     def loop(root: InterpreterFrame): Unit

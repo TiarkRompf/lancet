@@ -23,6 +23,7 @@ trait Base_Opt extends Base_Str {
   def reify[T](x: => Rep[T]): String = "{" + captureOutput(x) + "}"
 
 
+  var exprs: Map[String, Rep[Any]] = Map.empty
 
   def rewrite(s: String, x: Rep[Any]): Unit = {
     exprs += (s -> x)
@@ -34,8 +35,6 @@ trait Base_Opt extends Base_Str {
   case class Partial[+T](fields: Map[String, Rep[Any]]) extends Val[T]
   case object Top extends Val[Nothing]
 
-  var exprs: Map[String, Rep[Any]] = Map.empty
-
   var store: Map[String, Val[Any]] = Map.empty
 
   // TODO: track const modifications through the store, too
@@ -45,28 +44,6 @@ trait Base_Opt extends Base_Str {
     case Dyn(s) => store.getOrElse(s, Top).asInstanceOf[Val[T]]
   }
 
-
-
-  import java.io._
-  def captureOutput(func: => Any): String = {
-    val bstream = new ByteArrayOutputStream
-    val r = withOutput(new PrintStream(bstream))(func)
-    bstream.toString + r
-  }
-  def withOutput(out: PrintStream)(func: => Any): Any = {
-    val oldStdOut = System.out
-    val oldStdErr = System.err
-    try {
-      System.setOut(out)
-      System.setErr(out)
-      scala.Console.withOut(out)(scala.Console.withErr(out)(func))
-    } finally {
-      out.flush()
-      out.close()
-      System.setOut(oldStdOut)
-      System.setErr(oldStdErr)
-    }
-  }
 
 }
 

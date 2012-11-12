@@ -29,7 +29,7 @@ type char = Char
 // *** begin block 13:<String.getChars>(II[CI)V // 36:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 18:<StringBuilder.<init>>(ILjava/lang/String;)V // 9:<StringBuilder.<init>>()V // 10:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 31:<String.getChars>(II[CI)V // 36:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 18:<StringBuilder.<init>>(ILjava/lang/String;)V // 9:<StringBuilder.<init>>()V // 10:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 47:<String.getChars>(II[CI)V // 36:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 18:<StringBuilder.<init>>(ILjava/lang/String;)V // 9:<StringBuilder.<init>>()V // 10:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
-          val x5 = java.lang.System.arraycopy([C@167a80e2,0,x3,0,0).asInstanceOf[Object]
+          val x5 = java.lang.System.arraycopy((null:[C),0,x3,0,0).asInstanceOf[Object]
 // *** begin block 61:<String.getChars>(II[CI)V // 36:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 18:<StringBuilder.<init>>(ILjava/lang/String;)V // 9:<StringBuilder.<init>>()V // 10:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 36:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 18:<StringBuilder.<init>>(ILjava/lang/String;)V // 9:<StringBuilder.<init>>()V // 10:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
           val x6 = unsafe.putInt(x2,16, 0)
@@ -126,7 +126,7 @@ type char = Char
 // *** begin block 13:<String.getChars>(II[CI)V // 36:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 15:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 31:<String.getChars>(II[CI)V // 36:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 15:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 47:<String.getChars>(II[CI)V // 36:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 15:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
-          val x8 = java.lang.System.arraycopy([C@2e25877,0,x3,0,7).asInstanceOf[Object]
+          val x8 = java.lang.System.arraycopy((null:[C),0,x3,0,7).asInstanceOf[Object]
 // *** begin block 61:<String.getChars>(II[CI)V // 36:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 15:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 36:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 15:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
           val x9 = unsafe.putInt(x2,16, 7)
@@ -135,7 +135,7 @@ type char = Char
 // *** begin block 15:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 0:<BoxesRunTime.boxToInteger>(I)Ljava/lang/Integer; // 19:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 0:<Integer.valueOf>(I)Ljava/lang/Integer; // 4:<BoxesRunTime.boxToInteger>(I)Ljava/lang/Integer; // 19:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
-          val x10 = unsafe.getBoolean(class java.lang.Integer,260)
+          val x10 = unsafe.getBoolean(Class.forName("java.lang.Integer"),260)
           val x11 = if (x10) {1} else {0}
 // *** begin block 22:<Integer.valueOf>(I)Ljava/lang/Integer; // 4:<BoxesRunTime.boxToInteger>(I)Ljava/lang/Integer; // 19:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
           val x12 = -128 > x0
@@ -158,7 +158,7 @@ x19}
 // *** begin block 35:<Integer.valueOf>(I)Ljava/lang/Integer; // 4:<BoxesRunTime.boxToInteger>(I)Ljava/lang/Integer; // 19:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
           val x24 = 128 + x0
           val x25 = x24.toLong
-          val x26 = [Ljava.lang.Integer;@4f93e477.getClass()
+          val x26 = (null:Array[Object]).getClass()
           val x27 = !x26.isArray()
           val x29 = if (x27) {          val x28 = throw new ArrayStoreException(x26.getName())
 x28} else {()}
@@ -170,7 +170,7 @@ x31}
 x34} else {()}
           val x36 = 8 * x25
           val x37 = 24 + x36
-          val x38 = unsafe.getObject([Ljava.lang.Integer;@4f93e477,x37)
+          val x38 = unsafe.getObject((null:Array[Object]),x37)
           val x39 = goto 4:<BoxesRunTime.boxToInteger>(I)Ljava/lang/Integer; // 19:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 0:<Number.<init>>()V // 4:<Integer.<init>>(I)V // 53:<Integer.valueOf>(I)Ljava/lang/Integer; // 4:<BoxesRunTime.boxToInteger>(I)Ljava/lang/Integer; // 19:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
           val x40 = goto 0:<Object.<init>>()V // 4:<Number.<init>>()V // 4:<Integer.<init>>(I)V // 53:<Integer.valueOf>(I)Ljava/lang/Integer; // 4:<BoxesRunTime.boxToInteger>(I)Ljava/lang/Integer; // 19:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
@@ -320,7 +320,7 @@ x104} else {x65}
 x111} else {          val x112 = goto 16:<AbstractStringBuilder.expandCapacity>(I)V // 15:<AbstractStringBuilder.ensureCapacityInternal>(I)V // 22:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 x112}
 // *** begin block 0:<Integer.stringSize>(I)I // 27:<Integer.toString>(I)Ljava/lang/String; // 7:<Integer.toString>()Ljava/lang/String; // 13:<String.valueOf>(Ljava/lang/Object;)Ljava/lang/String; // 8:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
-          val x114 = [I@7ad53fd0.getClass()
+          val x114 = (null:[I).getClass()
           val x115 = !x114.isArray()
           val x117 = if (x115) {          val x116 = throw new ArrayStoreException(x114.getName())
 x116} else {()}
@@ -342,7 +342,7 @@ x125}
           val x127 = goto 27:<Integer.toString>(I)Ljava/lang/String; // 7:<Integer.toString>()Ljava/lang/String; // 13:<String.valueOf>(Ljava/lang/Object;)Ljava/lang/String; // 8:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** SEEN 1: 0:<Integer.stringSize>(I)I // 27:<Integer.toString>(I)Ljava/lang/String; // 7:<Integer.toString>()Ljava/lang/String; // 13:<String.valueOf>(Ljava/lang/Object;)Ljava/lang/String; // 8:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 0:<Integer.stringSize>(I)I // 27:<Integer.toString>(I)Ljava/lang/String; // 7:<Integer.toString>()Ljava/lang/String; // 13:<String.valueOf>(Ljava/lang/Object;)Ljava/lang/String; // 8:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
-          val x128 = [I@7ad53fd0.getClass()
+          val x128 = (null:[I).getClass()
           val x129 = !x128.isArray()
           val x131 = if (x129) {          val x130 = throw new ArrayStoreException(x128.getName())
 x130} else {()}
@@ -421,11 +421,11 @@ x158}
 // *** begin block 0:<VirtualMachineError.<init>>()V // 4:<OutOfMemoryError.<init>>()V // 33:<AbstractStringBuilder.expandCapacity>(I)V // 15:<AbstractStringBuilder.ensureCapacityInternal>(I)V // 22:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
           val x170 = goto 0:<Error.<init>>()V // 4:<VirtualMachineError.<init>>()V // 4:<OutOfMemoryError.<init>>()V // 33:<AbstractStringBuilder.expandCapacity>(I)V // 15:<AbstractStringBuilder.ensureCapacityInternal>(I)V // 22:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 75:<Integer.getChars>(II[C)V // 38:<Integer.toString>(I)Ljava/lang/String; // 7:<Integer.toString>()Ljava/lang/String; // 13:<String.valueOf>(Ljava/lang/Object;)Ljava/lang/String; // 8:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
-          val x171 = [C@30cbd22a.getClass()
+          val x171 = (null:[C).getClass()
           val x172 = !x171.isArray()
           val x174 = if (x172) {          val x173 = throw new ArrayStoreException(x171.getName())
 x173} else {()}
-          val x175 = unsafe.getChar([C@30cbd22a,24)
+          val x175 = unsafe.getChar((null:[C),24)
           val x176 = x175.toInt
           val x177 = x176.toChar
           val x178 = x140.getClass()
@@ -457,11 +457,11 @@ x183} else {()}
           val x194 = goto 0:<Throwable.<init>>()V // 4:<Error.<init>>()V // 4:<VirtualMachineError.<init>>()V // 4:<OutOfMemoryError.<init>>()V // 33:<AbstractStringBuilder.expandCapacity>(I)V // 15:<AbstractStringBuilder.ensureCapacityInternal>(I)V // 22:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** SEEN 1: 75:<Integer.getChars>(II[C)V // 38:<Integer.toString>(I)Ljava/lang/String; // 7:<Integer.toString>()Ljava/lang/String; // 13:<String.valueOf>(Ljava/lang/Object;)Ljava/lang/String; // 8:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 75:<Integer.getChars>(II[C)V // 38:<Integer.toString>(I)Ljava/lang/String; // 7:<Integer.toString>()Ljava/lang/String; // 13:<String.valueOf>(Ljava/lang/Object;)Ljava/lang/String; // 8:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
-          val x195 = [C@30cbd22a.getClass()
+          val x195 = (null:[C).getClass()
           val x196 = !x195.isArray()
           val x198 = if (x196) {          val x197 = throw new ArrayStoreException(x195.getName())
 x197} else {()}
-          val x199 = unsafe.getChar([C@30cbd22a,24)
+          val x199 = unsafe.getChar((null:[C),24)
           val x200 = x199.toInt
           val x201 = x200.toChar
           val x202 = x140.getClass()
@@ -476,11 +476,11 @@ x208} else {()}
           val x211 = goto 75:<Integer.getChars>(II[C)V // 38:<Integer.toString>(I)Ljava/lang/String; // 7:<Integer.toString>()Ljava/lang/String; // 13:<String.valueOf>(Ljava/lang/Object;)Ljava/lang/String; // 8:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** SEEN 2: 75:<Integer.getChars>(II[C)V // 38:<Integer.toString>(I)Ljava/lang/String; // 7:<Integer.toString>()Ljava/lang/String; // 13:<String.valueOf>(Ljava/lang/Object;)Ljava/lang/String; // 8:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 75:<Integer.getChars>(II[C)V // 38:<Integer.toString>(I)Ljava/lang/String; // 7:<Integer.toString>()Ljava/lang/String; // 13:<String.valueOf>(Ljava/lang/Object;)Ljava/lang/String; // 8:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
-          val x212 = [C@30cbd22a.getClass()
+          val x212 = (null:[C).getClass()
           val x213 = !x212.isArray()
           val x215 = if (x213) {          val x214 = throw new ArrayStoreException(x212.getName())
 x214} else {()}
-          val x216 = unsafe.getChar([C@30cbd22a,24)
+          val x216 = unsafe.getChar((null:[C),24)
           val x217 = x216.toInt
           val x218 = x217.toChar
           val x219 = x152.getClass()
@@ -511,11 +511,11 @@ x224} else {()}
           val x235 = goto 0:<Object.<init>>()V // 4:<Throwable.<init>>()V // 4:<Error.<init>>()V // 4:<VirtualMachineError.<init>>()V // 4:<OutOfMemoryError.<init>>()V // 33:<AbstractStringBuilder.expandCapacity>(I)V // 15:<AbstractStringBuilder.ensureCapacityInternal>(I)V // 22:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** SEEN 3: 75:<Integer.getChars>(II[C)V // 38:<Integer.toString>(I)Ljava/lang/String; // 7:<Integer.toString>()Ljava/lang/String; // 13:<String.valueOf>(Ljava/lang/Object;)Ljava/lang/String; // 8:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 75:<Integer.getChars>(II[C)V // 38:<Integer.toString>(I)Ljava/lang/String; // 7:<Integer.toString>()Ljava/lang/String; // 13:<String.valueOf>(Ljava/lang/Object;)Ljava/lang/String; // 8:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
-          val x236 = [C@30cbd22a.getClass()
+          val x236 = (null:[C).getClass()
           val x237 = !x236.isArray()
           val x239 = if (x237) {          val x238 = throw new ArrayStoreException(x236.getName())
 x238} else {()}
-          val x240 = unsafe.getChar([C@30cbd22a,24)
+          val x240 = unsafe.getChar((null:[C),24)
           val x241 = x240.toInt
           val x242 = x241.toChar
           val x243 = x140.getClass()
@@ -566,8 +566,8 @@ x249} else {()}
           val x268 = goto 46:<AbstractStringBuilder.expandCapacity>(I)V // 15:<AbstractStringBuilder.ensureCapacityInternal>(I)V // 22:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 4:<Throwable.<init>>()V // 4:<Error.<init>>()V // 4:<VirtualMachineError.<init>>()V // 4:<OutOfMemoryError.<init>>()V // 33:<AbstractStringBuilder.expandCapacity>(I)V // 15:<AbstractStringBuilder.ensureCapacityInternal>(I)V // 22:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
           val x269 = unsafe.putObject(x149,32, x149)
-          val x270 = unsafe.putObject(x149,40, [Ljava.lang.StackTraceElement;@6efd0a89)
-          val x271 = unsafe.putObject(x149,48, [])
+          val x270 = unsafe.putObject(x149,40, (null:Array[Object]))
+          val x271 = unsafe.putObject(x149,48, (null:java.util.Collections$UnmodifiableRandomAccessList))
           val x272 = unsafe.monitorEnter(x149)
           val x273 = goto 0:<Throwable.fillInStackTrace>()Ljava/lang/Throwable; // 27:<Throwable.<init>>()V // 4:<Error.<init>>()V // 4:<VirtualMachineError.<init>>()V // 4:<OutOfMemoryError.<init>>()V // 33:<AbstractStringBuilder.expandCapacity>(I)V // 15:<AbstractStringBuilder.ensureCapacityInternal>(I)V // 22:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 0:<Object.<init>>()V // 4:<String.<init>>([CII)V // 16:<StringBuilder.toString>()Ljava/lang/String; // 7:<StringBuilder.toString>()Ljava/lang/String; // 25:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
@@ -630,7 +630,7 @@ x295} else {x65}
           val x305 = unsafe.putInt(x2,16, x85)
           val x306 = goto 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 19:<Throwable.fillInStackTrace>()Ljava/lang/Throwable; // 27:<Throwable.<init>>()V // 4:<Error.<init>>()V // 4:<VirtualMachineError.<init>>()V // 4:<OutOfMemoryError.<init>>()V // 33:<AbstractStringBuilder.expandCapacity>(I)V // 15:<AbstractStringBuilder.ensureCapacityInternal>(I)V // 22:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
-          val x307 = unsafe.putObject(x149,40, [Ljava.lang.StackTraceElement;@6efd0a89)
+          val x307 = unsafe.putObject(x149,40, (null:Array[Object]))
           val x308 = unsafe.monitorEnter(x149)
           val x309 = goto 27:<Throwable.<init>>()V // 4:<Error.<init>>()V // 4:<VirtualMachineError.<init>>()V // 4:<OutOfMemoryError.<init>>()V // 33:<AbstractStringBuilder.expandCapacity>(I)V // 15:<AbstractStringBuilder.ensureCapacityInternal>(I)V // 22:<AbstractStringBuilder.append>(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder; // 5:<StringBuilder.append>(Ljava/lang/String;)Ljava/lang/StringBuilder; // 11:<StringBuilder.append>(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder; // 22:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 35:<String.<init>>([CII)V // 16:<StringBuilder.toString>()Ljava/lang/String; // 7:<StringBuilder.toString>()Ljava/lang/String; // 25:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
@@ -910,7 +910,7 @@ x295} else {x65}
           val x424 = if (x422) {          val x423 = throw new NullPointerException()
 x423} else {x413}
           val x425 = x424 eq null
-          val x426 = if (x425) {class java.lang.Thread} else {x424}
+          val x426 = if (x425) {Class.forName("java.lang.Thread")} else {x424}
           val x427 = unsafe.getObject(x426,120)
           val x428 = goto 9:<ThreadLocal.get>()Ljava/lang/Object; // 7:<DynamicVariable.value>()Ljava/lang/Object; // 7:<Console$.out>()Ljava/io/PrintStream; // 4:<Console$.println>(Ljava/lang/Object;)V // 7:<Predef$.println>(Ljava/lang/Object;)V // 28:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** SEEN 2: 25:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
@@ -985,7 +985,7 @@ x441} else {x427}
           val x457 = if (x455) {          val x456 = throw new NullPointerException()
 x456} else {x427}
           val x458 = x457 eq null
-          val x459 = if (x458) {class java.lang.ThreadLocal$ThreadLocalMap} else {x457}
+          val x459 = if (x458) {Class.forName("java.lang.ThreadLocal$ThreadLocalMap")} else {x457}
           val x460 = unsafe.getObject(x459,24)
           val x461 = x460 eq null
           val x463 = if (x461) {          val x462 = throw new NullPointerException()
@@ -997,7 +997,7 @@ x462} else {x460}
           val x469 = if (x467) {          val x468 = throw new NullPointerException()
 x468} else {x427}
           val x470 = x469 eq null
-          val x471 = if (x470) {class java.lang.ThreadLocal$ThreadLocalMap} else {x469}
+          val x471 = if (x470) {Class.forName("java.lang.ThreadLocal$ThreadLocalMap")} else {x469}
           val x472 = unsafe.getObject(x471,24)
           val x473 = x466.toLong
           val x474 = x472 eq null
@@ -1076,7 +1076,7 @@ x510} else {x427}
           val x520 = if (x518) {          val x519 = throw new NullPointerException()
 x519} else {x427}
           val x521 = x520 eq null
-          val x522 = if (x521) {class java.lang.ThreadLocal$ThreadLocalMap} else {x520}
+          val x522 = if (x521) {Class.forName("java.lang.ThreadLocal$ThreadLocalMap")} else {x520}
           val x523 = unsafe.getObject(x522,24)
           val x524 = x523 eq null
           val x526 = if (x524) {          val x525 = throw new NullPointerException()
@@ -1092,7 +1092,7 @@ x525} else {x523}
           val x532 = if (x530) {          val x531 = throw new NullPointerException()
 x531} else {x506}
           val x533 = x532 eq null
-          val x534 = if (x533) {class java.lang.Thread} else {x532}
+          val x534 = if (x533) {Class.forName("java.lang.Thread")} else {x532}
           val x535 = unsafe.getObject(x534,120)
           val x536 = goto 9:<ThreadLocal.get>()Ljava/lang/Object; // 7:<DynamicVariable.value>()Ljava/lang/Object; // 7:<Console$.out>()Ljava/io/PrintStream; // 4:<Console$.println>(Ljava/lang/Object;)V // 7:<Predef$.println>(Ljava/lang/Object;)V // 28:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** SEEN 3: 3:<ThreadLocal.get>()Ljava/lang/Object; // 7:<DynamicVariable.value>()Ljava/lang/Object; // 7:<Console$.out>()Ljava/io/PrintStream; // 4:<Console$.println>(Ljava/lang/Object;)V // 7:<Predef$.println>(Ljava/lang/Object;)V // 28:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
@@ -1110,7 +1110,7 @@ x539} else {x491}
           val x545 = if (x543) {          val x544 = throw new NullPointerException()
 x544} else {x513}
           val x546 = x545 eq null
-          val x547 = if (x546) {class java.lang.Thread} else {x545}
+          val x547 = if (x546) {Class.forName("java.lang.Thread")} else {x545}
           val x548 = unsafe.getObject(x547,120)
           val x549 = goto 9:<ThreadLocal.get>()Ljava/lang/Object; // 7:<DynamicVariable.value>()Ljava/lang/Object; // 7:<Console$.out>()Ljava/io/PrintStream; // 4:<Console$.println>(Ljava/lang/Object;)V // 7:<Predef$.println>(Ljava/lang/Object;)V // 28:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** SEEN 1: 9:<ThreadLocal.get>()Ljava/lang/Object; // 7:<DynamicVariable.value>()Ljava/lang/Object; // 7:<Console$.out>()Ljava/io/PrintStream; // 4:<Console$.println>(Ljava/lang/Object;)V // 7:<Predef$.println>(Ljava/lang/Object;)V // 28:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
@@ -1122,7 +1122,7 @@ x544} else {x513}
           val x553 = if (x551) {          val x552 = throw new NullPointerException()
 x552} else {x516}
           val x554 = x553 eq null
-          val x555 = if (x554) {class java.lang.Thread} else {x553}
+          val x555 = if (x554) {Class.forName("java.lang.Thread")} else {x553}
           val x556 = unsafe.getObject(x555,120)
           val x557 = goto 9:<ThreadLocal.get>()Ljava/lang/Object; // 7:<DynamicVariable.value>()Ljava/lang/Object; // 7:<Console$.out>()Ljava/io/PrintStream; // 4:<Console$.println>(Ljava/lang/Object;)V // 7:<Predef$.println>(Ljava/lang/Object;)V // 28:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 19:<ThreadLocal$ThreadLocalMap.getEntryAfterMiss>(Ljava/lang/ThreadLocal;ILjava/lang/ThreadLocal$ThreadLocalMap$Entry;)Ljava/lang/ThreadLocal$ThreadLocalMap$Entry; // 41:<ThreadLocal$ThreadLocalMap.getEntry>(Ljava/lang/ThreadLocal;)Ljava/lang/ThreadLocal$ThreadLocalMap$Entry; // 5:<ThreadLocal$ThreadLocalMap.access$000>(Ljava/lang/ThreadLocal$ThreadLocalMap;Ljava/lang/ThreadLocal;)Ljava/lang/ThreadLocal$ThreadLocalMap$Entry; // 19:<ThreadLocal.get>()Ljava/lang/Object; // 7:<DynamicVariable.value>()Ljava/lang/Object; // 7:<Console$.out>()Ljava/io/PrintStream; // 4:<Console$.println>(Ljava/lang/Object;)V // 7:<Predef$.println>(Ljava/lang/Object;)V // 28:<TestInterpreter1$$anonfun$testC$1$Foo$3.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
@@ -1197,7 +1197,7 @@ x583}
           val x594 = if (x592) {          val x593 = throw new NullPointerException()
 x593} else {x535}
           val x595 = x594 eq null
-          val x596 = if (x595) {class java.lang.ThreadLocal$ThreadLocalMap} else {x594}
+          val x596 = if (x595) {Class.forName("java.lang.ThreadLocal$ThreadLocalMap")} else {x594}
           val x597 = unsafe.getObject(x596,24)
           val x598 = x597 eq null
           val x600 = if (x598) {          val x599 = throw new NullPointerException()
@@ -1209,7 +1209,7 @@ x599} else {x597}
           val x606 = if (x604) {          val x605 = throw new NullPointerException()
 x605} else {x535}
           val x607 = x606 eq null
-          val x608 = if (x607) {class java.lang.ThreadLocal$ThreadLocalMap} else {x606}
+          val x608 = if (x607) {Class.forName("java.lang.ThreadLocal$ThreadLocalMap")} else {x606}
           val x609 = unsafe.getObject(x608,24)
           val x610 = x603.toLong
           val x611 = x609 eq null
@@ -1257,7 +1257,7 @@ x641} else {()}
           val x648 = if (x646) {          val x647 = throw new NullPointerException()
 x647} else {x548}
           val x649 = x648 eq null
-          val x650 = if (x649) {class java.lang.ThreadLocal$ThreadLocalMap} else {x648}
+          val x650 = if (x649) {Class.forName("java.lang.ThreadLocal$ThreadLocalMap")} else {x648}
           val x651 = unsafe.getObject(x650,24)
           val x652 = x651 eq null
           val x654 = if (x652) {          val x653 = throw new NullPointerException()
@@ -1269,7 +1269,7 @@ x653} else {x651}
           val x660 = if (x658) {          val x659 = throw new NullPointerException()
 x659} else {x548}
           val x661 = x660 eq null
-          val x662 = if (x661) {class java.lang.ThreadLocal$ThreadLocalMap} else {x660}
+          val x662 = if (x661) {Class.forName("java.lang.ThreadLocal$ThreadLocalMap")} else {x660}
           val x663 = unsafe.getObject(x662,24)
           val x664 = x657.toLong
           val x665 = x663 eq null
@@ -1304,7 +1304,7 @@ x685} else {x628}
           val x691 = if (x689) {          val x690 = throw new NullPointerException()
 x690} else {x556}
           val x692 = x691 eq null
-          val x693 = if (x692) {class java.lang.ThreadLocal$ThreadLocalMap} else {x691}
+          val x693 = if (x692) {Class.forName("java.lang.ThreadLocal$ThreadLocalMap")} else {x691}
           val x694 = unsafe.getObject(x693,24)
           val x695 = x694 eq null
           val x697 = if (x695) {          val x696 = throw new NullPointerException()
@@ -1316,7 +1316,7 @@ x696} else {x694}
           val x703 = if (x701) {          val x702 = throw new NullPointerException()
 x702} else {x556}
           val x704 = x703 eq null
-          val x705 = if (x704) {class java.lang.ThreadLocal$ThreadLocalMap} else {x703}
+          val x705 = if (x704) {Class.forName("java.lang.ThreadLocal$ThreadLocalMap")} else {x703}
           val x706 = unsafe.getObject(x705,24)
           val x707 = x700.toLong
           val x708 = x706 eq null
@@ -1424,7 +1424,7 @@ x779} else {x548}
           val x784 = if (x782) {          val x783 = throw new NullPointerException()
 x783} else {x535}
           val x785 = x784 eq null
-          val x786 = if (x785) {class java.lang.ThreadLocal$ThreadLocalMap} else {x784}
+          val x786 = if (x785) {Class.forName("java.lang.ThreadLocal$ThreadLocalMap")} else {x784}
           val x787 = unsafe.getObject(x786,24)
           val x788 = x787 eq null
           val x790 = if (x788) {          val x789 = throw new NullPointerException()
@@ -1450,7 +1450,7 @@ x794} else {x556}
           val x802 = if (x800) {          val x801 = throw new NullPointerException()
 x801} else {x548}
           val x803 = x802 eq null
-          val x804 = if (x803) {class java.lang.ThreadLocal$ThreadLocalMap} else {x802}
+          val x804 = if (x803) {Class.forName("java.lang.ThreadLocal$ThreadLocalMap")} else {x802}
           val x805 = unsafe.getObject(x804,24)
           val x806 = x805 eq null
           val x808 = if (x806) {          val x807 = throw new NullPointerException()
@@ -1470,7 +1470,7 @@ x812} else {x628}
           val x818 = if (x816) {          val x817 = throw new NullPointerException()
 x817} else {x556}
           val x819 = x818 eq null
-          val x820 = if (x819) {class java.lang.ThreadLocal$ThreadLocalMap} else {x818}
+          val x820 = if (x819) {Class.forName("java.lang.ThreadLocal$ThreadLocalMap")} else {x818}
           val x821 = unsafe.getObject(x820,24)
           val x822 = x821 eq null
           val x824 = if (x822) {          val x823 = throw new NullPointerException()

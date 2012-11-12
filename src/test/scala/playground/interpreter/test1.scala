@@ -9,10 +9,11 @@ class TestInterpreter1 extends FileDiffSuite {
 
   val prefix = "test-out/test-interpreter-1"
 
+  // interpret
   def testA = withOutFileChecked(prefix+"A") {
 
     class Foo {
-      def bar(x: Int) = println("hello: "+x)
+      def bar(x: Int) = { println("hello: "+x); 9 }
     }
 
     val o = new Foo
@@ -27,16 +28,17 @@ class TestInterpreter1 extends FileDiffSuite {
     val it = new BytecodeInterpreter_Impl
     it.TRACE = true
     it.TRACE_BYTE_CODE = true
-    it.initialize("")
+    it.initialize()
     it.execute(method, Array[Object](o, 8:Integer))
     
   }
 
 
+  // compile simple
   def testB = withOutFileChecked(prefix+"B") {
 
     class Foo {
-      def bar(x: Int) = println("hello: "+x)
+      def bar(x: Int) = { println("hello: "+x); 9 }
     }
 
     val o = new Foo
@@ -50,14 +52,18 @@ class TestInterpreter1 extends FileDiffSuite {
 
     val it = new BytecodeInterpreter_Simple
 
-    it.initialize("")
-    it.execute(method, Array[Object](o, 8:Integer))    
+    it.initialize()
+    val f = it.compile((x:Int) => o.bar(8))
+    println(f(7))
+
   }
 
+
+  // compile optimized
   def testC = withOutFileChecked(prefix+"C") {
 
     class Foo {
-      def bar(x: Int) = println("hello: "+x)
+      def bar(x: Int) = { println("hello: "+x); 9 }
     }
 
     val o = new Foo
@@ -73,8 +79,9 @@ class TestInterpreter1 extends FileDiffSuite {
 
     //it.emitControlFlow = false
 
-    it.initialize("")
-    it.execute(method, Array[Object](o, 8:Integer))    
+    it.initialize()
+    val f = it.compile((x:Int) => o.bar(8))
+    println(f(7))
   }
 
 }

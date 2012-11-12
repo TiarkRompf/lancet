@@ -30,18 +30,55 @@ trait Base_Str extends Base {
   def typeRep[T:TypeRep]: TypeRep[T] = implicitly[TypeRep[T]]
 
 
+  var constantPool: Vector[AnyRef] = Vector.empty
+
   def constToString[T](x:T): String = x match {
-    case x: Int => (""+x)
-    case x: Long => (""+x)
-    case x: Double => (""+x)
+    case x: Int => ""+x
+    case x: Long => ""+x
+    case x: Double => ""+x
+    case x: Unit => "()"
+    case null => "null"
     // TODO: primitives, arrays
     case s: String => ("\""+s+"\"")
-    case o: Array[Object] => ("(null:Array[Object])/*"+x+"*/") // TODO
     case c: Class[_] => ("Class.forName(\""+c.getName+"\")")//("classOf["+c.getName+"]")
-    case o: Object => ("(null:"+o.getClass.getName+")/*"+x+"*/")
-    case _ => (""+x)
+    //case o: Array[Object] => ("(null:Array[Object])") // TODO
+    //case o: Object => ("(null:"+o.getClass.getName+")")
+    case _ => 
+      var idx = constantPool.indexOf(x) // FIXME: use eq
+      if (idx < 0) {
+        constantPool = constantPool :+ x.asInstanceOf[AnyRef]
+        idx = constantPool.size - 1
+      }
+
+      "CONST_" + idx
   }
 
+
+
+  import java.io._
+  def captureOutput[A](func: => A): String = {
+    val (s,r) = captureOutputResult(func)
+    s + r
+  }
+  def captureOutputResult[A](func: => A): (String,A) = {
+    val bstream = new ByteArrayOutputStream
+    val r = withOutput(new PrintStream(bstream))(func)
+    (bstream.toString, r)
+  }
+  def withOutput[A](out: PrintStream)(func: => A): A = {
+    val oldStdOut = System.out
+    val oldStdErr = System.err
+    try {
+      System.setOut(out)
+      System.setErr(out)
+      scala.Console.withOut(out)(scala.Console.withErr(out)(func))
+    } finally {
+      out.flush()
+      out.close()
+      System.setOut(oldStdOut)
+      System.setErr(oldStdErr)
+    }
+  }
 }
 
 
@@ -59,27 +96,6 @@ trait Base_Simple extends Base_Str {
   def reify[T](x: => Rep[T]): String = "{" + captureOutput(x.s) + "}"
 
   def liftConst[T:TypeRep](x:T): Rep[T] = Rep[T](constToString(x))
-
-  import java.io._
-  def captureOutput(func: => Any): String = {
-    val bstream = new ByteArrayOutputStream
-    val r = withOutput(new PrintStream(bstream))(func)
-    bstream.toString + r
-  }
-  def withOutput(out: PrintStream)(func: => Any): Any = {
-    val oldStdOut = System.out
-    val oldStdErr = System.err
-    try {
-      System.setOut(out)
-      System.setErr(out)
-      scala.Console.withOut(out)(scala.Console.withErr(out)(func))
-    } finally {
-      out.flush()
-      out.close()
-      System.setOut(oldStdOut)
-      System.setErr(oldStdErr)
-    }
-  }
 
 }
 

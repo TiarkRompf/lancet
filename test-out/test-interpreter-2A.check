@@ -1,6 +1,3 @@
-object Generated {
-val unsafe = null.asInstanceOf[sun.misc.Unsafe]
-type char = Char
           val x0 = throw new NullPointerException()
           val x1 = null.document(null)
           val x2 = x1.getElementById(x1,"canvas")
@@ -6485,4 +6482,3 @@ type char = Char
           val x6481 = x3.closePath(x3)
           val x6482 = x3.restore(x3)
           val x6483 = x3.stroke(x3)
-}

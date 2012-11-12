@@ -124,8 +124,8 @@ class TestInterpreter2 extends FileDiffSuite {
     //it.TRACE_BYTE_CODE = true
     it.emitControlFlow = false
     it.emitRecursive = true
-    it.initialize("")
-    it.execute(method, Array[Object](Program))
+    it.initialize()
+    it.execute(method, Array(it.unit(Program)))
     
   }
 

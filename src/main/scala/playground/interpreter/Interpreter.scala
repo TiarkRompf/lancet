@@ -958,7 +958,8 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
 
     private def invokeVirtual(frame: InterpreterFrame, cpi: Char): InterpreterFrame = {// throws Throwable {
         val m: ResolvedJavaMethod = resolveMethod(frame, Bytecodes.INVOKEVIRTUAL, cpi);
-        if (Modifier.isFinal(m.accessFlags())) {
+        val isFinal = Modifier.isFinal(m.holder.accessFlags) || m.isLeafMethod
+        if (isFinal) {
             return invoke(frame, m, nullCheck(frame.peekReceiver(m)), true);
         } else {
             return resolveAndInvoke(frame, m);
@@ -1302,7 +1303,7 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
 
     def getRuntimeInterface(m: MetaAccessProvider): Runtime
 
-    def initialize(args: String): Boolean = {
+    def initialize(): Unit = {
         methodDelegates = new HashMap
         classDelegates = new HashMap
 
@@ -1320,7 +1321,6 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
 
         this.rootMethod = resolveRootMethod();
         registerDelegates();
-        return parseArguments(args);
     }
 
     def setOption(name: String, value: String): Unit = {
@@ -1387,11 +1387,6 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
         });
     }
 
-    //@SuppressWarnings("unused")
-    def parseArguments(stringArgs: String): Boolean = {
-        // TODO: parse the arguments
-        return true;
-    }
 
     def setMaxStackFrames(maxStackSize: Int): Unit = {
         this.maxStackFrames = maxStackSize;

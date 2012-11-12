@@ -425,8 +425,8 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
       if_(value === unit(null)) (reflect[Object]("throw new NullPointerException()")) (value)
 
     def checkArrayType(array: Rep[Object], arrayType: Class[_]): Unit = {
-        val cond = reflect[Boolean]("!array.getClass().getComponentType().isAssignableFrom("+arrayType+")")
-        if_(cond) (reflect[Unit]("throw new ArrayStoreException("+arrayType.getName()+")")) (liftConst())
+        val cond = reflect[Boolean]("!"+array+".getClass().getComponentType().isAssignableFrom(classOf["+arrayType+"])")
+        if_(cond) (reflect[Unit]("throw new ArrayStoreException(\""+arrayType.getName()+"\")")) (liftConst())
     }
 
     def checkArray(array: Rep[Object], index: Rep[Long]): Unit = {

@@ -2,7 +2,7 @@
 object Generated {
 val unsafe = null.asInstanceOf[sun.misc.Unsafe]
 type char = Char
-          val x1: Unit = block_0(null,null,null,(null:playground.interpreter.TestInterpreter1$$anonfun$testB$1$Foo$2)/*playground.interpreter.TestInterpreter1$$anonfun$testB$1$Foo$2@30005a85*/,x0,null,null,null) // 0:<TestInterpreter1$$anonfun$testB$1$Foo$2.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
+          val x1: Unit = block_0(null,null,null,(null:playground.interpreter.TestInterpreter1$$anonfun$testB$1$Foo$2),x0,null,null,null) // 0:<TestInterpreter1$$anonfun$testB$1$Foo$2.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 0:<TestInterpreter1$$anonfun$testB$1$Foo$2.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 // *** begin block 0:<TestInterpreter1$$anonfun$testB$1$Foo$2.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 def block_0(p2_0:Any,p2_1:Any,p2_2:Any,p2_3:Object,p2_4:Int,p2_5:Any,p2_6:Any,p2_7:Any): Any = {
@@ -478,7 +478,7 @@ def block_83(p4_0:Any,p4_1:Any,p4_2:Any,p4_3:Int,p4_4:Any,p4_5:Any,p4_6:Any,p3_0
           val x139: Object = if (x138) {Class.forName("java.lang.Integer")} else {null}
           val x140: Boolean = unsafe.getBoolean(x139,260)
           val x141: Int = if (x140) {1} else {0}
-          val x144: Unit = if ((null:java.lang.Boolean)/*true*/) {          val x142: Unit = block_84(p4_0,p4_1,p4_2,p4_3,x141,p4_5,p4_6,p3_0,p3_1,p3_2,p3_3,p3_4,p2_0,p2_1,p2_2,p2_3,p2_4,p2_5,p2_6,p2_7) // 22:<Integer.valueOf>(I)Ljava/lang/Integer; // 4:<BoxesRunTime.boxToInteger>(I)Ljava/lang/Integer; // 19:<TestInterpreter1$$anonfun$testB$1$Foo$2.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
+          val x144: Unit = if ((null:java.lang.Boolean)) {          val x142: Unit = block_84(p4_0,p4_1,p4_2,p4_3,x141,p4_5,p4_6,p3_0,p3_1,p3_2,p3_3,p3_4,p2_0,p2_1,p2_2,p2_3,p2_4,p2_5,p2_6,p2_7) // 22:<Integer.valueOf>(I)Ljava/lang/Integer; // 4:<BoxesRunTime.boxToInteger>(I)Ljava/lang/Integer; // 19:<TestInterpreter1$$anonfun$testB$1$Foo$2.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 x142} else {          val x143: Unit = block_85(p4_0,p4_1,p4_2,p4_3,x141,p4_5,p4_6,p3_0,p3_1,p3_2,p3_3,p3_4,p2_0,p2_1,p2_2,p2_3,p2_4,p2_5,p2_6,p2_7) // 6:<Integer.valueOf>(I)Ljava/lang/Integer; // 4:<BoxesRunTime.boxToInteger>(I)Ljava/lang/Integer; // 19:<TestInterpreter1$$anonfun$testB$1$Foo$2.bar>(I)V // 0:<BytecodeInterpreter_Impl.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
 x143}
 }
@@ -552,7 +552,7 @@ x183} else {x179}
           val x185: java.lang.Class[_ <: Any] = x179.getClass()
           val x186: Boolean = !x185.isArray()
           val x188: Unit = if (x186) {          val x187: Unit = throw new ArrayStoreException(x185.getName())
-x187} else {(null:scala.runtime.BoxedUnit)/*()*/}
+x187} else {()}
           val x189: Boolean = x181 < 0
           val x193: Boolean = if (x189) {x189} else {          val x190: Int = java.lang.reflect.Array.getLength(x179)
           val x191: Long = x190.toLong
@@ -560,7 +560,7 @@ x187} else {(null:scala.runtime.BoxedUnit)/*()*/}
 x192}
           val x196: Unit = if (x193) {          val x194: Int = x181.toInt
           val x195: Unit = throw new ArrayIndexOutOfBoundsException(x194)
-x195} else {(null:scala.runtime.BoxedUnit)/*()*/}
+x195} else {()}
           val x197: Long = 8 * x181
           val x198: Long = 24 + x197
           val x199: Object = unsafe.getObject(x179,x198)
