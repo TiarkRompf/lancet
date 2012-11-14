@@ -124,7 +124,7 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
     // may need different treatment for intra-procedural blocks and function
     // calls: want to inline functions but not generally duplicate local blocks
 
-    def loop(root: InterpreterFrame): Unit = {// throws Throwable {
+    def loop(root: InterpreterFrame, main: InterpreterFrame): Unit = {// throws Throwable {
 
       val info = new scala.collection.mutable.HashMap[String, Int]
 
@@ -178,12 +178,17 @@ final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with Runt
 
     def exec(frame: InterpreterFrame): Rep[Unit] = { // called internally to initiate control transfer
 
+      if (frame.getParentFrame == null) { // TODO: cleanup?
+        val p = popAsObject(frame, frame.getMethod.signature.returnKind())
+        return reflect[Unit]("(RES = "+p+") // return to root")
+      }
+
       val key = contextKey(frame)
       val id = info.getOrElseUpdate(key, {
         val id = count
         count += 1
 
-        // TODO: copy the whole stack: not ideal
+        // TODO: copy the whole stack: not ideal (handling of root buggy, too)
 
         def freshFrame(frame: InterpreterFrame): InterpreterFrame_Str = if (frame eq null) null else {
           val frame2 = frame.asInstanceOf[InterpreterFrame_Str].copy2(freshFrame(frame.getParentFrame))
@@ -213,7 +218,9 @@ final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with Runt
     }
 
 
-    def loop(root: InterpreterFrame): Unit = {
+    def loop(root: InterpreterFrame, main: InterpreterFrame): Unit = {
+
+      pushAsObjectInternal(root, main.getMethod.signature().returnKind(), reflect[Object]("null // stub return value")); // TODO: cleanup?
 
       while (worklist.nonEmpty) {
         var frame = worklist.head
@@ -227,14 +234,16 @@ final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with Runt
         val paramsStr = params.map(x => if (x eq null) "?" else x.toString+":"+x.typ)
         println("def block_"+id+"("+paramsStr.mkString(",")+"): Any = {")
 
-        if (frame.getParentFrame != null) { // don't eval root frame
+        if (frame.getParentFrame != null) { // don't eval root frame -- careful, this is a copy of it!
           val bci = frame.getBCI()
           val bs = new BytecodeStream(frame.getMethod.code())
           //bs.setBCI(globalFrame.getBCI())
           val res = executeBlock(frame, bs, bci)
           println(res)
         } else {
+          println("// shoudn't reach here..")
           println("// returned to root")
+          println("// rval: " + frame.asInstanceOf[InterpreterFrame_Str].returnValue)
         }
 
         println("}")
@@ -260,13 +269,15 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
 
     def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
 
-      val (src0, res) = ("", {//captureOutputResult { 
+      //def captureOutputResult[T](x:T) = ("", x)
+
+      val (src0, res) = captureOutputResult { 
 
         val arg = reflect[A]("ARG")
 
         execute(f.getClass.getMethod("apply", manifest[A].erasure), Array[Rep[Object]](unit(f),arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
 
-      })
+      }
 
       val (source, _) = captureOutputResult {
       
@@ -287,10 +298,10 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
         println("type char = Char")
 
         println("def apply(ARG: "+manifest[A]+"): "+manifest[B]+" = { object BODY {")
+        println("var RES = null.asInstanceOf["+manifest[B]+"]")
 
         println(src0)
 
-        println("val RES = " + res)
         println("}; BODY.RES }")
         println("}")
       }
@@ -340,9 +351,7 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
             }*/
 
 
-            // why
-
-            return popAsObject(rootFrame, signature.returnKind()); // DOESN'T WORK???
+            return popAsObject(rootFrame, signature.returnKind()); // only works if rootFrame not copied internally...
         } catch {
             case e: Exception =>
             // TODO (chaeubl): remove this exception handler (only used for debugging)
@@ -384,10 +393,10 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
             traceCall(frame, "RootCall");
         }
         exec(frame)
-        loop(root);
+        loop(root, frame);
     }
 
-    def loop(root: InterpreterFrame): Unit
+    def loop(root: InterpreterFrame, main: InterpreterFrame): Unit
 
 
 
@@ -403,7 +412,6 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
     override def retn() = local { (frame, bs) =>
 
       // create copy -- will be pushing values into parent frame !!
-
       val parentFrame = frame.getParentFrame.asInstanceOf[InterpreterFrame_Str].copy
       val returnValue = frame.getReturnValue()
       popFrame(frame)

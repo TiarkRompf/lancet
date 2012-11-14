@@ -265,6 +265,7 @@ with InterpreterFrame {
     }
 
     def copy() = {
+      //assert(parent != null, "don't copy root frame!")
       val frame = new InterpreterFrame_Str(method, parent, additionalStackSpace);
       System.arraycopy(locals, 0, frame.locals, 0, locals.length)
       //frame.locals = locals
@@ -276,6 +277,7 @@ with InterpreterFrame {
     }
 
     def copy2(parent: InterpreterFrame_Str) = { // TODO
+      //assert(parent != null, "don't copy root frame!")
       val frame = new InterpreterFrame_Str(method, parent, additionalStackSpace);
       System.arraycopy(locals, 0, frame.locals, 0, locals.length)
       //frame.locals = locals
