@@ -1263,3 +1263,4 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
     28: bipush
     30: ireturn
     Ret HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar> - (I)I
+res: 9

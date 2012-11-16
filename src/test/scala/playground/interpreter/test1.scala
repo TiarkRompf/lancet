@@ -29,16 +29,17 @@ class TestInterpreter1 extends FileDiffSuite {
     it.TRACE = true
     it.TRACE_BYTE_CODE = true
     it.initialize()
-    it.execute(method, Array[Object](o, 8:Integer))
+    val res = it.execute(method, Array[Object](o, 8:Integer))
     
+    println("res: " + res)
   }
 
 
   // compile simple
   def testB = withOutFileChecked(prefix+"B") {
 
-    class Foo {
-      def bar(x: Int) = { println("hello: "+x); 9 }
+    final class Foo { // making class final -- Simple compiler can't resolve call otherwise 
+      def bar(x: Int) = { System.out.println("hello: "+x); 9 }
     }
 
     val o = new Foo
