@@ -48,11 +48,20 @@ class Runtime_Impl(metaProvider: MetaAccessProvider) extends Runtime {
     toJava.setAccessible(true)
 
     def invoke(method: ResolvedJavaMethod, args: Array[AnyRef]): AnyRef = {
-      val m = toJava.invoke(method).asInstanceOf[java.lang.reflect.Method]
+      //System.out.println("prepare invoke: " + method + " " + args.mkString("(",",",")") + "//" + args.length)
 
-      //println("invoking: " + m + " " + args.mkString("(",",",")") + "//" + args.length)
-      //println("types: " + m.getParameterTypes.mkString(",") + "//" + m.getParameterTypes.length)
-      m.invoke(null, args:_*) // FIXME:?? what about non-static method ??
+      val m = toJava.invoke(method).asInstanceOf[java.lang.reflect.Method]
+      m.setAccessible(true)
+
+      //System.out.println("invoking: " + m + " " + args.mkString("(",",",")") + "//" + args.length)
+      //System.out.println("types: " + m.getParameterTypes.mkString(",") + "//" + m.getParameterTypes.length)
+
+      val static = Modifier.isStatic(method.accessFlags)
+
+      if (static)
+        m.invoke(null, args:_*)
+      else
+        m.invoke(args.head, args.tail:_*)
     }
 
     def typeIsInstance(typ: ResolvedJavaType, value: Object): Boolean = {
