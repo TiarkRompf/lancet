@@ -151,20 +151,31 @@ trait Unsafe_Str {
 
 class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
 
+    val toJavaM = classOf[HotSpotResolvedJavaMethod].getDeclaredMethod("toJava")
+    toJavaM.setAccessible(true)
+
     def invoke(method: ResolvedJavaMethod, args: Array[Rep[Object]]): Rep[Object] = {
         
         val holder = method.holder.toJava.getName
         val name = method.name
 
-        // TODO: static methods
+        def methToJava(m: ResolvedJavaMethod) = toJavaM.invoke(method).asInstanceOf[java.lang.reflect.Method]
+
+        val m = methToJava(method)
+        m.setAccessible(true)
+
         val static = Modifier.isStatic(method.accessFlags)
 
         if (!static) {
-            // TODO: may not be accurate for invokespecial: generated code performs invokevirtual
-            reflect[Object](args(0)+".asInstanceOf["+holder+"]."+name+"("+args.drop(1).mkString(",")+").asInstanceOf[Object]")
+            if (args.length > 1)
+                reflect[Object](liftConst(m),".invoke("+args.map(_+".asInstanceOf[AnyRef]").mkString(",")+") // "+holder+"."+name)
+            else
+                reflect[Object](liftConst(m),".invoke("+args(0)+") // "+holder+"."+name)
+            //reflect[Object](args(0)+".asInstanceOf["+holder+"]."+name+"("+args.drop(1).mkString(",")+").asInstanceOf[Object]")
         } else {
             reflect[Object](holder+"."+name+"("+args.mkString(",")+").asInstanceOf[Object]")
         }
+
 
         // TODO: actual class as result type info?
 
@@ -191,15 +202,15 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
     }
 
     def newArray(typ: ResolvedJavaType, size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
-        reflect[Object]("new Array["+typ.toJava()+"]("+size+")");
+        reflect[Object]("new Array["+typ.toJava().getName+"]("+size+")");
     }
 
     def newArray(typ: Class[_], size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
-        reflect[Object]("new Array["+typ+"]("+size+")");
+        reflect[Object]("new Array["+typ.getName+"]("+size+")");
     }
 
     def newMultiArray(typ: ResolvedJavaType, dimensions: Array[Rep[Int]]): Rep[Object] = { // throws InstantiationException {
-        reflect[Object]("new Array["+typ.toJava()+"]("+dimensions.mkString(",")+")");
+        reflect[Object]("new Array["+typ.toJava().getName+"]("+dimensions.mkString(",")+")");
     }
 
     def getFieldObject(base: Rep[Object], field: ResolvedJavaField): Rep[AnyRef] = {
@@ -425,7 +436,7 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
       if_(value === unit(null)) (reflect[Object]("throw new NullPointerException()")) (value)
 
     def checkArrayType(array: Rep[Object], arrayType: Class[_]): Unit = {
-        val cond = reflect[Boolean]("!"+array+".getClass().getComponentType().isAssignableFrom(classOf["+arrayType+"])")
+        val cond = reflect[Boolean]("!"+array+".getClass().getComponentType().isAssignableFrom(classOf["+arrayType.getName+"])")
         if_(cond) (reflect[Unit]("throw new ArrayStoreException(\""+arrayType.getName()+"\")")) (liftConst())
     }
 

@@ -44,13 +44,15 @@ class Runtime_Impl(metaProvider: MetaAccessProvider) extends Runtime {
 
     import Runtime._
 
-    val toJava = classOf[HotSpotResolvedJavaMethod].getDeclaredMethod("toJava")
-    toJava.setAccessible(true)
+    val toJavaM = classOf[HotSpotResolvedJavaMethod].getDeclaredMethod("toJava")
+    toJavaM.setAccessible(true)
 
     def invoke(method: ResolvedJavaMethod, args: Array[AnyRef]): AnyRef = {
       //System.out.println("prepare invoke: " + method + " " + args.mkString("(",",",")") + "//" + args.length)
 
-      val m = toJava.invoke(method).asInstanceOf[java.lang.reflect.Method]
+      def methToJava(m: ResolvedJavaMethod) = toJavaM.invoke(method).asInstanceOf[java.lang.reflect.Method]
+
+      val m = methToJava(method)
       m.setAccessible(true)
 
       //System.out.println("invoking: " + m + " " + args.mkString("(",",",")") + "//" + args.length)

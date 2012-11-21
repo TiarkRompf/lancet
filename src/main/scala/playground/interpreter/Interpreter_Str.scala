@@ -183,6 +183,12 @@ final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with Runt
         return reflect[Unit]("(RES = "+p+") // return to root")
       }
 
+      if (getContext(frame).drop(1).exists(_.getMethod() == frame.getMethod)) { // recursive (TODO: faster test)
+        println("// *** RECURSIVE: "+frame.getMethod+" ***")
+        return unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
+      }
+
+
       val key = contextKey(frame)
       val id = info.getOrElseUpdate(key, {
         val id = count
@@ -462,7 +468,7 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
 
 
     def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] =
-      reflect[Object]("checkCast("+typ.toJava+","+value+")")
+      reflect[Object](value+".asInstanceOf["+typ.toJava.getName+"] // checkCast")
  
     // called by invokeVirtual
 
@@ -481,6 +487,15 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
             return invokeDirect(parent, method, true)
           case _ =>
         }
+
+
+        // TODO: will require registering an assumption ...
+        val unique = null//m.holder.uniqueConcreteMethod(m)
+        if (unique ne null) {
+          println("// unique method: "+m)
+          return return invokeDirect(parent, unique, true)
+        }
+
 
         //val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethodImpl(m);
 
