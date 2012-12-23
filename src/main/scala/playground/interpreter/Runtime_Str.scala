@@ -166,14 +166,20 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
 
         val static = Modifier.isStatic(method.accessFlags)
 
+        val mtyp = TypeRep[Object](method.signature.returnKind.toString match {  //TODO: cleanup
+            case "void" => "Unit"
+            case "int" => "Int"
+            case _ => "Object"
+        })
+
         if (!static) {
             if (args.length > 1)
-                reflect[Object](liftConst(m),".invoke("+args.map(_+".asInstanceOf[AnyRef]").mkString(",")+") // "+holder+"."+name)
+                reflect[Object](liftConst(m),".invoke("+args.map(_+".asInstanceOf[AnyRef]").mkString(",")+") // "+holder+"."+name)(mtyp)
             else
-                reflect[Object](liftConst(m),".invoke("+args(0)+") // "+holder+"."+name)
+                reflect[Object](liftConst(m),".invoke("+args(0)+") // "+holder+"."+name)(mtyp)
             //reflect[Object](args(0)+".asInstanceOf["+holder+"]."+name+"("+args.drop(1).mkString(",")+").asInstanceOf[Object]")
         } else {
-            reflect[Object](holder+"."+name+"("+args.mkString(",")+").asInstanceOf[Object]")
+            reflect[Object](holder+"."+name+"("+args.mkString(",")+").asInstanceOf[Object]")(mtyp)
         }
 
 
@@ -463,8 +469,10 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
         return field.asInstanceOf[HotSpotResolvedJavaField].offset();
     }
 
-    def resolveBase(base: Rep[Object], field: ResolvedJavaField): Rep[Object] = 
-      if_ (base === unit(null)) (unit(field.holder().toJava())) (base)
+    def resolveBase(base: Rep[Object], field: ResolvedJavaField): Rep[Object] = // TODO: should not have dynamic test, rather test if field is static
+      if (Modifier.isStatic(field.accessFlags)) unit(field.holder().toJava()) else base
+
+      //if_ (base === unit(null)) (unit(field.holder().toJava())) (base)
 
 }
 

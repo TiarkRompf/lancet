@@ -101,7 +101,7 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
       val method = frame.getMethod()
       if (!emitRecursive && getContext(frame).drop(1).exists(_.getMethod() == method)) { // recursive (TODO: faster test)
         println("// *** RECURSIVE: "+method+" ***")
-        return unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
+        return reflect[Unit]("throw new Exception(\"RECURSIVE: "+frame.getMethod+"\")")
       }
 
       budget -= 1
@@ -126,6 +126,8 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
 
     def loop(root: InterpreterFrame, main: InterpreterFrame): Unit = {// throws Throwable {
 
+      pushAsObjectInternal(root, main.getMethod.signature().returnKind(), reflect[Object]("null // stub return value "+main.getMethod.signature().returnKind())); // TODO: cleanup?
+      
       val info = new scala.collection.mutable.HashMap[String, Int]
 
       while (worklist.nonEmpty) {
@@ -185,7 +187,7 @@ final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with Runt
 
       if (getContext(frame).drop(1).exists(_.getMethod() == frame.getMethod)) { // recursive (TODO: faster test)
         println("// *** RECURSIVE: "+frame.getMethod+" ***")
-        return unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
+        return reflect[Unit]("throw new Exception(\"RECURSIVE: "+frame.getMethod+"\")")
       }
 
 
@@ -226,7 +228,7 @@ final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with Runt
 
     def loop(root: InterpreterFrame, main: InterpreterFrame): Unit = {
 
-      pushAsObjectInternal(root, main.getMethod.signature().returnKind(), reflect[Object]("null // stub return value")); // TODO: cleanup?
+      pushAsObjectInternal(root, main.getMethod.signature().returnKind(), reflect[Object]("null // stub return value "+main.getMethod.signature().returnKind())); // TODO: cleanup?
 
       while (worklist.nonEmpty) {
         var frame = worklist.head

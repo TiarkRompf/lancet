@@ -546,6 +546,10 @@ with InterpreterFrame {
         assert (size >= 0);
         assert (tos - size >= stackTos());
         tos -= size;
+        // TR: null slots!
+        for (i <- 0 until size) {
+            locals(tos+i) = null.asInstanceOf[Rep[Object]]
+        }
     }
 
     private def tosDouble(offset: Int): Int = {
