@@ -102,6 +102,20 @@ trait Runtime {
   def isVolatile(field: ResolvedJavaField): Boolean
   def resolveOffset(field: ResolvedJavaField): Long
   def resolveBase(base: Rep[Object], field: ResolvedJavaField): Rep[Object] //used?
+
+
+  class ClassOps(x: Rep[Class[Object]]) { // TODO: move elsewhere?
+    def getName(): Rep[String] = classGetName(x)
+    def isArray(): Rep[Boolean] = classIsArray(x)
+    def getComponentType(): Rep[Class[Object]] = classGetComponentType(x)
+    def isAssignableFrom(other: Rep[Class[Object]]): Rep[Boolean] = classIsAssignableFrom(x, other)
+  }
+  implicit def classOps(x:Rep[Class[Object]]) = new ClassOps(x)
+  def objectGetClass(base: Rep[Object]): Rep[Class[Object]]
+  def classGetName(base: Rep[Class[Object]]): Rep[String]
+  def classIsArray(base: Rep[Class[Object]]): Rep[Boolean]
+  def classGetComponentType(base: Rep[Class[Object]]): Rep[Class[Object]]
+  def classIsAssignableFrom(base: Rep[Class[Object]], other: Rep[Class[Object]]): Rep[Boolean]
 }
 
 } 

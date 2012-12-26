@@ -478,6 +478,31 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProv
       case _ => super.arrayLength(array)
     }
 
+
+
+    override def objectGetClass(base: Rep[Object]): Rep[Class[Object]] = eval(base) match {
+      case Const(base) => unit(base.getClass).asInstanceOf[Rep[Class[Object]]]
+      case Partial(fs) => fs("clazz").asInstanceOf[Rep[Class[Object]]]
+      case _ => super.objectGetClass(base)
+    }
+
+    override def classGetName(base: Rep[Class[Object]]): Rep[String] = eval(base) match {
+      case Const(base) => unit(base.getName).asInstanceOf[Rep[String]]
+      case _ => super.classGetName(base)
+    }
+    override def classIsArray(base: Rep[Class[Object]]): Rep[Boolean] = eval(base) match {
+      case Const(base) => unit(base.isArray)
+      case _ => super.classIsArray(base)
+    }
+    override def classGetComponentType(base: Rep[Class[Object]]): Rep[Class[Object]] = eval(base) match {
+      case Const(base) => unit(base.getComponentType).asInstanceOf[Rep[Class[Object]]]
+      case _ => super.classGetComponentType(base)
+    }
+    override def classIsAssignableFrom(base: Rep[Class[Object]], other: Rep[Class[Object]]): Rep[Boolean] = (eval(base),eval(other)) match {
+      case (Const(base),Const(other)) => unit(base.isAssignableFrom(other))
+      case _ => super.classIsAssignableFrom(base,other)
+    }
+
 }
 
 }

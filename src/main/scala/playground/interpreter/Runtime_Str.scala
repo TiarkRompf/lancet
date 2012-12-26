@@ -434,7 +434,7 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
 
     def setArrayObject(value: Rep[Object], index: Rep[Long], array: Rep[Object]): Unit = {
         checkArray(array, index);
-        checkArrayType(array, if (value != null) value.getClass() else null);
+        checkArrayType(array, objectGetClass(value))
         unsafe.putObject(array, Unsafe.ARRAY_OBJECT_BASE_OFFSET + Unsafe.ARRAY_OBJECT_INDEX_SCALE * index, value);
     }
 
@@ -442,15 +442,22 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
       if_(value === unit(null)) (reflect[Object]("throw new NullPointerException()")) (value)
 
     def checkArrayType(array: Rep[Object], arrayType: Class[_]): Unit = {
-        val cond = reflect[Boolean]("!"+array+".getClass().getComponentType().isAssignableFrom(classOf["+arrayType.getName+"])")
-        if_(cond) (reflect[Unit]("throw new ArrayStoreException(\""+arrayType.getName()+"\")")) (liftConst())
+        val cond = objectGetClass(array).getComponentType().isAssignableFrom(liftConst(arrayType.asInstanceOf[Class[Object]]))
+        //val cond = reflect[Boolean]("!"+array+".getClass().getComponentType().isAssignableFrom(classOf["+arrayType.getName+"])")
+        if_(!cond) (reflect[Unit]("throw new ArrayStoreException(\""+arrayType.getName()+"\")")) (liftConst())
     }
+
+    def checkArrayType(array: Rep[Object], arrayType: Rep[Class[Object]]): Unit = { //TODO: shouldn't duplicate
+        val cond = objectGetClass(array).getComponentType().isAssignableFrom(arrayType)
+        if_(!cond) (reflect[Unit]("throw new ArrayStoreException(\""+arrayType.getName()+"\")")) (liftConst())
+    }
+
 
     def checkArray(array: Rep[Object], index: Rep[Long]): Unit = {
         nullCheck(array)
-        val typ = reflect[Class[_]](""+array+".getClass()")
-        val cond = reflect[Boolean]("!"+typ+".isArray()")
-        if_(cond) (reflect[Unit]("throw new ArrayStoreException("+typ+".getName())")) (liftConst());
+        val typ = objectGetClass(array)
+        val cond = typ.isArray()
+        if_(!cond) (reflect[Unit]("throw new ArrayStoreException("+typ.getName()+")")) (liftConst());
         if_(index < 0 || index >= arrayLength(array)) {
             reflect[Unit]("throw new ArrayIndexOutOfBoundsException("+index.toInt+")");
         } (liftConst())
@@ -469,10 +476,16 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
         return field.asInstanceOf[HotSpotResolvedJavaField].offset();
     }
 
-    def resolveBase(base: Rep[Object], field: ResolvedJavaField): Rep[Object] = // TODO: should not have dynamic test, rather test if field is static
+    def resolveBase(base: Rep[Object], field: ResolvedJavaField): Rep[Object] =
       if (Modifier.isStatic(field.accessFlags)) unit(field.holder().toJava()) else base
 
-      //if_ (base === unit(null)) (unit(field.holder().toJava())) (base)
+
+
+    def objectGetClass(base: Rep[Object]): Rep[Class[Object]] = reflect[Class[Object]](base+".getClass.asInstanceOf[Class[Object]]")
+    def classGetName(base: Rep[Class[Object]]): Rep[String] = reflect[String](base+".getName")
+    def classIsArray(base: Rep[Class[Object]]): Rep[Boolean] = reflect[Boolean](base+".isArray")
+    def classGetComponentType(base: Rep[Class[Object]]): Rep[Class[Object]] = reflect[Class[Object]](base+".getComponentType.asInstanceOf[Class[Object]]")
+    def classIsAssignableFrom(base: Rep[Class[Object]], other: Rep[Class[Object]]): Rep[Boolean] = reflect[Boolean](base+".isAssignableFrom("+other+")")
 
 }
 

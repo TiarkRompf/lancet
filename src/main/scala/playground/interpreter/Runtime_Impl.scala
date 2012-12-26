@@ -364,6 +364,12 @@ class Runtime_Impl(metaProvider: MetaAccessProvider) extends Runtime {
         return accessorBase;
     }
 
+    def objectGetClass(base: Object): Class[Object] = base.getClass.asInstanceOf[Class[Object]]
+    def classGetName(base: Class[Object]): String = base.getName
+    def classIsArray(base: Class[Object]): Boolean = base.isArray
+    def classGetComponentType(base: Class[Object]): Class[Object] = base.getComponentType.asInstanceOf[Class[Object]]
+    def classIsAssignableFrom(base: Class[Object], other: Class[Object]) = base.isAssignableFrom(other)
+
 }
 
 }

@@ -27,7 +27,7 @@ trait Core extends Base {
   implicit def unit(x: Float): Rep[Float]
   implicit def unit(x: Double): Rep[Double]
 
-
+  // TODO: String?
 
   implicit def unit(x: Null): Rep[Object]
   def unit(x: Object): Rep[Object]
@@ -255,6 +255,7 @@ trait Core extends Base {
 
   implicit def booleanOps(x: Rep[Boolean]) = new BooleanOps(x)
   class BooleanOps(x: Rep[Boolean]) { // TODO: somewhat crude
+    def unary_! : Rep[Boolean] = if_(x) (unit(false)) (unit(true))
     def ||(y: =>Rep[Boolean]): Rep[Boolean] = if_(x) (x) (y)
     def &&(y: =>Rep[Boolean]): Rep[Boolean] = if_(x) (y) (x)
   }

@@ -127,7 +127,7 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
     def loop(root: InterpreterFrame, main: InterpreterFrame): Unit = {// throws Throwable {
 
       pushAsObjectInternal(root, main.getMethod.signature().returnKind(), reflect[Object]("null // stub return value "+main.getMethod.signature().returnKind())); // TODO: cleanup?
-      
+
       val info = new scala.collection.mutable.HashMap[String, Int]
 
       while (worklist.nonEmpty) {
@@ -150,13 +150,15 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
           val bs = new BytecodeStream(frame.getMethod.code())
           //bs.setBCI(globalFrame.getBCI())
 
-          def frameStr(frame: InterpreterFrame) = getContext(frame).map(frame => ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().signature().asString()).replace("HotSpotMethod",""))
+          //def frameStr(frame: InterpreterFrame) = getContext(frame).map(frame => ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().signature().asString()).replace("HotSpotMethod",""))
 
           if (emitControlFlow) {
             println("// *** begin block " + key)
             //println("// *** stack " + frame.asInstanceOf[InterpreterFrame_Str].locals.mkString(","))
           }
           executeBlock(frame, bs, bci)
+        } else {
+          if (seenEnough) println("// *** seen enough")
         }
       }
     }

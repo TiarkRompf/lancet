@@ -33,6 +33,7 @@ trait Base_Str extends Base {
   var constantPool: Vector[AnyRef] = Vector.empty
 
   def constToString[T](x:T): String = x match {
+    case x: Boolean => ""+x
     case x: Int => ""+x
     case x: Long => ""+x
     case x: Double => ""+x
@@ -40,7 +41,12 @@ trait Base_Str extends Base {
     case null => "null"
     // TODO: primitives, arrays
     case s: String => ("\""+s+"\"")
-    case c: Class[_] => ("Class.forName(\""+c.getName+"\")")//("classOf["+c.getName+"]")
+    case c: Class[_] => 
+      c.getName() match {
+        case "char" => "classOf[Char]"
+        case name => 
+          ("Class.forName(\""+name+"\")")//("classOf["+c.getName+"]")
+      }
     //case o: Array[Object] => ("(null:Array[Object])") // TODO
     //case o: Object => ("(null:"+o.getClass.getName+")")
     case _ => 
