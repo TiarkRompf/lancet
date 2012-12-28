@@ -112,7 +112,7 @@ class TestInterpreter2 extends FileDiffSuite {
 
 
   def testA = withOutFileChecked(prefix+"A") {
-
+assert(false)
     val runtime = HotSpotGraalRuntime.getInstance().getRuntime();
     val compiler = HotSpotGraalRuntime.getInstance().getCompiler();
 

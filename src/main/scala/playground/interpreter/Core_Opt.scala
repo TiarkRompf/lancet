@@ -2,10 +2,16 @@ package playground.interpreter
 
 trait Base_Opt extends Base_Str {
 
-  abstract class Rep[+T] { def +(s: String) = toString+s }
+  abstract class Rep[+T:TypeRep] { def typ: TypeRep[_] = implicitly[TypeRep[T]] }
 
-  case class Static[+T](x: T) extends Rep[T] { override def toString = constToString(x) }
-  case class Dyn[+T](s: String) extends Rep[T] { override def toString = s }
+  case class Static[+T:TypeRep](x: T) extends Rep[T] { 
+    // adding a type cast everywhere: TestC was having issues with literal 8 passed to Object param?
+    override def toString = constToString(x) + ".asInstanceOf[" + typ + "]"
+  }
+
+  case class Dyn[+T:TypeRep](s: String) extends Rep[T] { 
+    override def toString = s 
+  }
 
   def repManifest[T:Manifest]: Manifest[Rep[T]] = manifest[Rep[T]]
 
@@ -26,6 +32,8 @@ trait Base_Opt extends Base_Str {
   var exprs: Map[String, Rep[Any]] = Map.empty
 
   def rewrite(s: String, x: Rep[Any]): Unit = {
+    // not used yet
+    assert(false, "REWRITE not used yet")
     exprs += (s -> x)
   }
 
@@ -35,7 +43,7 @@ trait Base_Opt extends Base_Str {
   case class Partial[+T](fields: Map[String, Rep[Any]]) extends Val[T]
   case object Top extends Val[Nothing]
 
-  var store: Map[String, Val[Any]] = Map.empty
+  var store: StoreLattice.Elem = Map.empty
 
   // TODO: track const modifications through the store, too
 
@@ -44,6 +52,70 @@ trait Base_Opt extends Base_Str {
     case Dyn(s) => store.getOrElse(s, Top).asInstanceOf[Val[T]]
   }
 
+
+
+  object StoreLattice {
+    type Elem = Map[String, Val[Any]]
+
+    def bottom: Elem = Map.empty
+
+    def alpha(sto: Elem, from: List[Rep[Any]], to: List[Rep[Any]]): Elem = {
+
+      val subst = (to zip from).toMap
+
+/*      def alphaRep(x: Rep[Any]): Rep[Any] = x match {
+        case Dyn(s) => subst.getOrElse(x, x)
+        case _ => x
+      }
+
+      sto map { 
+        case (k, Partial(fields)) => 
+          subst get Dyn(k) match {
+            case Some(Dyn)
+          }
+          (k, Partial(fields map (p => (p._1, alphaRep(p._2)))))
+        case p => p
+      }
+*/
+      
+      sto ++ (to flatMap {
+        case x@Dyn(s) => subst.get(x).flatMap { 
+          case Dyn(s2) => store.get(s2).map(s -> _)  // don't rewrite p2_0 -> x1
+          case Static(x) => Some(s -> Const(x))
+          case null => Some(s -> null)
+        }
+        case _ => Nil
+      }).toMap
+
+    }
+
+    def lub(x: Elem, y: Elem): Elem = {
+
+      // TODO: lub partials
+
+      //def lubRep[A](a: Rep[A])
+/*
+      def lubVal[A](a: Val[A], b: Val[A]): Val[A] = (a,b) match {
+        case (a,Top) => Top
+        case (Top,b) => Top
+        case (Const(u), Const(v)) if u == v => Const(u)
+        case _ => Top
+      }
+*/
+      val ks = x.keys ++ y.keys
+
+      ks.map { k =>
+        (k, (x.get(k), y.get(k)) match {
+          case (Some(a),Some(b)) => if (a == b) a else Top
+          case (Some(a),_) => a
+          case (_,Some(b)) => b
+        })
+      }.toMap
+    }
+
+
+    // TBD: need explicit compare op?
+  }
 
 }
 
