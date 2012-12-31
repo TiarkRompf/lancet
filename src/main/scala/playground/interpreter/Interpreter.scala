@@ -597,9 +597,9 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
       case Bytecodes.DCMPG =>
           compareDoubleGreater(frame);
       case Bytecodes.IFEQ =>
-          return conditionalBranch(frame.popInt() == 0)
+          return conditionalBranch(frame.popInt() === 0)
       case Bytecodes.IFNE =>
-          return conditionalBranch(frame.popInt() != 0)
+          return conditionalBranch(frame.popInt() !== 0)
       case Bytecodes.IFLT =>
           return conditionalBranch(frame.popInt() < 0)
       case Bytecodes.IFGE =>
@@ -609,9 +609,9 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
       case Bytecodes.IFLE =>
           return conditionalBranch(frame.popInt() <= 0)
       case Bytecodes.IF_ICMPEQ =>
-          return conditionalBranch(frame.popInt() == frame.popInt())
+          return conditionalBranch(frame.popInt() === frame.popInt())
       case Bytecodes.IF_ICMPNE =>
-          return conditionalBranch(frame.popInt() != frame.popInt())
+          return conditionalBranch(frame.popInt() !== frame.popInt())
       case Bytecodes.IF_ICMPLT =>
           return conditionalBranch(frame.popInt() > frame.popInt())
       case Bytecodes.IF_ICMPGE =>
@@ -621,9 +621,9 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
       case Bytecodes.IF_ICMPLE =>
           return conditionalBranch(frame.popInt() >= frame.popInt())
       case Bytecodes.IF_ACMPEQ =>
-          return conditionalBranch(frame.popObject() == frame.popObject())
+          return conditionalBranch(frame.popObject() === frame.popObject())
       case Bytecodes.IF_ACMPNE =>
-          return conditionalBranch(frame.popObject() != frame.popObject())
+          return conditionalBranch(frame.popObject() !== frame.popObject())
       case Bytecodes.GOTO | Bytecodes.GOTO_W =>
           return branch();
       case Bytecodes.JSR | Bytecodes.JSR_W =>
