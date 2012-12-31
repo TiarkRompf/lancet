@@ -24,8 +24,6 @@ package playground.interpreter
 
 
 import java.lang.reflect.{Array=>jlrArray,_};
-import java.util._;
-import sun.misc._;
 
 import com.oracle.graal.api._;
 import com.oracle.graal.api.meta._;
@@ -51,8 +49,14 @@ trait Unsafe_Opt extends Unsafe_Str {
 
   // TODO: static reads only safe for final fields
   override def getObject(base: Rep[Object], offset: Rep[Long]): Rep[Object] = (eval(base), eval(offset)) match {
-    case (Const(base), Const(offset)) => unit(static.unsafe.getObject(base,offset))
-    case (Partial(fs), Const(offset)) => fs.getOrElse(offset.toString, unit(null)).asInstanceOf[Rep[Object]]
+    case (Const(base), Const(offset)) => 
+      println("// unsafe read: " + base + "." + offset)
+      unit(static.unsafe.getObject(base,offset))
+    case (Partial(fs), Const(offset)) => 
+      fs.getOrElse(offset.toString, {
+        println("// unsafe read 2: " + base + "=" + fs + "." + offset)
+        unit(null)
+      }).asInstanceOf[Rep[Object]]
     case _ => super.getObject(base,offset)
   }
     
@@ -114,10 +118,14 @@ trait Unsafe_Opt extends Unsafe_Str {
 
   override def putObject(base: Rep[Object], offset: Rep[Long], value: Rep[Object]): Rep[Unit] = {
     val r = super.putObject(base, offset, value)
+    val Static(off) = offset
 
-    val s = base match { case Dyn(s) => s }
+    val s = dealias(base) match { case Dyn(s) => s }
     val Partial(fs) = store(s)
-    store += (s -> Partial(fs + (offset.toString -> value)))
+    store += (s -> Partial(fs + (off.toString -> dealias(value))))
+
+    println("// storing: " + (s -> Partial(fs + (off.toString -> value))))
+
     r
 
   }
@@ -205,17 +213,29 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProv
     override def newArray(typ: ResolvedJavaType, size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
       import scala.collection.immutable.Map
 
+      val rs = dealias(size)
+
+      // FIXME: size may be extracted later and may point to a stack var
+
+      println("// array size " + size + "=" + rs + "=" + eval(size))
+
       val r@Dyn(s) = super.newArray(typ, size)
-      store += (s -> Partial(Map("alloc" -> r, "clazz" -> unit(typ.arrayOf.toJava), "size" -> size)))
+      store += (s -> Partial(Map("alloc" -> r, "clazz" -> unit(typ.arrayOf.toJava), "size" -> rs)))
       r
     }
 
     override def newArray(typ: Class[_], size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
       import scala.collection.immutable.Map
 
+      val rs = dealias(size)
+
+      // FIXME: size may be extracted later and may point to a stack var
+
+      println("// array size " + size + "=" + rs + "=" + eval(size))
+
       val r@Dyn(s) = super.newArray(typ, size)
       //rewrite(s+" eq null", Static(false))
-      store += (s -> Partial(Map("alloc" -> r, "clazz" -> unit(java.lang.reflect.Array.newInstance(typ, 0).getClass), "size" -> size)))
+      store += (s -> Partial(Map("alloc" -> r, "clazz" -> unit(java.lang.reflect.Array.newInstance(typ, 0).getClass), "size" -> rs)))
       r
     }
 
@@ -446,7 +466,14 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProv
         checkArrayType(array, if (value != null) value.getClass() else null);
         unsafe.putObject(array, Unsafe.ARRAY_OBJECT_BASE_OFFSET + Unsafe.ARRAY_OBJECT_INDEX_SCALE * index, value);
     }
+*/
 
+    override def nullCheck(value: Rep[Object]): Rep[Object] = {
+      println("// nullcheck "+value + "=" + eval(value))
+      super.nullCheck(value)
+    }
+
+/*
     def nullCheck(value: Rep[Object]): Rep[Object] = 
       if_(value === unit(null)) (reflect[Object]("throw new NullPointerException()")) (value)
 

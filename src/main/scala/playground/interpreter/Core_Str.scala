@@ -68,7 +68,7 @@ trait Base_Str extends Base {
   }
   def captureOutputResult[A](func: => A): (String,A) = {
     val bstream = new ByteArrayOutputStream
-    val r = withOutput(new PrintStream(bstream))(func)
+    val r = withOutput(new PrintStream(bstream))(func) //func
     (bstream.toString, r)
   }
   def withOutput[A](out: PrintStream)(func: => A): A = {

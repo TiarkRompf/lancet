@@ -41,6 +41,7 @@ trait Base_Opt extends Base_Str {
   abstract class Val[+T]
   case class Const[+T](x: T) extends Val[T]
   case class Partial[+T](fields: Map[String, Rep[Any]]) extends Val[T]
+  case class Alias[+T](y: List[Rep[T]]) extends Val[T]
   case object Top extends Val[Nothing]
 
   var store: StoreLattice.Elem = Map.empty
@@ -49,7 +50,22 @@ trait Base_Opt extends Base_Str {
 
   def eval[T](x: Rep[T]): Val[T] = x match {
     case Static(x) => Const(x)
-    case Dyn(s) => store.getOrElse(s, Top).asInstanceOf[Val[T]]
+    case Dyn(s) => store.getOrElse(s, Top).asInstanceOf[Val[T]] match {
+      case Alias(List(x)) => eval(x) // TBD: cycles?
+      case Alias(_) => Top // more than one alias
+      case x => x
+    }
+  }
+
+  // TODO: generalize and move elsewhere
+  
+  def dealias[T](x: Rep[T]): Rep[T] = x match {
+    case Dyn(s) => store.get(s) match {
+        case Some(Alias(List(y:Rep[T]))) => dealias(y)
+        case Some(Const(c:T)) => Static(c)(x.typ.asInstanceOf[TypeRep[T]])
+        case _ => x
+      }
+    case _ => x
   }
 
 
@@ -78,10 +94,29 @@ trait Base_Opt extends Base_Str {
       }
 */
       
-      sto ++ (to flatMap {
+      def dealias[T](x: Rep[T]): Rep[T] = x match {
+        case Dyn(s) => sto.get(s) match {
+            case Some(Alias(List(y:Rep[T]))) => dealias(y)
+            //case Some(Const(c:T)) => Static(c)(x.typ.asInstanceOf[TypeRep[T]])
+            case _ => x
+          }
+        case _ => x
+      }
+
+      val sto2 = sto.filter { case (k,Alias(_)) => false case _ => true }
+
+      sto2 ++ (to flatMap {
         case x@Dyn(s) => subst.get(x).flatMap { 
-          case Dyn(s2) => store.get(s2).map(s -> _)  // don't rewrite p2_0 -> x1
-          case Static(x) => Some(s -> Const(x))
+          case y@Dyn(s2) => 
+            eval(y) match {
+              case z@Const(_) => 
+                Some(s -> z)
+              case _ =>
+                val z = dealias(y)
+                if (z != x)  //HACK
+                  Some(s -> Alias(List(z))) else None
+            }
+          case Static(y) => Some(s -> Const(y))
           case null => Some(s -> null)
         }
         case _ => Nil
@@ -117,7 +152,22 @@ trait Base_Opt extends Base_Str {
     // TBD: need explicit compare op?
   }
 
+  object FrameLattice {
+    type Elem = List[List[Rep[Any]]]
+
+    def bottom: Elem = Nil
+
+    def lub(x: Elem, y: Elem): Elem = {
+      x //FIXME
+    }
+  }
+
 }
+
+
+
+
+
 
 
 

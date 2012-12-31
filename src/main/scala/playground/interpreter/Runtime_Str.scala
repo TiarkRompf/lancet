@@ -438,8 +438,9 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
         unsafe.putObject(array, Unsafe.ARRAY_OBJECT_BASE_OFFSET + Unsafe.ARRAY_OBJECT_INDEX_SCALE * index, value);
     }
 
-    def nullCheck(value: Rep[Object]): Rep[Object] = 
+    def nullCheck(value: Rep[Object]): Rep[Object] = {
       if_(value === unit(null)) (reflect[Object]("throw new NullPointerException()")) (value)
+    }
 
     def checkArrayType(array: Rep[Object], arrayType: Class[_]): Unit = {
         val cond = objectGetClass(array).getComponentType().isAssignableFrom(liftConst(arrayType.asInstanceOf[Class[Object]]))
