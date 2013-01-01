@@ -440,6 +440,7 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
 
     def nullCheck(value: Rep[Object]): Rep[Object] = {
       if_(value === unit(null)) (reflect[Object]("throw new NullPointerException()")) (value)
+      value // TBD: what's the result?
     }
 
     def checkArrayType(array: Rep[Object], arrayType: Class[_]): Unit = {

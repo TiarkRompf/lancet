@@ -47,10 +47,26 @@ trait Unsafe_Opt extends Unsafe_Str {
     reflect("unsafe.monitorExit("+value+")")
   */
 
+  // TODO: should inspect reflect.Field objects
+
+  def isSafeRead(base: Object, offset: Long, typ: TypeRep[_]): Boolean = {
+    if (base == null) {
+      println("// base is null, dammit"); false
+    } else {
+      println("// safe read?: " + base + "." + offset + ":" + typ)
+      val unsafePrefixes = "sun.nio."::"java.io."::Nil
+      val safeFields = ""::Nil
+      val str = base.toString
+      val r = safeFields.contains(str.replace("@[a-z0-9]","")+"."+offset) || !unsafePrefixes.exists(str startsWith _)
+      if (r) println("// safe read: " + base.toString.replace("\n","\\n") + "." + offset + ":" + typ)
+      r
+    }
+  }
+
+
   // TODO: static reads only safe for final fields
   override def getObject(base: Rep[Object], offset: Rep[Long]): Rep[Object] = (eval(base), eval(offset)) match {
-    case (Const(base), Const(offset)) => 
-      println("// unsafe read: " + base + "." + offset)
+    case (Const(base), Const(offset)) if isSafeRead(base, offset, typeRep[Object]) =>
       unit(static.unsafe.getObject(base,offset))
     case (Partial(fs), Const(offset)) => 
       fs.getOrElse(offset.toString, {
@@ -87,7 +103,7 @@ trait Unsafe_Opt extends Unsafe_Str {
 
   // TODO: static reads only safe for final fields
   override def getInt(base: Rep[Object], offset: Rep[Long]): Rep[Int] = (eval(base), eval(offset)) match {
-    case (Const(base), Const(offset)) => unit(static.unsafe.getInt(base,offset))
+    case (Const(base), Const(offset)) if isSafeRead(base, offset, typeRep[Int]) => unit(static.unsafe.getInt(base,offset))
     case (Partial(fs), Const(offset)) => fs.getOrElse(offset.toString, unit(0)).asInstanceOf[Rep[Int]]
     case _ => super.getInt(base, offset)
   }
@@ -108,9 +124,9 @@ trait Unsafe_Opt extends Unsafe_Str {
 */
   // TODO: static reads only safe for final fields
   override def getDouble(base: Rep[Object], offset: Rep[Long]): Rep[Double] = (eval(base), eval(offset)) match {
-    case (Const(base), Const(offset)) => unit(static.unsafe.getDouble(base,offset))
+    case (Const(base), Const(offset)) if isSafeRead(base, offset, typeRep[Double]) => unit(static.unsafe.getDouble(base,offset))
     case (Partial(fs), Const(offset)) => fs.getOrElse(offset.toString, unit(0)).asInstanceOf[Rep[Double]]
-    case _ => super.getInt(base, offset)
+    case _ => super.getDouble(base, offset)
   }
 /*  def getDoubleVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Double] = 
     reflect("unsafe.getDoubleVolatile("+base+","+offset+")")
@@ -120,8 +136,8 @@ trait Unsafe_Opt extends Unsafe_Str {
     val r = super.putObject(base, offset, value)
     val Static(off) = offset
 
-    val s = dealias(base) match { case Dyn(s) => s }
-    val Partial(fs) = store(s)
+    val s = dealias(base) match { case Dyn(s) => s case Static(c) => println("// write to const "+ c); return r }
+    val Partial(fs) = store.getOrElse(s, { println("// key not found in store: " + s); return r })
     store += (s -> Partial(fs + (off.toString -> dealias(value))))
 
     println("// storing: " + (s -> Partial(fs + (off.toString -> value))))
@@ -129,6 +145,11 @@ trait Unsafe_Opt extends Unsafe_Str {
     r
 
   }
+
+
+  // TODO: putXX
+
+
 /*
   def putObjectVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Object]): Rep[Unit] = 
     reflect("unsafe.putObjectVolatile("+base+","+offset+", "+value+")")
@@ -152,10 +173,26 @@ trait Unsafe_Opt extends Unsafe_Str {
     reflect("unsafe.putShort("+base+","+offset+", "+value+")")
   def putShortVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Short]): Rep[Unit] = 
     reflect("unsafe.putShortVolatile("+base+","+offset+", "+value+")")
+*/
+  override def putInt(base: Rep[Object], offset: Rep[Long], value: Rep[Int]): Rep[Unit] = {
+    val r = super.putInt(base, offset, value)
+    val Static(off) = offset
 
-  def putInt(base: Rep[Object], offset: Rep[Long], value: Rep[Int]): Rep[Unit] = 
-    reflect("unsafe.putInt("+base+","+offset+", "+value+")")
-  def putIntVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Int]): Rep[Unit] = 
+    // TODO: more resilience
+    val s = dealias(base) match { case Dyn(s) => s case Static(c) => println("// write to const "+ c); return r }
+    val Partial(fs) = store.getOrElse(s, { println("// key not found in store: " + s); return r }) match {
+      case Const(c) => println("// write to constant: " + c); return r
+      case s => s
+    }
+    store += (s -> Partial(fs + (off.toString -> dealias(value))))
+
+    println("// storing int: " + (s -> Partial(fs + (off.toString -> value))))
+
+    r
+  }
+
+
+/*  def putIntVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Int]): Rep[Unit] = 
     reflect("unsafe.putIntVolatile("+base+","+offset+", "+value+")")
 
   def putLong(base: Rep[Object], offset: Rep[Long], value: Rep[Long]): Rep[Unit] = 

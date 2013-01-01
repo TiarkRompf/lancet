@@ -40,7 +40,7 @@ trait Base_Str extends Base {
     case x: Unit => "()"
     case null => "null"
     // TODO: primitives, arrays
-    case s: String => ("\""+s+"\"")
+    case s: String => ("\""+s.replace("\n","\\n")+"\"") // TODO: proper escape
     case c: Class[_] => 
       c.getName() match {
         case "char" => "classOf[Char]"
@@ -72,17 +72,17 @@ trait Base_Str extends Base {
     (bstream.toString, r)
   }
   def withOutput[A](out: PrintStream)(func: => A): A = {
-    val oldStdOut = System.out
-    val oldStdErr = System.err
+    //val oldStdOut = System.out
+    //val oldStdErr = System.err
     try {
-      System.setOut(out)
-      System.setErr(out)
+      //System.setOut(out)
+      //System.setErr(out)
       scala.Console.withOut(out)(scala.Console.withErr(out)(func))
     } finally {
       out.flush()
       out.close()
-      System.setOut(oldStdOut)
-      System.setErr(oldStdErr)
+      //System.setOut(oldStdOut)
+      //System.setErr(oldStdErr)
     }
   }
 }

@@ -142,7 +142,7 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
     val info = new mutable.HashMap[String, Int] // map key to id
     var count = 0
 
-    val storeInfo = new mutable.HashMap[String, StoreLattice.Elem] // map key to store
+    val storeInfo = new mutable.HashMap[String, List[StoreLattice.Elem]] // map key to store
     val frameInfo = new mutable.HashMap[String, FrameLattice.Elem] // map key to store
 
     val srcInfo = new mutable.ArrayBuffer[List[String]](budget)
@@ -198,7 +198,7 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
       var fresh = false
       val key = contextKey(frame)
       val id = info.getOrElseUpdate(key, { val id = count; count += 1; fresh = true; id })
-      var cnt = srcInfo(id).length
+      var cnt = storeInfo.getOrElse(key, Nil).length
 
 
       // alternative idea (TODO):
@@ -212,12 +212,10 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
       val params = getAllArgs(frame2)
       val args = getAllArgs(frame)
 
-      val extra = store collect { case (k,Partial(fs)) => k }
-
       // check if store lattice has changed ...
       val store2 = StoreLattice.alpha(store, args, params)
 
-      val stOld = storeInfo.getOrElse(key, StoreLattice.bottom)
+      val stOld = storeInfo.get(key) match { case Some(h::_) => h case _ => StoreLattice.bottom }
       val stNew = StoreLattice.lub(stOld,store2)
 
 
@@ -227,14 +225,31 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
       println("// store2: " + store2)
       println("// stNew:  " + stNew)
 
+      def domain(st: StoreLattice.Elem) = st collect { case (k,Partial(fs)) => k } toSet;
+
+      val extraNow = domain(store)
+      val extraNew = domain(stNew)
+
+      val extra = extraNow intersect extraNew
+      val extraNull = extraNew diff extra
+
+
+      assert((domain(stOld) intersect domain(stNew)) == domain(stOld)) // can only grow domain (?)
+
       // decision split vs generalize: pass store2 -> split, stNew -> generalize
 
       if (stNew != stOld || fresh) { // need to update: enqueue worklist item
         if (stNew != stOld)
           println("// != old  " + stOld)
 
+        storeInfo(key) = stNew::storeInfo.getOrElse(key, Nil)
 
-        storeInfo(key) = stNew
+        if (worklist.exists(f => contextKey(f) == key)) {
+          println("// overtaking " + id + "_" + cnt + "/" + key)
+          if (domain(stOld) != domain(stNew))
+            println("// domain " + domain(stOld) + " --> " + domain(stNew))
+        }
+
         worklist = worklist :+ frame2 // TODO: don't enqueue twice
         // note: must not rely on stNew when generating call!
 
@@ -244,7 +259,8 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
       // role of 'cnt': we do not overwrite speculative results but emit all
       // generated variants. earlier calls still go to the preliminary versions.
 
-      reflect[Unit]("block_"+id+"_"+(cnt-1)+"("+args.mkString(","),")(" + extra.map(s=>s+"="+s).mkString(",") + ") // "+key)
+      reflect[Unit]("block_"+id+"_"+(cnt-1)+"("+args.mkString(","),")(" + 
+        (extra.map(s=>s+"="+s) ++ extraNull.map(s=>s+"=null")).mkString(",") + ") // "+key)
     }
 
 
@@ -267,7 +283,7 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
         val id = info(key)
         val cnt = srcInfo(id).length
 
-        store = storeInfo(key)
+        store = storeInfo(key).reverse(cnt)
 
         val (src, _) = captureOutputResult {
 

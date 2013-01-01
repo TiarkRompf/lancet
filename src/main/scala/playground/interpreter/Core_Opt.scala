@@ -39,7 +39,7 @@ trait Base_Opt extends Base_Str {
 
 
   abstract class Val[+T]
-  case class Const[+T](x: T) extends Val[T]
+  case class Const[+T](x: T) extends Val[T] { override def toString = super.toString.replace("\n","\\n") }
   case class Partial[+T](fields: Map[String, Rep[Any]]) extends Val[T]
   case class Alias[+T](y: List[Rep[T]]) extends Val[T]
   case object Top extends Val[Nothing]
@@ -137,11 +137,28 @@ trait Base_Opt extends Base_Str {
         case _ => Top
       }
 */
+
+      type PElem = Map[String, Rep[Any]]
+
+      def lubPartial(x: PElem, y: PElem): PElem = {
+        val ks = x.keys ++ y.keys
+        ks.map { k =>
+          (k, (x.get(k), y.get(k)) match {
+            case (Some(a),Some(b)) if a == b => a
+            case (Some(Static(a)),Some(Static(b))) => Dyn[Any]("CLUB("+a+","+b+")".take(10)) // ensure termination
+            case (a,b) => Dyn[Any]("LUB") //("+a+","+b+")".take(10)) // ensure termination
+          })
+        }.toMap
+      }
+
       val ks = x.keys ++ y.keys
 
       ks.map { k =>
         (k, (x.get(k), y.get(k)) match {
-          case (Some(a),Some(b)) => if (a == b) a else Top
+          case (Some(a),Some(b)) if a == b => a
+          case (Some(Partial(as)),Some(Partial(bs))) => Partial(lubPartial(as,bs)) // two definitions ...
+          case (Some(Alias(as)),Some(Alias(bs))) => Alias(as ++ bs)
+          case (Some(a),Some(b)) => Top
           case (Some(a),_) => a
           case (_,Some(b)) => b
         })

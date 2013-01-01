@@ -56,7 +56,7 @@ class TestInterpreter1 extends FileDiffSuite {
   def testC = withOutFileChecked(prefix+"C") {
 
     class Foo {
-      def bar(x: Int) = { println("hello: "+x); 9 }
+      def bar(x: Int) = { System.out.println("hello: "+x); 9 }
     }
 
     val o = new Foo

@@ -202,12 +202,13 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
           case "long" => "Long"
           //TODO/FIXME
           case "scala.util.DynamicVariable" => "scala.util.DynamicVariable[_]"
+          case s if !Modifier.isPublic(x.getModifiers) => "Object /*" + s + "*/" //s <-- class may be private...
           case s => s
         }
 
         val cst = constantPool.zipWithIndex.map(p=>"CONST_"+p._2+": "+classStr(p._1.getClass)).mkString(",")
 
-        println("// constants: " + constantPool.toArray.deep.mkString(","))
+        println("// constants: " + constantPool.toArray.deep.mkString(",").replace("\n","\\n"))
         println("class Generated("+ cst +") extends ("+manifest[A]+"=>"+manifest[B]+"){")
         println("import sun.misc.Unsafe")
         println("val unsafe = { val fld = classOf[Unsafe].getDeclaredField(\"theUnsafe\"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }")
@@ -224,7 +225,12 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
 
       println(source)
 
-      ScalaCompile.compile[A,B](source, "Generated", constantPool.toList)
+      def specCls(x: AnyRef): (AnyRef,Class[_]) = {
+        val cls = x.getClass
+        if (Modifier.isPublic(cls.getModifiers)) (x,cls) else (x,classOf[Object])
+      }
+
+      ScalaCompile.compile[A,B](source, "Generated", constantPool.map(x=>specCls(x)).toList)
     }
 
     //@Override

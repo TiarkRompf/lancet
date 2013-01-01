@@ -44,7 +44,7 @@ object ScalaCompile {
   
   var dumpGeneratedCode = false
 
-  def compile[A:Manifest,B:Manifest](source: String, className: String, staticData: List[AnyRef]): A=>B = {
+  def compile[A:Manifest,B:Manifest](source: String, className: String, staticData: List[(AnyRef,Class[_])]): A=>B = {
     if (this.compiler eq null)
       setupCompiler()
     
@@ -78,9 +78,9 @@ object ScalaCompile {
     val loader = new AbstractFileClassLoader(fileSystem, this.getClass.getClassLoader)
 
     val cls: Class[_] = loader.loadClass(className)
-    val cons = cls.getConstructor(staticData.map(_.getClass):_*)
+    val cons = cls.getConstructor(staticData.map(_._2):_*)
     
-    val obj: A=>B = cons.newInstance(staticData:_*).asInstanceOf[A=>B]
+    val obj: A=>B = cons.newInstance(staticData.map(_._1):_*).asInstanceOf[A=>B]
     obj
   }
 }
