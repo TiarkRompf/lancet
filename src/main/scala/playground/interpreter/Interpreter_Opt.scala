@@ -230,20 +230,21 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
       // decision split vs generalize: pass store2 -> split, stNew -> generalize
 
       if (stNew != stOld || fresh) { // need to update: enqueue worklist item
-        if (stNew != stOld) println("// != old  " + stOld)
+        if (stNew != stOld)
+          println("// != old  " + stOld)
 
 
         storeInfo(key) = stNew
         worklist = worklist :+ frame2 // TODO: don't enqueue twice
         // note: must not rely on stNew when generating call!
 
-        if (!fresh) cnt += 1
+        cnt += 1
       }
 
       // role of 'cnt': we do not overwrite speculative results but emit all
       // generated variants. earlier calls still go to the preliminary versions.
 
-      reflect[Unit]("block_"+id+"_"+cnt+"("+args.mkString(","),")(" + extra.map(s=>s+"="+s).mkString(",") + ") // "+key)
+      reflect[Unit]("block_"+id+"_"+(cnt-1)+"("+args.mkString(","),")(" + extra.map(s=>s+"="+s).mkString(",") + ") // "+key)
     }
 
 

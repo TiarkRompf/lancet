@@ -200,7 +200,8 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
           case "int" => "Int"
           case "char" => "Char"
           case "long" => "Long"
-          //TODO
+          //TODO/FIXME
+          case "scala.util.DynamicVariable" => "scala.util.DynamicVariable[_]"
           case s => s
         }
 
@@ -376,9 +377,16 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
     }*/
 
 
-    def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] =
-      reflect[Object](value+".asInstanceOf["+typ.toJava.getName+"] // checkCast")
- 
+    def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = {
+
+      val cls = typ.toJava
+      val params = cls.getTypeParameters
+      val name = if (params.length == 0) cls.getName
+                 else cls.getName + "[" + params.map(x=>"_").mkString(",") + "]"
+
+      reflect[Object](value+".asInstanceOf["+name+"] // checkCast")
+    }
+
     // called by invokeVirtual
 
     def objectGetClass(receiver: Rep[Object]): Option[Class[_]] = None
