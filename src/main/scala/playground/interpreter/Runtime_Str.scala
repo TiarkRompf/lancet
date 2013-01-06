@@ -144,7 +144,7 @@ trait Unsafe_Str {
 
 
   def allocateInstance(clazz: Class[_]): Rep[Object] = 
-    reflect[Object]("unsafe.allocateInstance(classOf["+clazz.getName+"])")
+    reflect[Object]("unsafe.allocateInstance(Class.forName(\""+clazz.getName+"\"))")
 
 }
 
@@ -200,7 +200,7 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
 
     def monitorExit(value: Rep[Object]): Unit = {
         nullCheck(value)
-        unsafe.monitorEnter(value)
+        unsafe.monitorExit(value)
     }
 
     def newObject(typ: ResolvedJavaType): Rep[Object] = { //} throws InstantiationException {

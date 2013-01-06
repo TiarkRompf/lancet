@@ -18,7 +18,7 @@ trait Base_Opt extends Base_Str {
   var nSyms = 0
   def fresh = { nSyms += 1; "x" + (nSyms - 1) }
 
-  def emit(s: String) = println("          "+s)
+  def emit(s: String) = println(s)//"          "+s)
 
   def reflect[T:TypeRep](s: Any*): Rep[T] = { 
     val rhs = s.mkString("")
@@ -26,7 +26,7 @@ trait Base_Opt extends Base_Str {
       val x = fresh; emit("val "+x+" = "+s.mkString("")); Dyn[T](x)
     }).asInstanceOf[Rep[T]]
   }
-  def reify[T](x: => Rep[T]): String = "{" + captureOutput(x) + "}"
+  def reify[T](x: => Rep[T]): String = ("{\n  " + indented(captureOutput(x)) + "\n}")
 
 
   var exprs: Map[String, Rep[Any]] = Map.empty
@@ -44,6 +44,49 @@ trait Base_Opt extends Base_Str {
   case class Alias[+T](y: List[Rep[T]]) extends Val[T]
   case object Top extends Val[Nothing]
 
+/*
+
+  new idea: need to track const modifications, too
+
+  abstract class Addr
+  abstract class Null
+  abstract class Static(c)
+  abstract class Alloc(site: String, mult: Int)  // site: finite unique id, mult: 1 single alloc/unique ref, 2 alloc in loop
+
+  type Store = Map[Addr, AbsObj] // map Dyn ref to 
+  type AbsObj = Map[String, Set[Rep[Any]]] // map field to value
+  
+
+  type Env = Map[String, Addr]
+
+
+  def joinStore(a,b) = {
+  
+    
+
+  }
+
+
+
+  def putObject(target, field) = {
+  
+    val (mstAddr, mayAddrs) = store(target)
+
+    
+
+    for (a <- mayAddrs diff mstAddr)
+
+
+  }
+
+
+
+
+ */
+
+
+
+
   var store: StoreLattice.Elem = Map.empty
 
   // TODO: track const modifications through the store, too
@@ -55,6 +98,10 @@ trait Base_Opt extends Base_Str {
       case Alias(_) => Top // more than one alias
       case x => x
     }
+    case _ => 
+      println("// can't eval: " + x)
+      (new Exception).printStackTrace
+      Top
   }
 
   // TODO: generalize and move elsewhere
@@ -74,6 +121,105 @@ trait Base_Opt extends Base_Str {
     type Elem = Map[String, Val[Any]]
 
     def bottom: Elem = Map.empty
+
+    def getAllocs(x: Elem): Set[String] = x.collect { case (k,Partial(as)) => k }.toSet
+
+    def getFields(x: Elem): Set[Rep[Any]] = { // only unique aliases
+      x.values.collect { case Partial(as) => as.values case Alias(a::Nil) => a::Nil } .flatten.toSet
+    }
+
+    def getDynFields(x: Elem): Set[Rep[Any]] = getFields(x).collect { case s@Dyn(_) => s }
+
+
+    def getAllRefs(x: Elem) = getAllocs(x) ++ getFields(x).collect { case Dyn(s) => s }
+
+
+    def getLubParamArgs(x: Elem, y: Elem): Map[String, Rep[Any]] = {
+      
+      type PElem = Map[String, Rep[Any]]
+
+      def lubPartial(p: String)(x: PElem, y: PElem): PElem = {
+        val ks = x.keys ++ y.keys
+        ks.flatMap { k =>
+          ((x.get(k), y.get(k)) match {
+            case (Some(Dyn(s:String)),Some(b)) /*if s.startsWith("LUB_")*/ => Map(s->b):PElem
+            case _ => Map.empty:PElem
+          })
+        }.toMap
+      }
+
+      val ks = x.keys ++ y.keys
+
+      ks.flatMap { k =>
+        ((x.get(k), y.get(k)) match {
+          case (Some(Partial(as)),Some(Partial(bs))) => (lubPartial(k)(as,bs))
+          case _ => Map.empty:PElem
+        })
+      }.toMap
+    }
+
+    def lub(x: Elem, y: Elem): Elem = {
+
+      // TODO: lub partials
+
+      //def lubRep[A](a: Rep[A])
+/*
+      def lubVal[A](a: Val[A], b: Val[A]): Val[A] = (a,b) match {
+        case (a,Top) => Top
+        case (Top,b) => Top
+        case (Const(u), Const(v)) if u == v => Const(u)
+        case _ => Top
+      }
+*/
+
+      /*
+  
+      TODO: - need to handle SSA-like fields in partial objects
+            - we create new LUB_parent_key entries
+            - when calling a block, we need to set up the right
+              references on the calling side and in the parameter list
+      */
+
+
+      type PElem = Map[String, Rep[Any]]
+
+      def lubPartial(p: String)(x: PElem, y: PElem): PElem = {
+        val ks = x.keys ++ y.keys
+        ks.map { k =>
+          (k, (x.get(k), y.get(k)) match {
+            case (Some(a),Some(b)) if a == b => a
+            case (Some(Static(a)),Some(bb@Static(b))) => 
+              val str = "LUB_"+p+"_"+k
+              println("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")")
+              val tp = bb.typ.asInstanceOf[TypeRep[Any]]
+              Dyn[Any](str)(tp)
+            case (a,b) => 
+              val str = "LUB_"+p+"_"+k
+              if (b.nonEmpty) {
+                if (b.get.toString != str)
+                println("val "+str+" = " + b.get + " // Alias(" + a + "," + b + ")")
+              } else
+                println("val "+str+" = " + a.get + " // AAA Alias(" + a + "," + b + ")")
+              val tp = b match { case Some(b) => b.typ.asInstanceOf[TypeRep[Any]] case _ => typeRep[Any]} // other cases possible? type lub?
+              Dyn[Any](str)(tp)
+          })
+        }.toMap
+      }
+
+      val ks = x.keys ++ y.keys
+
+      ks.map { k =>
+        (k, (x.get(k), y.get(k)) match {
+          case (Some(a),Some(b)) if a == b => a
+          case (Some(Partial(as)),Some(Partial(bs))) => Partial(lubPartial(k)(as,bs)) // two definitions ...
+          case (Some(Alias(as)),Some(Alias(bs))) => Alias(as ++ bs)
+          case (Some(a),Some(b)) => Top
+          case (Some(a),_) => Top //a
+          case (_,Some(b)) => Top //b
+        })
+      }.toMap
+    }
+
 
     def alpha(sto: Elem, from: List[Rep[Any]], to: List[Rep[Any]]): Elem = {
 
@@ -123,60 +269,7 @@ trait Base_Opt extends Base_Str {
       }).toMap
 
     }
-
-    def lub(x: Elem, y: Elem): Elem = {
-
-      // TODO: lub partials
-
-      //def lubRep[A](a: Rep[A])
-/*
-      def lubVal[A](a: Val[A], b: Val[A]): Val[A] = (a,b) match {
-        case (a,Top) => Top
-        case (Top,b) => Top
-        case (Const(u), Const(v)) if u == v => Const(u)
-        case _ => Top
-      }
-*/
-
-      type PElem = Map[String, Rep[Any]]
-
-      def lubPartial(x: PElem, y: PElem): PElem = {
-        val ks = x.keys ++ y.keys
-        ks.map { k =>
-          (k, (x.get(k), y.get(k)) match {
-            case (Some(a),Some(b)) if a == b => a
-            case (Some(Static(a)),Some(Static(b))) => Dyn[Any]("CLUB("+a+","+b+")".take(10)) // ensure termination
-            case (a,b) => Dyn[Any]("LUB") //("+a+","+b+")".take(10)) // ensure termination
-          })
-        }.toMap
-      }
-
-      val ks = x.keys ++ y.keys
-
-      ks.map { k =>
-        (k, (x.get(k), y.get(k)) match {
-          case (Some(a),Some(b)) if a == b => a
-          case (Some(Partial(as)),Some(Partial(bs))) => Partial(lubPartial(as,bs)) // two definitions ...
-          case (Some(Alias(as)),Some(Alias(bs))) => Alias(as ++ bs)
-          case (Some(a),Some(b)) => Top
-          case (Some(a),_) => a
-          case (_,Some(b)) => b
-        })
-      }.toMap
-    }
-
-
     // TBD: need explicit compare op?
-  }
-
-  object FrameLattice {
-    type Elem = List[List[Rep[Any]]]
-
-    def bottom: Elem = Nil
-
-    def lub(x: Elem, y: Elem): Elem = {
-      x //FIXME
-    }
   }
 
 }

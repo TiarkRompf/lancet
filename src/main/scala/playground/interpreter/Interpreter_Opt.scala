@@ -111,6 +111,12 @@ class BytecodeInterpreter_Opt0 extends BytecodeInterpreter_Str with RuntimeUnive
 }
 
 
+// track reads and writes through constants --> elim reads
+// cse --> elim redundant checks
+// flow sensitive conditionals --> elim redundant branches
+
+
+
 
 
 
@@ -121,7 +127,7 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
         case Partial(fs) => 
           val Const(clazz: Class[_]) = eval(fs("clazz"))
           Some(clazz)
-        case Const(x) =>
+        case Const(x: NotNull) =>
           val clazz = x.getClass
           Some(clazz)
         case _ =>
@@ -129,15 +135,50 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
       }        
     }
 
+    object FrameLattice {
+      type Elem = InterpreterFrame
+
+      def getFields(x: Elem) = getAllArgs(x).filter(_ != null)
+
+      def lub(x0: Elem, y0: Elem): Elem = { // modifies y!
+        if (x0 == null) return null
+        val x = x0.asInstanceOf[InterpreterFrame_Str]
+        val y = y0.asInstanceOf[InterpreterFrame_Str]
+
+        assert(x.locals.length == y.locals.length)
+
+        for (i <- 0 until y.locals.length) {
+          val a = x.locals(i)
+          val b = y.locals(i)
+
+          if (a != b) {
+            val str = "PHI_"+x.depth+"_"+i
+            println("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")")
+            val tp = b.typ.asInstanceOf[TypeRep[AnyRef]] // NPE?
+            val phi = Dyn[AnyRef](str)(tp)
+            y.locals(i) = phi
+          }
+        }
+
+        lub(x.getParentFrame, y.getParentFrame)
+        y
+      }
+    }
 
 
+    // config options
 
-    var worklist: IndexedSeq[InterpreterFrame] = Vector.empty
-
-    var budget = 5000
+    var debugLoops = false
+    var debugPaths = false
 
     var emitControlFlow = true
     var emitRecursive = false
+
+    var budget = 5000
+
+    // internal data structures
+
+    var worklist: IndexedSeq[InterpreterFrame] = Vector.empty
 
     val info = new mutable.HashMap[String, Int] // map key to id
     var count = 0
@@ -168,10 +209,19 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
       frame2
     }
 
+    def freshFrameSimple(frame: InterpreterFrame): InterpreterFrame_Str = if (frame eq null) null else {
+      val frame2 = frame.asInstanceOf[InterpreterFrame_Str].copy2(freshFrameSimple(frame.getParentFrame))
+      val depth = frame2.depth
+      frame2
+    }
+
+
     def getAllArgs(frame: InterpreterFrame) = frame.getReturnValue()::getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
 
 
     // exec loop
+
+    var path: List[(Int,InterpreterFrame,StoreLattice.Elem)] = Nil
 
     def exec(frame: InterpreterFrame): Rep[Unit] = { // called internally to initiate control transfer
       
@@ -193,6 +243,7 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
 
       budget -= 1
       
+
       // decision to make: explore block afresh or generate call to existing one
 
       var fresh = false
@@ -201,9 +252,109 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
       var cnt = storeInfo.getOrElse(key, Nil).length
 
 
-      // alternative idea (TODO):
-      //  implement lub op on stacks
+      if (key.contains("AssertionError.<init>"))
+        return reflect[Unit]("AssertionError")
 
+      //println("// *** " + key)
+      //println("// *** " + store)
+
+      var save = path
+
+      if (debugPaths) println("// " + path.map(_._1).mkString(" "))
+
+      if (path.exists(_._1 == -id)) { // already in loop
+
+        val block = captureOutput { // use a block because we're reassigning LUB and PHI
+        val (frOld,stOld) = path.collectFirst { case (`id`, frOld, stOld) => (frOld,stOld) }.get
+
+        FrameLattice.lub(frOld, frame)
+
+        store = StoreLattice.lub(stOld, store) // create LUB_X definitions
+
+        //assert(store == stOld) this may happen -- see test3.scala
+
+        val locals = FrameLattice.getFields(frame).filter(_.toString.startsWith("PHI"))
+        val localsStr = locals.toList.map(_.toString).sorted.mkString(",")
+
+        val fields = StoreLattice.getFields(store).filter(_.toString.startsWith("LUB"))
+        val fieldsStr = fields.toList.map(_.toString).sorted.mkString(",")
+
+        "loop"+id+"("+localsStr+")"+"("+fieldsStr+")"
+        }
+        return Dyn[Unit](";{" + block + "}") // possibly a bad idea, but saves a line of output
+      }
+
+
+      val frame3 = freshFrameSimple(frame)
+
+      if (path.takeWhile(_._1 >= 0).exists(_._1 == id)) {
+        
+        path = (-id,freshFrameSimple(frame),store)::path
+
+        if (debugLoops) println("// LOOP " + id + "/" + key)
+
+        // generalize, set store to lub(store before 1st iter, store before 2nd iter = here)
+        // do until fixpoint (or fail if not reached immediately)
+
+
+        val (frOld,stOld) = path.collectFirst { case (`id`, frOld, stOld) => (frOld,stOld) }.get
+
+        if (debugLoops) println("// frameBefore " + getAllArgs(frOld))
+        if (debugLoops) println("// frameAfter  " + getAllArgs(frame))
+
+        FrameLattice.lub(frOld, frame3)
+
+        if (debugLoops) println("// stBefore " + stOld)
+
+        if (debugLoops) println("// stAfter  " + store)
+
+        store = StoreLattice.lub(stOld, store)
+
+        if (debugLoops) println("// stNew    " + store)
+
+        val locals = FrameLattice.getFields(frame3).filter(_.toString.startsWith("PHI"))
+        val localsStr = locals.toList.map(s=>s+":"+s.typ).sorted.mkString(",")
+
+        val fields = StoreLattice.getFields(store).filter(_.toString.startsWith("LUB"))
+        val fieldsStr = fields.toList.map(s=>s+":"+s.typ).sorted.mkString(",")
+
+        println("def loop"+id+"("+localsStr+")"+"("+fieldsStr+"): Unit = {")
+
+      } else {
+        path = (id,freshFrameSimple(frame),store)::path
+      }
+
+      val bci = frame3.getBCI()
+      val bs = new BytecodeStream(frame3.getMethod.code())
+      //bs.setBCI(globalFrame.getBCI())
+      val res = try { executeBlock(frame3, bs, bci) } catch {
+        case e: InterpreterException =>
+          println("// caught " + e)
+          reflect[Unit]("throw "+e.getMessage)
+      }
+      finally { path = save }
+      //println(res)
+
+      if (path.takeWhile(_._1 >= 0).exists(_._1 == id)) {
+        // TODO: lub fields for (tail-)recursive call
+        println(res)
+        println("}")
+        val locals = FrameLattice.getFields(frame3).filter(_.toString.startsWith("PHI"))
+        val localsStr = locals.toList.map(_.toString).sorted.mkString(",")
+        val fields = StoreLattice.getFields(store).filter(_.toString.startsWith("LUB"))
+        val fieldsStr = fields.toList.map(_.toString).sorted.mkString(",")
+        return reflect[Unit]("loop"+id+"("+localsStr+")"+"("+fieldsStr+")")
+      } else {
+        return res
+      }
+
+
+
+
+      // --------------------------------------------
+
+
+      // create a block ....
 
       // copy whole stack. TODO: not ideal
 
@@ -216,7 +367,7 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
       val store2 = StoreLattice.alpha(store, args, params)
 
       val stOld = storeInfo.get(key) match { case Some(h::_) => h case _ => StoreLattice.bottom }
-      val stNew = StoreLattice.lub(stOld,store2)
+      val stNew = if (stOld.isEmpty) store2 else StoreLattice.lub(stOld,store2) // create phi defs as side effect
 
 
       println("// args:   " + args)
@@ -234,9 +385,9 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
       val extraNull = extraNew diff extra
 
 
-      assert((domain(stOld) intersect domain(stNew)) == domain(stOld)) // can only grow domain (?)
+      //assert((domain(stOld) intersect domain(stNew)) == domain(stOld)) // can only grow domain (?)
 
-      // decision split vs generalize: pass store2 -> split, stNew -> generalize
+      // decision split vs generalize: use store2 -> split, stNew -> generalize
 
       if (stNew != stOld || fresh) { // need to update: enqueue worklist item
         if (stNew != stOld)
@@ -251,16 +402,22 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
         }
 
         worklist = worklist :+ frame2 // TODO: don't enqueue twice
-        // note: must not rely on stNew when generating call!
+        // note: must not rely on stNew when generating call! (later, for now its ok)
 
         cnt += 1
       }
 
+      val lubs = StoreLattice.getDynFields(stNew).filterNot { d => 
+        extra.contains(d.toString) || d.toString.startsWith("p") }
+      println("// lub params " + lubs)
+
       // role of 'cnt': we do not overwrite speculative results but emit all
       // generated variants. earlier calls still go to the preliminary versions.
 
-      reflect[Unit]("block_"+id+"_"+(cnt-1)+"("+args.mkString(","),")(" + 
-        (extra.map(s=>s+"="+s) ++ extraNull.map(s=>s+"=null")).mkString(",") + ") // "+key)
+      reflect[Unit]("block_"+id+"_"+(cnt-1)+"("+args.mkString(","),")" +
+        "(" + (extra.map(s=>s+"="+s) ++ extraNull.map(s=>s+"=null")).mkString(",") + ")" +
+        "(" + (lubs.map(s=>s+"="+s).mkString(",")) + ")" +
+        " // "+key)
     }
 
 
@@ -290,10 +447,13 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
           println("// *** begin block " + key)
           val params = getAllArgs(frame)
           val paramsStr = params.map(x => if (x eq null) "?" else x.toString+":"+x.typ)
-          val extra = store collect { case (k,Partial(fs)) => k }
+          val extra = store collect { case (k,Partial(fs)) => k } toList;
           val extraStr = extra.map(x => x+":AnyRef /*= null*/")
+          val lubs = StoreLattice.getDynFields(store).filterNot {
+            d => extra.contains(d.toString) || d.toString.startsWith("p") }
+          val lubsStr = lubs.map(x=> x.toString+":"+x.typ)
 
-          println("def block_"+id+"_"+cnt+"("+paramsStr.mkString(",")+")("+extraStr.mkString(",")+"): Any = {")
+          println("def block_"+id+"_"+cnt+"("+paramsStr.mkString(",")+")("+extraStr.mkString(",")+")("+lubsStr.mkString(",")+"): Any = {")
 
           if (frame.getParentFrame != null) { // don't eval root frame -- careful, this is a copy of it!
             val bci = frame.getBCI()

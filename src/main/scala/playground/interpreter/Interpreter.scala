@@ -59,7 +59,7 @@ trait BytecodeInterpreter extends InterpreterUniverse {
    * Thrown if executed byte code caused an error in {@link BytecodeInterpreter}. The actual execution exception is
    * accessible using {@link #getCause()} or {@link #getExecutionThrowable()}.
    */
-  class InterpreterException(cause: Throwable) extends RuntimeException(cause) {
+  class InterpreterException(cause: Rep[Throwable]) extends RuntimeException(cause.toString) {
       //private static final long serialVersionUID = 1L;
       def getExecutionThrowable() = getCause()
   }
@@ -195,9 +195,14 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
 
   def thrw(t: Rep[Throwable]) = local { (frame, bs) =>
 
+    throw new InterpreterException(t)
+
     val parentFrame = frame.getParentFrame
     popFrame(frame) // FIXME
     
+    println("THROW "+t)
+
+
     pushAsObjectInternal(parentFrame, frame.getMethod.signature().returnKind(), t);
 
     exec(parentFrame)
@@ -702,9 +707,9 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
       case Bytecodes.MULTIANEWARRAY =>
           frame.pushObject(allocateMultiArray(frame, bs.readCPI(), bs.readUByte(bs.currentBCI() + 3)));
       case Bytecodes.IFNULL =>
-          return conditionalBranch(frame.popObject() == null)
+          return conditionalBranch(frame.popObject() === unit(null))
       case Bytecodes.IFNONNULL =>
-          return conditionalBranch(frame.popObject() != null)
+          return conditionalBranch(frame.popObject() !== unit(null))
       case Bytecodes.BREAKPOINT =>
           assert(false, "no breakpoints supported at this time.");
     }

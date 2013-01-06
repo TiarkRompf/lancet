@@ -213,6 +213,8 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
         println("import sun.misc.Unsafe")
         println("val unsafe = { val fld = classOf[Unsafe].getDeclaredField(\"theUnsafe\"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }")
         println("type char = Char")
+        println("def WARN = assert(false, \"WARN\")")
+        println("def ERROR = assert(false, \"ERROR\")")
 
         println("def apply(ARG: "+manifest[A]+"): "+manifest[B]+" = { object BODY {")
         println("var RES = null.asInstanceOf["+manifest[B]+"]")

@@ -60,6 +60,7 @@ trait Base_Str extends Base {
   }
 
 
+  def indented(s: String) = s.replace("\n","\n  ")
 
   import java.io._
   def captureOutput[A](func: => A): String = {
