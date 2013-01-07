@@ -1,5 +1,5 @@
 // constants: <function1>,<function0>
-class Generated(CONST_0: playground.interpreter.TestInterpreter3$$anonfun$testA2$1$$anonfun$2,CONST_1: playground.interpreter.TestInterpreter3$$anonfun$testA2$1) extends (Int=>Int){
+class Generated(CONST_0: lancet.interpreter.TestInterpreter3$$anonfun$testA2$1$$anonfun$2,CONST_1: lancet.interpreter.TestInterpreter3$$anonfun$testA2$1) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -9,7 +9,7 @@ def apply(ARG: Int): Int = { object BODY {
   var RES = null.asInstanceOf[Int]
   val x0 = ARG
   val x1 = x0.asInstanceOf[Int]
-  val x2 = unsafe.allocateInstance(Class.forName("playground.interpreter.TestInterpreter3$Bar"))
+  val x2 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter3$Bar"))
   val x3 = unsafe.putInt(x2,16.asInstanceOf[Long], 7.asInstanceOf[Int])
   val x4 = 0.asInstanceOf[Int] >= x1
   val x18 = if (x4) {

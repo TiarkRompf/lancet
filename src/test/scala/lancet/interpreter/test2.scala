@@ -1,4 +1,4 @@
-package playground
+package lancet
 package interpreter
 
 import com.oracle.graal.api.meta._      // ResolvedJavaMethod

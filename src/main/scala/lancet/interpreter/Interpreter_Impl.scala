@@ -20,7 +20,7 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
-package playground.interpreter
+package lancet.interpreter
 
 import java.lang.reflect.{Array=>jlrArray,_};
 import java.util._;

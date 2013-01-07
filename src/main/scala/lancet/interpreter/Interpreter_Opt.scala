@@ -1,4 +1,4 @@
-package playground.interpreter
+package lancet.interpreter
 
 import com.oracle.graal.api._;
 import com.oracle.graal.api.meta._;

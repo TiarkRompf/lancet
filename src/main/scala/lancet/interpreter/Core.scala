@@ -1,4 +1,4 @@
-package playground.interpreter
+package lancet.interpreter
 
 // TODO: use Scala-Virtualized
 
