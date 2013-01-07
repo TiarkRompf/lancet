@@ -72,7 +72,7 @@ class BytecodeInterpreter_Opt0 extends BytecodeInterpreter_Str with RuntimeUnive
 
     def loop(root: InterpreterFrame, main: InterpreterFrame): Unit = {// throws Throwable {
 
-      pushAsObjectInternal(root, main.getMethod.signature().returnKind(), reflect[Object]("null // stub return value "+main.getMethod.signature().returnKind())); // TODO: cleanup?
+      pushAsObjectInternal(root, main.getMethod.signature().returnKind(), Dyn[Object]("null /* stub return value "+main.getMethod.signature().returnKind()+" */")); // TODO: cleanup?
 
       val info = new scala.collection.mutable.HashMap[String, Int]
 
@@ -430,7 +430,7 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
 
     def loop(root: InterpreterFrame, main: InterpreterFrame): Unit = {// throws Throwable {
 
-      pushAsObjectInternal(root, main.getMethod.signature().returnKind(), reflect[Object]("null // stub return value "+main.getMethod.signature().returnKind())); // TODO: cleanup?
+      pushAsObjectInternal(root, main.getMethod.signature().returnKind(), Dyn[Object]("null /* stub return value "+main.getMethod.signature().returnKind()+" */")); // TODO: cleanup?
 
       while (worklist.nonEmpty) {
         var frame = worklist.head

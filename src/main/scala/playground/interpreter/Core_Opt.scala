@@ -26,7 +26,7 @@ trait Base_Opt extends Base_Str {
       val x = fresh; emit("val "+x+" = "+s.mkString("")); Dyn[T](x)
     }).asInstanceOf[Rep[T]]
   }
-  def reify[T](x: => Rep[T]): String = ("{\n  " + indented(captureOutput(x)) + "\n}")
+  def reify[T](x: => Rep[T]): String = ("{\n" + indented(captureOutput(x)) + "\n}")
 
 
   var exprs: Map[String, Rep[Any]] = Map.empty
@@ -89,18 +89,26 @@ trait Base_Opt extends Base_Str {
 
   var store: StoreLattice.Elem = Map.empty
 
-  // TODO: track const modifications through the store, too
+  // strategy for static values:
+  // - put into the store only when written
+  // - this means after if () {a.x = y} else {}
+  //   only one branch may have the object in the store.
+  //   taking the lub needs to account for this.
+  //   (lub should not be Top!)
 
   def eval[T](x: Rep[T]): Val[T] = x match {
-    case Static(x) => Const(x)
+    //case Static(x) => Const(x)
+    case Static(x) => store.get(constToString(x)).asInstanceOf[Option[Val[T]]] match {
+      case Some(x) => x
+      case None => Const(x)
+    }
     case Dyn(s) => store.getOrElse(s, Top).asInstanceOf[Val[T]] match {
       case Alias(List(x)) => eval(x) // TBD: cycles?
       case Alias(_) => Top // more than one alias
       case x => x
     }
     case _ => 
-      println("// can't eval: " + x)
-      (new Exception).printStackTrace
+      println("ERROR // can't eval: " + x)
       Top
   }
 
@@ -212,6 +220,8 @@ trait Base_Opt extends Base_Str {
         (k, (x.get(k), y.get(k)) match {
           case (Some(a),Some(b)) if a == b => a
           case (Some(Partial(as)),Some(Partial(bs))) => Partial(lubPartial(k)(as,bs)) // two definitions ...
+          case (Some(Partial(as)),None) if k.startsWith("CONST") => Partial(lubPartial(k)(as,Map("alloc"->as("alloc"))))
+          case (None,Some(Partial(bs))) if k.startsWith("CONST") => Partial(lubPartial(k)(Map("alloc"->bs("alloc")),bs))
           case (Some(Alias(as)),Some(Alias(bs))) => Alias(as ++ bs)
           case (Some(a),Some(b)) => Top
           case (Some(a),_) => Top //a

@@ -217,9 +217,9 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
         println("def ERROR = assert(false, \"ERROR\")")
 
         println("def apply(ARG: "+manifest[A]+"): "+manifest[B]+" = { object BODY {")
-        println("var RES = null.asInstanceOf["+manifest[B]+"]")
+        println("  var RES = null.asInstanceOf["+manifest[B]+"]")
 
-        println(src0)
+        println(indented(src0.trim))
 
         println("}; BODY.RES }")
         println("}")

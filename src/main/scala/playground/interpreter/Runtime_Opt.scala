@@ -155,10 +155,10 @@ trait Unsafe_Opt extends Unsafe_Str {
     val r = super.putObject(base, offset, value)
     val Static(off) = offset
 
-    val s = dealias(base) match { case Dyn(s) => s case Static(c) => println("WARN // write to const "+ c); return r }
+    val s = dealias(base).toString
     val Partial(fs) = store.getOrElse(s, { println("WARN // key not found in store: " + s); return r }) match {
       case s@Partial(_) => s
-      case Const(c) => println("WARN // write to constant: " + c); return r
+      case s@Const(c) => Partial(Map("alloc" -> Static(c)))
       // Alias: update all partials with lub value for field
       case s => println("ERROR // write to unknown: " + s); return r
     }
@@ -202,10 +202,10 @@ trait Unsafe_Opt extends Unsafe_Str {
     val r = super.putInt(base, offset, value)
     val Static(off) = offset
 
-    val s = dealias(base) match { case Dyn(s) => s case Static(c) => println("WARN // write to const "+ c); return r }
-    val Partial(fs) = store.getOrElse(s, { println("WARN // key not found in store: " + s); return r }) match {
+    val s = dealias(base) match { case Static(x) => constToString(x) case x => x.toString }
+    val Partial(fs) = eval(base) match {
       case s@Partial(_) => s
-      case Const(c) => println("WARN // write to constant: " + c); return r
+      case s@Const(c) => Partial(Map("alloc" -> Static(c)))
       // Alias: update all partials with lub value for field
       case s => println("ERROR // write to unknown: " + s); return r
     }
@@ -561,6 +561,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProv
     }""")
     */
 
+    // TODO: Partial of Const
     override def arrayLength(array: Rep[Object]): Rep[Int] = eval(array) match {
       case Const(array) => java.lang.reflect.Array.getLength(array)
       case Partial(fs) => fs("size").asInstanceOf[Rep[Int]]
@@ -568,7 +569,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProv
     }
 
 
-
+    // TODO: Partial of Const
     override def objectGetClass(base: Rep[Object]): Rep[Class[Object]] = eval(base) match {
       case Const(base) => unit(base.getClass).asInstanceOf[Rep[Class[Object]]]
       case Partial(fs) => fs("clazz").asInstanceOf[Rep[Class[Object]]]
