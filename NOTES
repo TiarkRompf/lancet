@@ -1,16 +1,1 @@
-TODO
-====
-- test2.scala
-
-Questions
-=========
-- PhasePlan vs GraalCompiler.emitHIR: should phase plans also define built-in phases?
-- under what conditions is compilation deterministic? (desired for `compile`, also for stable test output)
-- what is the runtime penalty for compiledMethod.executeVarargs? (LMS by contrast generates new classes)
-
-- can we use -server for all regular background compilation and still have graal available for `compile`?
-
-Issues
-======
-- graal bootstrap and warmup time
-- frequent code cache exhaustion (error at graalCompiler.cpp:147), will need to gc compiled code
+(empty)

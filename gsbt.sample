@@ -1,5 +1,5 @@
-export JAVA_HOME=~/Desktop/tmpstuff/linz/graalvm-truffle/jdk1.7.0-ea/product
+export JAVA_HOME=~/graalvm/jdk1.7.0-ea/product
 
 $JAVA_HOME/bin/java -graal \
 -Xms512M -Xmx1G -XX:MaxPermSize=512M -XX:+CMSClassUnloadingEnabled \
--jar ~/sbt/sbt-launch-0.12.0-M2.jar "$@"
+-jar ~/sbt/sbt-launch.jar "$@"
