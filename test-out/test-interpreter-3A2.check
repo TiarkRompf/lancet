@@ -1,0 +1,52 @@
+// constants: <function1>,<function0>
+class Generated(CONST_0: playground.interpreter.TestInterpreter3$$anonfun$testA2$1$$anonfun$2,CONST_1: playground.interpreter.TestInterpreter3$$anonfun$testA2$1) extends (Int=>Int){
+import sun.misc.Unsafe
+val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
+type char = Char
+def WARN = assert(false, "WARN")
+def ERROR = assert(false, "ERROR")
+def apply(ARG: Int): Int = { object BODY {
+  var RES = null.asInstanceOf[Int]
+  val x0 = ARG
+  val x1 = x0.asInstanceOf[Int]
+  val x2 = unsafe.allocateInstance(Class.forName("playground.interpreter.TestInterpreter3$Bar"))
+  val x3 = unsafe.putInt(x2,16.asInstanceOf[Long], 7.asInstanceOf[Int])
+  val x4 = 0.asInstanceOf[Int] >= x1
+  val x18 = if (x4) {
+    val x5 = (RES = 7.asInstanceOf[Int]) // return to root
+    x5
+  } else {
+    val x6 = unsafe.putInt(x2,16.asInstanceOf[Long], 8.asInstanceOf[Int])
+    val x7 = -1.asInstanceOf[Int] + x1
+    val x8 = 0.asInstanceOf[Int] >= x7
+    val x17 = if (x8) {
+      val x9 = (RES = 8.asInstanceOf[Int]) // return to root
+      x9
+    } else {
+      val PHI_3_6 = x7 // LUBC(x1,x7)
+      val LUB_x2_16 = 8 // LUBC(7,8)
+      def loop14(PHI_3_6:Int)(LUB_x2_16:Int): Unit = {
+      val x10 = 1.asInstanceOf[Int] + LUB_x2_16
+      val x11 = unsafe.putInt(x2,16.asInstanceOf[Long], x10)
+      val x12 = -1.asInstanceOf[Int] + PHI_3_6
+      val x13 = 0.asInstanceOf[Int] >= x12
+      val x15 = if (x13) {
+        val x14 = (RES = x10) // return to root
+        x14
+      } else {
+        ;{val PHI_3_6 = x12 // LUBC(x1,x12)
+        val LUB_x2_16 = x10 // Alias(Some(7.asInstanceOf[Int]),Some(x10))
+        loop14(PHI_3_6)(LUB_x2_16)}
+      }
+      x15
+      }
+      val x16 = loop14(PHI_3_6)(LUB_x2_16)
+      x16
+    }
+    x17
+  }
+}; BODY.RES }
+}
+
+compilation: ok
+14
