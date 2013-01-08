@@ -112,20 +112,15 @@ class TestInterpreter2 extends FileDiffSuite {
 
 
   def testA = withOutFileChecked(prefix+"A") {
-assert(false)
-    val runtime = HotSpotGraalRuntime.getInstance().getRuntime();
-    val compiler = HotSpotGraalRuntime.getInstance().getCompiler();
-
-    val reflectMeth = Program.getClass.getDeclaredMethod("draw")
-    val method = runtime.getResolvedJavaMethod(reflectMeth)
 
     val it = new BytecodeInterpreter_JS2
     //it.TRACE = true
     //it.TRACE_BYTE_CODE = true
-    it.emitControlFlow = false
+    //it.emitControlFlow = false
+    //it.debugBlocks = true
     it.emitRecursive = true
     it.initialize()
-    it.execute(method, Array(it.unit(Program)))
+    val f = it.compile((x:Int) => Program.draw)
     
   }
 

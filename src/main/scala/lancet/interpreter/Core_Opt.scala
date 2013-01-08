@@ -39,7 +39,7 @@ trait Base_Opt extends Base_Str {
 
 
   abstract class Val[+T]
-  case class Const[+T](x: T) extends Val[T] { override def toString = super.toString.replace("\n","\\n") }
+  case class Const[+T](x: T) extends Val[T] { override def toString = ("Const("+x+")").replace("\n","\\n") }
   case class Partial[+T](fields: Map[String, Rep[Any]]) extends Val[T]
   case class Alias[+T](y: List[Rep[T]]) extends Val[T]
   case object Top extends Val[Nothing]

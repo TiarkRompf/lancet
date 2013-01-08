@@ -167,13 +167,14 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
 
     // config options
 
+    var debugBlocks = false
     var debugLoops = false
     var debugPaths = false
 
-    var emitControlFlow = true
+    //var emitControlFlow = true
     var emitRecursive = false
 
-    var budget = 10000
+    var budget = 20000
 
     // internal data structures
 
@@ -261,7 +262,7 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Str with RuntimeUniver
         return reflect[Unit]("WARN // refuse " + key)
 
 
-      //println("// *** " + key)
+      if (debugBlocks) println("// *** " + key)
       //println("// *** " + store)
 
       var save = path

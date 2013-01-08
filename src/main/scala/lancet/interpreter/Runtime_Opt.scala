@@ -174,7 +174,7 @@ trait Unsafe_Opt extends Unsafe_Str {
   // TODO: static reads only safe for final fields
   override def getDouble(base: Rep[Object], offset: Rep[Long]): Rep[Double] = (eval(base), eval(offset)) match {
     case (Const(base), Const(offset)) if isSafeRead(base, offset, typeRep[Double]) => unit(static.unsafe.getDouble(base,offset))
-    case (Partial(fs), Const(offset)) => fs.getOrElse(offset.toString, unit(0)).asInstanceOf[Rep[Double]]
+    case (Partial(fs), Const(offset)) => fs.getOrElse(offset.toString, unit(0.0)).asInstanceOf[Rep[Double]]
     case _ => super.getDouble(base, offset)
   }
 /*  def getDoubleVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Double] = 
