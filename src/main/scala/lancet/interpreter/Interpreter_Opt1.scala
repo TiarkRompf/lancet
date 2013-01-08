@@ -7,17 +7,16 @@ import com.oracle.graal.bytecode._;
 
 import scala.collection.{mutable,immutable}
 
+
 // (done) track reads and writes through constants --> elim reads
 // (todo) cse --> elim redundant checks
 // (todo) flow sensitive conditionals --> elim redundant branches
 
+// version 1
+// generate a new def for each block, generalizing each time a block
+// is reached by different paths
 
-class BytecodeInterpreter_Opt extends BytecodeInterpreter_Opt3
-
-
-
-
-class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUniverse_Opt {
+class BytecodeInterpreter_Opt1 extends BytecodeInterpreter_Str with RuntimeUniverse_Opt {
     override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m)
     override def objectGetClass(receiver: Rep[Object]): Option[Class[_]] = {
       eval(receiver) match {
@@ -35,43 +34,10 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
       }        
     }
 
-    object FrameLattice {
-      type Elem = InterpreterFrame
-
-      def getFields(x: Elem) = getAllArgs(x).filter(_ != null)
-
-      def lub(x0: Elem, y0: Elem): Elem = { // modifies y!
-        if (x0 == null) return null
-        val x = x0.asInstanceOf[InterpreterFrame_Str]
-        val y = y0.asInstanceOf[InterpreterFrame_Str]
-
-        assert(x.locals.length == y.locals.length)
-
-        for (i <- 0 until y.locals.length) {
-          val a = x.locals(i)
-          val b = y.locals(i)
-
-          if (a != b) {
-            val str = "PHI_"+x.depth+"_"+i
-            if (b.toString != str)
-              println("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")")
-            val tp = b.typ.asInstanceOf[TypeRep[AnyRef]] // NPE?
-            val phi = Dyn[AnyRef](str)(tp)
-            y.locals(i) = phi
-          }
-        }
-
-        lub(x.getParentFrame, y.getParentFrame)
-        y
-      }
-    }
-
 
     // config options
 
     var debugBlocks = false
-    var debugLoops = false
-    var debugPaths = false
 
     //var emitControlFlow = true
     var emitRecursive = false
@@ -86,7 +52,6 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
     var count = 0
 
     val storeInfo = new mutable.HashMap[String, List[StoreLattice.Elem]] // map key to store
-    val frameInfo = new mutable.HashMap[String, FrameLattice.Elem] // map key to store
 
     val srcInfo = new mutable.ArrayBuffer[List[String]](budget)
 
@@ -123,7 +88,6 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
     // exec loop
 
-    var path: List[(Int,InterpreterFrame,StoreLattice.Elem)] = Nil
 
     def exec(frame: InterpreterFrame): Rep[Unit] = { // called internally to initiate control transfer
       
@@ -167,109 +131,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
       if (debugBlocks) println("// *** " + key)
       //println("// *** " + store)
 
-      var save = path
       var saveStore = store
-
-      if (debugPaths) println("// " + path.map(_._1).mkString(" "))
-
-      if (path.exists(_._1 == -id)) { // we're already recording a loop, tie back recursive call
-
-        val block = captureOutput { // use a block to redefine LUB and PHI local vals
-        val (frOld,stOld) = path.collectFirst { case (`id`, frOld, stOld) => (frOld,stOld) }.get
-
-        FrameLattice.lub(frOld, frame)
-
-        store = StoreLattice.lub(stOld, store) // create LUB_X definitions
-
-        //assert(store == stOld) this may happen -- see test3.scala, TODO: but we should still check we've converged
-
-        val locals = FrameLattice.getFields(frame).filter(_.toString.startsWith("PHI"))
-        val localsStr = locals.toList.map(_.toString).sorted.mkString(",")
-
-        val fields = StoreLattice.getFields(store).filter(_.toString.startsWith("LUB"))
-        val fieldsStr = fields.toList.map(_.toString).sorted.mkString(",")
-
-        "loop"+id+"("+localsStr+")"+"("+fieldsStr+")"
-        }
-        return Dyn[Unit](";{" + block + "}") // may be a bad idea, but saves a line of output
-      }
-
-
-      val frame3 = freshFrameSimple(frame)
-
-      if (path.takeWhile(_._1 >= 0).exists(_._1 == id)) { // we're noting that we're in a loop, generalize
-        
-        path = (-id,freshFrameSimple(frame),store)::path
-
-        if (debugLoops) println("// LOOP " + id + "/" + key)
-
-        // generalize, set store to lub(store before 1st iter, store before 2nd iter = here)
-        // do until fixpoint (or fail if not reached immediately)
-
-        val (frOld,stOld) = path.collectFirst { case (`id`, frOld, stOld) => (frOld,stOld) }.get
-
-        if (debugLoops) println("// frameBefore " + getAllArgs(frOld))
-        if (debugLoops) println("// frameAfter  " + getAllArgs(frame))
-
-        FrameLattice.lub(frOld, frame3)
-
-        if (debugLoops) println("// stBefore " + stOld)
-
-        if (debugLoops) println("// stAfter  " + store)
-
-        store = StoreLattice.lub(stOld, store)
-
-        if (debugLoops) println("// stNew    " + store)
-
-        val locals = FrameLattice.getFields(frame3).filter(_.toString.startsWith("PHI"))
-        val localsStr = locals.toList.map(s=>s+":"+s.typ).sorted.mkString(",")
-
-        val fields = StoreLattice.getFields(store).filter(_.toString.startsWith("LUB"))
-        val fieldsStr = fields.toList.map(s=>s+":"+s.typ).sorted.mkString(",")
-
-        println("def loop"+id+"("+localsStr+")"+"("+fieldsStr+"): Unit = {")
-
-      } else {
-        path = (id,freshFrameSimple(frame),store)::path
-      }
-
-      val bci = frame3.getBCI()
-      val bs = new BytecodeStream(frame3.getMethod.code())
-      //bs.setBCI(globalFrame.getBCI())
-      val res1 = try { executeBlock(frame3, bs, bci) } catch {
-        case e: InterpreterException =>
-          println("// caught " + e)
-          reflect[Unit]("throw "+e.cause+".asInstanceOf[Throwable]")
-        case e: Throwable =>
-          println("ERROR /*")
-          println(key)
-          println(e.toString)
-          e.getStackTrace().take(20).map(println)
-          println("*/")
-          liftConst(())
-      }
-
-      path = save 
-
-      val res2 = if (path.takeWhile(_._1 >= 0).exists(_._1 == id)) {
-        println(res1)
-        println("}")
-        val locals = FrameLattice.getFields(frame3).filter(_.toString.startsWith("PHI"))
-        val localsStr = locals.toList.map(_.toString).sorted.mkString(",")
-        val fields = StoreLattice.getFields(store).filter(_.toString.startsWith("LUB"))
-        val fieldsStr = fields.toList.map(_.toString).sorted.mkString(",")
-        reflect[Unit]("loop"+id+"("+localsStr+")"+"("+fieldsStr+")")
-      } else {
-        res1
-      }
-
-      store = saveStore // reset here or earlier?
-
-      return res2
-
-
-
-      // -------------------------------------------- code below is from version 1
 
 
       // create a block ....

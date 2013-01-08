@@ -12,12 +12,11 @@ import scala.collection.{mutable,immutable}
 // (todo) flow sensitive conditionals --> elim redundant branches
 
 
-class BytecodeInterpreter_Opt extends BytecodeInterpreter_Opt3
+// version 2
+// inline complete paths (splitting conditionals), only generalize loops
 
 
-
-
-class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUniverse_Opt {
+class BytecodeInterpreter_Opt2 extends BytecodeInterpreter_Str with RuntimeUniverse_Opt {
     override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m)
     override def objectGetClass(receiver: Rep[Object]): Option[Class[_]] = {
       eval(receiver) match {
