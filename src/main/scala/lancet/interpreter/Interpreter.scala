@@ -59,7 +59,7 @@ trait BytecodeInterpreter extends InterpreterUniverse {
    * Thrown if executed byte code caused an error in {@link BytecodeInterpreter}. The actual execution exception is
    * accessible using {@link #getCause()} or {@link #getExecutionThrowable()}.
    */
-  class InterpreterException(cause: Rep[Throwable]) extends RuntimeException(cause.toString) {
+  class InterpreterException(val cause: Rep[Throwable]) extends RuntimeException(cause.toString) {
       //private static final long serialVersionUID = 1L;
       def getExecutionThrowable() = getCause()
   }

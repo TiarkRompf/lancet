@@ -39,6 +39,7 @@ object unsafe extends Unsafe_Opt
 
 
 var debugReadWrite = false
+var debugNullCheck = false
 
 
 trait Unsafe_Opt extends Unsafe_Str {
@@ -72,11 +73,13 @@ trait Unsafe_Opt extends Unsafe_Str {
                        "sun.nio.cs.StreamEncoder.80"::
                        "sun.nio.cs.StreamEncoder.88"::
                        "java.nio.HeapByteBuffer[pos=0 lim=8192 cap=8192].48":: //HACK/FIXME
+                       "sun.nio.cs.UTF_8$Encoder.72"::
+                       "java.nio.charset.CoderResult$1.16"::
                        Nil
       val str = base.toString
       val lookup = str.replaceAll("@[a-z0-9]+","")+"."+offset
       //println("// " + lookup + "/" + safeFields)
-      val r = safeFields.contains(lookup) || !unsafePrefixes.exists(str startsWith _)
+      val r = lookup.startsWith("Class.forName") || safeFields.contains(lookup) || !unsafePrefixes.exists(str startsWith _)
       if (debugReadWrite) {
         val pred = if (r) "safe" else "unsafe"
         println("// " + pred + " read: " + base.toString.replace("\n","\\n") + "." + offset + ":" + typ)
@@ -86,24 +89,44 @@ trait Unsafe_Opt extends Unsafe_Str {
   }
 
 
-  // TODO: static reads only safe for final fields
   override def getObject(base: Rep[Object], offset: Rep[Long]): Rep[Object] = (eval(base), eval(offset)) match {
     case (Const(base), Const(offset)) if isSafeRead(base, offset, typeRep[Object]) =>
       unit(static.unsafe.getObject(base,offset))
     case (Partial(fs), Const(offset)) => 
-      fs.getOrElse(offset.toString, unit(null)).asInstanceOf[Rep[Object]]
+      def default = fs("alloc") match {
+        case Static(base1:Object) => 
+          if (isSafeRead(base1, offset, typeRep[Object])) unit(static.unsafe.getObject(base1,offset))
+          else super.getObject(base, offset)
+        case _ => unit(null)
+      }
+      fs.getOrElse(offset.toString, default).asInstanceOf[Rep[Object]]
     case _ => super.getObject(base,offset)
   }
     
 /*
   def getObjectVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Object] = 
     reflect("unsafe.getObjectVolatile("+base+","+offset+")")
+*/
+  override def getBoolean(base: Rep[Object], offset: Rep[Long]): Rep[Boolean] = (eval(base), eval(offset)) match {
+    case (Const(base), Const(offset)) if isSafeRead(base, offset, typeRep[Int]) => 
+      unit(static.unsafe.getBoolean(base,offset))
+    case (Partial(fs), Const(offset)) => 
+      def default = fs("alloc") match {
+        case Static(base1:Object) => 
+          if (isSafeRead(base1, offset, typeRep[Boolean])) unit(static.unsafe.getBoolean(base1,offset))
+          else super.getBoolean(base, offset)
+        case _ => unit(false)
+      }
+      fs.getOrElse(offset.toString, default).asInstanceOf[Rep[Boolean]]
+    case _ => super.getBoolean(base, offset)
+  }
 
-  def getBoolean(base: Rep[Object], offset: Rep[Long]): Rep[Boolean] = 
-    reflect("unsafe.getBoolean("+base+","+offset+")")
-  def getBooleanVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Boolean] = 
-    reflect("unsafe.getBooleanVolatile("+base+","+offset+")")
-
+  override def getBooleanVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Boolean] = {
+    // HACK !!
+    if (base+","+offset == "Class.forName(\"sun.misc.VM\").asInstanceOf[Object],261.asInstanceOf[Long]") unit(true)
+    else super.getBooleanVolatile(base, offset)
+  }
+/*
   def getByte(base: Rep[Object], offset: Rep[Long]): Rep[Byte] = 
     reflect("unsafe.getByte("+base+","+offset+")")
   def getByteVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Byte] = 
@@ -120,10 +143,17 @@ trait Unsafe_Opt extends Unsafe_Str {
     reflect("unsafe.getShortVolatile("+base+","+offset+")")
 */
 
-  // TODO: static reads only safe for final fields
   override def getInt(base: Rep[Object], offset: Rep[Long]): Rep[Int] = (eval(base), eval(offset)) match {
-    case (Const(base), Const(offset)) if isSafeRead(base, offset, typeRep[Int]) => unit(static.unsafe.getInt(base,offset))
-    case (Partial(fs), Const(offset)) => fs.getOrElse(offset.toString, unit(0)).asInstanceOf[Rep[Int]]
+    case (Const(base), Const(offset)) if isSafeRead(base, offset, typeRep[Int]) => 
+      unit(static.unsafe.getInt(base,offset))
+    case (Partial(fs), Const(offset)) => 
+      def default = fs("alloc") match {
+        case Static(base1:Object) => 
+          if (isSafeRead(base1, offset, typeRep[Int])) unit(static.unsafe.getInt(base1,offset))
+          else super.getInt(base, offset)
+        case _ => unit(0)
+      }
+      fs.getOrElse(offset.toString, default).asInstanceOf[Rep[Int]]
     case _ => super.getInt(base, offset)
   }
 
@@ -155,8 +185,8 @@ trait Unsafe_Opt extends Unsafe_Str {
     val r = super.putObject(base, offset, value)
     val Static(off) = offset
 
-    val s = dealias(base).toString
-    val Partial(fs) = store.getOrElse(s, { println("WARN // key not found in store: " + s); return r }) match {
+    val s = dealias(base) match { case Static(x) => constToString(x) case x => x.toString }
+    val Partial(fs) = eval(base) match {
       case s@Partial(_) => s
       case s@Const(c) => Partial(Map("alloc" -> Static(c)))
       // Alias: update all partials with lub value for field
@@ -531,7 +561,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProv
 */
 
     override def nullCheck(value: Rep[Object]): Rep[Object] = {
-      //println("// nullcheck "+value + "=" + eval(value))
+      if (debugNullCheck) println("// nullcheck "+value + "=" + eval(value))
       super.nullCheck(value)
     }
 
@@ -572,7 +602,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProv
     // TODO: Partial of Const
     override def objectGetClass(base: Rep[Object]): Rep[Class[Object]] = eval(base) match {
       case Const(base) => unit(base.getClass).asInstanceOf[Rep[Class[Object]]]
-      case Partial(fs) => fs("clazz").asInstanceOf[Rep[Class[Object]]]
+      case Partial(fs) => fs.getOrElse("clazz", objectGetClass(fs("alloc").asInstanceOf[Rep[Class[Object]]])).asInstanceOf[Rep[Class[Object]]]
       case _ => super.objectGetClass(base)
     }
 

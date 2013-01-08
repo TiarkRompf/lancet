@@ -15,7 +15,7 @@ class TestInterpreter3 extends FileDiffSuite {
   }
 
 
-  // test:
+  // should test the following:
   // - reads/writes on allocs and constants
   // - loops
   // - exceptions

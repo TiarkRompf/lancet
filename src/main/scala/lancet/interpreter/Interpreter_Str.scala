@@ -153,8 +153,14 @@ final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with Runt
           val bci = frame.getBCI()
           val bs = new BytecodeStream(frame.getMethod.code())
           //bs.setBCI(globalFrame.getBCI())
-          val res = executeBlock(frame, bs, bci)
-          println(res)
+          try {
+            val res = executeBlock(frame, bs, bci)
+            println(res)
+          } catch {
+            case e: InterpreterException =>
+              println("// caught " + e)
+              println("throw "+e.cause+".asInstanceOf[Throwable]")
+          }
         } else {
           println("// shouldn't reach here..")
           println("// returned to root")

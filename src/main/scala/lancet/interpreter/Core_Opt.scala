@@ -27,7 +27,7 @@ trait Base_Opt extends Base_Str {
     }).asInstanceOf[Rep[T]]
   }
   def reify[T](x: => Rep[T]): String = ("{\n" + indented(captureOutput(x)) + "\n}")
-
+  // TODO: does reify need to worry about other state like the store?
 
   var exprs: Map[String, Rep[Any]] = Map.empty
 
@@ -198,14 +198,15 @@ trait Base_Opt extends Base_Str {
             case (Some(a),Some(b)) if a == b => a
             case (Some(Static(a)),Some(bb@Static(b))) => 
               val str = "LUB_"+p+"_"+k
-              println("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")")
+              if (b.toString != str)
+                println("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")")
               val tp = bb.typ.asInstanceOf[TypeRep[Any]]
               Dyn[Any](str)(tp)
             case (a,b) => 
               val str = "LUB_"+p+"_"+k
               if (b.nonEmpty) {
                 if (b.get.toString != str)
-                println("val "+str+" = " + b.get + " // Alias(" + a + "," + b + ")")
+                  println("val "+str+" = " + b.get + " // Alias(" + a + "," + b + ")")
               } else
                 println("val "+str+" = " + a.get + " // AAA Alias(" + a + "," + b + ")")
               val tp = b match { case Some(b) => b.typ.asInstanceOf[TypeRep[Any]] case _ => typeRep[Any]} // other cases possible? type lub?
@@ -220,6 +221,7 @@ trait Base_Opt extends Base_Str {
         (k, (x.get(k), y.get(k)) match {
           case (Some(a),Some(b)) if a == b => a
           case (Some(Partial(as)),Some(Partial(bs))) => Partial(lubPartial(k)(as,bs)) // two definitions ...
+          // todo: replace string check with as("alloc") check
           case (Some(Partial(as)),None) if k.startsWith("CONST") => Partial(lubPartial(k)(as,Map("alloc"->as("alloc"))))
           case (None,Some(Partial(bs))) if k.startsWith("CONST") => Partial(lubPartial(k)(Map("alloc"->bs("alloc")),bs))
           case (Some(Alias(as)),Some(Alias(bs))) => Alias(as ++ bs)
@@ -697,6 +699,7 @@ trait Core_Opt extends Base_Opt with Core_Str {
   }
   override def objectNotEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = (eval(x),eval(y)) match {
     case (Const(x), Const(y)) => x ne y
+    case (Partial(fs), Const(null)) => true
     case _ => super.objectNotEqual(x,y)
   }
 
