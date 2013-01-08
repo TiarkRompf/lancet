@@ -5,6 +5,8 @@ import com.oracle.graal.api.meta._;
 import com.oracle.graal.hotspot.meta._;
 import com.oracle.graal.bytecode._;
 
+import com.oracle.graal.java.BciBlockMapping
+
 import scala.collection.{mutable,immutable}
 
 // (done) track reads and writes through constants --> elim reads
@@ -15,6 +17,7 @@ import scala.collection.{mutable,immutable}
 class BytecodeInterpreter_Opt extends BytecodeInterpreter_Opt3
 
 
+// version 3
 
 
 class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUniverse_Opt {
@@ -82,6 +85,9 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
     var worklist: IndexedSeq[InterpreterFrame] = Vector.empty
 
+    val graalBlockMapping = new mutable.HashMap[ResolvedJavaMethod, BciBlockMapping] // map key to store
+
+
     val info = new mutable.HashMap[String, Int] // map key to id
     var count = 0
 
@@ -117,13 +123,13 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
       frame2
     }
 
-
     def getAllArgs(frame: InterpreterFrame) = frame.getReturnValue()::getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
 
 
     // exec loop
 
     var path: List[(Int,InterpreterFrame,StoreLattice.Elem)] = Nil
+
 
     def exec(frame: InterpreterFrame): Rep[Unit] = { // called internally to initiate control transfer
       
@@ -145,6 +151,22 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
       budget -= 1
       
+
+      // obtain block mapping that will tell us dominance relations
+
+      val graalBlock = graalBlockMapping.getOrElseUpdate(frame.getMethod, {
+        val map = new BciBlockMapping(method);
+        map.build();
+        import scala.collection.JavaConversions._
+        println("/*")
+        println("block map for method " + frame.getMethod)
+        for (b <- map.blocks) {
+          println(b + " succ [" + b.successors.map("B"+_.blockID).mkString(",") + "]")
+        }
+        println("*/")
+        map
+      })
+
 
       // decision to make: explore block afresh or generate call to existing one
 
