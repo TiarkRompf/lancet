@@ -31,45 +31,7 @@ import com.oracle.graal.api.meta._;
 import com.oracle.graal.hotspot.meta._;
 import com.oracle.graal.bytecode._;
 
-/* TODO:
-
-  loops/blocks
-    evaluate each block only once -- worklist
-  
-  method calls
-    either inline (default) or compile separately
-
-
-  generate executable code
-    private fields? --> unsafe ops
-
-
-  abstract interpretation / lattice ops
-
-
-  - unique ids for blocks (including inlined)
-  - support exceptions
-
-
-  - generate and compile working scala
-  - compile to js, koch snowflake
-  - generate graal ir
-
-  - lms: structured nodes, simplify, object abstraction
-  - join control flow, lattice ops
-
-
-  - run compiled scala code
-  - constant pool
-  - OptiML api
-
-*/
-
-
-
-
-
-// TODO: straightforward compilation
+// straightforward compilation
 
 final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with RuntimeUniverse_Simple {
 
@@ -207,23 +169,29 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
           case "char" => "Char"
           case "long" => "Long"
           //TODO/FIXME
-          case "scala.util.DynamicVariable" => "scala.util.DynamicVariable[_]"
           case s if !Modifier.isPublic(x.getModifiers) => "Object /*" + s + "*/" //s <-- class may be private...
           case s => s
+            val params = x.getTypeParameters
+            if (params.length == 0) s
+            else s + "[" + params.map(x=>"_").mkString(",") + "]"
         }
+
+        def manifestStr(x: Manifest[_]) = classStr(x.erasure)
+
+        val (maStr, mbStr) = (manifestStr(manifest[A]), manifestStr(manifest[B]))
 
         val cst = constantPool.zipWithIndex.map(p=>"CONST_"+p._2+": "+classStr(p._1.getClass)).mkString(",")
 
         println("// constants: " + constantPool.toArray.deep.mkString(",").replace("\n","\\n"))
-        println("class Generated("+ cst +") extends ("+manifest[A]+"=>"+manifest[B]+"){")
+        println("class Generated("+ cst +") extends ("+maStr+"=>"+mbStr+"){")
         println("import sun.misc.Unsafe")
         println("val unsafe = { val fld = classOf[Unsafe].getDeclaredField(\"theUnsafe\"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }")
         println("type char = Char")
         println("def WARN = assert(false, \"WARN\")")
         println("def ERROR = assert(false, \"ERROR\")")
 
-        println("def apply(ARG: "+manifest[A]+"): "+manifest[B]+" = { object BODY {")
-        println("  var RES = null.asInstanceOf["+manifest[B]+"]")
+        println("def apply(ARG: "+maStr+"): "+mbStr+" = { object BODY {")
+        println("  var RES = null.asInstanceOf["+mbStr+"]")
 
         println(indented(src0.trim))
 
