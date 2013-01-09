@@ -208,13 +208,35 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
         print(src)
         println("// (no return?)")
       } else if (returns.length == 1) {
-        print(src.replace("RETURN_0", "// continue"))
+        print(src.replace("RETURN_0", "")) // "continue"))
         val (frame0,store0) = returns(0)
         store = store0
         exec(frame0)
       } else {
-        assert(returns.length == 2) // for now ...
 
+        // calc lubs and backpatch returns
+
+        val gos = returns map { case (frameX,storeX) =>
+          val frameY = freshFrameSimple(frameX)
+          var storeY = storeX
+          val (go, _) = captureOutputResult {
+            returns foreach { case (f,s) => 
+              FrameLattice.lub(f, frameY) 
+              storeY = StoreLattice.lub(s, storeY)
+            }
+            val locals = FrameLattice.getFields(frameY).filter(_.toString.startsWith("PHI"))
+            val fields = StoreLattice.getFields(storeY).filter(_.toString.startsWith("LUB"))
+            for (v <- locals ++ fields) println("v"+v+" = "+v)
+          }
+          (go,frameY,storeY)
+        }
+
+        var src1 = src
+        for (((go,_,_),i) <- gos.zipWithIndex) {
+          src1 = src1.replace("RETURN_"+i,go)
+        }
+
+        /*
         val (frame0,store0) = returns(0)
         val (frame1,store1) = returns(1)
 
@@ -237,23 +259,28 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
           val fields = StoreLattice.getFields(store2).filter(_.toString.startsWith("LUB"))
           for (v <- locals ++ fields) println("v"+v+" = "+v)
           (frame2,store2)
-        }
+        }*/
 
+        val (_,f02,s02) = gos(0)        
+
+        /*
         assert(contextKey(f02) == contextKey(f12))
         assert(getAllArgs(f02) == getAllArgs(f12))
         assert(s02 == s12)
+        */
 
         val locals = FrameLattice.getFields(f02).filter(_.toString.startsWith("PHI"))
         val fields = StoreLattice.getFields(s02).filter(_.toString.startsWith("LUB"))
         for (v <- locals ++ fields) 
           println("var v"+v+" = null.asInstanceOf["+v.typ+"]")
 
-        print(src.replace("RETURN_0", go0).replace("RETURN_1", go1))
+        print(src1)
+        
+        //print(src.replace("RETURN_0", go0).replace("RETURN_1", go1))
 
         for (v <- locals ++ fields) 
           println("val "+v+" = v"+v)
 
-        //val (f02,s02) = returns(0)
         store = s02
         exec(f02)
       }
@@ -317,6 +344,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
 
       val frame3 = freshFrameSimple(frame)
+      var frame4 = frame3
 
       if (path.takeWhile(_._1 >= 0).exists(_._1 == id)) { // we're noting that we're in a loop, generalize
         
@@ -350,6 +378,8 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
         println("def loop"+id+"("+localsStr+")"+"("+fieldsStr+"): Unit = {")
 
+        frame4 = freshFrameSimple(frame3) // copy again
+
       } else {
         path = (id,freshFrameSimple(frame),store)::path
       }
@@ -375,7 +405,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
       val res2 = if (path.takeWhile(_._1 >= 0).exists(_._1 == id)) {
         println(res1)
         println("}")
-        val locals = FrameLattice.getFields(frame3).filter(_.toString.startsWith("PHI"))
+        val locals = FrameLattice.getFields(frame4).filter(_.toString.startsWith("PHI"))
         val localsStr = locals.toList.map(_.toString).sorted.mkString(",")
         val fields = StoreLattice.getFields(store).filter(_.toString.startsWith("LUB"))
         val fieldsStr = fields.toList.map(_.toString).sorted.mkString(",")

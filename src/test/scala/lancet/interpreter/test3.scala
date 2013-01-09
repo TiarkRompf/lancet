@@ -39,7 +39,7 @@ class TestInterpreter3 extends FileDiffSuite {
     println(y)
     assert(y == 9)
   }
-/*
+
   def testA2 = withOutFileChecked(prefix+"A2") {
     val it = new BytecodeInterpreter_Opt
     it.initialize()
@@ -135,7 +135,6 @@ class TestInterpreter3 extends FileDiffSuite {
     println(y)
     assert(y == 9)
   } 
-*/
 
 
 /* test that needs multiple speculative iterations:
