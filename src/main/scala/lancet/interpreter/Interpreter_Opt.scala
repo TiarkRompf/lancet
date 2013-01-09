@@ -128,8 +128,8 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
     // exec loop
 
-    var path: List[(Int,InterpreterFrame,StoreLattice.Elem)] = Nil
-
+    var handler: (InterpreterFrame => Rep[Unit]) = execMethod
+    var depth = 0
 
     def exec(frame: InterpreterFrame): Rep[Unit] = { // called internally to initiate control transfer
       
@@ -151,23 +151,120 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
       budget -= 1
       
+      handler(frame)
+    }
 
-      // obtain block mapping that will tell us dominance relations
 
-      val graalBlock = graalBlockMapping.getOrElseUpdate(frame.getMethod, {
+    def execMethod(mframe: InterpreterFrame): Rep[Unit] = {
+
+      // obtain block mapping that will tell us about dominance relations
+      val method = mframe.getMethod()
+
+      val graalBlock = graalBlockMapping.getOrElseUpdate(method, {
         val map = new BciBlockMapping(method);
         map.build();
         import scala.collection.JavaConversions._
-        println("/*")
-        println("block map for method " + frame.getMethod)
+        /*println("/*")
+        println("block map for method " + method)
         for (b <- map.blocks) {
           println(b + " succ [" + b.successors.map("B"+_.blockID).mkString(",") + "]")
         }
-        println("*/")
+        println("*/")*/
         map
       })
 
 
+      val saveHandler = handler
+      val saveDepth = getContext(mframe).length
+
+      println("// << " + method)
+
+      var returns: List[(InterpreterFrame, StoreLattice.Elem)] = Nil
+
+      handler = { blockFrame =>
+
+        val d = getContext(blockFrame).length
+
+        if (d > saveDepth) execMethod(blockFrame)
+        else if (d < saveDepth) { 
+          returns = returns :+ (freshFrameSimple(blockFrame), store)
+          println("RETURN_"+(returns.length-1))
+          liftConst(())
+        } else {
+          execPlain(blockFrame)
+        }
+      }
+
+      val (src, res) = captureOutputResult {
+        execPlain(mframe) // will not return before method is done
+      }
+
+
+      handler = saveHandler
+
+      println("// >> " + method + " " + returns.length)
+
+      if (returns.length == 0) {
+        print(src)
+        println("// (no return?)")
+      } else if (returns.length == 1) {
+        print(src.replace("RETURN_0", "// continue"))
+        val (frame0,store0) = returns(0)
+        store = store0
+        exec(frame0)
+      } else {
+        assert(returns.length == 2) // for now ...
+
+        val (frame0,store0) = returns(0)
+        val (frame1,store1) = returns(1)
+
+        val (go0, (f02,s02)) = captureOutputResult {
+          val frame2 = freshFrameSimple(frame0)
+          FrameLattice.lub(frame1, frame2)
+          val store2 = StoreLattice.lub(store1, store0)
+          
+          val locals = FrameLattice.getFields(frame2).filter(_.toString.startsWith("PHI"))
+          val fields = StoreLattice.getFields(store2).filter(_.toString.startsWith("LUB"))
+          for (v <- locals ++ fields) println("v"+v+" = "+v)
+          (frame2,store2)
+        }
+        val (go1, (f12,s12)) = captureOutputResult {
+          val frame2 = freshFrameSimple(frame1)
+          FrameLattice.lub(frame0, frame2)
+          val store2 = StoreLattice.lub(store0, store1)
+
+          val locals = FrameLattice.getFields(frame2).filter(_.toString.startsWith("PHI"))
+          val fields = StoreLattice.getFields(store2).filter(_.toString.startsWith("LUB"))
+          for (v <- locals ++ fields) println("v"+v+" = "+v)
+          (frame2,store2)
+        }
+
+        assert(contextKey(f02) == contextKey(f12))
+        assert(getAllArgs(f02) == getAllArgs(f12))
+        assert(s02 == s12)
+
+        val locals = FrameLattice.getFields(f02).filter(_.toString.startsWith("PHI"))
+        val fields = StoreLattice.getFields(s02).filter(_.toString.startsWith("LUB"))
+        for (v <- locals ++ fields) 
+          println("var v"+v+" = null.asInstanceOf["+v.typ+"]")
+
+        print(src.replace("RETURN_0", go0).replace("RETURN_1", go1))
+
+        for (v <- locals ++ fields) 
+          println("val "+v+" = v"+v)
+
+        //val (f02,s02) = returns(0)
+        store = s02
+        exec(f02)
+      }
+
+      res
+    }
+
+
+    var path: List[(Int,InterpreterFrame,StoreLattice.Elem)] = Nil
+
+    def execPlain(frame: InterpreterFrame): Rep[Unit] = {
       // decision to make: explore block afresh or generate call to existing one
 
       var fresh = false
@@ -175,7 +272,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
       val id = info.getOrElseUpdate(key, { val id = count; count += 1; fresh = true; id })
       var cnt = storeInfo.getOrElse(key, Nil).length
 
-
+/*
       if (key.contains("AssertionError.<init>"))
         return reflect[Unit]("throw new AssertionError")
 
@@ -184,11 +281,13 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
       if (key.contains("Exception.<init"))
         return reflect[Unit]("WARN // refuse " + key)
-
+*/
 
       if (debugBlocks) println("// *** " + key)
       //println("// *** " + store)
 
+
+      // -------------------------------------------- code below is from version 2
       var save = path
       var saveStore = store
 
