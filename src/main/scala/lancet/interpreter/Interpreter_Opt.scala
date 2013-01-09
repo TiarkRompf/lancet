@@ -339,7 +339,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
         "loop"+id+"("+localsStr+")"+"("+fieldsStr+")"
         }
-        return Dyn[Unit](";{" + block + "}") // may be a bad idea, but saves a line of output
+        return reflect[Unit]("{" + block + "}") // may be a bad idea, but saves a line of output
       }
 
 
