@@ -44,6 +44,19 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
 
     // ---------- high level execution loop ----------
 
+    /* see test4
+    def quoteFun[A:Manifest,B:Manifest](f: A=>B): String = {
+      val (src0, res) = captureOutputResult { 
+
+        val arg = reflect[A]("ARG")
+
+        execute(f.getClass.getMethod("apply", manifest[A].erasure), Array[Rep[Object]](unit(f),arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
+
+      }
+
+      "{ (ARG: " + manifest[A] + ") => " + src0 + "}"
+    }*/
+
     def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
 
       //def captureOutputResult[T](x:T) = ("", x)

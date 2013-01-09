@@ -18,6 +18,35 @@ class TestInterpreter4 extends FileDiffSuite {
 
     def handleJsMethod(parent: InterpreterFrame, m: ResolvedJavaMethod): Boolean = {
       val holder = m.holder
+
+      val fullName = m.holder.toJava.getName + "." + m.name
+
+      fullName match {
+        case "scala.collection.TraversableLike.filter" => 
+
+          println("// XXX hit filter " + fullName)
+
+          //val receiver = parent.peekReceiver(m)
+          val receiver::f::Nil = popArgumentsAsObject(parent, m, true).toList
+
+          val arg = Dyn[Object](fresh)
+
+          val fun = captureOutput {
+
+            val Partial(fs) = eval(f)
+            val Static(cls: Class[_]) = fs("clazz")
+            execute(cls.getMethod("apply", classOf[Object]), Array[Rep[Object]](f,arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
+          }
+
+          val returnValue = reflect[Object](""+receiver+".filter "+ "{" + arg + "=> " + fun + "}")
+          pushAsObject(parent, m.signature().returnKind(), returnValue)
+          return true
+
+
+          false
+        case _ => false
+      }
+
       if (classOf[Marker].isAssignableFrom(holder.toJava())) {
         //println("*** XXX JSM " + classOf[Program.JS] + " / " + holder.toJava)
         val receiver = parent.peekReceiver(m)
@@ -27,13 +56,13 @@ class TestInterpreter4 extends FileDiffSuite {
         true
       } else false
     }
-/*
+
     override def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame =
       if (handleJsMethod(parent,m)) null else super.resolveAndInvoke(parent, m)
     override def invokeDirect(parent: InterpreterFrame, m: ResolvedJavaMethod, hasReceiver: Boolean): InterpreterFrame =
       if (handleJsMethod(parent,m)) null else super.invokeDirect(parent, m, hasReceiver)
-    override def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = value // no casts in JavaScript
-*/
+    //override def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = value // no casts in JavaScript
+
   }
 
   object Decompiler extends BytecodeInterpreter_Test {
