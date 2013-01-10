@@ -137,4 +137,29 @@ class TestInterpreter4 extends FileDiffSuite {
     } }
   }
 
+/* from StatusQuo paper 
+
+List<User> getRoleUser () {
+List<User> listUsers = new ArrayList<User>(); 
+List<User> users = ... /* Hibernate query */ 
+List<Role> roles = ... /* Hibernate query */ 
+for (int i = 0; i < users.size(); i++) {
+for (int j = 0; j < roles.size(); j++) {
+if (users.get(i).roleId == roles.get(j).roleId) {
+        User userok = users.get(i);
+        listUsers.add(userok);
+   }}}
+return listUsers; 
+}
+
+ List<User> getRoleUser () {
+List<User> listUsers = db.executeQuery(
+"SELECT u
+FROM users u, roles r
+WHERE u.roleId == r.roleId ORDER BY u.roleId, r.roleId");
+return listUsers; 
+}
+
+*/
+
 }
