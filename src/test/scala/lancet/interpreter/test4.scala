@@ -67,6 +67,8 @@ class TestInterpreter4 extends FileDiffSuite {
 
   object Decompiler extends BytecodeInterpreter_Test {
     initialize()
+    emitUniqueOpt = true
+
     def decompile[A:Manifest,B:Manifest](f: A => B): String = {
       compile(f)
       "<decompiled>"

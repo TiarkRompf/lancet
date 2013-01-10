@@ -42,6 +42,9 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
     override def trace(level: Int, message: String)  = super.trace(level, "// " + message)
 
 
+    var emitUniqueOpt = false
+
+
     // ---------- high level execution loop ----------
 
     /* see test4
@@ -296,9 +299,9 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
 
 
         // TODO: will require registering an assumption ...
-        val unique = null//m.holder.uniqueConcreteMethod(m)
+        val unique = if (emitUniqueOpt) m.holder.uniqueConcreteMethod(m) else null
         if (unique ne null) {
-          println("// unique method: "+m)
+          println("// unique method: "+m+" TODO: guard")
           return return invokeDirect(parent, unique, true)
         }
 
