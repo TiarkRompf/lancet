@@ -38,7 +38,7 @@ class TestInterpreter4 extends FileDiffSuite {
             execute(cls.getMethod("apply", classOf[Object]), Array[Rep[Object]](f,arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
           }
 
-          val returnValue = reflect[Object](""+receiver+".filter "+ "{" + arg + "=> " + fun + "}")
+          val returnValue = reflect[Object](""+receiver+".filter "+ "{ " + arg + "=> " + fun + "}")
           pushAsObject(parent, m.signature().returnKind(), returnValue)
           return true
 
