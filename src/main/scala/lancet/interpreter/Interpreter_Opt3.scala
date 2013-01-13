@@ -73,6 +73,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
     // config options
 
     var debugBlocks = false
+    var debugMethods = false
     var debugLoops = false
     var debugPaths = false
 
@@ -177,9 +178,12 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
       val saveHandler = handler
       val saveDepth = getContext(mframe).length
 
-      println("// << " + method)
+      if (debugMethods) println("// << " + method)
 
       var returns: List[(InterpreterFrame, StoreLattice.Elem)] = Nil
+      var gotos: List[(InterpreterFrame, StoreLattice.Elem)] = Nil
+
+      //val blockInfo: mutable.Map[Int, List[(InterpreterFrame, StoreLattice.Elem)]] = new mutable.HashMap
 
       handler = { blockFrame =>
 
@@ -191,18 +195,54 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
           println("RETURN_"+(returns.length-1))
           liftConst(())
         } else {
-          execPlain(blockFrame)
+          gotoBlock(blockFrame)
         }
       }
 
-      val (src, res) = captureOutputResult {
-        execPlain(mframe) // will not return before method is done
+      def gotoBlock(blockFrame: InterpreterFrame): Rep[Unit] = {
+        gotos = gotos :+ (freshFrameSimple(blockFrame), store)
+        println("GOTO_"+(gotos.length-1))
+        liftConst(())
+
+        /*val key = contextKey(frame)
+        var fresh = false
+        val id = info.getOrElseUpdate(key, { val id = count; count += 1; fresh = true; id })
+        var cnt = storeInfo.getOrElse(key, Nil).length
+        println("//GOTO_"+id+" // "+key)*/
       }
+
+
+      val replaceGoto: mutable.ArrayBuffer[String] = new mutable.ArrayBuffer
+
+      val (src0, res) = captureOutputResult {
+        gotoBlock(mframe) // will not return before method is done
+
+        var i = 0
+        while (i < gotos.length) { // list grows underneath!
+          val (fr,st) = gotos(i)
+
+          val (src0, res0) = captureOutputResult {
+            store = st
+            execPlain(fr)
+          }
+
+          replaceGoto += src0
+
+          i += 1
+        }
+
+        liftConst(())
+      }
+
+
+      var src = src0
+      for (i <- 0 until replaceGoto.length)
+        src = src.replace("GOTO_"+i, replaceGoto(i))
 
 
       handler = saveHandler
 
-      println("// >> " + method + " " + returns.length)
+      if (debugMethods) println("// >> " + method + " " + returns.length)
 
       if (returns.length == 0) {
         print(src)
@@ -213,6 +253,9 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
         store = store0
         exec(frame0)
       } else {
+
+
+
 
         // calc lubs and backpatch returns
 
@@ -235,31 +278,6 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
         for (((go,_,_),i) <- gos.zipWithIndex) {
           src1 = src1.replace("RETURN_"+i,go)
         }
-
-        /*
-        val (frame0,store0) = returns(0)
-        val (frame1,store1) = returns(1)
-
-        val (go0, (f02,s02)) = captureOutputResult {
-          val frame2 = freshFrameSimple(frame0)
-          FrameLattice.lub(frame1, frame2)
-          val store2 = StoreLattice.lub(store1, store0)
-          
-          val locals = FrameLattice.getFields(frame2).filter(_.toString.startsWith("PHI"))
-          val fields = StoreLattice.getFields(store2).filter(_.toString.startsWith("LUB"))
-          for (v <- locals ++ fields) println("v"+v+" = "+v)
-          (frame2,store2)
-        }
-        val (go1, (f12,s12)) = captureOutputResult {
-          val frame2 = freshFrameSimple(frame1)
-          FrameLattice.lub(frame0, frame2)
-          val store2 = StoreLattice.lub(store0, store1)
-
-          val locals = FrameLattice.getFields(frame2).filter(_.toString.startsWith("PHI"))
-          val fields = StoreLattice.getFields(store2).filter(_.toString.startsWith("LUB"))
-          for (v <- locals ++ fields) println("v"+v+" = "+v)
-          (frame2,store2)
-        }*/
 
         val (_,f02,s02) = gos(0)        
 
