@@ -166,6 +166,7 @@ trait Base_Opt extends Base_Str {
       }.toMap
     }
 
+    // x is 'target' elem, y is 'current' elem
     def lub(x: Elem, y: Elem): Elem = {
 
       // TODO: lub partials
@@ -207,8 +208,10 @@ trait Base_Opt extends Base_Str {
               if (b.nonEmpty) {
                 if (b.get.toString != str)
                   println("val "+str+" = " + b.get + " // Alias(" + a + "," + b + ")")
-              } else
-                println("val "+str+" = " + a.get + " // AAA Alias(" + a + "," + b + ")")
+              } else {
+                //if (a.get.toString != str)
+                  println("val "+str+" = " + a.get + " // AAA Alias(" + a + "," + b + ")")
+              }
               val tp = b match { case Some(b) => b.typ.asInstanceOf[TypeRep[Any]] case _ => typeRep[Any]} // other cases possible? type lub?
               Dyn[Any](str)(tp)
           })
