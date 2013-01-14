@@ -17,7 +17,7 @@ import scala.collection.{mutable,immutable}
 class BytecodeInterpreter_Opt extends BytecodeInterpreter_Opt3
 
 
-// version 3
+// version 3 -- keep close to source program structure, don't duplicate in-method blocks
 
 
 class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUniverse_Opt {
@@ -56,9 +56,9 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
           if (a != b) {
             val str = "PHI_"+x.depth+"_"+i
-            if (b.toString != str)
+            if (b == null || b.toString != str)
               println("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")")
-            val tp = b.typ.asInstanceOf[TypeRep[AnyRef]] // NPE?
+            val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
             val phi = Dyn[AnyRef](str)(tp)
             y.locals(i) = phi
           }
@@ -80,7 +80,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
     //var emitControlFlow = true
     var emitRecursive = false
 
-    var budget = 20000
+    var budget = 30000
 
     // internal data structures
 
@@ -181,6 +181,12 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
       */
       val (_,f02,s02) = gos(0)
       ((f02,s02),gos.map(_._1))
+    }
+
+    def getFields(s: State) = {
+      val locals = FrameLattice.getFields(s._1).filter(_.toString.startsWith("PHI"))
+      val fields = StoreLattice.getFields(s._2).filterNot(_.isInstanceOf[Static[_]])//.filter(_.toString.startsWith("LUB"))
+      (locals ++ fields).distinct.sortBy(_.toString)
     }
 
 
@@ -295,18 +301,17 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
             replaceGoto(go) = replaceBlock(i)
           } else*/ {
             val (f12,s12) = ss
-            val locals = FrameLattice.getFields(f12).filter(_.toString.startsWith("PHI"))
-            val fields = StoreLattice.getFields(s12).filterNot(_.isInstanceOf[Static[_]])//.filter(_.toString.startsWith("LUB"))
+            val fields = getFields(ss)
             val key = contextKey(f12)
             val keyid = info.getOrElseUpdate(key, { val id = count; count += 1; id })
 
             for (g <- gs) {
               val (f02,s02) = gotos(g)
               val (_,_::head::_) = allLubs(List((f12,s12),(f02,s02)))
-              replaceGoto(g) = ";{"+head + "\nBLOCK_"+keyid+"("+(locals++fields).mkString(",")+")}"
+              replaceGoto(g) = ";{"+head + "\nBLOCK_"+keyid+"("+fields.mkString(",")+")}"
             }
 
-            println("def BLOCK_"+keyid+"("+(locals++fields).map(v=>v+":"+v.typ).mkString(",")+"): Unit = {")
+            println("def BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit = {")
             println(indented(replaceBlock(i)))
             println("}")
           }}
@@ -344,15 +349,14 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
         exec(frame0)
       }*/ else {
 
-        val ((f02,s02), gos) = allLubs(returns)
+        val (ss@(f02,s02), gos) = allLubs(returns)
 
-        val locals = FrameLattice.getFields(f02).filter(_.toString.startsWith("PHI"))
-        val fields = StoreLattice.getFields(s02).filterNot(_.isInstanceOf[Static[_]])
+        val fields = getFields(ss)
 
-        for (v <- locals ++ fields) 
+        for (v <- fields) 
           println("var v"+v+" = null.asInstanceOf["+v.typ+"]")
 
-        val assign = (locals ++ fields).map { v =>
+        val assign = fields.map { v =>
           "v"+v+" = "+v
         }.mkString("\n")
 
@@ -364,7 +368,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
         print(src1)
         
         println("{")
-        for (v <- locals ++ fields) 
+        for (v <- fields) 
           println("val "+v+" = v"+v)
 
         store = s02

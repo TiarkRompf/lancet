@@ -76,6 +76,7 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
       
         def classStr(x: Class[_]): String = if (x.isArray()) "Array["+classStr(x.getComponentType)+"]" else x.getName match {
           case "int" => "Int"
+          case "byte" => "Byte"
           case "char" => "Char"
           case "long" => "Long"
           //TODO/FIXME

@@ -205,14 +205,29 @@ trait Base_Opt extends Base_Str {
               Dyn[Any](str)(tp)
             case (a,b) => 
               val str = "LUB_"+p+"_"+k
-              if (b.nonEmpty) {
+              val tp = if (b.nonEmpty) {
                 if (b.get.toString != str)
                   println("val "+str+" = " + b.get + " // Alias(" + a + "," + b + ")")
+                b.get.typ.asInstanceOf[TypeRep[Any]]
               } else {
-                //if (a.get.toString != str)
+                val tp = a.get.typ.asInstanceOf[TypeRep[Any]]
+                // we don't have the b value in the store
+                // check if this refers to a const field; if so get the field value
+                if (p.startsWith("CONST")) {
+                  val obj = y("alloc")
+                  // TODO: make more robust!! can we call runtime.
+                  val fld = tp.toString match {
+                    case "Int" => 
+                      "unsafe.getInt("+obj+","+k+")"
+                    case "Object" => 
+                      "unsafe.getObject("+obj+","+k+")"
+                  }
+
+                  println("val "+str+" = " + fld + " // XXX LUBC(" + a + "," + b + ")")
+                } else 
                   println("val "+str+" = " + a.get + " // AAA Alias(" + a + "," + b + ")")
+                tp
               }
-              val tp = b match { case Some(b) => b.typ.asInstanceOf[TypeRep[Any]] case _ => typeRep[Any]} // other cases possible? type lub?
               Dyn[Any](str)(tp)
           })
         }.toMap
