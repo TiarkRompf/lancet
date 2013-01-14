@@ -193,12 +193,12 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
       val graalBlock = graalBlockMapping.getOrElseUpdate(method, {
         val map = new BciBlockMapping(method);
         map.build();
-        println("/*")
+        /*println("/*")
         println("block map for method " + method)
         for (b <- map.blocks) {
           println(b + " succ [" + b.successors.map("B"+_.blockID).mkString(",") + "]")
         }
-        println("*/")
+        println("*/")*/ 
         map
       })
 
@@ -235,7 +235,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
         blockInfo(b.blockID) = blockInfo.getOrElse(b.blockID,Nil) :+ (gotos.length,s)
 
         gotos = gotos :+ s
-        println("GOTO_"+(gotos.length-1) + " // " + b)
+        println("GOTO_"+(gotos.length-1))
         liftConst(())
 
         /*val key = contextKey(frame)
@@ -249,22 +249,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
       val replaceGoto: mutable.Map[Int,String] = new mutable.HashMap
 
       val (src0, res) = captureOutputResult {
-        gotoBlock(mframe) // previously, would not return before method is done
-
-/*      var i = 0
-        while (i < gotos.length) { // list grows underneath!
-          val (fr,st) = gotos(i)
-
-          val (src0, res0) = captureOutputResult {
-            store = st
-            execPlain(fr)
-          }
-
-          replaceGoto += src0
-
-          i += 1
-        }
-*/
+        gotoBlock(mframe) // returns on first goto
 
         for (b <- graalBlock.blocks) {
           val i = b.blockID
@@ -276,11 +261,26 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
           }*/
 
-          if (ss.nonEmpty) {
+          if (ss.length == 1) {
+            val (go, (f02,s02)) = ss.head
+            val (src,_) = captureOutputResult {
+              store = s02
+              execPlain(f02)
+            }
+            replaceGoto(go) = src
+
+          } else if (ss.nonEmpty) {
             val ((f02,s02), gos) = allLubs(ss.map(_._2))
+            val gotos = ss.map(_._1)
+            val locals = FrameLattice.getFields(f02).filter(_.toString.startsWith("PHI"))
+            val fields = StoreLattice.getFields(s02).filter(_.toString.startsWith("LUB"))
+            for ((j,s) <- gotos zip gos)
+              replaceGoto(j) = s + "\nBLOCK_"+i+"("+(locals++fields).mkString(",")+")"
+
             store = s02
-            println("// BLOCK_"+i)
+            println("def BLOCK_"+i+"("+(locals++fields).map(v=>v+":"+v.typ).mkString(",")+") = {")
             execPlain(f02)
+            println("}")
           }
 
         }
@@ -292,7 +292,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
       var src = src0
       for (i <- 0 until gotos.length) {
-        //src = src.replace("GOTO_"+i, replaceGoto(i))
+        src = src.replace("GOTO_"+i, replaceGoto(i))
         //src = src + "def GOTO_"+i+": Unit = {\n" + indented(replaceGoto(i).trim) + "\n}\n"
       }
 
@@ -304,8 +304,14 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
         print(src)
         println("// (no return?)")
       } else if (returns.length == 1) {
-        print(src.replace("RETURN_0", "")) // "continue"))
         val (frame0,store0) = returns(0)
+        val locals = FrameLattice.getFields(frame0).filter(_.toString.startsWith("PHI"))
+        val fields = StoreLattice.getFields(store0).filter(_.toString.startsWith("LUB"))
+        for (v <- locals ++ fields) 
+          println("var v"+v+" = null.asInstanceOf["+v.typ+"]")
+        print(src.replace("RETURN_0", "")) // "continue"))
+        for (v <- locals ++ fields) 
+          println("val "+v+" = v"+v)
         store = store0
         exec(frame0)
       } else {
