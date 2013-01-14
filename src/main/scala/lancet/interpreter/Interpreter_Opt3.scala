@@ -156,7 +156,36 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
     }
 
 
+
+    // calc lubs and backpatch info for jumps
+    type State = (InterpreterFrame, StoreLattice.Elem)    
+    def allLubs(returns: List[State]): (State,List[String]) = {
+      val gos = returns map { case (frameX,storeX) =>
+        val frameY = freshFrameSimple(frameX)
+        var storeY = storeX
+        val (go, _) = captureOutputResult {
+          returns foreach { case (f,s) => 
+            FrameLattice.lub(f, frameY) 
+            storeY = StoreLattice.lub(s, storeY)
+          }
+          val locals = FrameLattice.getFields(frameY).filter(_.toString.startsWith("PHI"))
+          val fields = StoreLattice.getFields(storeY).filter(_.toString.startsWith("LUB"))
+          for (v <- locals ++ fields) println("v"+v+" = "+v)
+        }
+        (go,frameY,storeY)
+      }
+      /* assert all match ...
+      assert(contextKey(f02) == contextKey(f12))
+      assert(getAllArgs(f02) == getAllArgs(f12))
+      assert(s02 == s12)
+      */
+      val (_,f02,s02) = gos(0)
+      ((f02,s02),gos.map(_._1))
+    }
+
+
     def execMethod(mframe: InterpreterFrame): Rep[Unit] = {
+      import scala.collection.JavaConversions._
 
       // obtain block mapping that will tell us about dominance relations
       val method = mframe.getMethod()
@@ -164,13 +193,12 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
       val graalBlock = graalBlockMapping.getOrElseUpdate(method, {
         val map = new BciBlockMapping(method);
         map.build();
-        import scala.collection.JavaConversions._
-        /*println("/*")
+        println("/*")
         println("block map for method " + method)
         for (b <- map.blocks) {
           println(b + " succ [" + b.successors.map("B"+_.blockID).mkString(",") + "]")
         }
-        println("*/")*/
+        println("*/")
         map
       })
 
@@ -180,10 +208,12 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
       if (debugMethods) println("// << " + method)
 
-      var returns: List[(InterpreterFrame, StoreLattice.Elem)] = Nil
-      var gotos: List[(InterpreterFrame, StoreLattice.Elem)] = Nil
+      var returns: List[State] = Nil
+      var gotos: List[State] = Nil
 
-      //val blockInfo: mutable.Map[Int, List[(InterpreterFrame, StoreLattice.Elem)]] = new mutable.HashMap
+      val blockInfo: mutable.Map[Int, List[(Int,State)]] = new mutable.HashMap
+
+      def getGraalBlock(fr: InterpreterFrame) = graalBlock.blocks.find(_.startBci == fr.getBCI).get
 
       handler = { blockFrame =>
 
@@ -200,8 +230,12 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
       }
 
       def gotoBlock(blockFrame: InterpreterFrame): Rep[Unit] = {
-        gotos = gotos :+ (freshFrameSimple(blockFrame), store)
-        println("GOTO_"+(gotos.length-1))
+        val s = (freshFrameSimple(blockFrame), store)
+        val b = getGraalBlock(blockFrame)
+        blockInfo(b.blockID) = blockInfo.getOrElse(b.blockID,Nil) :+ (gotos.length,s)
+
+        gotos = gotos :+ s
+        println("GOTO_"+(gotos.length-1) + " // " + b)
         liftConst(())
 
         /*val key = contextKey(frame)
@@ -212,12 +246,12 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
       }
 
 
-      val replaceGoto: mutable.ArrayBuffer[String] = new mutable.ArrayBuffer
+      val replaceGoto: mutable.Map[Int,String] = new mutable.HashMap
 
       val (src0, res) = captureOutputResult {
-        gotoBlock(mframe) // will not return before method is done
+        gotoBlock(mframe) // previously, would not return before method is done
 
-        var i = 0
+/*      var i = 0
         while (i < gotos.length) { // list grows underneath!
           val (fr,st) = gotos(i)
 
@@ -230,15 +264,37 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
           i += 1
         }
+*/
+
+        for (b <- graalBlock.blocks) {
+          val i = b.blockID
+          val ss = blockInfo.getOrElse(i,Nil)
+
+          /*ss.length match {
+            case 0 =>
+            case 1 =>
+
+          }*/
+
+          if (ss.nonEmpty) {
+            val ((f02,s02), gos) = allLubs(ss.map(_._2))
+            store = s02
+            println("// BLOCK_"+i)
+            execPlain(f02)
+          }
+
+        }
+
 
         liftConst(())
       }
 
 
       var src = src0
-      for (i <- 0 until replaceGoto.length)
-        src = src.replace("GOTO_"+i, replaceGoto(i))
-
+      for (i <- 0 until gotos.length) {
+        //src = src.replace("GOTO_"+i, replaceGoto(i))
+        //src = src + "def GOTO_"+i+": Unit = {\n" + indented(replaceGoto(i).trim) + "\n}\n"
+      }
 
       handler = saveHandler
 
@@ -254,38 +310,12 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
         exec(frame0)
       } else {
 
-
-
-
-        // calc lubs and backpatch returns
-
-        val gos = returns map { case (frameX,storeX) =>
-          val frameY = freshFrameSimple(frameX)
-          var storeY = storeX
-          val (go, _) = captureOutputResult {
-            returns foreach { case (f,s) => 
-              FrameLattice.lub(f, frameY) 
-              storeY = StoreLattice.lub(s, storeY)
-            }
-            val locals = FrameLattice.getFields(frameY).filter(_.toString.startsWith("PHI"))
-            val fields = StoreLattice.getFields(storeY).filter(_.toString.startsWith("LUB"))
-            for (v <- locals ++ fields) println("v"+v+" = "+v)
-          }
-          (go,frameY,storeY)
-        }
+        val ((f02,s02), gos) = allLubs(returns)
 
         var src1 = src
-        for (((go,_,_),i) <- gos.zipWithIndex) {
+        for ((go,i) <- gos.zipWithIndex) {
           src1 = src1.replace("RETURN_"+i,go)
         }
-
-        val (_,f02,s02) = gos(0)        
-
-        /*
-        assert(contextKey(f02) == contextKey(f12))
-        assert(getAllArgs(f02) == getAllArgs(f12))
-        assert(s02 == s12)
-        */
 
         val locals = FrameLattice.getFields(f02).filter(_.toString.startsWith("PHI"))
         val fields = StoreLattice.getFields(s02).filter(_.toString.startsWith("LUB"))
