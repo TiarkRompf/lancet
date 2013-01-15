@@ -48,7 +48,15 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         val x = x0.asInstanceOf[InterpreterFrame_Str]
         val y = y0.asInstanceOf[InterpreterFrame_Str]
 
-        assert(x.locals.length == y.locals.length)
+        assert(x.locals.length == y.locals.length, {
+          "x.locals " + x.locals.mkString(",") + "\n" + 
+          "y.locals " + y.locals.mkString(",") + "\n" + 
+          x.getMethod + "\n" + 
+          y.getMethod + "\n" + 
+          (new Exception getStackTrace ()).mkString("\n")
+        })
+
+        assert(x.getMethod == y.getMethod)
 
         for (i <- 0 until y.locals.length) {
           val a = x.locals(i)
@@ -129,6 +137,20 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
     // exec loop
 
+    def withScope[A](body: =>A): A = { // reset scope, e.g. for nested calls
+      val saveHandler = handler
+      val saveDepth = depth
+      try {
+        handler = execMethod
+        depth = 0
+        body
+      } finally {
+        handler = saveHandler
+        depth = saveDepth
+      }
+    }
+
+
     var handler: (InterpreterFrame => Rep[Unit]) = execMethod
     var depth = 0
 
@@ -159,12 +181,12 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
     // calc lubs and backpatch info for jumps
     type State = (InterpreterFrame, StoreLattice.Elem)    
-    def allLubs(returns: List[State]): (State,List[String]) = {
-      val gos = returns map { case (frameX,storeX) =>
+    def allLubs(states: List[State]): (State,List[String]) = {
+      val gos = states map { case (frameX,storeX) =>
         val frameY = freshFrameSimple(frameX)
         var storeY = storeX
         val (go, _) = captureOutputResult {
-          returns foreach { case (f,s) => 
+          states foreach { case (f,s) => 
             FrameLattice.lub(f, frameY) 
             storeY = StoreLattice.lub(s, storeY)
           }
@@ -269,6 +291,11 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         getAllArgs(s0._1) != getAllArgs(s1._1) || s0._2 != s1._2
 
       def gotoBlock(blockFrame: InterpreterFrame): Rep[Unit] = {
+        // make sure we're still in the same method! --> catch external calls that don't reset handler
+        assert(mframe.getMethod == blockFrame.getMethod, {"\n" +
+                mframe.getMethod + "\n" +
+                blockFrame.getMethod})
+
         val s = (freshFrameSimple(blockFrame), store)
         val b = getGraalBlock(blockFrame)
         blockInfo.get(b.blockID) match {
@@ -348,6 +375,9 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
       }
 
 
+      // XXXXXXX why does test3X2 unroll the first iteration???
+
+
       var src = src0
       for (i <- 0 until gotos.length if replaceGoto.contains(i)) {
         src = src.replace("GOTO_"+i+";", replaceGoto(i).trim)
@@ -379,7 +409,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         res
 
       } else {
-        println("// WARNING: multiple returns")
+        println("// WARNING: multiple returns in " + mframe.getMethod)
 
         val (ss@(f02,s02), gos) = allLubs(returns)
 
@@ -395,7 +425,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
         var src1 = src
         for ((go,i) <- gos.zipWithIndex) {
-          src1 = src1.replace("RETURN_"+i,go+assign)
+          src1 = src1.replace("RETURN_"+i,"/*R"+i+"*/" + go+assign)
         }
 
         print(src1)
@@ -411,6 +441,12 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
       res
     }
+
+
+// TODO:   override def executeInstruction to halt on basic block boundaries
+
+
+
 
 
     var path: List[(Int,InterpreterFrame,StoreLattice.Elem)] = Nil
@@ -519,7 +555,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
           println("ERROR /*")
           println(key)
           println(e.toString)
-          e.getStackTrace().take(20).map(println)
+          e.getStackTrace().take(100).map(println)
           println("*/")
           liftConst(())
       }

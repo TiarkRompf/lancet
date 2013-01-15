@@ -81,7 +81,9 @@ class TestInterpreter4 extends FileDiffSuite {
       val body = captureOutput {
         val Partial(fs) = eval(f)
         val Static(cls: Class[_]) = fs("clazz")
-        execute(cls.getMethod("apply", classOf[Object]), Array[Rep[Object]](f,arg)(repManifest[Object]))
+        withScope {
+          execute(cls.getMethod("apply", classOf[Object]), Array[Rep[Object]](f,arg)(repManifest[Object]))
+        }
       }
       (arg,body)
     }
