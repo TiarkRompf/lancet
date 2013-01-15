@@ -443,9 +443,25 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
     }
 
 
-// TODO:   override def executeInstruction to halt on basic block boundaries
+    // halt on basic block boundaries: do not silently skip into the next block
+    // (identify block start bci by looking at BasicBlockMapping)
 
+    override def executeInstruction(frame: InterpreterFrame, bs: BytecodeStream): Control = {
+      import collection.JavaConversions._
+      val c = super.executeInstruction(frame,bs)
 
+      val graalBlock = graalBlockMapping(frame.getMethod)
+
+      val bci = bs.nextBCI()
+
+      if (graalBlock.blocks.exists(_.startBci == bci)) {
+        if (c == null) {
+          //println("// *** silently going into next block from "+contextKey(frame))
+          bs.next()
+          local { (frame, bs) => exec(frame, bs.currentBCI) }
+        } else c
+      } else c
+    }
 
 
 
