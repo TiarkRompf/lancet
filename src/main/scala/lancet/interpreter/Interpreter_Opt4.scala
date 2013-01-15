@@ -14,10 +14,13 @@ import scala.collection.{mutable,immutable}
 // (todo) flow sensitive conditionals --> elim redundant branches
 
 
-// version 3 -- keep close to source program structure, don't duplicate in-method blocks
+class BytecodeInterpreter_Opt extends BytecodeInterpreter_Opt4
 
 
-class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUniverse_Opt {
+// version 4 -- reverse engineer more of the program block structure (if, loop)
+
+
+class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUniverse_Opt {
     override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m)
     override def objectGetClass(receiver: Rep[Object]): Option[Class[_]] = {
       eval(receiver) match {
@@ -205,6 +208,31 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
         map
       })
 
+      def postDominators(blocks: List[BciBlockMapping.Block]) = {
+        var PostDom: Map[BciBlockMapping.Block,Set[BciBlockMapping.Block]] = Map()
+        val (exit,internal) = blocks.partition(_.successors.length == 0)
+        for (n <- exit)
+          PostDom += (n -> Set(n))
+        for (n <- internal)
+          PostDom += (n -> blocks.toSet)
+        var p0 = PostDom
+        do {
+          p0 = PostDom
+          for (n <- internal) {
+            val x = (blocks.toSet /: n.successors) ((a:Set[BciBlockMapping.Block],b:BciBlockMapping.Block) => a intersect PostDom(b))
+            PostDom += (n -> (Set(n) ++ x))
+          }
+        } while (PostDom != p0)
+        PostDom
+      }
+/*
+      println("/*")
+      val postDom = postDominators(graalBlock.blocks.toList)
+      for (b <- graalBlock.blocks) {
+          println(b + " succ [" + postDom(b).map("B"+_.blockID).mkString(",") + "]")
+      }
+      println("*/")
+*/
 
       val saveHandler = handler
       val saveDepth = getContext(mframe).length
@@ -293,10 +321,10 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
           if (blockInfo.contains(i)) {
           val (gs,ss) = blockInfo(i)
 
-          /*if (gs.length == 1) {
+          if (gs.length == 1) {
             val (go, (f02,s02)) = (gs.head, ss)
             replaceGoto(go) = replaceBlock(i)
-          } else*/ {
+          } else {
             val (f12,s12) = ss
             val fields = getFields(ss)
             val key = contextKey(f12)
@@ -305,7 +333,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
             for (g <- gs) {
               val (f02,s02) = gotos(g)
               val (_,_::head::_) = allLubs(List((f12,s12),(f02,s02)))
-              replaceGoto(g) = ";{"+head + "\nBLOCK_"+keyid+"("+fields.mkString(",")+")}"
+              replaceGoto(g) = ";{"+head.trim + "\nBLOCK_"+keyid+"("+fields.mkString(",")+")}"
             }
 
             println("def BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit = {")
@@ -322,7 +350,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
       var src = src0
       for (i <- 0 until gotos.length if replaceGoto.contains(i)) {
-        src = src.replace("GOTO_"+i+";", replaceGoto(i))
+        src = src.replace("GOTO_"+i+";", replaceGoto(i).trim)
         //src = src + "def GOTO_"+i+": Unit = {\n" + indented(replaceGoto(i).trim) + "\n}\n"
       }
 
@@ -333,23 +361,31 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
       if (returns.length == 0) {
         print(src)
         println("// (no return?)")
-      } /*else if (returns.length == 1) {
+      } else if (returns.length == 1) { 
+
         val (frame0,store0) = returns(0)
-        val locals = FrameLattice.getFields(frame0).filter(_.toString.startsWith("PHI"))
+        /*val locals = FrameLattice.getFields(frame0).filter(_.toString.startsWith("PHI"))
         val fields = StoreLattice.getFields(store0).filter(_.toString.startsWith("LUB"))
         for (v <- locals ++ fields) 
           println("var v"+v+" = null.asInstanceOf["+v.typ+"]")
         print(src.replace("RETURN_0", "")) // "continue"))
         for (v <- locals ++ fields) 
-          println("val "+v+" = v"+v)
-        store = store0
-        exec(frame0)
-      }*/ else {
+          println("val "+v+" = v"+v)*/          
+        val (retSrc,res) = captureOutputResult {
+          store = store0
+          exec(frame0)
+        }
+        print(src.replace("RETURN_0", retSrc.trim)) // "continue"))
+        res
+
+      } else {
+        println("// WARNING: multiple returns")
 
         val (ss@(f02,s02), gos) = allLubs(returns)
 
         val fields = getFields(ss)
 
+        println(";{")
         for (v <- fields) 
           println("var v"+v+" = null.asInstanceOf["+v.typ+"]")
 
@@ -364,13 +400,13 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
         print(src1)
         
-        println("{")
         for (v <- fields) 
           println("val "+v+" = v"+v)
 
+        println(";{")
         store = s02
         exec(f02)
-        println("}")
+        println("}}")
       }
 
       res
