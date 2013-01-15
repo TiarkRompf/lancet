@@ -36,53 +36,54 @@ class TestInterpreter4 extends FileDiffSuite {
   }
 
 
-  def test1 = {
-    withOutFileChecked(prefix+"decompile1") {  {
-      val e = Decompiler.decompile { xs: Seq[Person] =>
-        xs.filter(pred1)
-      }
-      println(e)
-    } }
+  def test1 = withOutFileChecked(prefix+"decompile1") {
+    val dec = new Decompiler
+    val e = dec.decompile { xs: Seq[Person] =>
+      xs.filter(pred1)
+    }
+    println(e)
   }
 
-  def test2 = {
-    withOutFileChecked(prefix+"decompile2") {  {
-      val e = Decompiler.decompile { xs: Seq[Person] =>
-        xs.filter(pred2)
-      }
-      println(e)
-    } }
+  def test2 = withOutFileChecked(prefix+"decompile2") {
+    val dec = new Decompiler
+    val e = dec.decompile { xs: Seq[Person] =>
+      xs.filter(pred2)
+    }
+    println(e)
   }
   
-  def test3 = {
-    withOutFileChecked(prefix+"decompile3") {  {
-      val e = Decompiler.decompile { xs: Seq[Person] =>
-        xs.filter(pred3)
-      }
-      println(e)
-    } }
+  def test3 = withOutFileChecked(prefix+"decompile3") {
+    val dec = new Decompiler
+    val e = dec.decompile { xs: Seq[Person] =>
+      xs.filter(pred3)
+    }
+    println(e)
   }
 
-  def test4 = {
-    withOutFileChecked(prefix+"decompile4") {  {
-      val e = Decompiler.decompile { xs: Seq[Person] =>
-        xs.map(x => new { val foo = x.age } ).map(x => x.foo)
-      }
-      println(e)
-    } }
+  def test4 = withOutFileChecked(prefix+"decompile4") {
+    val dec = new Decompiler
+    val e = dec.decompile { xs: Seq[Person] =>
+      xs.map(x => new { val foo = x.age } ).map(x => x.foo)
+    }
+    println(e)
   }
 
   class Marker
 
-  class BytecodeInterpreter_Test extends BytecodeInterpreter_Opt {
+  class Decompiler extends BytecodeInterpreter_Opt {
 
-    def decompileInternal(f: Rep[Object]): (Rep[Object],String) = {
+    def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],String) = {
       val arg = Dyn[Object](fresh)
       val body = captureOutput {
         val Partial(fs) = eval(f)
         val Static(cls: Class[_]) = fs("clazz")
         withScope {
+          //println("{ object BODY {")
+          println("  var RES = null.asInstanceOf[Object]")
           execute(cls.getMethod("apply", classOf[Object]), Array[Rep[Object]](f,arg)(repManifest[Object]))
+          //println("}")
+          //"BODY.RES.asInstanceOf["+typeRep[B]+"]}"
+          "RES.asInstanceOf["+typeRep[B]+"]"
         }
       }
       (arg,body)
@@ -100,21 +101,21 @@ class TestInterpreter4 extends FileDiffSuite {
       fullName match {
         case "scala.collection.TraversableLike.filter" => handle {
           case receiver::f::Nil =>
-            val (arg,body) = decompileInternal(f)
+            val (arg,body) = decompileInternal[Object,Boolean](f)
             reflect[Object](""+receiver+".filter "+ "{ " + arg + " => " + body + "}")
         }
         case _ => false
       }
-
     }
+
+    // TODO: do we need to reconstruct generic types, i.e. Seq[A] ?
 
     override def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame =
       if (handleMethodCall(parent,m)) null else super.resolveAndInvoke(parent, m)
     override def invokeDirect(parent: InterpreterFrame, m: ResolvedJavaMethod, hasReceiver: Boolean): InterpreterFrame =
       if (handleMethodCall(parent,m)) null else super.invokeDirect(parent, m, hasReceiver)
-  }
 
-  object Decompiler extends BytecodeInterpreter_Test {
+
     initialize()
     emitUniqueOpt = true
 

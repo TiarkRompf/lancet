@@ -140,13 +140,16 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
     def withScope[A](body: =>A): A = { // reset scope, e.g. for nested calls
       val saveHandler = handler
       val saveDepth = depth
+      val saveStore = store
       try {
         handler = execMethod
         depth = 0
+        //store = StoreLattice.bottom // really clear completely?
         body
       } finally {
         handler = saveHandler
         depth = saveDepth
+        store = saveStore 
       }
     }
 
@@ -458,7 +461,9 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         if (c == null) {
           //println("// *** silently going into next block from "+contextKey(frame))
           bs.next()
-          local { (frame, bs) => exec(frame, bs.currentBCI) }
+          local { (frame, bs) => 
+            assert(bci == bs.currentBCI)
+            exec(frame, bs.currentBCI) }
         } else c
       } else c
     }

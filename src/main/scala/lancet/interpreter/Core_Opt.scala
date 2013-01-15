@@ -23,7 +23,11 @@ trait Base_Opt extends Base_Str {
   def reflect[T:TypeRep](s: Any*): Rep[T] = { 
     val rhs = s.mkString("")
     exprs.getOrElse(rhs, {
-      val x = fresh; emit("val "+x+" = "+s.mkString("")); Dyn[T](x)
+      if (typeRep[T] == typeRep[Unit]) {
+        emit(s.mkString("")); liftConst(()).asInstanceOf[Rep[T]]
+      } else {
+        val x = fresh; emit("val "+x+" = "+s.mkString("")); Dyn[T](x)
+      }
     }).asInstanceOf[Rep[T]]
   }
   def reify[T](x: => Rep[T]): String = ("{\n" + indented(captureOutput(x)) + "\n}")
