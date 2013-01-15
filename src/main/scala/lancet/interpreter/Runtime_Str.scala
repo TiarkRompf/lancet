@@ -168,18 +168,23 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
 
         val mtyp = TypeRep[Object](method.signature.returnKind.toString match {  //TODO: cleanup
             case "void" => "Unit"
+            case "char" => "Char"
             case "int" => "Int"
+            case "long" => "Long"
+            case "float" => "Float"
+            case "double" => "Double"
+            case "boolean" => "Boolean"
             case _ => "Object"
         })
 
         if (!static) {
             if (args.length > 1)
-                reflect[Object](liftConst(m),".invoke("+args.map(_+".asInstanceOf[AnyRef]").mkString(",")+") // "+holder+"."+name)(mtyp)
+                reflect[Object](liftConst(m),".invoke("+args.map(_+".asInstanceOf[AnyRef]").mkString(",")+").asInstanceOf["+mtyp+"] // "+holder+"."+name)(mtyp)
             else
-                reflect[Object](liftConst(m),".invoke("+args(0)+") // "+holder+"."+name)(mtyp)
+                reflect[Object](liftConst(m),".invoke("+args(0)+").asInstanceOf["+mtyp+"] // "+holder+"."+name)(mtyp)
             //reflect[Object](args(0)+".asInstanceOf["+holder+"]."+name+"("+args.drop(1).mkString(",")+").asInstanceOf[Object]")
         } else {
-            reflect[Object](holder+"."+name+"("+args.mkString(",")+").asInstanceOf[Object]")(mtyp)
+            reflect[Object](holder+"."+name+"("+args.mkString(",")+").asInstanceOf["+mtyp+"]")(mtyp)
         }
 
 
@@ -190,7 +195,7 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
     }
 
     def typeIsInstance(typ: ResolvedJavaType, value: Rep[Object]): Rep[Boolean] = {
-        reflect[Boolean](""+value+".isInstanceOf["+typ.toJava+"]")
+        reflect[Boolean](""+value+".isInstanceOf["+typ.toJava().getName+"]")
     }
 
     def monitorEnter(value: Rep[Object]): Unit = {

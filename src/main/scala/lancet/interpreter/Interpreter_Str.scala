@@ -234,11 +234,24 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
 
     // ---------- block / statement level ----------
 
-    def lookupSearch(bs: BytecodeStream, key: Rep[Int]): Int = {reflect[Int]("lookupSearch");0}/*{
-        val switchHelper = new BytecodeLookupSwitch(bs, bs.currentBCI())
+    def lookupSearch(bs: BytecodeStream, key: Rep[Int])(k: Int => Rep[Unit]): Rep[Unit] = {
+      val switchHelper = new BytecodeLookupSwitch(bs, bs.currentBCI())
 
-        var low = 0;
-        var high = switchHelper.numberOfCases() - 1;
+      var low = 0;
+      var high = switchHelper.numberOfCases() - 1;
+
+      println(""+key+" match {")
+      for (i <- low to high) {
+        val midVal = switchHelper.keyAt(i);
+        println("case "+midVal+" => ")
+        println(indented(reify(k(switchHelper.bci() + switchHelper.offsetAt(i)))))
+      }
+      println("case _ => ")
+      println(indented(reify(k(switchHelper.defaultTarget))))
+      println("}")
+      liftConst(())
+    }
+    /*{
         while (low <= high) {
             val mid = (low + high) >>> 1;
             val midVal = switchHelper.keyAt(mid);
@@ -254,20 +267,32 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
         return switchHelper.defaultTarget(); // key not found.
     }*/
 
-    def tableSearch(bs: BytecodeStream, index: Rep[Int]): Int = {reflect[Int]("tableSearch");0}/*{
-        val switchHelper = new BytecodeTableSwitch(bs, bs.currentBCI());
+    def tableSearch(bs: BytecodeStream, index: Rep[Int])(k: Int => Rep[Unit]): Rep[Unit] = {
+      val switchHelper = new BytecodeTableSwitch(bs, bs.currentBCI());
 
-        val low = switchHelper.lowKey();
-        val high = switchHelper.highKey();
+      val low = switchHelper.lowKey();
+      val high = switchHelper.highKey();
 
-        assert(low <= high);
+      assert(low <= high);
 
-        if (index < low || index > high) {
-            return switchHelper.defaultTarget();
-        } else {
-            return switchHelper.targetAt(index - low);
-        }
-    }*/
+      println(""+index+" match {")
+      for (i <- low to high) {
+        println("case "+i+" => ")
+        println(indented(reify(k(switchHelper.targetAt(i-low)))))
+      }
+      println("case _ => ")
+      println(indented(reify(k(switchHelper.defaultTarget))))
+      println("}")
+
+      /*
+      if (index < low || index > high) {
+          return switchHelper.defaultTarget();
+      } else {
+          return switchHelper.targetAt(index - low);
+      }
+      */
+      liftConst(())
+    }
 
 
     def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = {

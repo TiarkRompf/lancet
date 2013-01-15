@@ -64,7 +64,9 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
           if (a != b) {
             val str = "PHI_"+x.depth+"_"+i
-            if (b == null || b.toString != str)
+            if (b == null)
+              println("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")")
+            else if (b.toString != str)
               println("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")")
             val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
             val phi = Dyn[AnyRef](str)(tp)
@@ -209,7 +211,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
     }
 
     def getFields(s: State) = {
-      val locals = FrameLattice.getFields(s._1).filter(_.toString.startsWith("PHI"))
+      val locals = FrameLattice.getFields(s._1).filterNot(_.isInstanceOf[Static[_]])//filter(_.toString.startsWith("PHI"))
       val fields = StoreLattice.getFields(s._2).filterNot(_.isInstanceOf[Static[_]])//.filter(_.toString.startsWith("LUB"))
       (locals ++ fields).distinct.sortBy(_.toString)
     }
@@ -380,6 +382,10 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
       // XXXXXXX why does test3X2 unroll the first iteration???
 
+      // XXXXXXX note: GOTO_i and RETURN_i may be in blocks that have been overwritten
+      // (contents of gotos and returns are never discarded)
+      // so if there are loops, we may assume there are more gotos/returns than there are
+      // Q: does this occur anywhere?
 
       var src = src0
       for (i <- 0 until gotos.length if replaceGoto.contains(i)) {
@@ -412,7 +418,12 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         res
 
       } else {
-        println("// WARNING: multiple returns in " + mframe.getMethod)
+        println("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
+        /*println("/*")
+        for ((bc,i) <- mframe.getMethod.code.zipWithIndex)
+          println(i+": "+Bytecodes.baseNameOf(bc))
+        println("*/")*/
+
 
         val (ss@(f02,s02), gos) = allLubs(returns)
 

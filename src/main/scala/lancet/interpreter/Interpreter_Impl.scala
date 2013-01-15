@@ -227,7 +227,7 @@ final class BytecodeInterpreter_Impl extends InterpreterUniverse_Impl with Bytec
 
     // ---------- statement level ----------
 
-    def lookupSearch(bs: BytecodeStream, key: Int): Int = {
+    def lookupSearch(bs: BytecodeStream, key: Int)(k: Int => Unit): Unit = {
         val switchHelper = new BytecodeLookupSwitch(bs, bs.currentBCI())
 
         var low = 0;
@@ -241,13 +241,13 @@ final class BytecodeInterpreter_Impl extends InterpreterUniverse_Impl with Bytec
             } else if (midVal > key) {
                 high = mid - 1;
             } else {
-                return switchHelper.bci() + switchHelper.offsetAt(mid); // key found
+                return k(switchHelper.bci() + switchHelper.offsetAt(mid)); // key found
             }
         }
-        return switchHelper.defaultTarget(); // key not found.
+        return k(switchHelper.defaultTarget()); // key not found.
     }
 
-    def tableSearch(bs: BytecodeStream, index: Int): Int = {
+    def tableSearch(bs: BytecodeStream, index: Int)(k: Int => Unit): Unit = {
         val switchHelper = new BytecodeTableSwitch(bs, bs.currentBCI());
 
         val low = switchHelper.lowKey();
@@ -256,9 +256,9 @@ final class BytecodeInterpreter_Impl extends InterpreterUniverse_Impl with Bytec
         assert(low <= high);
 
         if (index < low || index > high) {
-            return switchHelper.defaultTarget();
+            return k(switchHelper.defaultTarget());
         } else {
-            return switchHelper.targetAt(index - low);
+            return k(switchHelper.targetAt(index - low));
         }
     }
 

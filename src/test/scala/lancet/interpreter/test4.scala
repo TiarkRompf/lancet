@@ -92,17 +92,23 @@ class TestInterpreter4 extends FileDiffSuite {
     def handleMethodCall(parent: InterpreterFrame, m: ResolvedJavaMethod): Boolean = {
       val fullName = m.holder.toJava.getName + "." + m.name
       def handle(f: List[Rep[Object]] => Rep[Object]): Boolean = {
-        val returnValue = f(popArgumentsAsObject(parent, m, true).toList)
+        val returnValue = f(popArgumentsAsObject(parent, m, !java.lang.reflect.Modifier.isStatic(m.accessFlags)).toList)
         pushAsObject(parent, m.signature().returnKind(), returnValue)
         true
       }
 
       // check for known collection methods
       fullName match {
+        case "java.lang.Integer.valueOf" => handle {
+          case r::Nil => reflect[Object]("Integer.valueOf("+r+")")
+        }
+        case "scala.runtime.BoxesRunTime.equals" => handle {
+          case a::b::Nil => reflect[Boolean](a+"=="+b).asInstanceOf[Rep[Object]]
+        }
         case "scala.collection.TraversableLike.filter" => handle {
           case receiver::f::Nil =>
             val (arg,body) = decompileInternal[Object,Boolean](f)
-            reflect[Object](""+receiver+".filter "+ "{ " + arg + " => " + body + "}")
+            reflect[Object](""+receiver+".asInstanceOf[Traversable[Object]].filter "+ "{ ("+arg+":"+arg.typ+")" + " => " + body + "}")
         }
         case _ => false
       }

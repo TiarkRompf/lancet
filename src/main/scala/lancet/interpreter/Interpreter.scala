@@ -802,16 +802,18 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
     }
 
     private def lookupSwitch(frame: InterpreterFrame, bs: BytecodeStream): Rep[Unit] = {
-        val idx = lookupSearch(bs, frame.popInt());
-        exec(frame, idx)
+        lookupSearch(bs, frame.popInt()) { idx =>
+          exec(frame, idx)
+        }
     }
 
     private def tableSwitch(frame: InterpreterFrame, bs: BytecodeStream): Rep[Unit] = {
-        val idx = tableSearch(bs, frame.popInt())
-        exec(frame, idx)
+        tableSearch(bs, frame.popInt()) { idx =>
+          exec(frame, idx)
+        }
     }
 
-    protected def lookupSearch(bs: BytecodeStream, key: Rep[Int]): Int /*= {
+    protected def lookupSearch(bs: BytecodeStream, key: Rep[Int])(k: Int => Rep[Unit]): Rep[Unit] /*= {
         val switchHelper = new BytecodeLookupSwitch(bs, bs.currentBCI())
 
         var low = 0;
@@ -831,7 +833,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
         return switchHelper.defaultTarget(); // key not found.
     }*/
 
-    protected def tableSearch(bs: BytecodeStream, index: Rep[Int]): Int /*= {
+    protected def tableSearch(bs: BytecodeStream, index: Rep[Int])(k: Int => Rep[Unit]): Rep[Unit] /*= {
         val switchHelper = new BytecodeTableSwitch(bs, bs.currentBCI());
 
         val low = switchHelper.lowKey();
