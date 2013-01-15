@@ -9,73 +9,6 @@ class TestInterpreter4 extends FileDiffSuite {
 
   val prefix = "test-out/test-interpreter-4"
 
-  class Marker
-
-  class BytecodeInterpreter_Test extends BytecodeInterpreter_Opt {
-    /*override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m) {
-      override def isVolatile(field: ResolvedJavaField) = false // don't honor volatile
-    }*/
-
-    def handleJsMethod(parent: InterpreterFrame, m: ResolvedJavaMethod): Boolean = {
-      val holder = m.holder
-
-      val fullName = m.holder.toJava.getName + "." + m.name
-
-      fullName match {
-        case "scala.collection.TraversableLike.filter" => 
-
-          println("// XXX hit filter " + fullName)
-
-          //val receiver = parent.peekReceiver(m)
-          val receiver::f::Nil = popArgumentsAsObject(parent, m, true).toList
-
-          val arg = Dyn[Object](fresh)
-
-          val fun = captureOutput {
-
-            val Partial(fs) = eval(f)
-            val Static(cls: Class[_]) = fs("clazz")
-            execute(cls.getMethod("apply", classOf[Object]), Array[Rep[Object]](f,arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
-          }
-
-          val returnValue = reflect[Object](""+receiver+".filter "+ "{ " + arg + " => " + fun + "}")
-          pushAsObject(parent, m.signature().returnKind(), returnValue)
-          return true
-
-
-          false
-        case _ => false
-      }
-
-      if (classOf[Marker].isAssignableFrom(holder.toJava())) {
-        //println("*** XXX JSM " + classOf[Program.JS] + " / " + holder.toJava)
-        val receiver = parent.peekReceiver(m)
-        val parameters = popArgumentsAsObject(parent, m, true)
-        val returnValue = reflect[Object](""+receiver+"."+m.name+"("+parameters.mkString(",")+")")
-        pushAsObject(parent, m.signature().returnKind(), returnValue)
-        true
-      } else false
-    }
-
-    override def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame =
-      if (handleJsMethod(parent,m)) null else super.resolveAndInvoke(parent, m)
-    override def invokeDirect(parent: InterpreterFrame, m: ResolvedJavaMethod, hasReceiver: Boolean): InterpreterFrame =
-      if (handleJsMethod(parent,m)) null else super.invokeDirect(parent, m, hasReceiver)
-    //override def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = value // no casts in JavaScript
-
-  }
-
-  object Decompiler extends BytecodeInterpreter_Test {
-    initialize()
-    emitUniqueOpt = true
-
-    def decompile[A:Manifest,B:Manifest](f: A => B): String = {
-      compile(f)
-      "<decompiled>"
-    }
-  }
-
-
   case class Person(val age: Int, val flag: Boolean)
 
   def pred1(p: Person) = p.age < 42
@@ -138,6 +71,59 @@ class TestInterpreter4 extends FileDiffSuite {
       println(e)
     } }
   }
+
+  class Marker
+
+  class BytecodeInterpreter_Test extends BytecodeInterpreter_Opt {
+
+    def decompileInternal(f: Rep[Object]): (Rep[Object],String) = {
+      val arg = Dyn[Object](fresh)
+      val body = captureOutput {
+        val Partial(fs) = eval(f)
+        val Static(cls: Class[_]) = fs("clazz")
+        execute(cls.getMethod("apply", classOf[Object]), Array[Rep[Object]](f,arg)(repManifest[Object]))
+      }
+      (arg,body)
+    }
+
+    def handleMethodCall(parent: InterpreterFrame, m: ResolvedJavaMethod): Boolean = {
+      val fullName = m.holder.toJava.getName + "." + m.name
+      def handle(f: List[Rep[Object]] => Rep[Object]): Boolean = {
+        val returnValue = f(popArgumentsAsObject(parent, m, true).toList)
+        pushAsObject(parent, m.signature().returnKind(), returnValue)
+        true
+      }
+
+      // check for known collection methods
+      fullName match {
+        case "scala.collection.TraversableLike.filter" => handle {
+          case receiver::f::Nil =>
+            val (arg,body) = decompileInternal(f)
+            reflect[Object](""+receiver+".filter "+ "{ " + arg + " => " + body + "}")
+        }
+        case _ => false
+      }
+
+    }
+
+    override def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame =
+      if (handleMethodCall(parent,m)) null else super.resolveAndInvoke(parent, m)
+    override def invokeDirect(parent: InterpreterFrame, m: ResolvedJavaMethod, hasReceiver: Boolean): InterpreterFrame =
+      if (handleMethodCall(parent,m)) null else super.invokeDirect(parent, m, hasReceiver)
+  }
+
+  object Decompiler extends BytecodeInterpreter_Test {
+    initialize()
+    emitUniqueOpt = true
+
+    def decompile[A:Manifest,B:Manifest](f: A => B): String = {
+      compile(f)
+      "<decompiled>"
+    }
+  }
+
+
+
 
 /* from StatusQuo paper 
 
