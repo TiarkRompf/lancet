@@ -110,6 +110,11 @@ class TestInterpreter4 extends FileDiffSuite {
             val (arg,body) = decompileInternal[Object,Boolean](f)
             reflect[Object](""+receiver+".asInstanceOf[Traversable[Object]].filter "+ "{ ("+arg+":"+arg.typ+")" + " => " + body + "}")
         }
+        case "scala.collection.TraversableLike.map" => handle {
+          case receiver::f::cbf::Nil =>
+            val (arg,body) = decompileInternal[Object,Boolean](f)
+            reflect[Object](""+receiver+".asInstanceOf[Traversable[Object]].map "+ "{ ("+arg+":"+arg.typ+")" + " => " + body + "}")
+        }
         case _ => false
       }
     }
