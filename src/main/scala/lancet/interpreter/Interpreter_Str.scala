@@ -60,6 +60,37 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
       "{ (ARG: " + manifest[A] + ") => " + src0 + "}"
     }*/
 
+    def printIndented(str: String): Unit = {
+      val lines = str.split("\n")
+      var indent = 1
+      var opened = false
+      for (l <- lines if l.trim.length > 0) {
+        if (l.contains("}")) indent -= 1
+        println("  "*indent + l.trim)
+        if (l.contains("{")) indent += 1
+      }
+
+      /*
+      for (l <- lines) {
+        if (opened) {
+          opened = false
+          if (l.contains("}")) {
+            print(" " + l.trim)
+          } else {
+            indent += 1
+            println()
+            print("  "*indent + l.trim)
+          }
+        } else {
+          if (l.contains("}")) indent -= 1
+          print("  "*indent + l.trim)
+        }
+        if (l.contains("{")) { opened = true } else println()
+      }*/
+    }
+
+
+
     def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
 
       //def captureOutputResult[T](x:T) = ("", x)
@@ -104,7 +135,9 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
         println("def apply(ARG: "+maStr+"): "+mbStr+" = { object BODY {")
         println("  var RES = null.asInstanceOf["+mbStr+"]")
 
-        println(indented(src0.trim))
+        //println(indented(src0.trim))
+        printIndented(src0)
+        println()
 
         println("}; BODY.RES }")
         println("}")
