@@ -84,6 +84,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
     var debugBlocks = false
     var debugMethods = false
+    var debugReturns = false
     var debugLoops = false
     var debugPaths = false
 
@@ -380,8 +381,6 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
       }
 
 
-      // XXXXXXX why does test3X2 unroll the first iteration???
-
       // XXXXXXX note: GOTO_i and RETURN_i may be in blocks that have been overwritten
       // (contents of gotos and returns are never discarded)
       // so if there are loops, we may assume there are more gotos/returns than there are
@@ -411,6 +410,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         for (v <- locals ++ fields) 
           println("val "+v+" = v"+v)*/          
         val (retSrc,res) = captureOutputResult {
+          if (debugReturns) println("// ret single "+method)
           store = store0
           exec(frame0)
         }
@@ -444,10 +444,10 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
         print(src1)
         
+        println(";{")
+        if (debugReturns) println("// ret multi "+method)
         for (v <- fields) 
           println("val "+v+" = v"+v)
-
-        println(";{")
         store = s02
         exec(f02)
         println("}}")

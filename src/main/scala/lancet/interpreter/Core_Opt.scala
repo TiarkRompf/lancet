@@ -243,13 +243,21 @@ trait Base_Opt extends Base_Str {
         (k, (x.get(k), y.get(k)) match {
           case (Some(a),Some(b)) if a == b => a
           case (Some(Partial(as)),Some(Partial(bs))) => Partial(lubPartial(k)(as,bs)) // two definitions ...
-          // todo: replace string check with as("alloc") check
+          // const: lift on the other side if missing; todo: replace string check with as("alloc") check
           case (Some(Partial(as)),None) if k.startsWith("CONST") => Partial(lubPartial(k)(as,Map("alloc"->as("alloc"))))
           case (None,Some(Partial(bs))) if k.startsWith("CONST") => Partial(lubPartial(k)(Map("alloc"->bs("alloc")),bs))
+          // allocs: may be null in alternative
+          //case (Some(Partial(as)),None) => Partial(lubPartial(k)(as,Map("alloc"->liftConst(null))))
+          //case (None,Some(Partial(bs))) => Partial(lubPartial(k)(Map("alloc"->liftConst(null)),bs))
+          case (Some(Partial(as)),None) => println("val "+k+" = null // lub "+Partial(as)+", None "); Top
           case (Some(Alias(as)),Some(Alias(bs))) => Alias(as ++ bs)
           case (Some(a),Some(b)) => Top
-          case (Some(a),_) => Top //a
-          case (_,Some(b)) => Top //b
+          case (Some(a),b) => 
+            println("// strange lub: "+k+" -> Some("+a+"), "+b); 
+            Top //a
+          case (a,Some(b)) => 
+            println("// strange lub: "+k+" -> "+a+",Some("+b+")"); 
+            Top //b
         })
       }.toMap
     }
