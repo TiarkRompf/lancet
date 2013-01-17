@@ -328,7 +328,7 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
         val unique = if (emitUniqueOpt) m.holder.uniqueConcreteMethod(m) else null
         if (unique ne null) {
           println("// unique method: "+m+" TODO: guard")
-          return return invokeDirect(parent, unique, true)
+          return invokeDirect(parent, unique, true)
         }
 
 

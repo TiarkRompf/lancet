@@ -159,9 +159,11 @@ class Runtime_Str(metaProvider: MetaAccessProvider) extends Runtime {
         val holder = method.holder.toJava.getName
         val name = method.name
 
+        assert(name != "<init>", "not handling constructors here...")
+
         def methToJava(m: ResolvedJavaMethod) = toJavaM.invoke(method).asInstanceOf[java.lang.reflect.Method]
 
-        val m = methToJava(method)
+        val m = methToJava(method)        
         m.setAccessible(true)
 
         val static = Modifier.isStatic(method.accessFlags)

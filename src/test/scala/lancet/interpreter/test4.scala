@@ -90,7 +90,8 @@ class TestInterpreter4 extends FileDiffSuite {
     }
 
     def handleMethodCall(parent: InterpreterFrame, m: ResolvedJavaMethod): Boolean = {
-      val fullName = m.holder.toJava.getName + "." + m.name
+      val className = m.holder.toJava.getName
+      val fullName = className + "." + m.name
       def handle(f: List[Rep[Object]] => Rep[Object]): Boolean = {
         val returnValue = f(popArgumentsAsObject(parent, m, !java.lang.reflect.Modifier.isStatic(m.accessFlags)).toList)
         pushAsObject(parent, m.signature().returnKind(), returnValue)
@@ -115,7 +116,33 @@ class TestInterpreter4 extends FileDiffSuite {
             val (arg,body) = decompileInternal[Object,Boolean](f)
             reflect[Object](""+receiver+".asInstanceOf[Traversable[Object]].map "+ "{ ("+arg+":"+arg.typ+")" + " => " + body + "}")
         }
-        case _ => false
+        /*case s if s contains ".reflMethod$" => handle { // structural call
+          case args =>
+            reflect[Object](s+"("+args.mkString(",")+") // structural call")
+        }*/
+        case "java.lang.Class.getMethod" => handle { // structural call
+          case receiver::name::args =>
+            reflect[Object](""+receiver+".asInstanceOf[Class[_]].getMethod("+name+".asInstanceOf[String],"+args.map(s=>s+".asInstanceOf[Class[_]]").mkString(",")+")")
+        }
+        case "java.lang.reflect.Method.invoke" => handle { // structural call
+          case receiver::args =>
+            reflect[Object](""+receiver+".asInstanceOf[java.lang.reflect.Method].invoke("+args.mkString(",")+")")
+        }
+        case s if className.startsWith("java.lang.reflect") => handle {
+          case args =>
+            runtimeInterface.invoke(m,args.toArray)
+        }
+        case s if className.startsWith("scala.runtime.MethodCache") && m.name != "<init>" => handle {
+          case args =>
+            runtimeInterface.invoke(m,args.toArray)
+        }
+        case s if className.startsWith("scala.runtime.EmptyMethodCache") && m.name != "<init>" => handle {
+          case args =>
+            runtimeInterface.invoke(m,args.toArray)
+        }
+        case _ => 
+          //println(fullName)
+          false
       }
     }
 
