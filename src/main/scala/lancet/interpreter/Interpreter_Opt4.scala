@@ -91,7 +91,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
     //var emitControlFlow = true
     var emitRecursive = false
 
-    var budget = 30000
+    var budget = 10000
 
     // internal data structures
 
@@ -99,6 +99,8 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
     val graalBlockMapping = new mutable.HashMap[ResolvedJavaMethod, BciBlockMapping] // map key to store
 
+
+    val stats = new mutable.HashMap[String, Int] // map key to id
 
     val info = new mutable.HashMap[String, Int] // map key to id
     var count = 0
@@ -337,15 +339,14 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
           worklist = worklist.tail
           val b = graalBlock.blocks(i)
 
-          if (blockInfo.contains(i)) {
-            val (gs,ss) = blockInfo(i)
-            val (f02,s02) = ss
-            val (src,_) = captureOutputResult {
-              store = s02
-              execPlain(f02)
-            }
-            replaceBlock(i) = src
+          assert (blockInfo.contains(i))
+          val (gs,ss) = blockInfo(i)
+          val (f02,s02) = ss
+          val (src,_) = captureOutputResult {
+            store = s02
+            execPlain(f02)
           }
+          replaceBlock(i) = src
         }
 
         for (b <- graalBlock.blocks) {
@@ -369,6 +370,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
               replaceGoto(g) = ";{"+head.trim + "\nBLOCK_"+keyid+"("+fields.mkString(",")+")}"
             }
 
+            println("// "+key)
             println("def BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit = {")
             println(indented(replaceBlock(i)))
             println("}")
@@ -383,7 +385,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
       // XXXXXXX note: GOTO_i and RETURN_i may be in blocks that have been overwritten
       // (contents of gotos and returns are never discarded)
-      // so if there are loops, we may assume there are more gotos/returns than there are
+      // so if there are loops, we may assume there are more gotos/returns than actually
       // Q: does this occur anywhere?
 
       var src = src0
@@ -491,16 +493,20 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
       val id = info.getOrElseUpdate(key, { val id = count; count += 1; fresh = true; id })
       var cnt = storeInfo.getOrElse(key, Nil).length
 
+      stats(key) = stats.getOrElse(key,0) + 1
+
 /*
       if (key.contains("AssertionError.<init>"))
         return reflect[Unit]("throw new AssertionError")
+*/
 
-      if (key.contains("StreamEncoder")) //CharsetEncoder.encode")) // encodeLoop"))
+      //if (key.contains("StreamEncoder")) //CharsetEncoder.encode")) // encodeLoop"))
+      
+      if (key.contains("CharsetEncoder.encode"))
         return reflect[Unit]("WARN // refuse " + key)
 
       if (key.contains("Exception.<init"))
         return reflect[Unit]("WARN // refuse " + key)
-*/
 
       if (debugBlocks) println("// *** " + key)
       //println("// *** " + store)
@@ -741,5 +747,15 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
     }
 
 
+
+    override def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
+      val f1 = try super.compile(f) finally {
+        println("--- stats ---")
+        for ((k,v) <- stats.toList.sortBy(_._2).reverse)
+          println(v + "  " + k)
+        println("total: " + stats.map(_._2).sum)
+      }
+      f1
+    }
 
 }

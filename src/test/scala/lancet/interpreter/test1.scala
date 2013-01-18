@@ -60,7 +60,9 @@ class TestInterpreter1 extends FileDiffSuite {
     }
 
     val o = new Foo
-    val it = new BytecodeInterpreter_Opt
+    val it = new BytecodeInterpreter_Opt {
+      
+    }
 
     //it.emitControlFlow = false
 
