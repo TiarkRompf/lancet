@@ -751,8 +751,16 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
     override def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
       val f1 = try super.compile(f) finally {
         println("--- stats ---")
-        for ((k,v) <- stats.toList.sortBy(_._2).reverse)
-          println(v + "  " + k)
+        val stats1 = stats.toList.map { case (k,v) => 
+          val frame = k.split("//").map { s => 
+            val Array(bci,meth) = s.split(":")
+            meth + ":" + bci
+          }
+          frame.reverse.mkString(" // ") + "    " + v
+        }
+
+        stats1.sorted foreach println
+
         println("total: " + stats.map(_._2).sum)
       }
       f1
