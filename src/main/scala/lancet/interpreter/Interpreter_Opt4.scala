@@ -495,6 +495,15 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
       stats(key) = stats.getOrElse(key,0) + 1
 
+      // debug test1c
+      if (key.startsWith("99:<BufferedWriter.write>")) {
+        System.out.println("kick it ...")
+        for ((k,v) <- store.toList.sortBy(_._1))
+          System.out.println("  " + k + "  --->  "+v)
+      }
+
+
+
 /*
       if (key.contains("AssertionError.<init>"))
         return reflect[Unit]("throw new AssertionError")

@@ -259,7 +259,7 @@ trait Base_Opt extends Base_Str {
             println("// strange lub: "+k+" -> "+a+",Some("+b+")"); 
             Top //b
         })
-      }.toMap
+      }.filter(_._2 != Top).toMap
     }
 
 
