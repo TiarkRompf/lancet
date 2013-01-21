@@ -1,0 +1,97 @@
+// constants: <function1>,<function0>,lancet.interpreter.TestInterpreter4@13c58865
+class Generated(CONST_0: lancet.interpreter.TestInterpreter4$$anonfun$test2$1$$anonfun$2,CONST_1: lancet.interpreter.TestInterpreter4$$anonfun$test2$1,CONST_2: lancet.interpreter.TestInterpreter4) extends (scala.collection.Seq[_]=>scala.collection.Seq[_]){
+import sun.misc.Unsafe
+val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
+type char = Char
+def WARN = assert(false, "WARN")
+def ERROR = assert(false, "ERROR")
+def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY {
+  var RES = null.asInstanceOf[scala.collection.Seq[_]]
+  val x0 = ARG
+  val x1 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test2$1$$anonfun$2$$anonfun$apply$2"))
+  unsafe.putObject(x1,16.asInstanceOf[Long], CONST_0.asInstanceOf[Object])
+  val x22 = x0.asInstanceOf[Traversable[Object]].filter { (x2:Object) =>
+    var RES = null.asInstanceOf[Object]
+    val x3 = x2.asInstanceOf[lancet.interpreter.TestInterpreter4$Person] // checkCast
+    val x4 = x3 eq null.asInstanceOf[Null]
+    val x6 = if (x4) {
+      val x5 = throw new NullPointerException()
+      x5
+    } else {
+      x3
+    }
+    // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
+    val x7 = x3 eq null.asInstanceOf[Null]
+    val x9 = if (x7) {
+      val x8 = throw new NullPointerException()
+      x8
+    } else {
+      x3
+    }
+    val x10 = unsafe.getBoolean(x3,20.asInstanceOf[Long])
+    val x11 = if (x10) {
+      1.asInstanceOf[Int]
+    } else {
+      0.asInstanceOf[Int]
+    }
+    val x12 = x11 == 0.asInstanceOf[Int]
+    if (x12) {
+      ;{val PHI_4_5 = 1.asInstanceOf[Int] // LUBC(PHI_4_5,1.asInstanceOf[Int])
+      BLOCK_25(PHI_4_5,x1,x2,x3)}
+      ().asInstanceOf[Unit]
+    } else {
+      val x13 = x3 eq null.asInstanceOf[Null]
+      val x15 = if (x13) {
+        val x14 = throw new NullPointerException()
+        x14
+      } else {
+        x3
+      }
+      // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
+      val x16 = x3 eq null.asInstanceOf[Null]
+      val x18 = if (x16) {
+        val x17 = throw new NullPointerException()
+        x17
+      } else {
+        x3
+      }
+      val x19 = unsafe.getInt(x3,16.asInstanceOf[Long])
+      val x20 = 42.asInstanceOf[Int] <= x19
+      if (x20) {
+        ;{val PHI_4_5 = 0.asInstanceOf[Int] // LUBC(PHI_4_5,0.asInstanceOf[Int])
+        BLOCK_25(PHI_4_5,x1,x2,x3)}
+        ().asInstanceOf[Unit]
+      } else {
+        ;{val PHI_4_5 = 1.asInstanceOf[Int] // LUBC(PHI_4_5,1.asInstanceOf[Int])
+        BLOCK_25(PHI_4_5,x1,x2,x3)}
+        ().asInstanceOf[Unit]
+      }
+      ().asInstanceOf[Unit]
+    }
+    def BLOCK_25(PHI_4_5:Int,x1:Object,x2:Object,x3:Object): Unit = {
+      val x21 = PHI_4_5 == 0.asInstanceOf[Int]
+      if (x21) {
+        ;{val PHI_4_4 = false.asInstanceOf[Object] // LUBC(PHI_4_4,false.asInstanceOf[Object])
+        BLOCK_32(PHI_4_4,PHI_4_5,x1,x2)}
+        ().asInstanceOf[Unit]
+      } else {
+        ;{val PHI_4_4 = true.asInstanceOf[Object] // LUBC(PHI_4_4,true.asInstanceOf[Object])
+        BLOCK_32(PHI_4_4,PHI_4_5,x1,x2)}
+        ().asInstanceOf[Unit]
+      }
+      def BLOCK_32(PHI_4_4:Object,PHI_4_5:Int,x1:Object,x2:Object): Unit = {
+        (RES = PHI_4_4) // return to root
+      }
+    }
+    // (no return?)
+    RES.asInstanceOf[Boolean]
+  }
+  val x23 = x22.asInstanceOf[scala.collection.Seq[_]] // checkCast
+  (RES = x23) // return to root
+  // (no return?)
+
+}; BODY.RES }
+}
+
+compilation: ok
+<decompiled>
