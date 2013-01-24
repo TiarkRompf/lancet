@@ -441,7 +441,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
         var src1 = src
         for ((go,i) <- gos.zipWithIndex) {
-          src1 = src1.replace("RETURN_"+i,"/*R"+i+"*/" + go+assign)
+          src1 = src1.replace("RETURN_"+i,"/*R"+i+"*/;{" + go+assign+"}")
         }
 
         print(src1)
