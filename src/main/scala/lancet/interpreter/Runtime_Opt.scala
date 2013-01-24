@@ -117,7 +117,9 @@ trait Unsafe_Opt extends Unsafe_Str {
           else super.getBoolean(base, offset)
         case _ => unit(false)
       }
-      fs.getOrElse(offset.toString, default).asInstanceOf[Rep[Boolean]]
+      fs.get(offset.toString).
+        map(x=>objectAsInstanceOf[Boolean](x.asInstanceOf[Rep[Object]])).
+        getOrElse(default) // value stored will be int, not bool
     case _ => super.getBoolean(base, offset)
   }
 
@@ -190,7 +192,7 @@ trait Unsafe_Opt extends Unsafe_Str {
       case s@Partial(_) => s
       case s@Const(c) => Partial(Map("alloc" -> Static(c)))
       // Alias: update all partials with lub value for field
-      case s => println("ERROR // write to unknown: " + s); return r
+      case s => println("ERROR // write to unknown: " + s); return r // need to trash the whole store?? sigh ...
     }
     store += (s -> Partial(fs + (off.toString -> dealias(value))))
 

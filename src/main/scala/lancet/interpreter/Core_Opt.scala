@@ -49,7 +49,6 @@ trait Base_Opt extends Base_Str {
   case object Top extends Val[Nothing]
 
 /*
-
   new idea: need to track const modifications, too
 
   abstract class Addr
@@ -59,33 +58,13 @@ trait Base_Opt extends Base_Str {
 
   type Store = Map[Addr, AbsObj] // map Dyn ref to 
   type AbsObj = Map[String, Set[Rep[Any]]] // map field to value
-  
 
   type Env = Map[String, Addr]
-
-
-  def joinStore(a,b) = {
-  
-    
-
-  }
-
-
-
+  def joinStore(a,b) = {  }
   def putObject(target, field) = {
-  
     val (mstAddr, mayAddrs) = store(target)
-
-    
-
     for (a <- mayAddrs diff mstAddr)
-
-
   }
-
-
-
-
  */
 
 
