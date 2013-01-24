@@ -228,7 +228,7 @@ trait Base_Opt extends Base_Str {
           // allocs: may be null in alternative
           //case (Some(Partial(as)),None) => Partial(lubPartial(k)(as,Map("alloc"->liftConst(null))))
           //case (None,Some(Partial(bs))) => Partial(lubPartial(k)(Map("alloc"->liftConst(null)),bs))
-          case (Some(Partial(as)),None) => println("val "+k+" = null // lub "+Partial(as)+", None "); Top
+          //case (Some(Partial(as)),None) => println("val "+k+" = null // lub "+Partial(as)+", None "); Top
           case (Some(Alias(as)),Some(Alias(bs))) => Alias(as ++ bs)
           case (Some(a),Some(b)) => Top
           case (Some(a),b) => 
