@@ -91,7 +91,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
     //var emitControlFlow = true
     var emitRecursive = false
 
-    var budget = 10000
+    var budget = 50000
 
     // internal data structures
 
@@ -441,7 +441,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
         var src1 = src
         for ((go,i) <- gos.zipWithIndex) {
-          src1 = src1.replace("RETURN_"+i,"/*R"+i+"*/;{" + go+assign+"}")
+          src1 = src1.replace("RETURN_"+i,"/*R"+i+"*/;{" + go+assign+"};")
         }
 
         print(src1)
@@ -512,8 +512,8 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
       //if (key.contains("StreamEncoder")) //CharsetEncoder.encode")) // encodeLoop"))
       
-      if (key.contains("CharsetEncoder.encode"))
-        return reflect[Unit]("WARN // refuse " + key)
+      //if (key.contains("CharsetEncoder.encode"))
+        //return reflect[Unit]("WARN // refuse " + key)
 
       if (key.contains("Exception.<init"))
         return reflect[Unit]("WARN // refuse " + key)
