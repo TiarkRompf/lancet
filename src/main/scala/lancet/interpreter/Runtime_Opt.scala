@@ -118,8 +118,8 @@ trait Unsafe_Opt extends Unsafe_Str {
         case _ => unit(false)
       }
       fs.get(offset.toString).
-        map(x=>objectAsInstanceOf[Boolean](x.asInstanceOf[Rep[Object]])).
-        getOrElse(default) // value stored will be int, not bool
+        map{x=>if(x.typ==typeRep[Int]) (x.asInstanceOf[Rep[Int]] === 1) else x.asInstanceOf[Rep[Boolean]]}.
+        getOrElse(default) // value stored will be int, not bool (not quite sure why exactly)
     case _ => super.getBoolean(base, offset)
   }
 
