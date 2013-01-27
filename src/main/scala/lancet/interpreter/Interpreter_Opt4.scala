@@ -91,7 +91,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
     //var emitControlFlow = true
     var emitRecursive = false
 
-    var budget = 50000
+    var budget = 200000
 
     // internal data structures
 
@@ -515,8 +515,8 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
       //if (key.contains("CharsetEncoder.encode"))
         //return reflect[Unit]("WARN // refuse " + key)
 
-      if (key.contains("Exception.<init"))
-        return reflect[Unit]("WARN // refuse " + key)
+      //if (key.contains("Exception.<init"))
+      //  return reflect[Unit]("WARN // refuse " + key)
 
       if (debugBlocks) println("// *** " + key)
       //println("// *** " + store)
