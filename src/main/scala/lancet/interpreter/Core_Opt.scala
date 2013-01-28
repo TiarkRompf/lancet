@@ -175,6 +175,8 @@ trait Base_Opt extends Base_Str {
 
       type PElem = Map[String, Rep[Any]]
 
+      val y0 = y
+
       def lubPartial(p: String)(x: PElem, y: PElem): PElem = {
         val ks = x.keys ++ y.keys
         ks.map { k =>
@@ -189,6 +191,9 @@ trait Base_Opt extends Base_Str {
             case (a,b) => 
               val str = "LUB_"+p+"_"+k
               val tp = if (b.nonEmpty) {
+                //if (b.get.toString != str && !y0.contains(b.get.toString)) {
+                //  println("// PROBLEMO "+b.get+" not in "+y0)
+                //}
                 if (b.get.toString != str)
                   println("val "+str+" = " + b.get + " // Alias(" + a + "," + b + ")")
                 b.get.typ.asInstanceOf[TypeRep[Any]]
@@ -218,7 +223,7 @@ trait Base_Opt extends Base_Str {
 
       val ks = x.keys ++ y.keys
 
-      ks.map { k =>
+      val r1 = ks.map { k =>
         (k, (x.get(k), y.get(k)) match {
           case (Some(a),Some(b)) if a == b => a
           case (Some(Partial(as)),Some(Partial(bs))) => Partial(lubPartial(k)(as,bs)) // two definitions ...
@@ -238,7 +243,19 @@ trait Base_Opt extends Base_Str {
             println("// strange lub: "+k+" -> "+a+",Some("+b+")"); 
             Top //b
         })
-      }.filter(_._2 != Top).toMap
+      }
+
+      val removed = r1.collect { case (k,Top) => k }
+
+      if (removed.nonEmpty)
+        println("//removed: "+removed)
+
+      val r2 = r1.filter(_._2 != Top).toMap
+
+      if (removed.exists(e => r2.toString.contains(e.toString)))
+        println("// PROBLEMO "+r2+" contains "+removed)
+
+      r2
     }
 
 

@@ -190,13 +190,14 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
     // calc lubs and backpatch info for jumps
     type State = (InterpreterFrame, StoreLattice.Elem)    
     def allLubs(states: List[State]): (State,List[String]) = { // TODO: check this. for returns, R1 seems off at times (?)
+      // backpatch info: foreach state, commands needed to initialize lub vars
       val gos = states map { case (frameX,storeX) =>
         val frameY = freshFrameSimple(frameX)
         var storeY = storeX
         val (go, _) = captureOutputResult {
           states foreach { case (f,s) => 
             FrameLattice.lub(f, frameY) 
-            storeY = StoreLattice.lub(s, storeY)
+            storeY = StoreLattice.lub(s,storeY)
           }
           //val locals = FrameLattice.getFields(frameY).filter(_.toString.startsWith("PHI"))
           //val fields = StoreLattice.getFields(storeY).filter(_.toString.startsWith("LUB"))
@@ -204,12 +205,12 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         }
         (go,frameY,storeY)
       }
-      /* assert all match ...
-      assert(contextKey(f02) == contextKey(f12))
-      assert(getAllArgs(f02) == getAllArgs(f12))
-      assert(s02 == s12)
-      */
       val (_,f02,s02) = gos(0)
+      for ((_,fx,sx) <- gos) { // sanity check
+        assert(contextKey(f02) == contextKey(fx))
+        assert(getAllArgs(f02) == getAllArgs(fx))
+        assert(s02 == sx, s02+"!=="+sx)
+      }
       ((f02,s02),gos.map(_._1))
     }
 
