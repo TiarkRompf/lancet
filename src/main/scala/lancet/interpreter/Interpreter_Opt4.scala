@@ -194,7 +194,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
       val gos = states map { case (frameX,storeX) =>
         val frameY = freshFrameSimple(frameX)
         var storeY = storeX
-        val (go, _) = captureOutputResult {
+        val (go, _) = captureOutputResult { // start with 'this' state, make it match all others
           states foreach { case (f,s) => 
             FrameLattice.lub(f, frameY) 
             storeY = StoreLattice.lub(s,storeY)
@@ -289,7 +289,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         if (d > saveDepth) execMethod(blockFrame)
         else if (d < saveDepth) { 
           returns = returns :+ (freshFrameSimple(blockFrame), store)
-          println("RETURN_"+(returns.length-1))
+          println("RETURN_"+(returns.length-1)+";")
           liftConst(())
         } else {
           gotoBlock(blockFrame)
@@ -442,7 +442,8 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
         var src1 = src
         for ((go,i) <- gos.zipWithIndex) {
-          src1 = src1.replace("RETURN_"+i,"/*R"+i+"*/;{" + go+assign+"};")
+          val dbg = "//"+returns(i)._2.toString+"\n"
+          src1 = src1.replace("RETURN_"+i+";","/*R"+i+"*/;{" + dbg+go+assign+"};")
         }
 
         print(src1)
