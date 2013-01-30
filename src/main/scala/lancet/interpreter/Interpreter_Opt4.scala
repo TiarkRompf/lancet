@@ -67,7 +67,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
             if (b == null)
               println("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")")
             else if (b.toString != str)
-              println("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")")
+              println("val "+str+" = " + b + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")")
             val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
             val phi = Dyn[AnyRef](str)(tp)
             y.locals(i) = phi
@@ -368,7 +368,8 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
             for (g <- gs) {
               val (f02,s02) = gotos(g)
               val (_,_::head::_) = allLubs(List((f12,s12),(f02,s02)))
-              replaceGoto(g) = ";{"+head.trim + "\nBLOCK_"+keyid+"("+fields.mkString(",")+")}"
+              // TODO: shouldn't need asInstanceOf !!! <-- lub of previous val???
+              replaceGoto(g) = ";{"+head.trim + "\nBLOCK_"+keyid+"("+fields.map(v=>v+".asInstanceOf["+v.typ+"]").mkString(",")+")}"
             }
 
             println("// "+key)
@@ -417,7 +418,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
           store = store0
           exec(frame0)
         }
-        print(src.replace("RETURN_0", retSrc.trim)) // "continue"))
+        print(src.replace("RETURN_0;", retSrc.trim)) // "continue"))
         res
 
       } else {
@@ -442,8 +443,8 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
         var src1 = src
         for ((go,i) <- gos.zipWithIndex) {
-          val dbg = "//"+returns(i)._2.toString+"\n"
-          src1 = src1.replace("RETURN_"+i+";","/*R"+i+"*/;{" + dbg+go+assign+"};")
+          //val dbg = "//"+returns(i)._2.toString+"\n"
+          src1 = src1.replace("RETURN_"+i+";","/*R"+i+"*/;{" + go+assign+"};")
         }
 
         print(src1)
