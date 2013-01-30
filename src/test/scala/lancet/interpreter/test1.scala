@@ -51,6 +51,14 @@ class TestInterpreter1 extends FileDiffSuite {
 
   }
 
+/*
+  this takes quite long. profiling data: 73s / 2013-01-30
+    total             73s
+    allLubs           23s
+    String.replace    19s
+    contextKey        10s
+    compile           7s
+*/
 
   // compile optimized
   def testC = withOutFileChecked(prefix+"C") {
@@ -61,7 +69,7 @@ class TestInterpreter1 extends FileDiffSuite {
 
     val o = new Foo
     val it = new BytecodeInterpreter_Opt {
-      
+
     }
 
     //it.emitControlFlow = false
