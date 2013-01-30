@@ -227,7 +227,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
       // obtain block mapping that will tell us about dominance relations
       val method = mframe.getMethod()
 
-      val graalBlock = graalBlockMapping.getOrElseUpdate(method, {
+      val graalBlocks = graalBlockMapping.getOrElseUpdate(method, {
         val map = new BciBlockMapping(method);
         map.build();
         /*println("/*")
@@ -273,22 +273,29 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
       var returns: List[State] = Nil
       var gotos: List[State] = Nil
 
-      val blockInfo: mutable.Map[Int, (List[Int],State)] = new mutable.HashMap
+      case class BlockInfo(inEdges: List[(Int,Int)], inState: State)
+      case class BlockInfoOut(returns: List[State], outEdges: List[State], code: String)
+
+      val blockInfo: mutable.Map[Int, BlockInfo] = new mutable.HashMap
+      val blockInfoOut: mutable.Map[Int, BlockInfoOut] = new mutable.HashMap
 
       var worklist: List[Int] = Nil
 
       val replaceGoto: mutable.Map[Int,String] = new mutable.HashMap
       val replaceBlock: mutable.Map[Int,String] = new mutable.HashMap
 
-      def getGraalBlock(fr: InterpreterFrame) = graalBlock.blocks.find(_.startBci == fr.getBCI).get
+      def getGraalBlock(fr: InterpreterFrame) = graalBlocks.blocks.find(_.startBci == fr.getBCI).get
 
+      var curBlock = -1
+
+      // *** entry point: main control transfer handler ***
       handler = { blockFrame =>
-
         val d = getContext(blockFrame).length
 
         if (d > saveDepth) execMethod(blockFrame)
         else if (d < saveDepth) { 
           returns = returns :+ (freshFrameSimple(blockFrame), store)
+          blockInfoOut(curBlock) = blockInfoOut(curBlock).copy(returns=returns :+ (freshFrameSimple(blockFrame), store))
           println("RETURN_"+(returns.length-1)+";")
           liftConst(())
         } else {
@@ -308,20 +315,20 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         val s = (freshFrameSimple(blockFrame), store)
         val b = getGraalBlock(blockFrame)
         blockInfo.get(b.blockID) match {
-          case Some((gs, state)) => 
+          case Some(BlockInfo(gs, state)) => 
             val (_,(state2,_)) = captureOutputResult(allLubs(List(state,s))) // suppress output
-            blockInfo(b.blockID) = (gs:+gotos.length, state2)
+            blockInfo(b.blockID) = BlockInfo(gs:+(curBlock,gotos.length), state2)
             if (!worklist.contains(b.blockID) && statesDiffer(state,state2)) {
               worklist = (b.blockID::worklist).sorted
             }
             // if (state != state2) worklist += b.blockID
           case None => 
-            blockInfo(b.blockID) = (gotos.length::Nil,s)
+            blockInfo(b.blockID) = BlockInfo((curBlock,gotos.length)::Nil,s)
             worklist = (b.blockID::worklist).sorted
         }
         //blockInfo(b.blockID) = blockInfo.getOrElse(b.blockID,Nil) :+ (gotos.length,s)
 
-        gotos = gotos :+ s
+        gotos = gotos :+ s // TODO: count per current block!!
         println("GOTO_"+(gotos.length-1)+";")
         liftConst(())
 
@@ -332,40 +339,47 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         println("//GOTO_"+id+" // "+key)*/
       }
 
+
+      // *** compute fixpoint ***
+
       val (src0, res) = captureOutputResult {
         gotoBlock(mframe) // returns on first goto
 
         while (worklist.nonEmpty) {
           val i = worklist.head
           worklist = worklist.tail
-          val b = graalBlock.blocks(i)
+          val b = graalBlocks.blocks(i)
 
-          assert (blockInfo.contains(i))
-          val (gs,ss) = blockInfo(i)
+          assert(blockInfo.contains(i))
+          curBlock = i
+          blockInfoOut(i) = BlockInfoOut(Nil,Nil,"")
+          // for all successors, invalidate gotos from here!
+          val BlockInfo(gs,ss) = blockInfo(i)
           val (f02,s02) = ss
           val (src,_) = captureOutputResult {
             store = s02
             execPlain(f02)
           }
+          blockInfoOut(i) = blockInfoOut(i).copy(code=src)
           replaceBlock(i) = src
         }
 
-        for (b <- graalBlock.blocks) {
+        for (b <- graalBlocks.blocks) {
           val i = b.blockID
 
           if (blockInfo.contains(i)) {
-          val (gs,ss) = blockInfo(i)
+          val BlockInfo(gotosToBlock,stateAfterBlock) = blockInfo(i)
 
-          if (gs.length == 1) {
-            val (go, (f02,s02)) = (gs.head, ss)
+          if (gotosToBlock.length == 1) {
+            val ((caller,go), (f02,s02)) = (gotosToBlock.head, stateAfterBlock)
             replaceGoto(go) = replaceBlock(i)
           } else {
-            val (f12,s12) = ss
-            val fields = getFields(ss)
+            val (f12,s12) = stateAfterBlock
+            val fields = getFields(stateAfterBlock)
             val key = contextKey(f12)
             val keyid = info.getOrElseUpdate(key, { val id = count; count += 1; id })
 
-            for (g <- gs) {
+            for ((c,g) <- gotosToBlock) {
               val (f02,s02) = gotos(g)
               val (_,_::head::_) = allLubs(List((f12,s12),(f02,s02)))
               // TODO: shouldn't need asInstanceOf !!! <-- lub of previous val???
@@ -384,6 +398,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         liftConst(())
       }
 
+      // *** backpatch jumps and emit code ***
 
       // XXXXXXX note: GOTO_i and RETURN_i may be in blocks that have been overwritten
       // (contents of gotos and returns are never discarded)
