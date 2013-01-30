@@ -396,7 +396,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
             val preds = getPreds(bid)
             val s1 = blockInfo(bid).inState
             val (f12,s12) = s1
-            val (_,_::head::Nil) = allLubs(List((f12,s12),(f02,s02)))
+            val (_,_::head::Nil) = allLubs(List((f12,s12),(f02,s02))) // could do just lub?
             val rhs = if (preds.length < 2) { // inline
               if (head.isEmpty) blockInfoOut(bid).code // WHY DOES THIS OCCUR AT ALL? INVESTIGATE !!
               else ";{"+head.trim + "\n" + blockInfoOut(bid).code+"}" // no need for lub, we're the only caller (assert?)
@@ -520,7 +520,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         var src1 = src
         for ((k,go) <- (returns.map(_._1)) zip gos) {
           //val dbg = "//"+returns(i)._2.toString+"\n"
-          src1 = src1.replace(k,"/*"+k+"*/;{" + go+assign+"};")
+          src1 = src1.replace(k,"/*"+k.substring(1)+"*/;{" + go+assign+"};") // substr prevents further matches
         }
 
         print(src1)
