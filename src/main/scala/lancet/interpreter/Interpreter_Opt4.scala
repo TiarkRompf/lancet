@@ -9,16 +9,13 @@ import com.oracle.graal.java.BciBlockMapping
 
 import scala.collection.{mutable,immutable}
 
-// (done) track reads and writes through constants --> elim reads
 // (todo) cse --> elim redundant checks
-// (todo) flow sensitive conditionals --> elim redundant branches
 
 
 class BytecodeInterpreter_Opt extends BytecodeInterpreter_Opt4
 
 
 // version 4 -- reverse engineer more of the program block structure (if, loop)
-
 
 class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUniverse_Opt {
     override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m)
@@ -97,11 +94,21 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
     // global internal data structures
 
     val graalBlockMapping = new mutable.HashMap[ResolvedJavaMethod, BciBlockMapping] // map key to store
+    def getGraalBlocks(method: ResolvedJavaMethod) = graalBlockMapping.getOrElseUpdate(method, {
+      val map = new BciBlockMapping(method);
+      map.build();
+      map
+    })
 
     val stats = new mutable.HashMap[String, Int] // map key to id
 
     val info = new mutable.HashMap[String, Int] // map key to id
     var count = 0
+    def contextKeyId(frame: InterpreterFrame) = {
+      val key = contextKey(frame)
+      val id = info.getOrElseUpdate(key, { val id = count; count += 1; id })
+      (key,id)
+    }
 
     // dynamically scoped internal data structures
 
@@ -188,6 +195,9 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
       (locals ++ fields).distinct.sortBy(_.toString)
     }
 
+    def statesDiffer(s0: State, s1: State) = 
+      getAllArgs(s0._1) != getAllArgs(s1._1) || s0._2 != s1._2
+
 
 
     // exec loop
@@ -221,18 +231,8 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
       // obtain block mapping that will tell us about dominance relations
       val method = mframe.getMethod()
-
-      val graalBlocks = graalBlockMapping.getOrElseUpdate(method, {
-        val map = new BciBlockMapping(method);
-        map.build();
-        /*println("/*")
-        println("block map for method " + method)
-        for (b <- map.blocks) {
-          println(b + " succ [" + b.successors.map("B"+_.blockID).mkString(",") + "]")
-        }
-        println("*/")*/ 
-        map
-      })
+      val graalBlocks = getGraalBlocks(method)
+      def getGraalBlock(fr: InterpreterFrame) = graalBlocks.blocks.find(_.startBci == fr.getBCI).get
 
 /*
       println("/*")
@@ -248,9 +248,6 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
       if (debugMethods) println("// << " + method)
 
-      //var returns: List[State] = Nil
-      //var gotos: List[State] = Nil
-
       case class BlockInfo(inEdges: List[(Int,State)], inState: State)
       case class BlockInfoOut(returns: List[State], gotos: List[State], code: String)
 
@@ -258,11 +255,6 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
       val blockInfoOut: mutable.Map[Int, BlockInfoOut] = new mutable.HashMap
 
       var worklist: List[Int] = Nil
-
-      //val replaceGoto: mutable.Map[Int,String] = new mutable.HashMap
-      //val replaceBlock: mutable.Map[Int,String] = new mutable.HashMap
-
-      def getGraalBlock(fr: InterpreterFrame) = graalBlocks.blocks.find(_.startBci == fr.getBCI).get
 
       var curBlock = -1
 
@@ -283,9 +275,6 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
           gotoBlock(blockFrame)
         }
       }
-
-      def statesDiffer(s0: State, s1: State) = 
-        getAllArgs(s0._1) != getAllArgs(s1._1) || s0._2 != s1._2
 
       def gotoBlock(blockFrame: InterpreterFrame): Rep[Unit] = {
         // make sure we're still in the same method! --> catch external calls that don't reset handler
@@ -309,27 +298,18 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
             blockInfo(b.blockID) = BlockInfo(List((curBlock,s)),s)
             worklist = (b.blockID::worklist).sorted
         }
-        //blockInfo(b.blockID) = blockInfo.getOrElse(b.blockID,Nil) :+ (gotos.length,s)
 
-        //gotos = gotos :+ s // TODO: count per current block!!
-        //println("GOTO_"+(gotos.length-1)+";")
         val out = blockInfoOut(curBlock)
         println("GOTO_"+(out.gotos.length)+";")
         blockInfoOut(curBlock) = out.copy(gotos = out.gotos :+ s)
         liftConst(())
-
-        /*val key = contextKey(frame)
-        var fresh = false
-        val id = info.getOrElseUpdate(key, { val id = count; count += 1; fresh = true; id })
-        var cnt = storeInfo.getOrElse(key, Nil).length
-        println("//GOTO_"+id+" // "+key)*/
       }
 
 
       // *** compute fixpoint ***
 
-      val (src0, res) = captureOutputResult {
-        //gotoBlock(mframe) // returns on first goto
+      val (src, res) = captureOutputResult {
+        //gotoBlock(mframe) // alternative; just do it ourselves ...
         val s = (freshFrameSimple(mframe), store)
         val b = getGraalBlock(mframe)
         blockInfo(b.blockID) = BlockInfo(List((-1,s)),s)
@@ -344,18 +324,16 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
           val BlockInfo(edges,(f02,s02)) = blockInfo(i)
           val (src,_) = captureOutputResult {
             store = s02
-            execPlain(f02)
+            execFoReal(f02)
           }
           blockInfoOut(i) = blockInfoOut(i).copy(code=src)
         }
 
         // got fixpoint, now use acquired info to emit code
 
-        def getPreds(i: Int) = blockInfo(i).inEdges.map(_._1).filterNot(_ == -1)
-        /*def getPreds(i: Int) = { // inefficient, use groupBy
-          for ((k,v) <- blockInfoOut.toList if v.gotos.map(s=>getGraalBlock(s._1).blockID) contains i) yield k
-        }*/
-        assert(getPreds(b.blockID).isEmpty)
+        def getPreds(i: Int) = blockInfo(i).inEdges.map(_._1)
+        def shouldInline(i: Int) = getPreds(i).length < 2
+        assert(getPreds(b.blockID) == List(-1))
 
         // fix jumps inside blocks: either call or inline
 
@@ -367,18 +345,16 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
           val (f12,s12) = stateBeforeBlock
           val fields = getFields(stateBeforeBlock)
-          val key = contextKey(f12)
-          val keyid = info.getOrElseUpdate(key, { val id = count; count += 1; id })
+          val (key,keyid) = contextKeyId(f12)
 
           var src = code
           for ((s0,i) <- gotos.zipWithIndex) {
             val (f02,s02) = s0
             val bid = getGraalBlock(f02).blockID
-            val preds = getPreds(bid)
             val s1 = blockInfo(bid).inState
             val (f12,s12) = s1
             val (_,_::head::Nil) = allLubs(List((f12,s12),(f02,s02))) // could do just lub?
-            val rhs = if (preds.length < 2) { // inline
+            val rhs = if (shouldInline(bid)) { // inline
               if (head.isEmpty) blockInfoOut(bid).code // WHY DOES THIS OCCUR AT ALL? INVESTIGATE !!
               else ";{"+head.trim + "\n" + blockInfoOut(bid).code+"}" // no need for lub, we're the only caller (assert?)
             } else { // emit call
@@ -387,8 +363,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
               val (_,_::head::Nil) = allLubs(List((f12,s12),(f02,s02)))
 
               val fields = getFields(s1)
-              val key = contextKey(f12)
-              val keyid = info.getOrElseUpdate(key, { val id = count; count += 1; id })
+              val (key,keyid) = contextKeyId(f12)
 
               // TODO: shouldn't need asInstanceOf !!! <-- lub of previous val???
               ";{"+head.trim + "\nBLOCK_"+keyid+"("+fields/*.map(v=>v+".asInstanceOf["+v.typ+"]")*/.mkString(",")+")}"
@@ -399,33 +374,27 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         }
 
         // initial block -- do we ever need to lub here?
-        assert(getPreds(b.blockID).isEmpty)
+        assert(getPreds(b.blockID) == List(-1))
         println(blockInfoOut(b.blockID).code)
 
         // emit all non-inlined blocks
         for (b <- graalBlocks.blocks if blockInfo.contains(b.blockID)) {
           val i = b.blockID
-          val preds = getPreds(i)
 
           val BlockInfo(edges, stateBeforeBlock) = blockInfo(i)
           val BlockInfoOut(returns, gotos, code) = blockInfoOut(i)
 
           val (f12,s12) = stateBeforeBlock
           val fields = getFields(stateBeforeBlock)
-          val key = contextKey(f12)
-          val keyid = info.getOrElseUpdate(key, { val id = count; count += 1; id })
+          val (key,keyid) = contextKeyId(f12)
 
-          if (preds.length >= 2) {
+          if (!shouldInline(i)) {
             println("// "+key)
             //println("// preds "+preds.mkString(","))
 
             println("def BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit = {")
             println(code)
             println("}")
-          } else {
-            //println("// "+key)
-            //println("// preds "+preds.mkString(","))
-            //println("// BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit")
           }
 
         }
@@ -433,29 +402,17 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         liftConst(())
       }
 
-      // *** backpatch jumps and emit code ***
+      // *** reset state
 
-      // XXXXXXX note: GOTO_i and RETURN_i may be in blocks that have been overwritten
-      // (contents of gotos and returns are never discarded)
-      // so if there are loops, we may assume there are more gotos/returns than actually
-      // Q: does this occur anywhere?
+      handler = saveHandler
 
-      var src = src0
-/*
-      for (i <- 0 until gotos.length if replaceGoto.contains(i)) {
-        src = src.replace("GOTO_"+i+";", replaceGoto(i).trim)
-        //src = src + "def GOTO_"+i+": Unit = {\n" + indented(replaceGoto(i).trim) + "\n}\n"
-      }
-*/
+      if (debugMethods) println("// >> " + method)
+
+      // *** backpatch returns and continue ***
 
       val returns = blockInfoOut.toList flatMap { case (i, out) =>
         out.returns.zipWithIndex.map { case (st, j) => ("RETURN_"+i+"_"+j+";",st) }
       }
-
-
-      handler = saveHandler
-
-      if (debugMethods) println("// >> " + method + " " + returns.length)
 
       if (returns.length == 0) {
         print(src)
@@ -478,12 +435,9 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         val fields = getFields(ss)
 
         println(";{")
-        for (v <- fields) 
-          println("var v"+v+" = null.asInstanceOf["+v.typ+"]")
+        for (v <- fields) println("var v"+v+" = null.asInstanceOf["+v.typ+"]")
 
-        val assign = fields.map { v =>
-          "v"+v+" = "+v
-        }.mkString("\n")
+        val assign = fields.map { v => "v"+v+" = "+v }.mkString("\n")
 
         var src1 = src
         for ((k,go) <- (returns.map(_._1)) zip gos) {
@@ -494,8 +448,8 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         
         println(";{")
         if (debugReturns) println("// ret multi "+method)
-        for (v <- fields) 
-          println("val "+v+" = v"+v)
+        for (v <- fields) println("val "+v+" = v"+v)
+
         store = s02
         exec(f02)
         println("}}")
@@ -529,7 +483,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
 
 
-    def execPlain(frame: InterpreterFrame): Rep[Unit] = {
+    def execFoReal(frame: InterpreterFrame): Rep[Unit] = {
 
       val key = contextKey(frame)
       val id = info.getOrElseUpdate(key, { val id = count; count += 1; id })
