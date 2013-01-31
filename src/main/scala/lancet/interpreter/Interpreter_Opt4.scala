@@ -87,6 +87,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
     var debugReturns = false
     var debugLoops = false
     var debugPaths = false
+    var debugStats = false
 
     //var emitControlFlow = true
     var emitRecursive = false
@@ -533,7 +534,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
       val key = contextKey(frame)
       val id = info.getOrElseUpdate(key, { val id = count; count += 1; id })
 
-      stats(key) = stats.getOrElse(key,0) + 1
+      if (debugStats) stats(key) = stats.getOrElse(key,0) + 1
 
       if (debugBlocks) println("// *** " + key)
 
@@ -569,7 +570,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
 
     override def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
-      val f1 = try super.compile(f) finally {
+      val f1 = try super.compile(f) finally if (debugStats) {
         println("--- stats ---")
         val stats1 = stats.toList.map { case (k,v) => 
           val frame = k.split("//").map { s => 
