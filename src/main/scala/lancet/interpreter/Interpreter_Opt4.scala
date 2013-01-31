@@ -273,7 +273,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
       //var returns: List[State] = Nil
       //var gotos: List[State] = Nil
 
-      case class BlockInfo(inState: State)
+      case class BlockInfo(inEdges: List[(Int,State)], inState: State)
       case class BlockInfoOut(returns: List[State], gotos: List[State], code: String)
 
       val blockInfo: mutable.Map[Int, BlockInfo] = new mutable.HashMap
@@ -318,15 +318,17 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         val s = (freshFrameSimple(blockFrame), store)
         val b = getGraalBlock(blockFrame)
         blockInfo.get(b.blockID) match {
-          case Some(BlockInfo(state)) => 
-            val (state2,_) = allLubs(List(state,s))
-            blockInfo(b.blockID) = BlockInfo(state2)
+          case Some(BlockInfo(edges,state)) => 
+            // CAVEAT: can only have one edge per block pair (unchecked!)
+            val edges2 = edges.filterNot(_._1 == curBlock) :+ (curBlock,s) //update with s at curBlock!
+            val (state2,_) = allLubs(edges2.map(_._2))
+            blockInfo(b.blockID) = BlockInfo(edges2,state2)
             if (!worklist.contains(b.blockID) && statesDiffer(state,state2)) {
               worklist = (b.blockID::worklist).sorted
             }
             // if (state != state2) worklist += b.blockID
           case None => 
-            blockInfo(b.blockID) = BlockInfo(s)
+            blockInfo(b.blockID) = BlockInfo(List((curBlock,s)),s)
             worklist = (b.blockID::worklist).sorted
         }
         //blockInfo(b.blockID) = blockInfo.getOrElse(b.blockID,Nil) :+ (gotos.length,s)
@@ -352,7 +354,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         //gotoBlock(mframe) // returns on first goto
         val s = (freshFrameSimple(mframe), store)
         val b = getGraalBlock(mframe)
-        blockInfo(b.blockID) = BlockInfo(s)
+        blockInfo(b.blockID) = BlockInfo(List((-1,s)),s)
         worklist = List(b.blockID)
 
         while (worklist.nonEmpty) {
@@ -361,7 +363,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
           assert(blockInfo.contains(i))
           curBlock = i
           blockInfoOut(i) = BlockInfoOut(Nil,Nil,"") // reset gotos
-          val BlockInfo((f02,s02)) = blockInfo(i)
+          val BlockInfo(edges,(f02,s02)) = blockInfo(i)
           val (src,_) = captureOutputResult {
             store = s02
             execPlain(f02)
@@ -371,9 +373,10 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
         // got fixpoint, now use acquired info to emit code
 
-        def getPreds(i: Int) = { // inefficient, use groupBy
+        def getPreds(i: Int) = blockInfo(i).inEdges.map(_._1).filterNot(_ == -1)
+        /*def getPreds(i: Int) = { // inefficient, use groupBy
           for ((k,v) <- blockInfoOut.toList if v.gotos.map(s=>getGraalBlock(s._1).blockID) contains i) yield k
-        }
+        }*/
         assert(getPreds(b.blockID).isEmpty)
 
         // fix jumps inside blocks: either call or inline
@@ -381,7 +384,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         for (b <- graalBlocks.blocks.reverse if blockInfo.contains(b.blockID)) {
           val i = b.blockID
 
-          val BlockInfo(stateBeforeBlock) = blockInfo(i)
+          val BlockInfo(edges, stateBeforeBlock) = blockInfo(i)
           val BlockInfoOut(returns, gotos, code) = blockInfoOut(i)
 
           val (f12,s12) = stateBeforeBlock
@@ -410,7 +413,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
               val keyid = info.getOrElseUpdate(key, { val id = count; count += 1; id })
 
               // TODO: shouldn't need asInstanceOf !!! <-- lub of previous val???
-              ";{"+head.trim + "\nBLOCK_"+keyid+"("+fields.map(v=>v+".asInstanceOf["+v.typ+"]").mkString(",")+")}"
+              ";{"+head.trim + "\nBLOCK_"+keyid+"("+fields/*.map(v=>v+".asInstanceOf["+v.typ+"]")*/.mkString(",")+")}"
             }
             src = src.replace("GOTO_"+i+";", rhs)
           }
@@ -426,7 +429,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
           val i = b.blockID
           val preds = getPreds(i)
 
-          val BlockInfo(stateBeforeBlock) = blockInfo(i)
+          val BlockInfo(edges, stateBeforeBlock) = blockInfo(i)
           val BlockInfoOut(returns, gotos, code) = blockInfoOut(i)
 
           val (f12,s12) = stateBeforeBlock
