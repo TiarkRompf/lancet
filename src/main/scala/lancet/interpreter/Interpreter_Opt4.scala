@@ -189,7 +189,8 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
     // calc lubs and backpatch info for jumps
     type State = (InterpreterFrame, StoreLattice.Elem)    
-    def allLubs(states: List[State]): (State,List[String]) = { // TODO: check this. for returns, R1 seems off at times (?)
+    def allLubs(states: List[State]): (State,List[String]) = {
+      if (states.length == 1) return (states.head, Nil) // fast path
       // backpatch info: foreach state, commands needed to initialize lub vars
       val gos = states map { case (frameX,storeX) =>
         val frameY = freshFrameSimple(frameX)
