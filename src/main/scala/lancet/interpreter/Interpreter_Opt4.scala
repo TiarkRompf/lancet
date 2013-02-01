@@ -18,7 +18,7 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Opt4
 // version 4 -- reverse engineer more of the program block structure (if, loop)
 
 
-trait AbstractInterpreter extends BytecodeInterpreter_Str with RuntimeUniverse_Opt {
+trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpreter_Str with RuntimeUniverse_Opt {
 
     override def objectGetClass(receiver: Rep[Object]): Option[Class[_]] = {
       eval(receiver) match {
@@ -78,7 +78,8 @@ trait AbstractInterpreter extends BytecodeInterpreter_Str with RuntimeUniverse_O
     }
 
     // calc lubs and backpatch info for jumps
-    type State = (InterpreterFrame, StoreLattice.Elem)    
+    type State = (InterpreterFrame, StoreLattice.Elem)
+
     def allLubs(states: List[State]): (State,List[String]) = {
       if (states.length == 1) return (states.head, Nil) // fast path
       // backpatch info: foreach state, commands needed to initialize lub vars
@@ -105,6 +106,8 @@ trait AbstractInterpreter extends BytecodeInterpreter_Str with RuntimeUniverse_O
       ((f02,s02),gos.map(_._1))
     }
 
+    def getFrame(s: State) = s._1
+
     def getFields(s: State) = {
       val locals = FrameLattice.getFields(s._1).filterNot(_.isInstanceOf[Static[_]])//filter(_.toString.startsWith("PHI"))
       val fields = StoreLattice.getFields(s._2).filterNot(_.isInstanceOf[Static[_]])//.filter(_.toString.startsWith("LUB"))
@@ -122,12 +125,43 @@ trait AbstractInterpreter extends BytecodeInterpreter_Str with RuntimeUniverse_O
 
     def getAllArgs(frame: InterpreterFrame) = frame.getReturnValue()::getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
 
+    def getState(frame: InterpreterFrame) = (freshFrameSimple(frame), store)
+    def withState[A](state: State)(f: InterpreterFrame => A): A = { store = state._2; f(state._1) }
+
+}
+
+trait AbstractInterpreterIntf extends BytecodeInterpreter_Str with Core_Str {
+
+    type State// = (InterpreterFrame, StoreLattice.Elem)
+
+    def getFrame(s: State): InterpreterFrame
+
+    def allLubs(states: List[State]): (State,List[String])
+
+    def getFields(s: State): List[Rep[Any]]
+
+    def statesDiffer(s0: State, s1: State): Boolean
+
+    def getAllArgs(frame: InterpreterFrame): List[Rep[Any]]
+
+    def freshFrameSimple(frame: InterpreterFrame): InterpreterFrame_Str
+
+    def getState(frame: InterpreterFrame): State
+    def withState[A](state: State)(f: InterpreterFrame => A): A
 
 }
 
 
-class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpreter_Str with RuntimeUniverse_Opt {
+
+
+
+class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpreter_Opt4Engine with BytecodeInterpreter_Str with RuntimeUniverse_Opt {
     override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m)
+
+}
+
+
+trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with BytecodeInterpreter_Str with Core_Opt {
 
     // config options
 
@@ -264,12 +298,6 @@ class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpre
 
       var curBlock = -1
 
-      // helpers
-
-      def getState(frame: InterpreterFrame) = (freshFrameSimple(frame), store)
-      def withState[A](state: State)(f: InterpreterFrame => A): A = { store = state._2; f(state._1) }
-
-
       // *** entry point: main control transfer handler ***
       handler = { blockFrame =>
         val d = getContext(blockFrame).length
@@ -355,14 +383,14 @@ class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpre
 
           var src = code
           for ((s0,i) <- gotos.zipWithIndex) {
-            val bid = getGraalBlock(s0._1).blockID
+            val bid = getGraalBlock(getFrame(s0)).blockID
             val s1 = blockInfo(bid).inState
             val rhs = if (shouldInline(bid)) {
               assert(!statesDiffer(s0,s1))
               blockInfoOut(bid).code
             } else { // emit call
               val fields = getFields(s1)
-              val (key,keyid) = contextKeyId(s1._1)
+              val (key,keyid) = contextKeyId(getFrame(s1))
               val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
               ";{"+head.trim + "\nBLOCK_"+keyid+"("+fields.mkString(",")+")}"
             }
@@ -383,7 +411,7 @@ class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpre
             val BlockInfoOut(returns, gotos, code) = blockInfoOut(i)
 
             val fields = getFields(stateBeforeBlock)
-            val (key,keyid) = contextKeyId(stateBeforeBlock._1)
+            val (key,keyid) = contextKeyId(getFrame(stateBeforeBlock))
 
             println("// "+key)
             println("def BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit = {")
