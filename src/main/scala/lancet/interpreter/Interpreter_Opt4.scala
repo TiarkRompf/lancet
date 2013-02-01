@@ -258,13 +258,19 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
       var curBlock = -1
 
+      // helpers
+
+      def getState(frame: InterpreterFrame) = (freshFrameSimple(frame), store)
+      def withState[A](state: State)(f: InterpreterFrame => A): A = { store = state._2; f(state._1) }
+
+
       // *** entry point: main control transfer handler ***
       handler = { blockFrame =>
         val d = getContext(blockFrame).length
 
         if (d > saveDepth) execMethod(blockFrame)
         else if (d < saveDepth) { 
-          val s = (freshFrameSimple(blockFrame), store)
+          val s = getState(blockFrame)
           val out = blockInfoOut(curBlock)
           println("RETURN_"+curBlock+"_"+(out.returns.length)+";")
           blockInfoOut(curBlock) = out.copy(returns = out.returns :+ s)
@@ -282,12 +288,13 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
                 mframe.getMethod + "\n" +
                 blockFrame.getMethod})
 
-        val s = (freshFrameSimple(blockFrame), store)
+        val s = getState(blockFrame)
         val b = getGraalBlock(blockFrame)
         blockInfo.get(b.blockID) match {
           case Some(BlockInfo(edges,state)) => 
             // CAVEAT: can only have one edge per block pair (unchecked!)
             val edges2 = edges.filterNot(_._1 == curBlock) :+ (curBlock,s) //update with s at curBlock!
+            // alternative: don't compute lub here, just test prev with new state per edge
             val (state2,_) = allLubs(edges2.map(_._2))
             blockInfo(b.blockID) = BlockInfo(edges2,state2)
             if (!worklist.contains(b.blockID) && statesDiffer(state,state2)) {
@@ -310,7 +317,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
       val (src, res) = captureOutputResult {
         //gotoBlock(mframe) // alternative; just do it ourselves ...
-        val s = (freshFrameSimple(mframe), store)
+        val s = getState(mframe)
         val b = getGraalBlock(mframe)
         blockInfo(b.blockID) = BlockInfo(List((-1,s)),s)
         worklist = List(b.blockID)
@@ -321,56 +328,41 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
           assert(blockInfo.contains(i))
           curBlock = i
           blockInfoOut(i) = BlockInfoOut(Nil,Nil,"") // reset gotos
-          val BlockInfo(edges,(f02,s02)) = blockInfo(i)
+          val BlockInfo(edges,s) = blockInfo(i)
           val (src,_) = captureOutputResult {
-            store = s02
-            execFoReal(f02)
+            withState(s)(execFoReal)
           }
           blockInfoOut(i) = blockInfoOut(i).copy(code=src)
         }
 
-        // got fixpoint, now use acquired info to emit code
+        // reached fixpoint, now use acquired info to emit code
 
         def getPreds(i: Int) = blockInfo(i).inEdges.map(_._1)
         def shouldInline(i: Int) = getPreds(i).length < 2
         assert(getPreds(b.blockID) == List(-1))
 
         // fix jumps inside blocks: either call or inline
-
         for (b <- graalBlocks.blocks.reverse if blockInfo.contains(b.blockID)) {
           val i = b.blockID
-
           val BlockInfo(edges, stateBeforeBlock) = blockInfo(i)
           val BlockInfoOut(returns, gotos, code) = blockInfoOut(i)
 
-          val (f12,s12) = stateBeforeBlock
-          val fields = getFields(stateBeforeBlock)
-          val (key,keyid) = contextKeyId(f12)
-
           var src = code
           for ((s0,i) <- gotos.zipWithIndex) {
-            val (f02,s02) = s0
-            val bid = getGraalBlock(f02).blockID
+            val bid = getGraalBlock(s0._1).blockID
             val s1 = blockInfo(bid).inState
-            val (f12,s12) = s1
-            val (_,_::head::Nil) = allLubs(List((f12,s12),(f02,s02))) // could do just lub?
-            val rhs = if (shouldInline(bid)) { // inline
-              if (head.isEmpty) blockInfoOut(bid).code // WHY DOES THIS OCCUR AT ALL? INVESTIGATE !!
-              else ";{"+head.trim + "\n" + blockInfoOut(bid).code+"}" // no need for lub, we're the only caller (assert?)
+            val rhs = if (shouldInline(bid)) {
+              assert(!statesDiffer(s0,s1))
+              blockInfoOut(bid).code
             } else { // emit call
-              val s1 = blockInfo(bid).inState
-              val (f12,s12) = s1
-              val (_,_::head::Nil) = allLubs(List((f12,s12),(f02,s02)))
-
               val fields = getFields(s1)
-              val (key,keyid) = contextKeyId(f12)
-
-              // TODO: shouldn't need asInstanceOf !!! <-- lub of previous val???
-              ";{"+head.trim + "\nBLOCK_"+keyid+"("+fields/*.map(v=>v+".asInstanceOf["+v.typ+"]")*/.mkString(",")+")}"
+              val (key,keyid) = contextKeyId(s1._1)
+              val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
+              ";{"+head.trim + "\nBLOCK_"+keyid+"("+fields.mkString(",")+")}"
             }
             src = src.replace("GOTO_"+i+";", rhs)
           }
-          blockInfoOut(i) = BlockInfoOut(returns, gotos, src) // update code body
+          blockInfoOut(i) = BlockInfoOut(returns, gotos, src) // update body src
         }
 
         // initial block -- do we ever need to lub here?
@@ -380,23 +372,18 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         // emit all non-inlined blocks
         for (b <- graalBlocks.blocks if blockInfo.contains(b.blockID)) {
           val i = b.blockID
-
-          val BlockInfo(edges, stateBeforeBlock) = blockInfo(i)
-          val BlockInfoOut(returns, gotos, code) = blockInfoOut(i)
-
-          val (f12,s12) = stateBeforeBlock
-          val fields = getFields(stateBeforeBlock)
-          val (key,keyid) = contextKeyId(f12)
-
           if (!shouldInline(i)) {
-            println("// "+key)
-            //println("// preds "+preds.mkString(","))
+            val BlockInfo(edges, stateBeforeBlock) = blockInfo(i)
+            val BlockInfoOut(returns, gotos, code) = blockInfoOut(i)
 
+            val fields = getFields(stateBeforeBlock)
+            val (key,keyid) = contextKeyId(stateBeforeBlock._1)
+
+            println("// "+key)
             println("def BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit = {")
             println(code)
             println("}")
           }
-
         }
 
         liftConst(())
@@ -406,9 +393,9 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
       handler = saveHandler
 
-      if (debugMethods) println("// >> " + method)
-
       // *** backpatch returns and continue ***
+
+      if (debugMethods) println("// >> " + method)
 
       val returns = blockInfoOut.toList flatMap { case (i, out) =>
         out.returns.zipWithIndex.map { case (st, j) => ("RETURN_"+i+"_"+j+";",st) }
@@ -418,43 +405,35 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
         print(src)
         println("// (no return?)")
       } else if (returns.length == 1) { 
-        val (k,(frame0,store0)) = returns(0)
+        val (k,s) = returns(0)
         val (retSrc,res) = captureOutputResult {
           if (debugReturns) println("// ret single "+method)
-          store = store0
-          exec(frame0)
+          withState(s)(exec)
         }
         print(src.replace(k, retSrc.trim))
         res
-
       } else {
         println("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
 
-        val (ss@(f02,s02), gos) = allLubs(returns.map(_._2))
-
+        val (ss, gos) = allLubs(returns.map(_._2))
         val fields = getFields(ss)
 
         println(";{")
         for (v <- fields) println("var v"+v+" = null.asInstanceOf["+v.typ+"]")
 
-        val assign = fields.map { v => "v"+v+" = "+v }.mkString("\n")
-
         var src1 = src
         for ((k,go) <- (returns.map(_._1)) zip gos) {
+          val assign = fields.map { v => "v"+v+" = "+v }.mkString("\n")
           src1 = src1.replace(k,"/*R"+k.substring(6)+"*/;{" + go+assign+"};") // substr prevents further matches
         }
-
         print(src1)
         
         println(";{")
         if (debugReturns) println("// ret multi "+method)
         for (v <- fields) println("val "+v+" = v"+v)
-
-        store = s02
-        exec(f02)
+        withState(ss)(exec)
         println("}}")
       }
-
       res
     }
 
@@ -482,7 +461,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
     }
 
 
-
+    // actually execute a block's bytecode 
     def execFoReal(frame: InterpreterFrame): Rep[Unit] = {
 
       val key = contextKey(frame)
@@ -511,18 +490,17 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
           liftConst(())
       }
 
-      store = saveStore // reset here or earlier?
+      store = saveStore // need to reset?
 
       res
     }
 
+    // not used -- we manage local worklists in execMethod
     def loop(root: InterpreterFrame, main: InterpreterFrame): Unit = {
-      // nothing to be done here
       pushAsObjectInternal(root, main.getMethod.signature().returnKind(), Dyn[Object]("null /* stub return value "+main.getMethod.signature().returnKind()+" */")); // TODO: cleanup?
     }
 
-
-
+    // print stats after compiling
     override def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
       val f1 = try super.compile(f) finally if (debugStats) {
         println("--- stats ---")
@@ -533,9 +511,7 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
           }
           frame.reverse.mkString(" // ") + "    " + v
         }
-
         stats1.sorted foreach println
-
         println("total: " + stats.map(_._2).sum)
       }
       f1
