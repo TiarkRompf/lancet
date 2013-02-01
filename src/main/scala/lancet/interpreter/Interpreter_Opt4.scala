@@ -167,10 +167,48 @@ class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpre
       }
     }
 
+    def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = "BLOCK_"+keyid+"("+fields.mkString(",")+")"
+
+    def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: String): String = {
+      "// "+key+"\n" +
+      "def BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit = {\n" +
+      code+"\n"+
+      "}"
+    }
+
+
+    def genVarDef(v: Rep[Any]): String = "var v"+v+" = null.asInstanceOf["+v.typ+"]"
+    def genVarWrite(v: Rep[Any]): String = "v"+v+" = "+v
+    def genVarRead(v: Rep[Any]): String = "val "+v+" = v"+v
+
+
+    // not used -- we manage local worklists in execMethod
+    def loop(root: InterpreterFrame, main: InterpreterFrame): Unit = {
+      pushAsObjectInternal(root, main.getMethod.signature().returnKind(), Dyn[Object]("null /* stub return value "+main.getMethod.signature().returnKind()+" */")); // TODO: cleanup?
+    }
+
+    // print stats after compiling
+    override def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
+      val f1 = try super.compile(f) finally if (debugStats) {
+        println("--- stats ---")
+        val stats1 = stats.toList.map { case (k,v) => 
+          val frame = k.split("//").map { s => 
+            val Array(bci,meth) = s.split(":")
+            meth + ":" + bci
+          }
+          frame.reverse.mkString(" // ") + "    " + v
+        }
+        stats1.sorted foreach println
+        println("total: " + stats.map(_._2).sum)
+      }
+      f1
+    }
+
+
 }
 
 
-trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with BytecodeInterpreter_Str with Core_Opt {
+trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with BytecodeInterpreter_Str with Core_Str {
 
     // config options
 
@@ -225,14 +263,11 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
 
     // abstract methods
 
-    def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = "BLOCK_"+keyid+"("+fields.mkString(",")+")"
-
-    def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: String): String = {
-      "// "+key+"\n" +
-      "def BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit = {\n" +
-      code+"\n"+
-      "}"
-    }
+    def genBlockCall(keyid: Int, fields: List[Rep[Any]]): String
+    def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: String): String
+    def genVarDef(v: Rep[Any]): String
+    def genVarWrite(v: Rep[Any]): String
+    def genVarRead(v: Rep[Any]): String
 
     // helpers
 
@@ -467,18 +502,19 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
         val fields = getFields(ss)
 
         println(";{")
-        for (v <- fields) println("var v"+v+" = null.asInstanceOf["+v.typ+"]")
+
+        for (v <- fields) println(genVarDef(v))
 
         var src1 = src
         for ((k,go) <- (returns.map(_._1)) zip gos) {
-          val assign = fields.map { v => "v"+v+" = "+v }.mkString("\n")
+          val assign = fields.map(genVarWrite).mkString("\n")
           src1 = src1.replace(k,"/*R"+k.substring(6)+"*/;{" + go+assign+"};") // substr prevents further matches
         }
         print(src1)
         
         println(";{")
         if (debugReturns) println("// ret multi "+method)
-        for (v <- fields) println("val "+v+" = v"+v)
+        for (v <- fields) println(genVarRead(v))
         withState(ss)(exec)
         println("}}")
       }
@@ -512,14 +548,13 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
     // actually execute a block's bytecode 
     def execFoReal(frame: InterpreterFrame): Rep[Unit] = {
 
-      val key = contextKey(frame)
-      val id = info.getOrElseUpdate(key, { val id = count; count += 1; id })
+      val (key,id) = contextKeyId(frame)
 
       if (debugStats) stats(key) = stats.getOrElse(key,0) + 1
 
       if (debugBlocks) println("// *** " + key)
 
-      var saveStore = store
+      //var saveStore = store
 
       val frame3 = freshFrameSimple(frame)
       val bci = frame3.getBCI()
@@ -538,31 +573,10 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
           liftConst(())
       }
 
-      store = saveStore // need to reset?
+      //store = saveStore // need to reset?
 
       res
     }
 
-    // not used -- we manage local worklists in execMethod
-    def loop(root: InterpreterFrame, main: InterpreterFrame): Unit = {
-      pushAsObjectInternal(root, main.getMethod.signature().returnKind(), Dyn[Object]("null /* stub return value "+main.getMethod.signature().returnKind()+" */")); // TODO: cleanup?
-    }
-
-    // print stats after compiling
-    override def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
-      val f1 = try super.compile(f) finally if (debugStats) {
-        println("--- stats ---")
-        val stats1 = stats.toList.map { case (k,v) => 
-          val frame = k.split("//").map { s => 
-            val Array(bci,meth) = s.split(":")
-            meth + ":" + bci
-          }
-          frame.reverse.mkString(" // ") + "    " + v
-        }
-        stats1.sorted foreach println
-        println("total: " + stats.map(_._2).sum)
-      }
-      f1
-    }
 
 }
