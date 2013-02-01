@@ -17,8 +17,9 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Opt4
 
 // version 4 -- reverse engineer more of the program block structure (if, loop)
 
-class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUniverse_Opt {
-    override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m)
+
+trait AbstractInterpreter extends BytecodeInterpreter_Str with RuntimeUniverse_Opt {
+
     override def objectGetClass(receiver: Rep[Object]): Option[Class[_]] = {
       eval(receiver) match {
         case Partial(fs) if fs.contains("clazz") => 
@@ -76,6 +77,57 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
       }
     }
 
+    // calc lubs and backpatch info for jumps
+    type State = (InterpreterFrame, StoreLattice.Elem)    
+    def allLubs(states: List[State]): (State,List[String]) = {
+      if (states.length == 1) return (states.head, Nil) // fast path
+      // backpatch info: foreach state, commands needed to initialize lub vars
+      val gos = states map { case (frameX,storeX) =>
+        val frameY = freshFrameSimple(frameX)
+        var storeY = storeX
+        val (go, _) = captureOutputResult { // start with 'this' state, make it match all others
+          states foreach { case (f,s) => 
+            FrameLattice.lub(f, frameY) 
+            storeY = StoreLattice.lub(s,storeY)
+          }
+          //val locals = FrameLattice.getFields(frameY).filter(_.toString.startsWith("PHI"))
+          //val fields = StoreLattice.getFields(storeY).filter(_.toString.startsWith("LUB"))
+          //for (v <- locals ++ fields) println("v"+v+" = "+v)
+        }
+        (go,frameY,storeY)
+      }
+      val (_,f02,s02) = gos(0)
+      for ((_,fx,sx) <- gos) { // sanity check
+        assert(contextKey(f02) == contextKey(fx))
+        assert(getAllArgs(f02) == getAllArgs(fx))
+        assert(s02 == sx, s02+"!=="+sx)
+      }
+      ((f02,s02),gos.map(_._1))
+    }
+
+    def getFields(s: State) = {
+      val locals = FrameLattice.getFields(s._1).filterNot(_.isInstanceOf[Static[_]])//filter(_.toString.startsWith("PHI"))
+      val fields = StoreLattice.getFields(s._2).filterNot(_.isInstanceOf[Static[_]])//.filter(_.toString.startsWith("LUB"))
+      (locals ++ fields).distinct.sortBy(_.toString)
+    }
+
+    def statesDiffer(s0: State, s1: State) = 
+      getAllArgs(s0._1) != getAllArgs(s1._1) || s0._2 != s1._2
+
+    def freshFrameSimple(frame: InterpreterFrame): InterpreterFrame_Str = if (frame eq null) null else {
+      val frame2 = frame.asInstanceOf[InterpreterFrame_Str].copy2(freshFrameSimple(frame.getParentFrame))
+      val depth = frame2.depth
+      frame2
+    }
+
+    def getAllArgs(frame: InterpreterFrame) = frame.getReturnValue()::getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
+
+
+}
+
+
+class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpreter_Str with RuntimeUniverse_Opt {
+    override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m)
 
     // config options
 
@@ -134,14 +186,6 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
 
     // helpers
 
-    def freshFrameSimple(frame: InterpreterFrame): InterpreterFrame_Str = if (frame eq null) null else {
-      val frame2 = frame.asInstanceOf[InterpreterFrame_Str].copy2(freshFrameSimple(frame.getParentFrame))
-      val depth = frame2.depth
-      frame2
-    }
-
-    def getAllArgs(frame: InterpreterFrame) = frame.getReturnValue()::getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
-
     def postDominators(blocks: List[BciBlockMapping.Block]) = {
       import scala.collection.JavaConversions._
       var PostDom: Map[BciBlockMapping.Block,Set[BciBlockMapping.Block]] = Map()
@@ -160,44 +204,6 @@ class BytecodeInterpreter_Opt4 extends BytecodeInterpreter_Str with RuntimeUnive
       } while (PostDom != p0)
       PostDom
     }
-
-    // calc lubs and backpatch info for jumps
-    type State = (InterpreterFrame, StoreLattice.Elem)    
-    def allLubs(states: List[State]): (State,List[String]) = {
-      if (states.length == 1) return (states.head, Nil) // fast path
-      // backpatch info: foreach state, commands needed to initialize lub vars
-      val gos = states map { case (frameX,storeX) =>
-        val frameY = freshFrameSimple(frameX)
-        var storeY = storeX
-        val (go, _) = captureOutputResult { // start with 'this' state, make it match all others
-          states foreach { case (f,s) => 
-            FrameLattice.lub(f, frameY) 
-            storeY = StoreLattice.lub(s,storeY)
-          }
-          //val locals = FrameLattice.getFields(frameY).filter(_.toString.startsWith("PHI"))
-          //val fields = StoreLattice.getFields(storeY).filter(_.toString.startsWith("LUB"))
-          //for (v <- locals ++ fields) println("v"+v+" = "+v)
-        }
-        (go,frameY,storeY)
-      }
-      val (_,f02,s02) = gos(0)
-      for ((_,fx,sx) <- gos) { // sanity check
-        assert(contextKey(f02) == contextKey(fx))
-        assert(getAllArgs(f02) == getAllArgs(fx))
-        assert(s02 == sx, s02+"!=="+sx)
-      }
-      ((f02,s02),gos.map(_._1))
-    }
-
-    def getFields(s: State) = {
-      val locals = FrameLattice.getFields(s._1).filterNot(_.isInstanceOf[Static[_]])//filter(_.toString.startsWith("PHI"))
-      val fields = StoreLattice.getFields(s._2).filterNot(_.isInstanceOf[Static[_]])//.filter(_.toString.startsWith("LUB"))
-      (locals ++ fields).distinct.sortBy(_.toString)
-    }
-
-    def statesDiffer(s0: State, s1: State) = 
-      getAllArgs(s0._1) != getAllArgs(s1._1) || s0._2 != s1._2
-
 
 
     // exec loop
