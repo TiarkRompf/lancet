@@ -132,7 +132,7 @@ trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpret
 
 trait AbstractInterpreterIntf extends BytecodeInterpreter_Str with Core_Str {
 
-    type State// = (InterpreterFrame, StoreLattice.Elem)
+    type State
 
     def getFrame(s: State): InterpreterFrame
 
@@ -157,6 +157,15 @@ trait AbstractInterpreterIntf extends BytecodeInterpreter_Str with Core_Str {
 
 class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpreter_Opt4Engine with BytecodeInterpreter_Str with RuntimeUniverse_Opt {
     override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m)
+
+    override def withScope[A](body: =>A): A = { // TODO: put somewhere else
+      val saveStore = store
+      try {
+        super.withScope(body)
+      } finally {
+        store = saveStore 
+      }
+    }
 
 }
 
@@ -204,19 +213,26 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
     def withScope[A](body: =>A): A = { // reset scope, e.g. for nested calls
       val saveHandler = handler
       val saveDepth = depth
-      val saveStore = store
       try {
         handler = execMethod
         depth = 0
-        //store = StoreLattice.bottom // really clear completely?
         body
       } finally {
         handler = saveHandler
         depth = saveDepth
-        store = saveStore 
       }
     }
 
+    // abstract methods
+
+    def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = "BLOCK_"+keyid+"("+fields.mkString(",")+")"
+
+    def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: String): String = {
+      "// "+key+"\n" +
+      "def BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit = {\n" +
+      code+"\n"+
+      "}"
+    }
 
     // helpers
 
@@ -392,7 +408,8 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
               val fields = getFields(s1)
               val (key,keyid) = contextKeyId(getFrame(s1))
               val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
-              ";{"+head.trim + "\nBLOCK_"+keyid+"("+fields.mkString(",")+")}"
+              val call = genBlockCall(keyid, fields)
+              ";{"+head.trim + "\n" + call + "}"
             }
             src = src.replace("GOTO_"+i+";", rhs)
           }
@@ -413,10 +430,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
             val fields = getFields(stateBeforeBlock)
             val (key,keyid) = contextKeyId(getFrame(stateBeforeBlock))
 
-            println("// "+key)
-            println("def BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit = {")
-            println(code)
-            println("}")
+            println(genBlockDef(key, keyid, fields, code))
           }
         }
 
