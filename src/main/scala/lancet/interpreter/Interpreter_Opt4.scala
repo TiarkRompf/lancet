@@ -135,14 +135,10 @@ trait AbstractInterpreterIntf extends BytecodeInterpreter_Str with Core_Str {
     type State
 
     def getFrame(s: State): InterpreterFrame
-
-    def allLubs(states: List[State]): (State,List[String])
-
     def getFields(s: State): List[Rep[Any]]
 
+    def allLubs(states: List[State]): (State,List[String])
     def statesDiffer(s0: State, s1: State): Boolean
-
-    def getAllArgs(frame: InterpreterFrame): List[Rep[Any]]
 
     def freshFrameSimple(frame: InterpreterFrame): InterpreterFrame_Str
 
@@ -554,13 +550,11 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
 
       if (debugBlocks) println("// *** " + key)
 
-      //var saveStore = store
-
-      val frame3 = freshFrameSimple(frame)
-      val bci = frame3.getBCI()
-      val bs = new BytecodeStream(frame3.getMethod.code())
+      val frame1 = freshFrameSimple(frame) // necessary?
+      val bci = frame1.getBCI()
+      val bs = new BytecodeStream(frame1.getMethod.code())
       //bs.setBCI(globalFrame.getBCI())
-      val res = try { executeBlock(frame3, bs, bci) } catch {
+      val res = try { executeBlock(frame1, bs, bci) } catch {
         case e: InterpreterException =>
           println("// caught " + e)
           reflect[Unit]("throw "+e.cause+".asInstanceOf[Throwable]")
@@ -572,8 +566,6 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
           println("*/")
           liftConst(())
       }
-
-      //store = saveStore // need to reset?
 
       res
     }
