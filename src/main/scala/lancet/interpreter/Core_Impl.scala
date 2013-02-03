@@ -2,14 +2,14 @@ package lancet.interpreter
 
 
 
-trait Base_Impl extends Base {
+trait Base_Exec extends Base {
   type Rep[+T] = T
   def repManifest[T:Manifest]: Manifest[T] = manifest[T]
 }
 
 
 
-trait Core_Impl extends Base_Impl with Core {
+trait Core_Exec extends Base_Exec with Core {
   type TypeRep[T] = Manifest[T]
   implicit def anyType[T:Manifest]: TypeRep[T] = manifest[T]
   implicit def booleanType = manifest[Boolean]

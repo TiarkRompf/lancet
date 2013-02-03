@@ -25,7 +25,7 @@ class TestInterpreter1 extends FileDiffSuite {
     val reflectMeth = cls.getDeclaredMethod("bar", classOf[Int])
     val method = runtime.getResolvedJavaMethod(reflectMeth)
 
-    val it = new BytecodeInterpreter_Impl
+    val it = new BytecodeInterpreter_Exec
     it.TRACE = true
     it.TRACE_BYTE_CODE = true
     it.initialize()

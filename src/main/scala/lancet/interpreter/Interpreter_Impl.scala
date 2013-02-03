@@ -34,11 +34,11 @@ import com.oracle.graal.bytecode._;
 
 
 //@SuppressWarnings("static-method")
-final class BytecodeInterpreter_Impl extends InterpreterUniverse_Impl with BytecodeInterpreter_Common {
+final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with BytecodeInterpreter_Common {
 
     import BytecodeInterpreter._
 
-    def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Impl(m)
+    def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Exec(m)
 
 
     // ---------- high level execution loop ----------
@@ -59,9 +59,9 @@ final class BytecodeInterpreter_Impl extends InterpreterUniverse_Impl with Bytec
             }
 
 
-            var rootFrame: InterpreterFrame_Impl = null // nativeFrame
+            var rootFrame: InterpreterFrame_Exec = null // nativeFrame
             if (rootFrame == null) {
-              rootFrame = new InterpreterFrame_Impl(rootMethod, signature.argumentSlots(true));
+              rootFrame = new InterpreterFrame_Exec(rootMethod, signature.argumentSlots(true));
               rootFrame.pushObject(this);
               rootFrame.pushObject(method);
               rootFrame.pushObject(boxedArguments);

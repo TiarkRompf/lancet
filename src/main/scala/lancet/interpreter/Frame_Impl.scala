@@ -36,7 +36,7 @@ import com.oracle.graal.bytecode._;
 
 
 
-trait InterpreterUniverse_Impl extends RuntimeUniverse_Impl with InterpreterUniverse {
+trait InterpreterUniverse_Exec extends RuntimeUniverse_Exec with InterpreterUniverse {
 
 
 
@@ -48,7 +48,7 @@ object Frame extends HasUnsafe {
 
 
 
-class Frame_Impl(numLocals: Int, parent: Frame) extends Frame {
+class Frame_Exec(numLocals: Int, parent: Frame) extends Frame {
     import Frame._
     assert(numLocals >= MIN_FRAME_SIZE);
 
@@ -139,8 +139,8 @@ object InterpreterFrame {
 }
 
 
-class InterpreterFrame_Impl(var method: ResolvedJavaMethod, parent: InterpreterFrame, additionalStackSpace: Int) 
-extends Frame_Impl(method.maxLocals() + method.maxStackSize() + InterpreterFrame.BASE_LENGTH + additionalStackSpace, parent) 
+class InterpreterFrame_Exec(var method: ResolvedJavaMethod, parent: InterpreterFrame, additionalStackSpace: Int) 
+extends Frame_Exec(method.maxLocals() + method.maxStackSize() + InterpreterFrame.BASE_LENGTH + additionalStackSpace, parent) 
 with InterpreterFrame {
 
     import Frame._
@@ -163,7 +163,7 @@ with InterpreterFrame {
     }
 
     def create(method: ResolvedJavaMethod, hasReceiver: Boolean, additionalStackSpace: Int, useParentArguments: Boolean): InterpreterFrame = {
-        val frame = new InterpreterFrame_Impl(method, this, additionalStackSpace);
+        val frame = new InterpreterFrame_Exec(method, this, additionalStackSpace);
 
         if (useParentArguments) {
             val length = method.signature().argumentSlots(hasReceiver);
@@ -199,7 +199,7 @@ with InterpreterFrame {
         return BASE_LENGTH + getMethod().maxLocals();
     }
 
-    private def copyArguments(dest: InterpreterFrame_Impl, length: Int): Unit = {
+    private def copyArguments(dest: InterpreterFrame_Exec, length: Int): Unit = {
         System.arraycopy(locals, tosSingle(length - 1), dest.locals, BASE_LENGTH, length);
         System.arraycopy(primitiveLocals, tosSingle(length - 1), dest.primitiveLocals, BASE_LENGTH, length);
     }

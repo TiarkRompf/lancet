@@ -34,11 +34,11 @@ import com.oracle.graal.bytecode._;
 
 
 
-trait RuntimeUniverse_Impl extends Core_Impl with RuntimeUniverse {
+trait RuntimeUniverse_Exec extends Core_Exec with RuntimeUniverse {
 
 object Runtime extends HasUnsafe
 
-class Runtime_Impl(metaProvider: MetaAccessProvider) extends Runtime {
+class Runtime_Exec(metaProvider: MetaAccessProvider) extends Runtime {
 
     //val delegate = Graal.getRuntime().getCapability(classOf[RuntimeInterpreterInterface]);
 

@@ -1405,7 +1405,7 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
 
     protected def resolveRootMethod(): ResolvedJavaMethod = {
         try {
-            return metaAccessProvider.getResolvedJavaMethod(classOf[BytecodeInterpreter_Impl].getDeclaredMethod("execute", classOf[Method], classOf[Array[Object]]));
+            return metaAccessProvider.getResolvedJavaMethod(classOf[BytecodeInterpreter_Exec].getDeclaredMethod("execute", classOf[Method], classOf[Array[Object]]));
         } catch {
             case e: Exception =>
             throw new RuntimeException(e);
