@@ -1,12 +1,4 @@
-package lancet.interpreter
-
-
-
-trait Base_Exec extends Base {
-  type Rep[+T] = T
-  def repManifest[T:Manifest]: Manifest[T] = manifest[T]
-}
-
+package lancet.core
 
 
 trait Core_Exec extends Base_Exec with Core {

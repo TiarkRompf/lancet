@@ -1,13 +1,4 @@
-package lancet.interpreter
-
-// TODO: use Scala-Virtualized
-
-trait Base {
-  type Rep[+T]
-  type TypeRep[T]
-  def repManifest[T:Manifest]: Manifest[Rep[T]]
-}
-
+package lancet.core
 
 trait Core extends Base {
 

@@ -1,5 +1,7 @@
 package lancet.interpreter
 
+import lancet.core._
+
 import com.oracle.graal.api._;
 import com.oracle.graal.api.meta._;
 import com.oracle.graal.hotspot.meta._;

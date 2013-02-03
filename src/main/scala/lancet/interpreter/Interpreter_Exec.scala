@@ -22,6 +22,8 @@
  */
 package lancet.interpreter
 
+import lancet.core._
+
 import java.lang.reflect.{Array=>jlrArray,_};
 import java.util._;
 import sun.misc._;

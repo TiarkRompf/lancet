@@ -20,7 +20,7 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
-package lancet.interpreter
+package lancet.core
 
 
 import java.lang.reflect.{Array=>jlrArray,_};
