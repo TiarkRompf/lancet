@@ -184,7 +184,7 @@ trait Base_Opt extends Base_Str {
             case (Some(a),Some(b)) if a == b => a
             case (Some(Static(a)),Some(bb@Static(b))) => 
               val str = "LUB_"+p+"_"+k
-              if (b.toString != str)
+              if (""+b != str)
                 println("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")")
               val tp = bb.typ.asInstanceOf[TypeRep[Any]]
               Dyn[Any](str)(tp)
@@ -207,6 +207,8 @@ trait Base_Opt extends Base_Str {
                   val fld = tp.toString match {
                     case "Int" => 
                       "unsafe.getInt("+obj+","+k+")"
+                    case "Byte" => 
+                      "unsafe.getByte("+obj+","+k+")"
                     case "Object" => 
                       "unsafe.getObject("+obj+","+k+")"
                   }

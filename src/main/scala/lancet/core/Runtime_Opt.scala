@@ -43,242 +43,6 @@ var debugNullCheck = false
 
 
 trait Unsafe_Opt extends Unsafe_Str {
-
-  /*
-  def monitorEnter(value: Rep[Object]): Rep[Unit] = 
-    reflect("unsafe.monitorEnter("+value+")")
-  def monitorExit(value: Rep[Object]): Rep[Unit] = 
-    reflect("unsafe.monitorExit("+value+")")
-  */
-
-  // TODO: should inspect reflect.Field objects
-
-  def isSafeRead(base: Object, offset: Long, typ: TypeRep[_]): Boolean = {
-    if (base == null) {
-      println("// base is null, dammit"); false
-    } else {
-      val unsafePrefixes = "sun.nio."::"java.io."::"java.nio."::Nil
-      val safeFields = "java.io.PrintStream.16"::
-                       "java.io.PrintStream.40"::
-                       "java.io.PrintStream.48"::
-                       "java.io.BufferedWriter.32":: /*.40 Int .44 Int */
-                       "java.io.BufferedWriter.48"::
-                       "java.io.BufferedWriter.56"::
-                       "java.io.BufferedWriter.64"::
-                       "java.io.OutputStreamWriter.40"::
-                       "sun.nio.cs.StreamEncoder.32"::
-                       "sun.nio.cs.StreamEncoder.56"::
-                       "sun.nio.cs.StreamEncoder.64"::
-                       "sun.nio.cs.StreamEncoder.72"::
-                       "sun.nio.cs.StreamEncoder.80"::
-                       "sun.nio.cs.StreamEncoder.88"::
-                       "java.nio.HeapByteBuffer[pos=0 lim=8192 cap=8192].48":: //HACK/FIXME
-                       "sun.nio.cs.UTF_8$Encoder.72"::
-                       "java.nio.charset.CoderResult$1.16"::
-                       Nil
-      val str = base.toString
-      val lookup = str.replaceAll("@[a-z0-9]+","")+"."+offset
-      //println("// " + lookup + "/" + safeFields)
-      val r = lookup.startsWith("Class.forName") || safeFields.contains(lookup) || !unsafePrefixes.exists(str startsWith _)
-      if (debugReadWrite) {
-        val pred = if (r) "safe" else "unsafe"
-        println("// " + pred + " read: " + base.toString.replace("\n","\\n") + "." + offset + ":" + typ)
-      }
-      r
-    }
-  }
-
-
-  override def getObject(base: Rep[Object], offset: Rep[Long]): Rep[Object] = (eval(base), eval(offset)) match {
-    case (Const(base), Const(offset)) if isSafeRead(base, offset, typeRep[Object]) =>
-      unit(static.unsafe.getObject(base,offset))
-    case (Partial(fs), Const(offset)) => 
-      def default = fs("alloc") match {
-        case Static(base1:Object) => 
-          if (isSafeRead(base1, offset, typeRep[Object])) unit(static.unsafe.getObject(base1,offset))
-          else super.getObject(base, offset)
-        case _ => unit(null)
-      }
-      fs.getOrElse(offset.toString, default).asInstanceOf[Rep[Object]]
-    case _ => super.getObject(base,offset)
-  }
-    
-/*
-  def getObjectVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Object] = 
-    reflect("unsafe.getObjectVolatile("+base+","+offset+")")
-*/
-  override def getBoolean(base: Rep[Object], offset: Rep[Long]): Rep[Boolean] = (eval(base), eval(offset)) match {
-    case (Const(base), Const(offset)) if isSafeRead(base, offset, typeRep[Int]) => 
-      unit(static.unsafe.getBoolean(base,offset))
-    case (Partial(fs), Const(offset)) => 
-      def default = fs("alloc") match {
-        case Static(base1:Object) => 
-          if (isSafeRead(base1, offset, typeRep[Boolean])) unit(static.unsafe.getBoolean(base1,offset))
-          else super.getBoolean(base, offset)
-        case _ => unit(false)
-      }
-      fs.get(offset.toString).
-        map{x=>if(x.typ==typeRep[Int]) (x.asInstanceOf[Rep[Int]] === 1) else x.asInstanceOf[Rep[Boolean]]}.
-        getOrElse(default) // value stored will be int, not bool (not quite sure why exactly)
-    case _ => super.getBoolean(base, offset)
-  }
-
-  override def getBooleanVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Boolean] = {
-    // HACK !!
-    if (base+","+offset == "Class.forName(\"sun.misc.VM\").asInstanceOf[Object],261.asInstanceOf[Long]") unit(true)
-    else super.getBooleanVolatile(base, offset)
-  }
-/*
-  def getByte(base: Rep[Object], offset: Rep[Long]): Rep[Byte] = 
-    reflect("unsafe.getByte("+base+","+offset+")")
-  def getByteVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Byte] = 
-    reflect("unsafe.getByteVolatile("+base+","+offset+")")
-
-  def getChar(base: Rep[Object], offset: Rep[Long]): Rep[Char] = 
-    reflect("unsafe.getChar("+base+","+offset+")")
-  def getCharVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Char] = 
-    reflect("unsafe.getCharVolatile("+base+","+offset+")")
-
-  def getShort(base: Rep[Object], offset: Rep[Long]): Rep[Short] = 
-    reflect("unsafe.getShort("+base+","+offset+")")
-  def getShortVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Short] = 
-    reflect("unsafe.getShortVolatile("+base+","+offset+")")
-*/
-
-  override def getInt(base: Rep[Object], offset: Rep[Long]): Rep[Int] = (eval(base), eval(offset)) match {
-    case (Const(base), Const(offset)) if isSafeRead(base, offset, typeRep[Int]) => 
-      unit(static.unsafe.getInt(base,offset))
-    case (Partial(fs), Const(offset)) => 
-      def default = fs("alloc") match {
-        case Static(base1:Object) => 
-          if (isSafeRead(base1, offset, typeRep[Int])) unit(static.unsafe.getInt(base1,offset))
-          else super.getInt(base, offset)
-        case _ => unit(0)
-      }
-      fs.getOrElse(offset.toString, default).asInstanceOf[Rep[Int]]
-    case _ => super.getInt(base, offset)
-  }
-
-/*
-  def getIntVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Int] = 
-    reflect("unsafe.getIntVolatile("+base+","+offset+")")
-
-  def getLong(base: Rep[Object], offset: Rep[Long]): Rep[Long] = 
-    reflect("unsafe.getLong("+base+","+offset+")")
-  def getLongVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Long] = 
-    reflect("unsafe.getLongVolatile("+base+","+offset+")")
-
-  def getFloat(base: Rep[Object], offset: Rep[Long]): Rep[Float] = 
-    reflect("unsafe.getFloat("+base+","+offset+")")
-  def getFloatVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Float] = 
-    reflect("unsafe.getFloatVolatile("+base+","+offset+")")
-*/
-  // TODO: static reads only safe for final fields
-  override def getDouble(base: Rep[Object], offset: Rep[Long]): Rep[Double] = (eval(base), eval(offset)) match {
-    case (Const(base), Const(offset)) if isSafeRead(base, offset, typeRep[Double]) => unit(static.unsafe.getDouble(base,offset))
-    case (Partial(fs), Const(offset)) => fs.getOrElse(offset.toString, unit(0.0)).asInstanceOf[Rep[Double]]
-    case _ => super.getDouble(base, offset)
-  }
-/*  def getDoubleVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Double] = 
-    reflect("unsafe.getDoubleVolatile("+base+","+offset+")")
-*/
-
-  override def putObject(base: Rep[Object], offset: Rep[Long], value: Rep[Object]): Rep[Unit] = {
-    val r = super.putObject(base, offset, value)
-    val Static(off) = offset
-
-    val s = dealias(base) match { case Static(x) => constToString(x) case x => x.toString }
-    val Partial(fs) = eval(base) match {
-      case s@Partial(_) => s
-      case s@Const(c) => Partial(Map("alloc" -> Static(c)))
-      // Alias: update all partials with lub value for field
-      case s => println("ERROR // write to unknown: " + s); return r // need to trash the whole store?? sigh ...
-    }
-    store += (s -> Partial(fs + (off.toString -> dealias(value))))
-
-    if (debugReadWrite) println("// storing: " + (s -> Partial(fs + (off.toString -> value))))
-
-    r
-
-  }
-
-
-  // TODO: putXX
-
-
-/*
-  def putObjectVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Object]): Rep[Unit] = 
-    reflect("unsafe.putObjectVolatile("+base+","+offset+", "+value+")")
-
-  def putBoolean(base: Rep[Object], offset: Rep[Long], value: Rep[Boolean]): Rep[Unit] = 
-    reflect("unsafe.putBoolean("+base+","+offset+", "+value+")")
-  def putBooleanVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Boolean]): Rep[Unit] = 
-    reflect("unsafe.putBooleanVolatile("+base+","+offset+", "+value+")")
-
-  def putByte(base: Rep[Object], offset: Rep[Long], value: Rep[Byte]): Rep[Unit] = 
-    reflect("unsafe.putByte("+base+","+offset+", "+value+")")
-  def putByteVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Byte]): Rep[Unit] = 
-    reflect("unsafe.putByteVolatile("+base+","+offset+", "+value+")")
-
-  def putChar(base: Rep[Object], offset: Rep[Long], value: Rep[Char]): Rep[Unit] = 
-    reflect("unsafe.putChar("+base+","+offset+", "+value+")")
-  def putCharVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Char]): Rep[Unit] = 
-    reflect("unsafe.putCharVolatile("+base+","+offset+", "+value+")")
-
-  def putShort(base: Rep[Object], offset: Rep[Long], value: Rep[Short]): Rep[Unit] = 
-    reflect("unsafe.putShort("+base+","+offset+", "+value+")")
-  def putShortVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Short]): Rep[Unit] = 
-    reflect("unsafe.putShortVolatile("+base+","+offset+", "+value+")")
-*/
-  override def putInt(base: Rep[Object], offset: Rep[Long], value: Rep[Int]): Rep[Unit] = {
-    val r = super.putInt(base, offset, value)
-    val Static(off) = offset
-
-    val s = dealias(base) match { case Static(x) => constToString(x) case x => x.toString }
-    val Partial(fs) = eval(base) match {
-      case s@Partial(_) => s
-      case s@Const(c) => Partial(Map("alloc" -> Static(c)))
-      // Alias: update all partials with lub value for field
-      case s => println("ERROR // write to unknown: " + s); return r
-    }
-    store += (s -> Partial(fs + (off.toString -> dealias(value))))
-
-    if (debugReadWrite) println("// storing: " + (s -> Partial(fs + (off.toString -> value))))
-
-    r
-  }
-
-
-/*  def putIntVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Int]): Rep[Unit] = 
-    reflect("unsafe.putIntVolatile("+base+","+offset+", "+value+")")
-
-  def putLong(base: Rep[Object], offset: Rep[Long], value: Rep[Long]): Rep[Unit] = 
-    reflect("unsafe.putLong("+base+","+offset+", "+value+")")
-  def putLongVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Long]): Rep[Unit] = 
-    reflect("unsafe.putLongVolatile("+base+","+offset+", "+value+")")
-
-  def putFloat(base: Rep[Object], offset: Rep[Long], value: Rep[Float]): Rep[Unit] = 
-    reflect("unsafe.putFloat("+base+","+offset+", "+value+")")
-  def putFloatVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Float]): Rep[Unit] = 
-    reflect("unsafe.putFloatVolatile("+base+","+offset+", "+value+")")
-
-  def putDouble(base: Rep[Object], offset: Rep[Long], value: Rep[Double]): Rep[Unit] = 
-    reflect("unsafe.putDouble("+base+","+offset+", "+value+")")
-  def putDoubleVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Double]): Rep[Unit] = 
-    reflect("unsafe.putDoubleVolatile("+base+","+offset+", "+value+")")
-*/
-
-
-
-  override def allocateInstance(clazz: Class[_]): Rep[Object] = {
-    import scala.collection.immutable.Map
-
-    val r@Dyn(s) = super.allocateInstance(clazz)
-    //rewrite(s+" eq null", Static(false))
-    store += (s -> Partial(Map("alloc" -> r, "clazz" -> unit(clazz))))
-    r
-  }
-
 }
 
 
@@ -311,7 +75,7 @@ class Runtime_Generic(metaProvider: MetaAccessProvider) extends Runtime_Str(meta
         getArrayDefault[T](index, array)
     }
 
-    def setArray[T:TypeRep](value: Rep[T], index: Rep[Long], array: Rep[Object]): Unit = {
+    def setArray[T:TypeRep:Manifest](value: Rep[T], index: Rep[Long], array: Rep[Object]): Unit = {
         /*checkArray(array, index);
         checkArrayType(array, classOf[T]);
         unsafe.putLong(array, Unsafe.ARRAY_LONG_BASE_OFFSET + Unsafe.ARRAY_LONG_INDEX_SCALE * index, value);*/
@@ -429,10 +193,19 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
         nullCheck(value)
         unsafe.monitorEnter(value)
     }
+*/
 
-    def newObject(typ: ResolvedJavaType): Rep[Object] = { //} throws InstantiationException {
-        unsafe.allocateInstance(typ.toJava());
-    }*/
+    override def newObject(typ: ResolvedJavaType): Rep[Object] = { //} throws InstantiationException {
+      val clazz = typ.toJava
+      import scala.collection.immutable.Map
+
+      val r@Dyn(s) = super.newObject(typ)
+      //rewrite(s+" eq null", Static(false))
+      store += (s -> Partial(Map("alloc" -> r, "clazz" -> unit(clazz))))
+      r
+    }
+
+
 
     override def newArray(typ: ResolvedJavaType, size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
       import scala.collection.immutable.Map
@@ -504,6 +277,184 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
         }
     }""")
     */
+
+
+
+
+    def getFieldUnsafe[T:TypeRep](base: Object, offset: Long): T = {
+      typeRep[T].toString match {
+        case "Int" => static.unsafe.getInt(base, offset).asInstanceOf[T]
+        case "Short" => static.unsafe.getShort(base, offset).asInstanceOf[T]
+        case "Byte" => static.unsafe.getByte(base, offset).asInstanceOf[T]
+        case "Boolean" => static.unsafe.getBoolean(base, offset).asInstanceOf[T]
+        case "Char" => static.unsafe.getChar(base, offset).asInstanceOf[T]
+        case "Float" => static.unsafe.getFloat(base, offset).asInstanceOf[T]
+        case "Double" => static.unsafe.getDouble(base, offset).asInstanceOf[T]
+        case "Object" => static.unsafe.getObject(base, offset).asInstanceOf[T]
+      }
+    }
+
+
+    override def getField[T:TypeRep](base0: Rep[Object], field: ResolvedJavaField): Rep[T] = {
+      val offset = resolveOffset(field)
+      val base = resolveBase(base0,field)
+      val volatile = isVolatile(field) // TODO!
+
+      if (base+","+offset == "Class.forName(\"sun.misc.VM\").asInstanceOf[Object],261.asInstanceOf[Long]") return unit(true).asInstanceOf[Rep[T]]
+
+      (eval(base), eval(offset)) match {
+          case (Const(base), Const(offset)) if isSafeRead(base, offset, typeRep[T]) => 
+            liftConst(getFieldUnsafe[T](base,offset))
+          case (Partial(fs), Const(offset)) => 
+            def default = fs("alloc") match {
+              case Static(base1:Object) => 
+                if (isSafeRead(base1, offset, typeRep[Boolean])) liftConst[T](getFieldUnsafe[T](base1,offset))
+                else super.getField[T](base0, field)
+              case _ => liftConst[T](null.asInstanceOf[T])
+            }
+            if (typeRep[T] == typeRep[Boolean])
+              fs.get(offset.toString).
+                map{x=>(if(x.typ==typeRep[Int]) (x.asInstanceOf[Rep[Int]] === 1) else x).asInstanceOf[Rep[T]]}.
+                getOrElse(default) // value stored will be int, not bool (not quite sure why exactly)
+            else
+              fs.getOrElse(offset.toString, default).asInstanceOf[Rep[T]]
+          case _ => super.getField[T](base0, field)
+        }
+        /*if (isVolatile(field)) {
+            unsafe.getObjectVolatile(resolveBase(base, field), offset)
+        } else {
+            unsafe.getObject(resolveBase(base, field), offset)
+        }*/
+    }
+
+    override def getArray[T:TypeRep](index: Rep[Long], array: Rep[Object]): Rep[T] = {
+      checkArray(array, index);
+
+      val base = array
+      val offset = 0
+
+      (eval(base), eval(index)) match {
+          case (Const(base:Array[T]), Const(index)) if isSafeRead(base, offset, typeRep[T]) => 
+            liftConst(base(index.toInt))
+          case (Partial(fs), Const(index)) => 
+            def default = fs("alloc") match {
+              case Static(base1:Array[T]) => 
+                if (isSafeRead(base1, offset, typeRep[Boolean])) liftConst[T](base1(index.toInt))
+                else super.getArray[T](index, array)
+              case _ => liftConst[T](null.asInstanceOf[T])
+            }
+            if (typeRep[T] == typeRep[Boolean])
+              fs.get(offset.toString).
+                map{x=>(if(x.typ==typeRep[Int]) (x.asInstanceOf[Rep[Int]] === 1) else x).asInstanceOf[Rep[T]]}.
+                getOrElse(default) // value stored will be int, not bool (not quite sure why exactly)
+            else
+              fs.getOrElse(offset.toString, default).asInstanceOf[Rep[T]]
+          case _ => super.getArray[T](index, array)
+        }
+        /*checkArray(array, index);
+        return unsafe.getByte(array, (Unsafe.ARRAY_BYTE_BASE_OFFSET) + Unsafe.ARRAY_BYTE_INDEX_SCALE.toLong * index);*/
+    }
+
+    override def setField[T:TypeRep](value: Rep[T], base0: Rep[Object], field: ResolvedJavaField): Unit = {
+      val offset = resolveOffset(field)
+      val base = resolveBase(base0,field)
+      val volatile = isVolatile(field) // TODO!
+
+      super.setField(value, base0, field)
+      //val Static(off) = offset
+      val off = offset
+
+      val s = dealias(base) match { case Static(x) => constToString(x) case x => x.toString }
+      val Partial(fs) = eval(base) match {
+        case s@Partial(_) => s
+        case s@Const(c) => Partial(Map("alloc" -> Static(c)))
+        // Alias: update all partials with lub value for field
+        case s => println("ERROR // write to unknown: " + s); return // need to trash the whole store?? sigh ...
+      }
+      store += (s -> Partial(fs + (off.toString -> dealias(value))))
+
+      if (debugReadWrite) println("// storing: " + (s -> Partial(fs + (off.toString -> value))))
+
+      /*val offset = resolveOffset(field);
+      if (isVolatile(field)) {
+          unsafe.putDoubleVolatile(resolveBase(base, field), offset, value);
+      } else {
+          unsafe.putDouble(resolveBase(base, field), offset, value);
+      }*/
+    }
+
+    override def setArray[T:TypeRep:Manifest](value: Rep[T], index: Rep[Long], array: Rep[Object]): Unit = {
+      checkArray(array, index)
+      checkArrayType(array, manifest[T].erasure)
+
+      val offset = index
+      val base = array
+
+      super.setArray(value, index,array)
+      //val Static(off) = offset
+      val off = offset
+
+      val s = dealias(base) match { case Static(x) => constToString(x) case x => x.toString }
+      val Partial(fs) = eval(base) match {
+        case s@Partial(_) => s
+        case s@Const(c) => Partial(Map("alloc" -> Static(c)))
+        // Alias: update all partials with lub value for field
+        case s => println("ERROR // write to unknown: " + s); return // need to trash the whole store?? sigh ...
+      }
+      store += (s -> Partial(fs + (off.toString -> dealias(value))))
+
+      if (debugReadWrite) println("// storing: " + (s -> Partial(fs + (off.toString -> value))))
+
+
+      /*checkArray(array, index);
+      checkArrayType(array, classOf[T]);
+      unsafe.putLong(array, Unsafe.ARRAY_LONG_BASE_OFFSET + Unsafe.ARRAY_LONG_INDEX_SCALE * index, value);*/
+    }
+
+
+
+  // TODO: should inspect reflect.Field objects
+
+  def isSafeRead(base: Object, offset: Long, typ: TypeRep[_]): Boolean = {
+    if (base == null) {
+      println("// base is null, dammit"); false
+    } else {
+      val unsafePrefixes = "sun.nio."::"java.io."::"java.nio."::Nil
+      val safeFields = "java.io.PrintStream.16"::
+                       "java.io.PrintStream.40"::
+                       "java.io.PrintStream.48"::
+                       "java.io.BufferedWriter.32":: /*.40 Int .44 Int */
+                       "java.io.BufferedWriter.48"::
+                       "java.io.BufferedWriter.56"::
+                       "java.io.BufferedWriter.64"::
+                       "java.io.OutputStreamWriter.40"::
+                       "sun.nio.cs.StreamEncoder.32"::
+                       "sun.nio.cs.StreamEncoder.56"::
+                       "sun.nio.cs.StreamEncoder.64"::
+                       "sun.nio.cs.StreamEncoder.72"::
+                       "sun.nio.cs.StreamEncoder.80"::
+                       "sun.nio.cs.StreamEncoder.88"::
+                       "java.nio.HeapByteBuffer[pos=0 lim=8192 cap=8192].48":: //HACK/FIXME
+                       "sun.nio.cs.UTF_8$Encoder.72"::
+                       "java.nio.charset.CoderResult$1.16"::
+                       Nil
+      val str = base.toString
+      val lookup = str.replaceAll("@[a-z0-9]+","")+"."+offset
+      //println("// " + lookup + "/" + safeFields)
+      val r = lookup.startsWith("Class.forName") || safeFields.contains(lookup) || !unsafePrefixes.exists(str startsWith _)
+      if (debugReadWrite) {
+        val pred = if (r) "safe" else "unsafe"
+        println("// " + pred + " read: " + base.toString.replace("\n","\\n") + "." + offset + ":" + typ)
+      }
+      r
+    }
+  }
+
+
+
+
+
+
 
     // TODO: Partial of Const
     override def arrayLength(array: Rep[Object]): Rep[Int] = eval(array) match {
