@@ -283,6 +283,97 @@ trait Unsafe_Opt extends Unsafe_Str {
 
 class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProvider) {
 
+    def getField[T:TypeRep](base: Rep[Object], field: ResolvedJavaField): Rep[T] = {
+        /*val offset = resolveOffset(field);
+        if (isVolatile(field)) {
+            unsafe.getObjectVolatile(resolveBase(base, field), offset)
+        } else {
+            unsafe.getObject(resolveBase(base, field), offset)
+        }*/
+        getFieldDefault[T](base, field)
+    }
+
+    def setField[T:TypeRep](value: Rep[T], base: Rep[Object], field: ResolvedJavaField): Unit = {
+        /*val offset = resolveOffset(field);
+        if (isVolatile(field)) {
+            unsafe.putDoubleVolatile(resolveBase(base, field), offset, value);
+        } else {
+            unsafe.putDouble(resolveBase(base, field), offset, value);
+        }*/
+        setFieldDefault(value, base, field)
+    }
+
+    def getArray[T:TypeRep](index: Rep[Long], array: Rep[Object]): Rep[T] = {
+        /*checkArray(array, index);
+        return unsafe.getByte(array, (Unsafe.ARRAY_BYTE_BASE_OFFSET) + Unsafe.ARRAY_BYTE_INDEX_SCALE.toLong * index);*/
+        getArrayDefault[T](index, array)
+    }
+
+    def setArray[T:TypeRep](value: Rep[T], index: Rep[Long], array: Rep[Object]): Unit = {
+        /*checkArray(array, index);
+        checkArrayType(array, classOf[T]);
+        unsafe.putLong(array, Unsafe.ARRAY_LONG_BASE_OFFSET + Unsafe.ARRAY_LONG_INDEX_SCALE * index, value);*/
+    }
+
+    def getFieldDefault[T:TypeRep](base: Rep[Object], field: ResolvedJavaField): Rep[T] = {
+      typeRep[T].toString match {
+        case "Int" => super.getFieldInt(base, field).asInstanceOf[Rep[T]]
+        case "Short" => super.getFieldShort(base, field).asInstanceOf[Rep[T]]
+        case "Byte" => super.getFieldByte(base, field).asInstanceOf[Rep[T]]
+        case "Boolean" => super.getFieldBoolean(base, field).asInstanceOf[Rep[T]]
+        case "Char" => super.getFieldChar(base, field).asInstanceOf[Rep[T]]
+        case "Float" => super.getFieldFloat(base, field).asInstanceOf[Rep[T]]
+        case "Double" => super.getFieldDouble(base, field).asInstanceOf[Rep[T]]
+      }
+    }
+
+    def setFieldDefault[T:TypeRep](value: Rep[T], base: Rep[Object], field: ResolvedJavaField): Unit = {
+      typeRep[T].toString match {
+        case "Int" => super.setFieldInt(value.asInstanceOf[Rep[Int]], base, field)
+        //case "Short" => super.setFieldShort(value.asInstanceOf[Rep[Short]], base, field)
+        //case "Byte" => super.setFieldByte(value.asInstanceOf[Rep[Byte]], base, field)
+        //case "Boolean" => super.setFieldBoolean(value.asInstanceOf[Rep[Boolean]], base, field)
+        //case "Char" => super.setFieldChar(value.asInstanceOf[Rep[Char]], base, field)
+        case "Float" => super.setFieldFloat(value.asInstanceOf[Rep[Float]], base, field)
+        case "Double" => super.setFieldDouble(value.asInstanceOf[Rep[Double]], base, field)
+      }
+    }
+
+    def getArrayDefault[T:TypeRep](index: Rep[Long], array: Rep[Object]): Rep[T] = {
+      typeRep[T].toString match {
+        case "Int" => super.getArrayInt(index, array).asInstanceOf[Rep[T]]
+        case "Short" => super.getArrayShort(index, array).asInstanceOf[Rep[T]]
+        case "Byte" => super.getArrayByte(index, array).asInstanceOf[Rep[T]]
+        //case "Boolean" => super.getArrayBoolean(index, array).asInstanceOf[Rep[T]]
+        case "Char" => super.getArrayChar(index, array).asInstanceOf[Rep[T]]
+        case "Float" => super.getArrayFloat(index, array).asInstanceOf[Rep[T]]
+        case "Double" => super.getArrayDouble(index, array).asInstanceOf[Rep[T]]
+      }
+    }
+
+    def setArrayDefault[T:TypeRep](value: Rep[T], index: Rep[Long], array: Rep[Object]): Unit = {
+      typeRep[T].toString match {
+        case "Int" => super.setArrayInt(value.asInstanceOf[Rep[Int]], index, array)
+        case "Short" => super.setArrayShort(value.asInstanceOf[Rep[Short]], index, array)
+        case "Byte" => super.setArrayByte(value.asInstanceOf[Rep[Byte]], index, array)
+        //case "Boolean" => super.setArrayBoolean(value.asInstanceOf[Rep[Boolean]], index, array)
+        case "Char" => super.setArrayChar(value.asInstanceOf[Rep[Char]], index, array)
+        case "Float" => super.setArrayFloat(value.asInstanceOf[Rep[Float]], index, array)
+        case "Double" => super.setArrayDouble(value.asInstanceOf[Rep[Double]], index, array)
+      }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     /*def invoke(method: ResolvedJavaMethod, args: Array[Rep[Object]]): Rep[Object] =
         reflect(""+method+".invoke("+args.mkString(",")+")")
 
