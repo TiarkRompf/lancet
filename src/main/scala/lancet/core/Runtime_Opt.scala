@@ -281,7 +281,9 @@ trait Unsafe_Opt extends Unsafe_Str {
 
 }
 
-class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProvider) {
+
+
+class Runtime_Generic(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProvider) {
 
     def getField[T:TypeRep](base: Rep[Object], field: ResolvedJavaField): Rep[T] = {
         /*val offset = resolveOffset(field);
@@ -300,7 +302,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProv
         } else {
             unsafe.putDouble(resolveBase(base, field), offset, value);
         }*/
-        setFieldDefault(value, base, field)
+        setFieldDefault[T](value, base, field)
     }
 
     def getArray[T:TypeRep](index: Rep[Long], array: Rep[Object]): Rep[T] = {
@@ -313,6 +315,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProv
         /*checkArray(array, index);
         checkArrayType(array, classOf[T]);
         unsafe.putLong(array, Unsafe.ARRAY_LONG_BASE_OFFSET + Unsafe.ARRAY_LONG_INDEX_SCALE * index, value);*/
+        setArrayDefault[T](value, index, array)
     }
 
     def getFieldDefault[T:TypeRep](base: Rep[Object], field: ResolvedJavaField): Rep[T] = {
@@ -324,6 +327,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProv
         case "Char" => super.getFieldChar(base, field).asInstanceOf[Rep[T]]
         case "Float" => super.getFieldFloat(base, field).asInstanceOf[Rep[T]]
         case "Double" => super.getFieldDouble(base, field).asInstanceOf[Rep[T]]
+        case "Object" => super.getFieldObject(base, field).asInstanceOf[Rep[T]]
       }
     }
 
@@ -336,6 +340,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProv
         //case "Char" => super.setFieldChar(value.asInstanceOf[Rep[Char]], base, field)
         case "Float" => super.setFieldFloat(value.asInstanceOf[Rep[Float]], base, field)
         case "Double" => super.setFieldDouble(value.asInstanceOf[Rep[Double]], base, field)
+        case "Object" => super.setFieldObject(value.asInstanceOf[Rep[Object]], base, field)
       }
     }
 
@@ -348,6 +353,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProv
         case "Char" => super.getArrayChar(index, array).asInstanceOf[Rep[T]]
         case "Float" => super.getArrayFloat(index, array).asInstanceOf[Rep[T]]
         case "Double" => super.getArrayDouble(index, array).asInstanceOf[Rep[T]]
+        case "Object" => super.getArrayObject(index, array).asInstanceOf[Rep[T]]
       }
     }
 
@@ -360,17 +366,50 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProv
         case "Char" => super.setArrayChar(value.asInstanceOf[Rep[Char]], index, array)
         case "Float" => super.setArrayFloat(value.asInstanceOf[Rep[Float]], index, array)
         case "Double" => super.setArrayDouble(value.asInstanceOf[Rep[Double]], index, array)
+        case "Object" => super.setArrayObject(value.asInstanceOf[Rep[Object]], index, array)
       }
     }
 
 
+    override def getFieldObject(base: Rep[Object], field: ResolvedJavaField): Rep[AnyRef] = getField[Object](base,field)
+    override def getFieldBoolean(base: Rep[Object], field: ResolvedJavaField): Rep[Boolean] = getField[Boolean](base,field)
+    override def getFieldByte(base: Rep[Object], field: ResolvedJavaField): Rep[Byte] = getField[Byte](base,field)
+    override def getFieldChar(base: Rep[Object], field: ResolvedJavaField): Rep[Char] = getField[Char](base,field)
+    override def getFieldShort(base: Rep[Object], field: ResolvedJavaField): Rep[Short] = getField[Short](base,field)
+    override def getFieldInt(base: Rep[Object], field: ResolvedJavaField): Rep[Int] = getField[Int](base,field)
+    override def getFieldLong(base: Rep[Object], field: ResolvedJavaField): Rep[Long] = getField[Long](base,field)
+    override def getFieldDouble(base: Rep[Object], field: ResolvedJavaField): Rep[Double] = getField[Double](base,field)
+    override def getFieldFloat(base: Rep[Object], field: ResolvedJavaField): Rep[Float] = getField[Float](base,field)
+
+    override def setFieldObject(value: Rep[Object], base: Rep[Object], field: ResolvedJavaField): Unit = setField[Object](value,base,field)
+    override def setFieldInt(value: Rep[Int], base: Rep[Object], field: ResolvedJavaField): Unit = setField[Int](value,base,field)
+    override def setFieldFloat(value: Rep[Float], base: Rep[Object], field: ResolvedJavaField): Unit = setField[Float](value,base,field)
+    override def setFieldDouble(value: Rep[Double], base: Rep[Object], field: ResolvedJavaField): Unit = setField[Double](value,base,field)
+    override def setFieldLong(value: Rep[Long], base: Rep[Object], field: ResolvedJavaField): Unit = setField[Long](value,base,field)
+    
+    override def getArrayByte(index: Rep[Long], array: Rep[Object]): Rep[Byte] = getArray[Byte](index,array)
+    override def getArrayChar(index: Rep[Long], array: Rep[Object]): Rep[Char] = getArray[Char](index,array)
+    override def getArrayShort(index: Rep[Long], array: Rep[Object]): Rep[Short] = getArray[Short](index,array)
+    override def getArrayInt(index: Rep[Long], array: Rep[Object]): Rep[Int] = getArray[Int](index,array)
+    override def getArrayLong(index: Rep[Long], array: Rep[Object]): Rep[Long] = getArray[Long](index,array)
+    override def getArrayDouble(index: Rep[Long], array: Rep[Object]): Rep[Double] = getArray[Double](index,array)
+    override def getArrayFloat(index: Rep[Long], array: Rep[Object]): Rep[Float] = getArray[Float](index,array)
+    override def getArrayObject(index: Rep[Long], array: Rep[Object]): Rep[Object] = getArray[Object](index,array)
+    
+    override def setArrayByte(value: Rep[Byte], index: Rep[Long], array: Rep[Object]): Unit = setArray[Byte](value, index, array)
+    override def setArrayChar(value: Rep[Char], index: Rep[Long], array: Rep[Object]): Unit = setArray[Char](value, index, array)
+    override def setArrayShort(value: Rep[Short], index: Rep[Long], array: Rep[Object]): Unit = setArray[Short](value, index, array)
+    override def setArrayInt(value: Rep[Int], index: Rep[Long], array: Rep[Object]): Unit = setArray[Int](value, index, array)
+    override def setArrayLong(value: Rep[Long], index: Rep[Long], array: Rep[Object]): Unit = setArray[Long](value, index, array)
+    override def setArrayFloat(value: Rep[Float], index: Rep[Long], array: Rep[Object]): Unit = setArray[Float](value, index, array)
+    override def setArrayDouble(value: Rep[Double], index: Rep[Long], array: Rep[Object]): Unit = setArray[Double](value, index, array)
+    override def setArrayObject(value: Rep[Object], index: Rep[Long], array: Rep[Object]): Unit = setArray[Object](value, index, array)
+
+}
 
 
 
-
-
-
-
+class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(metaProvider) {
 
 
 
@@ -433,225 +472,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProv
       r
     }
 
-    /*def getFieldObject(base: Rep[Object], field: ResolvedJavaField): Rep[AnyRef] = {
-        val offset = resolveOffset(field);
-        if (isVolatile(field)) {
-            unsafe.getObjectVolatile(resolveBase(base, field), offset)
-        } else {
-            unsafe.getObject(resolveBase(base, field), offset)
-        }
-    }
 
-    def getFieldBoolean(base: Rep[Object], field: ResolvedJavaField): Rep[Boolean] = {
-        val offset = resolveOffset(field);
-        if (isVolatile(field)) {
-            unsafe.getBooleanVolatile(resolveBase(base, field), offset)
-        } else {
-            unsafe.getBoolean(resolveBase(base, field), offset)
-        }
-    }
-
-    def getFieldByte(base: Rep[Object], field: ResolvedJavaField): Rep[Byte] = {
-        val offset = resolveOffset(field);
-        if (isVolatile(field)) {
-            unsafe.getByteVolatile(resolveBase(base, field), offset)
-        } else {
-            unsafe.getByte(resolveBase(base, field), offset)
-        }
-    }
-
-    def getFieldChar(base: Rep[Object], field: ResolvedJavaField): Rep[Char] = {
-        val offset = resolveOffset(field);
-        if (isVolatile(field)) {
-            unsafe.getCharVolatile(resolveBase(base, field), offset)
-        } else {
-            unsafe.getChar(resolveBase(base, field), offset)
-        }
-    }
-
-    def getFieldShort(base: Rep[Object], field: ResolvedJavaField): Rep[Short] = {
-        val offset = resolveOffset(field);
-        if (isVolatile(field)) {
-            unsafe.getShortVolatile(resolveBase(base, field), offset)
-        } else {
-            unsafe.getShort(resolveBase(base, field), offset)
-        }
-    }
-
-    def getFieldInt(base: Rep[Object], field: ResolvedJavaField): Rep[Int] = {
-        val offset = resolveOffset(field);
-        if (isVolatile(field)) {
-            unsafe.getIntVolatile(resolveBase(base, field), offset)
-        } else {
-            unsafe.getInt(resolveBase(base, field), offset)
-        }
-    }
-
-    def getFieldLong(base: Rep[Object], field: ResolvedJavaField): Rep[Long] = {
-        val offset = resolveOffset(field);
-        if (isVolatile(field)) {
-            unsafe.getLongVolatile(resolveBase(base, field), offset)
-        } else {
-            unsafe.getLong(resolveBase(base, field), offset)
-        }
-    }
-
-    def getFieldDouble(base: Rep[Object], field: ResolvedJavaField): Rep[Double] = {
-        val offset = resolveOffset(field);
-        if (isVolatile(field)) {
-            unsafe.getDoubleVolatile(resolveBase(base, field), offset)
-        } else {
-            unsafe.getDouble(resolveBase(base, field), offset)
-        }
-    }
-
-    def getFieldFloat(base: Rep[Object], field: ResolvedJavaField): Rep[Float] = {
-        val offset = resolveOffset(field);
-        if (isVolatile(field)) {
-            unsafe.getFloatVolatile(resolveBase(base, field), offset)
-        } else {
-            unsafe.getFloat(resolveBase(base, field), offset)
-        }
-    }
-
-    def setFieldObject(value: Rep[Object], base: Rep[Object], field: ResolvedJavaField): Unit = {
-        val offset = resolveOffset(field);
-        if (isVolatile(field)) {
-            unsafe.putObjectVolatile(resolveBase(base, field), offset, value)
-        } else {
-            unsafe.putObject(resolveBase(base, field), offset, value)
-        }
-    }
-
-    def setFieldInt(value: Rep[Int], base: Rep[Object], field: ResolvedJavaField): Unit = {
-        val offset = resolveOffset(field);
-        if (isVolatile(field)) {
-            unsafe.putIntVolatile(resolveBase(base, field), offset, value)
-        } else {
-            unsafe.putInt(resolveBase(base, field), offset, value)
-        }
-    }
-
-
-    def setFieldFloat(value: Rep[Float], base: Rep[Object], field: ResolvedJavaField): Unit = {
-        val offset = resolveOffset(field);
-        if (isVolatile(field)) {
-            unsafe.putFloatVolatile(resolveBase(base, field), offset, value)
-        } else {
-            unsafe.putFloat(resolveBase(base, field), offset, value)
-        }
-    }
-
-    def setFieldDouble(value: Rep[Double], base: Rep[Object], field: ResolvedJavaField): Unit = {
-        val offset = resolveOffset(field);
-        if (isVolatile(field)) {
-            unsafe.putDoubleVolatile(resolveBase(base, field), offset, value);
-        } else {
-            unsafe.putDouble(resolveBase(base, field), offset, value);
-        }
-    }
-
-    def setFieldLong(value: Rep[Long], base: Rep[Object], field: ResolvedJavaField): Unit = {
-        val offset = resolveOffset(field);
-        if (isVolatile(field)) {
-            unsafe.putDoubleVolatile(resolveBase(base, field), offset, value);
-        } else {
-            unsafe.putDouble(resolveBase(base, field), offset, value);
-        }
-    }
-
-    def getArrayByte(index: Rep[Long], array: Rep[Object]): Rep[Byte] = {
-        checkArray(array, index);
-        return unsafe.getByte(array, (Unsafe.ARRAY_BYTE_BASE_OFFSET) + Unsafe.ARRAY_BYTE_INDEX_SCALE.toLong * index);
-    }
-
-    def getArrayChar(index: Rep[Long], array: Rep[Object]): Rep[Char] = {
-        checkArray(array, index);
-        return unsafe.getChar(array, Unsafe.ARRAY_CHAR_BASE_OFFSET + Unsafe.ARRAY_CHAR_INDEX_SCALE * index);
-    }
-
-    def getArrayShort(index: Rep[Long], array: Rep[Object]): Rep[Short] = {
-        checkArray(array, index);
-        return unsafe.getShort(array, Unsafe.ARRAY_SHORT_BASE_OFFSET + Unsafe.ARRAY_SHORT_INDEX_SCALE * index);
-    }
-
-    def getArrayInt(index: Rep[Long], array: Rep[Object]): Rep[Int] = {
-        checkArray(array, index);
-        return unsafe.getInt(array, Unsafe.ARRAY_INT_BASE_OFFSET + Unsafe.ARRAY_INT_INDEX_SCALE * index);
-    }
-
-    def getArrayLong(index: Rep[Long], array: Rep[Object]): Rep[Long] = {
-        checkArray(array, index);
-        return unsafe.getLong(array, Unsafe.ARRAY_LONG_BASE_OFFSET + Unsafe.ARRAY_LONG_INDEX_SCALE * index);
-    }
-
-    def getArrayDouble(index: Rep[Long], array: Rep[Object]): Rep[Double] = {
-        checkArray(array, index);
-        return unsafe.getDouble(array, Unsafe.ARRAY_DOUBLE_BASE_OFFSET + Unsafe.ARRAY_DOUBLE_INDEX_SCALE * index);
-    }
-
-    def getArrayFloat(index: Rep[Long], array: Rep[Object]): Rep[Float] = {
-        checkArray(array, index);
-        return unsafe.getFloat(array, Unsafe.ARRAY_FLOAT_BASE_OFFSET + Unsafe.ARRAY_FLOAT_INDEX_SCALE * index);
-    }
-
-    def getArrayObject(index: Rep[Long], array: Rep[Object]): Rep[Object] = {
-        checkArray(array, index);
-        return unsafe.getObject(array, Unsafe.ARRAY_OBJECT_BASE_OFFSET + Unsafe.ARRAY_OBJECT_INDEX_SCALE * index);
-    }
-
-    def setArrayByte(value: Rep[Byte], index: Rep[Long], array: Rep[Object]): Unit = {
-        checkArray(array, index);
-        if (array.isInstanceOf[Array[Boolean]]) {
-            checkArrayType(array, classOf[Boolean]);
-        } else {
-            checkArrayType(array, classOf[Byte]);
-        }
-        unsafe.putByte(array, Unsafe.ARRAY_BYTE_BASE_OFFSET + Unsafe.ARRAY_BYTE_INDEX_SCALE * index, value);
-    }
-
-    def setArrayChar(value: Rep[Char], index: Rep[Long], array: Rep[Object]): Unit = {
-        checkArray(array, index);
-        checkArrayType(array, classOf[Char]);
-        unsafe.putChar(array, Unsafe.ARRAY_CHAR_BASE_OFFSET + Unsafe.ARRAY_CHAR_INDEX_SCALE * index, value);
-    }
-
-    def setArrayShort(value: Rep[Short], index: Rep[Long], array: Rep[Object]): Unit = {
-        checkArray(array, index);
-        checkArrayType(array, classOf[Short]);
-        unsafe.putShort(array, Unsafe.ARRAY_SHORT_BASE_OFFSET + Unsafe.ARRAY_SHORT_INDEX_SCALE * index, value);
-    }
-
-    def setArrayInt(value: Rep[Int], index: Rep[Long], array: Rep[Object]): Unit = {
-        checkArray(array, index);
-        checkArrayType(array, classOf[Int]);
-        unsafe.putInt(array, Unsafe.ARRAY_INT_BASE_OFFSET + Unsafe.ARRAY_INT_INDEX_SCALE * index, value);
-    }
-
-    def setArrayLong(value: Rep[Long], index: Rep[Long], array: Rep[Object]): Unit = {
-        checkArray(array, index);
-        checkArrayType(array, classOf[Long]);
-        unsafe.putLong(array, Unsafe.ARRAY_LONG_BASE_OFFSET + Unsafe.ARRAY_LONG_INDEX_SCALE * index, value);
-    }
-
-    def setArrayFloat(value: Rep[Float], index: Rep[Long], array: Rep[Object]): Unit = {
-        checkArray(array, index);
-        checkArrayType(array, classOf[Float]);
-        unsafe.putFloat(array, Unsafe.ARRAY_FLOAT_BASE_OFFSET + Unsafe.ARRAY_FLOAT_INDEX_SCALE * index, value);
-    }
-
-    def setArrayDouble(value: Rep[Double], index: Rep[Long], array: Rep[Object]): Unit = {
-        checkArray(array, index);
-        checkArrayType(array, classOf[Double]);
-        unsafe.putDouble(array, Unsafe.ARRAY_DOUBLE_BASE_OFFSET + Unsafe.ARRAY_DOUBLE_INDEX_SCALE * index, value);
-    }
-
-    def setArrayObject(value: Rep[Object], index: Rep[Long], array: Rep[Object]): Unit = {
-        checkArray(array, index);
-        checkArrayType(array, if (value != null) value.getClass() else null);
-        unsafe.putObject(array, Unsafe.ARRAY_OBJECT_BASE_OFFSET + Unsafe.ARRAY_OBJECT_INDEX_SCALE * index, value);
-    }
-*/
 
     override def nullCheck(value: Rep[Object]): Rep[Object] = {
       if (debugNullCheck) println("// nullcheck "+value + "=" + eval(value))
