@@ -364,6 +364,8 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
           return invokeDirect(parent, unique, true)
         }
 
+        // TODO: if non unique, may want to switch on all possible targets
+
 
         //val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethodImpl(m);
 
