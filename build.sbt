@@ -2,14 +2,20 @@ name := "lancet"
 
 version := "0.2"
 
-scalaVersion := "2.9.2"
+scalaVersion := "2.10.0"
+
+scalaOrganization := "org.scala-lang.virtualized"
 
 // tests are not thread safe
 parallelExecution in Test := false
 
-libraryDependencies += "org.scala-lang" % "scala-compiler" % "2.9.2"
+libraryDependencies += "org.scala-lang" % "scala-compiler" % "2.10.0"
 
-libraryDependencies += "org.scalatest" % "scalatest_2.9.0" % "1.6.1" % "test"
+libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.10.0"
+
+//libraryDependencies += "org.scalatest" % "scalatest_2.9.0" % "1.6.1" % "test"
+
+libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "test"
 
 libraryDependencies += "junit" % "junit" % "4.8.1" % "test"
 

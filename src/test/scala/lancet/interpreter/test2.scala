@@ -53,7 +53,7 @@ class TestInterpreter2 extends FileDiffSuite {
     }
 
 
-    var deg = Math.Pi/180;  // For converting degrees to radians
+    var deg = scala.math.Pi/180;  // For converting degrees to radians
 
     // Draw a level-n Koch Snowflake fractal on the canvas context c,
     // with lower-left corner at (x,y) and side length len.
