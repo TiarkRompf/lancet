@@ -294,30 +294,42 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
       }
     }
 
+    // hack: used by base_opt / regular getField will check store for updates
+    def getFieldConst[T:TypeRep](base0: Rep[Object], field: ResolvedJavaField): Rep[T] = {
+      val offset = resolveOffset(field)
+      val Static(base) = resolveBase(base0,field)
+      if (isSafeRead(base, offset, field, typeRep[T]))
+        liftConst(getFieldUnsafe[T](base,offset))
+      else
+        super.getField[T](base0, field)
+    }
 
     override def getField[T:TypeRep](base0: Rep[Object], field: ResolvedJavaField): Rep[T] = {
       val offset = resolveOffset(field)
       val base = resolveBase(base0,field)
       val volatile = isVolatile(field) // TODO!
 
+      //println("// getField " + base0 + ":" + field.holder.toJava.getName + "." + field.name)
+
       if (base+","+offset == "Class.forName(\"sun.misc.VM\").asInstanceOf[Object],261.asInstanceOf[Long]") return unit(true).asInstanceOf[Rep[T]]
 
       (eval(base), eval(offset)) match {
-          case (Const(base), Const(offset)) if isSafeRead(base, offset, typeRep[T]) => 
+          case (Const(base), Const(offset)) if isSafeRead(base, offset, field, typeRep[T]) => 
             liftConst(getFieldUnsafe[T](base,offset))
           case (Partial(fs), Const(offset)) => 
             def default = fs("alloc") match {
               case Static(base1:Object) => 
-                if (isSafeRead(base1, offset, typeRep[Boolean])) liftConst[T](getFieldUnsafe[T](base1,offset))
+                if (isSafeRead(base1, offset, field, typeRep[T])) liftConst[T](getFieldUnsafe[T](base1,offset))
                 else super.getField[T](base0, field)
               case _ => liftConst[T](null.asInstanceOf[T])
             }
+            val k = field.name//offset.toString
             if (typeRep[T] == typeRep[Boolean])
-              fs.get(offset.toString).
+              fs.get(k).
                 map{x=>(if(x.typ==typeRep[Int]) (x.asInstanceOf[Rep[Int]] === 1) else x).asInstanceOf[Rep[T]]}.
                 getOrElse(default) // value stored will be int, not bool (not quite sure why exactly)
             else
-              fs.getOrElse(offset.toString, default).asInstanceOf[Rep[T]]
+              fs.getOrElse(k, default).asInstanceOf[Rep[T]]
           case _ => super.getField[T](base0, field)
         }
         /*if (isVolatile(field)) {
@@ -327,6 +339,35 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
         }*/
     }
 
+
+    override def setField[T:TypeRep](value: Rep[T], base0: Rep[Object], field: ResolvedJavaField): Unit = {
+      val offset = resolveOffset(field)
+      val base = resolveBase(base0,field)
+      val volatile = isVolatile(field) // TODO!
+
+      super.setField(value, base0, field)
+      //val Static(off) = offset
+      val k = field.name // off.toString
+
+      val s = dealias(base) match { case Static(x) => constToString(x) case x => x.toString }
+      val Partial(fs) = eval(base) match {
+        case s@Partial(_) => s
+        case s@Const(c) => Partial(Map("alloc" -> Static(c), "clazz" -> Static(c.getClass)))
+        // Alias: update all partials with lub value for field
+        case s => println("ERROR // write to unknown: " + s); return // need to trash the whole store?? sigh ...
+      }
+      store += (s -> Partial(fs + (k -> dealias(value))))
+
+      if (debugReadWrite) println("// storing: " + (s -> Partial(fs + (k -> value))))
+
+      /*val offset = resolveOffset(field);
+      if (isVolatile(field)) {
+          unsafe.putDoubleVolatile(resolveBase(base, field), offset, value);
+      } else {
+          unsafe.putDouble(resolveBase(base, field), offset, value);
+      }*/
+    }
+
     override def getArray[T:TypeRep](index: Rep[Long], array: Rep[Object]): Rep[T] = {
       checkArray(array, index);
 
@@ -334,12 +375,12 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
       val offset = 0
 
       (eval(base), eval(index)) match {
-          case (Const(base:Array[T]), Const(index)) if isSafeRead(base, offset, typeRep[T]) => 
+          case (Const(base:Array[T]), Const(index)) if isSafeReadArray(base, typeRep[T]) => 
             liftConst(base(index.toInt))
           case (Partial(fs), Const(index)) => 
             def default = fs("alloc") match {
               case Static(base1:Array[T]) => 
-                if (isSafeRead(base1, offset, typeRep[Boolean])) liftConst[T](base1(index.toInt))
+                if (isSafeReadArray(base1, typeRep[Boolean])) liftConst[T](base1(index.toInt))
                 else super.getArray[T](index, array)
               case _ => liftConst[T](null.asInstanceOf[T])
             }
@@ -355,34 +396,6 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
         return unsafe.getByte(array, (Unsafe.ARRAY_BYTE_BASE_OFFSET) + Unsafe.ARRAY_BYTE_INDEX_SCALE.toLong * index);*/
     }
 
-    override def setField[T:TypeRep](value: Rep[T], base0: Rep[Object], field: ResolvedJavaField): Unit = {
-      val offset = resolveOffset(field)
-      val base = resolveBase(base0,field)
-      val volatile = isVolatile(field) // TODO!
-
-      super.setField(value, base0, field)
-      //val Static(off) = offset
-      val off = offset
-
-      val s = dealias(base) match { case Static(x) => constToString(x) case x => x.toString }
-      val Partial(fs) = eval(base) match {
-        case s@Partial(_) => s
-        case s@Const(c) => Partial(Map("alloc" -> Static(c)))
-        // Alias: update all partials with lub value for field
-        case s => println("ERROR // write to unknown: " + s); return // need to trash the whole store?? sigh ...
-      }
-      store += (s -> Partial(fs + (off.toString -> dealias(value))))
-
-      if (debugReadWrite) println("// storing: " + (s -> Partial(fs + (off.toString -> value))))
-
-      /*val offset = resolveOffset(field);
-      if (isVolatile(field)) {
-          unsafe.putDoubleVolatile(resolveBase(base, field), offset, value);
-      } else {
-          unsafe.putDouble(resolveBase(base, field), offset, value);
-      }*/
-    }
-
     override def setArray[T:TypeRep:Manifest](value: Rep[T], index: Rep[Long], array: Rep[Object]): Unit = {
       checkArray(array, index)
       checkArrayType(array, manifest[T].erasure)
@@ -392,19 +405,20 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
 
       super.setArray(value, index,array)
       //val Static(off) = offset
-      val off = offset
+      //val off = offset
 
+/*
       val s = dealias(base) match { case Static(x) => constToString(x) case x => x.toString }
       val Partial(fs) = eval(base) match {
         case s@Partial(_) => s
-        case s@Const(c) => Partial(Map("alloc" -> Static(c)))
+        case s@Const(c) => Partial(Map("alloc" -> Static(c), "clazz" -> Static(c.getClass), "size" -> Static(c.length)))
         // Alias: update all partials with lub value for field
         case s => println("ERROR // write to unknown: " + s); return // need to trash the whole store?? sigh ...
       }
-      store += (s -> Partial(fs + (off.toString -> dealias(value))))
+      store += (s -> Partial(fs + ("array" -> dealias(value))))
 
-      if (debugReadWrite) println("// storing: " + (s -> Partial(fs + (off.toString -> value))))
-
+      if (debugReadWrite) println("// storing: " + (s -> Partial(fs + ("array" -> value))))
+*/
 
       /*checkArray(array, index);
       checkArrayType(array, classOf[T]);
@@ -415,10 +429,11 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
 
   // TODO: should inspect reflect.Field objects
 
-  def isSafeRead(base: Object, offset: Long, typ: TypeRep[_]): Boolean = {
+  def isSafeRead(base: Object, offset: Long, field: ResolvedJavaField, typ: TypeRep[_]): Boolean = {
     if (base == null) {
       println("// base is null, dammit"); false
     } else {
+/*
       val unsafePrefixes = "sun.nio."::"java.io."::"java.nio."::Nil
       val safeFields = "java.io.PrintStream.16"::
                        "java.io.PrintStream.40"::
@@ -447,9 +462,31 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
         println("// " + pred + " read: " + base.toString.replace("\n","\\n") + "." + offset + ":" + typ)
       }
       r
+*/
+
+      if (Modifier.isFinal(field.accessFlags)) return true
+
+      val name = field.holder.toJava.getName + "." + field.name
+
+      name match {
+        case "java.io.FilterOutputStream.out" => true
+        case "java.io.PrintStream.charOut" => true
+        case "java.io.PrintStream.textOut" => true
+        case "java.io.Writer.lock" => true
+        case "java.io.BufferedWriter.out" => true
+        case "java.io.BufferedWriter.cb" => true
+        case "sun.nio.cs.StreamEncoder.encoder" => true
+        case "sun.nio.cs.StreamEncoder.bb" => true
+        case "java.nio.charset.CharsetEncoder.stateNames" => true
+        case _ =>
+         false
+      }
     }
   }
 
+  def isSafeReadArray(base: Object, typ: TypeRep[_]): Boolean = {
+    false
+  }
 
 
 
@@ -467,7 +504,12 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
     // TODO: Partial of Const
     override def objectGetClass(base: Rep[Object]): Rep[Class[Object]] = eval(base) match {
       case Const(base) => unit(base.getClass).asInstanceOf[Rep[Class[Object]]]
-      case Partial(fs) => fs.getOrElse("clazz", objectGetClass(fs("alloc").asInstanceOf[Rep[Class[Object]]])).asInstanceOf[Rep[Class[Object]]]
+      case Partial(fs) => 
+        fs.getOrElse("clazz", {
+          val alloc = fs("alloc").asInstanceOf[Rep[Object]]
+          if (alloc == base) super.objectGetClass(base)
+          else objectGetClass(alloc)
+        }).asInstanceOf[Rep[Class[Object]]]
       case _ => super.objectGetClass(base)
     }
 

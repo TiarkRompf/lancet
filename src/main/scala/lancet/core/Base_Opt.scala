@@ -107,6 +107,7 @@ trait Base_Opt extends Base_Str {
   }
 
 
+  def getFieldForLub[T:TypeRep](base: Rep[Object], cls: Class[_], k: String): Rep[T] = throw new Exception
 
   object StoreLattice {
     type Elem = Map[String, Val[Any]]
@@ -188,6 +189,8 @@ trait Base_Opt extends Base_Str {
                 println("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")")
               val tp = bb.typ.asInstanceOf[TypeRep[Any]]
               Dyn[Any](str)(tp)
+            case (Some(a),None) if p.startsWith("CONST") && k == "clazz" => a // class is constant
+            case (None,Some(b)) if p.startsWith("CONST") && k == "clazz" => b // class is constant
             case (a,b) => 
               val str = "LUB_"+p+"_"+k
               val tp = if (b.nonEmpty) {
@@ -197,23 +200,18 @@ trait Base_Opt extends Base_Str {
                 if (b.get.toString != str)
                   println("val "+str+" = " + b.get + " // Alias(" + a + "," + b + ")")
                 b.get.typ.asInstanceOf[TypeRep[Any]]
-              } else {
+              } else {                
                 val tp = a.get.typ.asInstanceOf[TypeRep[Any]]
                 // we don't have the b value in the store
                 // check if this refers to a const field; if so get the field value
                 if (p.startsWith("CONST")) {
-                  val obj = y("alloc")
-                  // TODO: make more robust!! can we call runtime.
-                  val fld = tp.toString match {
-                    case "Int" => 
-                      "unsafe.getInt("+obj+","+k+")"
-                    case "Byte" => 
-                      "unsafe.getByte("+obj+","+k+")"
-                    case "Object" => 
-                      "unsafe.getObject("+obj+","+k+")"
-                  }
-
-                  println("val "+str+" = " + fld + " // XXX LUBC(" + a + "," + b + ")")
+                  val obj = y("alloc").asInstanceOf[Rep[Object]]
+                  val cls:Class[_] = obj match { case Static(o) => o.getClass }
+                  val fld = getFieldForLub(obj,cls,k)(tp)
+                  println("// lookup "+obj+"."+k+"="+fld)
+                  // may fld and a.get be equal? unlikely ...
+                  if (fld.toString != str)
+                    println("val "+str+" = " + fld + " // XXX LUBC(" + a + "," + b + ")")
                 } else 
                   println("val "+str+" = " + a.get + " // AAA Alias(" + a + "," + b + ")")
                 tp
@@ -230,8 +228,8 @@ trait Base_Opt extends Base_Str {
           case (Some(a),Some(b)) if a == b => a
           case (Some(Partial(as)),Some(Partial(bs))) => Partial(lubPartial(k)(as,bs)) // two definitions ...
           // const: lift on the other side if missing; todo: replace string check with as("alloc") check
-          case (Some(Partial(as)),None) if k.startsWith("CONST") => Partial(lubPartial(k)(as,Map("alloc"->as("alloc"))))
-          case (None,Some(Partial(bs))) if k.startsWith("CONST") => Partial(lubPartial(k)(Map("alloc"->bs("alloc")),bs))
+          case (Some(Partial(as)),None) if k.startsWith("CONST") => Partial(lubPartial(k)(as,Map("alloc"->as("alloc"),"clazz"->as("clazz")))) // final fields ...
+          case (None,Some(Partial(bs))) if k.startsWith("CONST") => Partial(lubPartial(k)(Map("alloc"->bs("alloc"),"clazz"->bs("clazz")),bs))
           // allocs: may be null in alternative
           //case (Some(Partial(as)),None) => Partial(lubPartial(k)(as,Map("alloc"->liftConst(null))))
           //case (None,Some(Partial(bs))) => Partial(lubPartial(k)(Map("alloc"->liftConst(null)),bs))
@@ -239,10 +237,10 @@ trait Base_Opt extends Base_Str {
           case (Some(Alias(as)),Some(Alias(bs))) => Alias(as ++ bs)
           case (Some(a),Some(b)) => Top
           case (Some(a),b) => 
-            println("// strange lub: "+k+" -> Some("+a+"), "+b); 
+            //println("// strange lub: "+k+" -> Some("+a+"), "+b); 
             Top //a
           case (a,Some(b)) => 
-            println("// strange lub: "+k+" -> "+a+",Some("+b+")"); 
+            //println("// strange lub: "+k+" -> "+a+",Some("+b+")"); 
             Top //b
         })
       }

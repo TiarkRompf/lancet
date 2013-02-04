@@ -22,6 +22,14 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Opt4
 
 trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpreter_Str with RuntimeUniverse_Opt {
 
+    // hack: base_opt doesn't have access to runtime
+    override def getFieldForLub[T:TypeRep](base: Rep[Object], cls: Class[_], k: String): Rep[T] = {
+      val fld = metaAccessProvider.getResolvedJavaType(cls).declaredFields.find(_.name == k)
+      fld.map(f => runtimeInterface.asInstanceOf[Runtime_Opt].getFieldConst[T](base,f)).
+        getOrElse(getFieldForLub[T](base,cls.getSuperclass,k))
+    }
+
+
     override def objectGetClass(receiver: Rep[Object]): Option[Class[_]] = {
       eval(receiver) match {
         case Partial(fs) if fs.contains("clazz") => 
