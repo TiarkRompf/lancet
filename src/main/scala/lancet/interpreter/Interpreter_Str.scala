@@ -65,11 +65,13 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
     def printIndented(str: String): Unit = {
       val lines = str.split("\n")
       var indent = 1
-      var opened = false
-      for (l <- lines if l.trim.length > 0) {
-        if (l.contains("}")) indent -= 1
-        println("  "*indent + l.trim)
-        if (l.contains("{")) indent += 1
+      for (l0 <- lines; val l = l0.trim; if l.length > 0) {
+        var open = 0
+        var close = 0
+        l foreach { case '{' => open += 1 case '}' => close += 1 case _ => }
+        val d = if (close == 0) 0 else l.takeWhile(_ == '}').length
+        println("  "*(indent-d) + l)
+        indent += (open - close)
       }
 
       /*
