@@ -32,7 +32,7 @@ import com.oracle.graal.bytecode._;
 
 
 
-trait RuntimeUniverse_Opt extends Core_Opt with RuntimeUniverse_Str {
+trait RuntimeUniverse_Opt extends Core_Opt with RuntimeUniverse_LMS {
 
 object static extends HasUnsafe
 object unsafe extends Unsafe_Opt
@@ -42,12 +42,12 @@ var debugReadWrite = false
 var debugNullCheck = false
 
 
-trait Unsafe_Opt extends Unsafe_Str {
+trait Unsafe_Opt extends Unsafe_LMS {
 }
 
 
 
-class Runtime_Generic(metaProvider: MetaAccessProvider) extends Runtime_Str(metaProvider) {
+class Runtime_Generic(metaProvider: MetaAccessProvider) extends Runtime_LMS(metaProvider) {
 
     def getField[T:TypeRep](base: Rep[Object], field: ResolvedJavaField): Rep[T] = {
         /*val offset = resolveOffset(field);

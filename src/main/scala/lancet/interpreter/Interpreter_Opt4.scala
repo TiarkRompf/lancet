@@ -20,7 +20,7 @@ class BytecodeInterpreter_Opt extends BytecodeInterpreter_Opt4
 // version 4 -- reverse engineer more of the program block structure (if, loop)
 
 
-trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpreter_Str with RuntimeUniverse_Opt {
+trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpreter_LMS with RuntimeUniverse_Opt {
 
     // hack: base_opt doesn't have access to runtime
     override def getFieldForLub[T:TypeRep](base: Rep[Object], cls: Class[_], k: String): Rep[T] = {
@@ -104,6 +104,7 @@ trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpret
           //val locals = FrameLattice.getFields(frameY).filter(_.toString.startsWith("PHI"))
           //val fields = StoreLattice.getFields(storeY).filter(_.toString.startsWith("LUB"))
           //for (v <- locals ++ fields) println("v"+v+" = "+v)
+          liftConst(())
         }
         (go,frameY,storeY)
       }
@@ -142,7 +143,7 @@ trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpret
 
 
 
-trait AbstractInterpreterIntf extends BytecodeInterpreter_Str with Core_Str {
+trait AbstractInterpreterIntf extends BytecodeInterpreter_LMS with Core_LMS {
 
     type State
 
@@ -163,7 +164,7 @@ trait AbstractInterpreterIntf extends BytecodeInterpreter_Str with Core_Str {
 
 
 
-class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpreter_Opt4Engine with BytecodeInterpreter_Str with RuntimeUniverse_Opt {
+class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpreter_Opt4Engine with BytecodeInterpreter_LMS with RuntimeUniverse_Opt {
     override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m)
 
     override def withScope[A](body: =>A): A = { // TODO: put somewhere else
@@ -216,7 +217,7 @@ class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpre
 }
 
 
-trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with BytecodeInterpreter_Str with Core_Str {
+trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with BytecodeInterpreter_LMS with Core_LMS {
 
     // config options
 
@@ -493,7 +494,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
       }
 
       if (returns.length == 0) {
-        print(src)
+        println(src)
         println("// (no return?)")
       } else if (returns.length == 1) { 
         val (k,s) = returns(0)
@@ -501,7 +502,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
           if (debugReturns) println("// ret single "+method)
           withState(s)(exec)
         }
-        print(src.replace(k, retSrc.trim))
+        println(src.replace(k, retSrc.trim))
         res
       } else {
         println("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
@@ -518,7 +519,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
           val assign = fields.map(genVarWrite).mkString("\n")
           src1 = src1.replace(k,"/*R"+k.substring(6)+"*/;{" + go+assign+"};") // substr prevents further matches
         }
-        print(src1)
+        println(src1)
         
         println(";{")
         if (debugReturns) println("// ret multi "+method)

@@ -1,6 +1,8 @@
 package lancet
 package interpreter
 
+import lancet.api._
+
 import com.oracle.graal.api.meta._      // ResolvedJavaMethod
 import com.oracle.graal.hotspot._
 import com.oracle.graal.hotspot.meta._  // HotSpotRuntime
@@ -19,22 +21,20 @@ class TestInterpreter1 extends FileDiffSuite {
     val o = new Foo
 
     val runtime = HotSpotGraalRuntime.getInstance().getRuntime();
-    val compiler = HotSpotGraalRuntime.getInstance().getCompiler();
 
     val cls = o.getClass
     val reflectMeth = cls.getDeclaredMethod("bar", classOf[Int])
     val method = runtime.getResolvedJavaMethod(reflectMeth)
 
-    val it = new BytecodeInterpreter_Exec
+    val it = Lancet.newInterpreter
     it.TRACE = true
     it.TRACE_BYTE_CODE = true
-    it.initialize()
     val res = it.execute(method, Array[Object](o, 8:Integer))
     
     println("res: " + res)
   }
 
-
+/*
   // compile simple
   def testB = withOutFileChecked(prefix+"B") {
 
@@ -43,13 +43,14 @@ class TestInterpreter1 extends FileDiffSuite {
     }
 
     val o = new Foo
-    val it = new BytecodeInterpreter_Simple
+    val it = Lancet.newCompilerSimple
 
-    it.initialize()
     val f = it.compile((x:Int) => o.bar(8))
     println(f(7))
 
   }
+*/
+  
 
 /*
   this takes quite long. profiling data: 73s / 2013-01-30
@@ -68,13 +69,10 @@ class TestInterpreter1 extends FileDiffSuite {
     }
 
     val o = new Foo
-    val it = new BytecodeInterpreter_Opt {
-
-    }
+    val it = Lancet.newCompilerOpt
 
     //it.emitControlFlow = false
 
-    it.initialize()
     val f = it.compile((x:Int) => o.bar(8))
     println(f(7))
   }

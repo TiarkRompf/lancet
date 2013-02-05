@@ -1,6 +1,102 @@
 package lancet.core
 
-trait Base_Str2 extends Base_Str {
+import scala.virtualization.lms.common._
+
+/*
+trait Base_LMS extends Base {
+  val IR: EffectExp
+
+  type Rep[+T] = IR.Rep[T]
+  type TypeRep[T] = Manifest[T]
+
+  def infix_typ[T](x: Rep[T]): TypeRep[T]
+
+}
+
+trait Base_LMS2 extends Base_LMS {
+  import IR._
+
+  type Static[+T] = IR.Const[T]
+  type Dyn[+T] = IR.Sym[T]
+
+  val Static = IR.Const
+  object Dyn {
+    def apply
+    def unapply[T](x: Rep[T]): Option[String] = x match {
+      case Sym(n) => Some("x"+n)
+      case _ => None
+    }
+  }
+
+  def constToString(x:Any): String
+*/
+
+
+trait Base_LMS0 extends Base {
+  def reflect[T:TypeRep](s: Any*): Rep[T]
+  def reify[T](x: => Rep[T]): Block[T]
+
+  def liftConst[T:TypeRep](x:T): Rep[T]
+
+  def repManifest[T:Manifest]: Manifest[Rep[T]]
+
+  type Block[+T]
+
+  case class TypeRep[T](s: String) { override def toString = s }
+
+  implicit def anyType[T:Manifest] = new TypeRep[T](manifest[T].toString)
+
+  implicit object booleanType extends TypeRep[Boolean]("Boolean")
+  implicit object byteType extends TypeRep[Byte]("Byte")
+  implicit object charType extends TypeRep[Char]("Char")
+  implicit object shortType extends TypeRep[Short]("Short")
+  implicit object intType extends TypeRep[Int]("Int")
+  implicit object longType extends TypeRep[Long]("Long")
+  implicit object floatType extends TypeRep[Float]("Float")
+  implicit object doubleType extends TypeRep[Double]("Double")
+  implicit object objectType extends TypeRep[Object]("Object")
+
+  implicit object unitType extends TypeRep[Unit]("Unit")
+
+  def typeRep[T:TypeRep]: TypeRep[T] = implicitly[TypeRep[T]]
+
+
+  var constantPool: Vector[AnyRef] = Vector.empty
+
+  def constToString[T](x:T): String = x match {
+    case x: Boolean => ""+x
+    case x: Int => ""+x
+    case x: Long => ""+x
+    case x: Double => ""+x
+    case x: Unit => "()"
+    case null => "null"
+    // TODO: primitives, arrays
+    case s: String => ("\""+s.replace("\n","\\n")+"\"") // TODO: proper escape
+    case c: Class[_] => 
+      c.getName() match {
+        case "char" => "classOf[Char]"
+        case name => 
+          ("Class.forName(\""+name+"\")")//("classOf["+c.getName+"]")
+      }
+    //case o: Array[Object] => ("(null:Array[Object])") // TODO
+    //case o: Object => ("(null:"+o.getClass.getName+")")
+    case _ => 
+      var idx = constantPool.indexOf(x) // FIXME: use eq
+      if (idx < 0) {
+        constantPool = constantPool :+ x.asInstanceOf[AnyRef]
+        idx = constantPool.size - 1
+      }
+
+      "CONST_" + idx
+  }
+
+}
+
+trait Base_LMS extends Base_LMS0 {
+
+  //def constToString(x:Any): String
+
+
 
   abstract class Rep[+T:TypeRep] { def typ: TypeRep[_] = implicitly[TypeRep[T]] }
 
@@ -13,32 +109,86 @@ trait Base_Str2 extends Base_Str {
     override def toString = s 
   }
 
+  case class Block[+T](stms: List[Stm], res: Rep[T]) {
+    override def toString = "{\n"+stms.mkString("\n")+"\n" + res + "\n}"
+  }
+
+  abstract class Stm {
+    def deps: List[Dyn[Any]]
+    def blocks: List[Block[Any]]
+  }
+
+  case class ValDef[T](x: String, rhs: List[Any]) /*rhs: Either[String,Rep[Any]]*/ extends Stm {
+    override def toString = if (x == "_") rhs.mkString("") else "val "+x+" = "+rhs.mkString("")
+    def deps: List[Dyn[Any]] = rhs collect { case x: Dyn[t] => x }
+    def blocks: List[Block[Any]] = rhs collect { case x: Block[t] => x }
+  }
+
+  case class Unstructured(s: String) extends Stm {
+    override def toString = s
+    def deps: List[Dyn[Any]] = Nil
+    def blocks: List[Block[Any]] = Nil
+  }
+
+
   def repManifest[T:Manifest]: Manifest[Rep[T]] = manifest[Rep[T]]
 
   var nSyms = 0
   def fresh = { nSyms += 1; "x" + (nSyms - 1) }
 
-  def emit(s: String) = println(s)//"          "+s)
-
   def reflect[T:TypeRep](s: Any*): Rep[T] = { 
     val rhs = s.mkString("")
+
     ({//exprs.getOrElse(rhs, {
       if (typeRep[T] == typeRep[Unit]) {
-        emit(s.mkString("")); liftConst(()).asInstanceOf[Rep[T]]
+        emit(ValDef("_", s.toList)); liftConst(()).asInstanceOf[Rep[T]]
       } else {
-        val x = fresh; emit("val "+x+" = "+s.mkString("")); Dyn[T](x)
+        val x = fresh; emit(ValDef(x,s.toList)); Dyn[T](x)
       }
     }).asInstanceOf[Rep[T]]
   }
 
-  def reify[T](x: => Rep[T]): String = ("{\n" + indented(captureOutput(x)) + "\n}")
-  // TODO: does reify need to worry about other state like the store?
+  //var d = 0
+  var stms: List[Stm] = null
+
+  def emit(s: Stm) = {
+    //System.out.println("  "*d + s)
+    stms = s::stms
+  }
+
+
+  def reify[T](x: => Rep[T]): Block[T] = {
+    val save = stms
+    stms = Nil
+    try {
+      //System.out.println("  "*d + "<<")
+      //d += 1
+      val res = x
+      //d -= 1
+      //System.out.println("  "*d + ">>")
+      Block(stms.reverse,res)
+    } finally {
+      stms = save
+    }
+  }
+
+
+  def println(s: Any) = emit(Unstructured(s.toString))
+
+  def captureOutput[A](func: => Rep[A]): String = {
+    val (s,r) = captureOutputResult(func)
+    s + r
+  }
+  def captureOutputResult[A](func: => Rep[A]): (String,Rep[A]) = {
+    val Block(stms,res) = reify(func)
+    (stms.mkString("\n"),res)
+  }
 
 }
 
 
 
-trait Base_Opt_Abs extends Base {
+trait Base_LMS_Abs extends Base {
 
   abstract class Val[+T]
   case class Const[+T](x: T) extends Val[T] { override def toString = ("Const("+x+")").replace("\n","\\n") }
@@ -49,11 +199,11 @@ trait Base_Opt_Abs extends Base {
   def eval[T](x: Rep[T]): Val[T]
 
 
-
 }
 
+trait Base_Opt extends Base_LMS_Opt
 
-trait Base_Opt extends Base_Opt_Abs with Base_Str2 {
+trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
 
 /*
   var exprs: Map[String, Rep[Any]] = Map.empty
@@ -225,7 +375,7 @@ trait Base_Opt extends Base_Opt_Abs with Base_Str2 {
                   val obj = y("alloc").asInstanceOf[Rep[Object]]
                   val cls:Class[_] = obj match { case Static(o) => o.getClass }
                   val fld = getFieldForLub(obj,cls,k)(tp)
-                  println("// lookup "+obj+"."+k+"="+fld)
+                  //println("// lookup "+obj+"."+k+"="+fld)
                   // may fld and a.get be equal? unlikely ...
                   if (fld.toString != str)
                     println("val "+str+" = " + fld + " // XXX LUBC(" + a + "," + b + ")")

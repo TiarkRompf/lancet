@@ -1,6 +1,8 @@
 package lancet
 package interpreter
 
+import lancet.api._
+
 import com.oracle.graal.api.meta._      // ResolvedJavaMethod
 import com.oracle.graal.hotspot._
 import com.oracle.graal.hotspot.meta._  // HotSpotRuntime
@@ -83,7 +85,7 @@ class TestInterpreter4 extends FileDiffSuite {
           execute(cls.getMethod("apply", classOf[Object]), Array[Rep[Object]](f,arg)(repManifest[Object]))
           //println("}")
           //"BODY.RES.asInstanceOf["+typeRep[B]+"]}"
-          "RES.asInstanceOf["+typeRep[B]+"]"
+          Dyn[Unit]("RES.asInstanceOf["+typeRep[B]+"]")
         }
       }
       (arg,body)
@@ -106,12 +108,12 @@ class TestInterpreter4 extends FileDiffSuite {
         case "scala.runtime.BoxesRunTime.equals" => handle {
           case a::b::Nil => reflect[Boolean](a+"=="+b).asInstanceOf[Rep[Object]]
         }
-        case "scala.collection.TraversableLike.filter" => handle {
+        case "scala.collection.GenTraversableLike.filter" => handle {
           case receiver::f::Nil =>
             val (arg,body) = decompileInternal[Object,Boolean](f)
             reflect[Object](""+receiver+".asInstanceOf[Traversable[Object]].filter "+ "{ ("+arg+":"+arg.typ+")" + " => \n" + body + "\n}")
         }
-        case "scala.collection.TraversableLike.map" => handle {
+        case "scala.collection.GenTraversableLike.map" => handle {
           case receiver::f::cbf::Nil =>
             val (arg,body) = decompileInternal[Object,Boolean](f)
             reflect[Object](""+receiver+".asInstanceOf[Traversable[Object]].map "+ "{ ("+arg+":"+arg.typ+")" + " => \n" + body + "\n}")

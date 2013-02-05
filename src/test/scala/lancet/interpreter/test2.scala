@@ -1,6 +1,8 @@
 package lancet
 package interpreter
 
+import lancet.api._
+
 import com.oracle.graal.api.meta._      // ResolvedJavaMethod
 import com.oracle.graal.hotspot._
 import com.oracle.graal.hotspot.meta._  // HotSpotRuntime

@@ -35,11 +35,11 @@ import com.oracle.graal.bytecode._;
 
 
 //@SuppressWarnings("static-method")
-trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInterpreter_Common {
+trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInterpreter_Common {
 
     import BytecodeInterpreter._
 
-    def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Str(m)
+    def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_LMS(m)
 
     override def trace(level: Int, message: String)  = super.trace(level, "// " + message)
 
@@ -73,33 +73,34 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
         println("  "*(indent-d) + l)
         indent += (open - close)
       }
-
-      /*
-      for (l <- lines) {
-        if (opened) {
-          opened = false
-          if (l.contains("}")) {
-            print(" " + l.trim)
-          } else {
-            indent += 1
-            println()
-            print("  "*indent + l.trim)
-          }
-        } else {
-          if (l.contains("}")) indent -= 1
-          print("  "*indent + l.trim)
-        }
-        if (l.contains("{")) { opened = true } else println()
-      }*/
     }
 
+    def classStr(x: Class[_]): String = if (x.isArray()) "Array["+classStr(x.getComponentType)+"]" else x.getName match {
+      case "int" => "Int"
+      case "byte" => "Byte"
+      case "char" => "Char"
+      case "long" => "Long"
+      //TODO/FIXME
+      case s if !Modifier.isPublic(x.getModifiers) => "Object /*" + s + "*/" //s <-- class may be private...
+      case s => s
+        val params = x.getTypeParameters
+        if (params.length == 0) s
+        else s + "[" + params.map(x=>"_").mkString(",") + "]"
+    }
+
+    def manifestStr(x: Manifest[_]) = classStr(x.erasure)
+
+    def specCls(x: AnyRef): (AnyRef,Class[_]) = {
+      val cls = x.getClass
+      if (Modifier.isPublic(cls.getModifiers)) (x,cls) else (x,classOf[Object])
+    }
 
 
     def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
 
       //def captureOutputResult[T](x:T) = ("", x)
 
-      val (src0, res) = captureOutputResult { 
+      val (src0, res) = captureOutputResult {
 
         val arg = reflect[A]("ARG")
 
@@ -109,21 +110,6 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
 
       val (source, _) = captureOutputResult {
       
-        def classStr(x: Class[_]): String = if (x.isArray()) "Array["+classStr(x.getComponentType)+"]" else x.getName match {
-          case "int" => "Int"
-          case "byte" => "Byte"
-          case "char" => "Char"
-          case "long" => "Long"
-          //TODO/FIXME
-          case s if !Modifier.isPublic(x.getModifiers) => "Object /*" + s + "*/" //s <-- class may be private...
-          case s => s
-            val params = x.getTypeParameters
-            if (params.length == 0) s
-            else s + "[" + params.map(x=>"_").mkString(",") + "]"
-        }
-
-        def manifestStr(x: Manifest[_]) = classStr(x.erasure)
-
         val (maStr, mbStr) = (manifestStr(manifest[A]), manifestStr(manifest[B]))
 
         val cst = constantPool.zipWithIndex.map(p=>"CONST_"+p._2+": "+classStr(p._1.getClass)).mkString(",")
@@ -139,20 +125,16 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
         println("def apply(ARG: "+maStr+"): "+mbStr+" = { object BODY {")
         println("  var RES = null.asInstanceOf["+mbStr+"]")
 
-        //println(indented(src0.trim))
         printIndented(src0)
-        println()
+        //println()
 
         println("}; BODY.RES }")
         println("}")
+
+        liftConst(())
       }
 
-      println(source)
-
-      def specCls(x: AnyRef): (AnyRef,Class[_]) = {
-        val cls = x.getClass
-        if (Modifier.isPublic(cls.getModifiers)) (x,cls) else (x,classOf[Object])
-      }
+      System.out.println(source)
 
       ScalaCompile.compile[A,B](source, "Generated", constantPool.map(x=>specCls(x)).toList)
     }
@@ -281,10 +263,10 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
       for (i <- low to high) {
         val midVal = switchHelper.keyAt(i);
         println("case "+midVal+" => ")
-        println(indented(reify(k(switchHelper.bci() + switchHelper.offsetAt(i)))))
+        println(reify(k(switchHelper.bci() + switchHelper.offsetAt(i))))
       }
       println("case _ => ")
-      println(indented(reify(k(switchHelper.defaultTarget))))
+      println(reify(k(switchHelper.defaultTarget)))
       println("}")
       liftConst(())
     }
@@ -315,10 +297,10 @@ trait BytecodeInterpreter_Str extends InterpreterUniverse_Str with BytecodeInter
       println(""+index+" match {")
       for (i <- low to high) {
         println("case "+i+" => ")
-        println(indented(reify(k(switchHelper.targetAt(i-low)))))
+        println(reify(k(switchHelper.targetAt(i-low))))
       }
       println("case _ => ")
-      println(indented(reify(k(switchHelper.defaultTarget))))
+      println(reify(k(switchHelper.defaultTarget)))
       println("}")
 
       /*

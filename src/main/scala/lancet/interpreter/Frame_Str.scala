@@ -35,7 +35,7 @@ import com.oracle.graal.bytecode._;
 
 
 
-trait InterpreterUniverse_Str extends RuntimeUniverse_Str with InterpreterUniverse {
+trait InterpreterUniverse_LMS extends RuntimeUniverse_LMS with InterpreterUniverse {
 
 
 object Frame {
@@ -46,7 +46,7 @@ object Frame {
 
 
 // local array is staged
-
+/*
 class Frame_Str0(val numLocals: Int, parent: Frame) extends Frame {
     import Frame._
     assert(numLocals >= MIN_FRAME_SIZE);
@@ -125,6 +125,7 @@ class Frame_Str0(val numLocals: Int, parent: Frame) extends Frame {
     }
     
 }
+*/
 
 
 // local array contains staged values
