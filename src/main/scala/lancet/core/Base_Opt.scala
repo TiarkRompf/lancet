@@ -1,6 +1,6 @@
 package lancet.core
 
-trait Base_Opt extends Base_Str {
+trait Base_Str2 extends Base_Str {
 
   abstract class Rep[+T:TypeRep] { def typ: TypeRep[_] = implicitly[TypeRep[T]] }
 
@@ -9,7 +9,7 @@ trait Base_Opt extends Base_Str {
     override def toString = constToString(x) + ".asInstanceOf[" + typ + "]"
   }
 
-  case class Dyn[+T:TypeRep](s: String) extends Rep[T] { 
+  case class Dyn[+T:TypeRep](s: String) extends Rep[T] {
     override def toString = s 
   }
 
@@ -22,7 +22,7 @@ trait Base_Opt extends Base_Str {
 
   def reflect[T:TypeRep](s: Any*): Rep[T] = { 
     val rhs = s.mkString("")
-    exprs.getOrElse(rhs, {
+    ({//exprs.getOrElse(rhs, {
       if (typeRep[T] == typeRep[Unit]) {
         emit(s.mkString("")); liftConst(()).asInstanceOf[Rep[T]]
       } else {
@@ -30,9 +30,32 @@ trait Base_Opt extends Base_Str {
       }
     }).asInstanceOf[Rep[T]]
   }
+
   def reify[T](x: => Rep[T]): String = ("{\n" + indented(captureOutput(x)) + "\n}")
   // TODO: does reify need to worry about other state like the store?
 
+}
+
+
+
+trait Base_Opt_Abs extends Base {
+
+  abstract class Val[+T]
+  case class Const[+T](x: T) extends Val[T] { override def toString = ("Const("+x+")").replace("\n","\\n") }
+  case class Partial[+T](fields: Map[String, Rep[Any]]) extends Val[T]
+  case class Alias[+T](y: List[Rep[T]]) extends Val[T]
+  case object Top extends Val[Nothing]
+
+  def eval[T](x: Rep[T]): Val[T]
+
+
+
+}
+
+
+trait Base_Opt extends Base_Opt_Abs with Base_Str2 {
+
+/*
   var exprs: Map[String, Rep[Any]] = Map.empty
 
   def rewrite(s: String, x: Rep[Any]): Unit = {
@@ -40,13 +63,7 @@ trait Base_Opt extends Base_Str {
     assert(false, "REWRITE not used yet")
     exprs += (s -> x)
   }
-
-
-  abstract class Val[+T]
-  case class Const[+T](x: T) extends Val[T] { override def toString = ("Const("+x+")").replace("\n","\\n") }
-  case class Partial[+T](fields: Map[String, Rep[Any]]) extends Val[T]
-  case class Alias[+T](y: List[Rep[T]]) extends Val[T]
-  case object Top extends Val[Nothing]
+*/
 
 /*
   new idea: need to track const modifications, too
