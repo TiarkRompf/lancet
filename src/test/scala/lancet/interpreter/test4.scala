@@ -105,6 +105,10 @@ class TestInterpreter4 extends FileDiffSuite {
         case "java.lang.Integer.valueOf" => handle {
           case r::Nil => reflect[Object]("Integer.valueOf("+r+")")
         }
+        case "java.lang.Object.getClass" => handle {
+          case receiver::Nil =>
+            runtimeInterface.objectGetClass(receiver)
+        }
         case "scala.runtime.BoxesRunTime.equals" => handle {
           case a::b::Nil => reflect[Boolean](a+"=="+b).asInstanceOf[Rep[Object]]
         }
@@ -113,7 +117,7 @@ class TestInterpreter4 extends FileDiffSuite {
             val (arg,body) = decompileInternal[Object,Boolean](f)
             reflect[Object](""+receiver+".asInstanceOf[Traversable[Object]].filter "+ "{ ("+arg+":"+arg.typ+")" + " => \n" + body + "\n}")
         }
-        case "scala.collection.GenTraversableLike.map" => handle {
+        case "scala.collection.generic.FilterMonadic.map" | "scala.collection.TraversableLike.map" => handle {
           case receiver::f::cbf::Nil =>
             val (arg,body) = decompileInternal[Object,Boolean](f)
             reflect[Object](""+receiver+".asInstanceOf[Traversable[Object]].map "+ "{ ("+arg+":"+arg.typ+")" + " => \n" + body + "\n}")
@@ -148,6 +152,31 @@ class TestInterpreter4 extends FileDiffSuite {
       }
     }
 
+
+    override def isSafeRead(base: Object, offset: Long, field: ResolvedJavaField, typ: TypeRep[_]): Boolean = {
+    super.isSafeRead(base, offset, field, typ) || {
+      val name = field.holder.toJava.getName + "." + field.name
+      name match {
+        case "scala.collection.generic.GenTraversableFactory.bitmap$0" => true // lazy field, treat as const
+        case "scala.collection.generic.GenTraversableFactory.ReusableCBF" => true
+        case _ =>
+         false
+      }
+    }}
+
+
+
+
+    override def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = { // stupid value classes ...
+      val y = super.checkCastInternal(typ,value)
+      if (typ.toJava == Class.forName("scala.collection.TraversableLike")) {
+        exprs = exprs.filter(_._2 != y) // HACK - pretend it didn't happen ...
+        reflect[Object](y+".asInstanceOf[Object] // work around value classes, which aren't classes")
+      } else y
+    }
+
+
+
     // TODO: do we need to reconstruct generic types, i.e. Seq[A] ?
 
     override def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame =
@@ -158,6 +187,8 @@ class TestInterpreter4 extends FileDiffSuite {
 
     initialize()
     emitUniqueOpt = true
+    debugBlockKeys = false
+    debugReadWrite = false
 
     def decompile[A:Manifest,B:Manifest](f: A => B): String = {
       compile(f)

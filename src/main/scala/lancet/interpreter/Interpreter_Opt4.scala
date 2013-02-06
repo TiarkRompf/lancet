@@ -144,6 +144,10 @@ trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpret
     def getState(frame: InterpreterFrame) = (freshFrameSimple(frame), store, exprs)
     def withState[A](state: State)(f: InterpreterFrame => A): A = { store = state._2; exprs = state._3; f(state._1) }
 
+    def getState0 = (null, store, exprs) // TODO: cleanup
+    def setState0(state: State): Unit = { store = state._2; exprs = state._3 }
+
+
 }
 
 
@@ -163,6 +167,9 @@ trait AbstractInterpreterIntf extends BytecodeInterpreter_LMS with Core_LMS {
     def getState(frame: InterpreterFrame): State
     def withState[A](state: State)(f: InterpreterFrame => A): A
 
+    def getState0: State
+    def setState0(s: State): Unit
+
 }
 
 
@@ -173,18 +180,18 @@ class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpre
     override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m)
 
     override def withScope[A](body: =>A): A = { // TODO: put somewhere else
-      val saveStore = store
+      val save = getState0
       try {
         super.withScope(body)
       } finally {
-        store = saveStore 
+        setState0(save)
       }
     }
 
     def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = "BLOCK_"+keyid+"("+fields.mkString(",")+")"
 
     def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: String): String = {
-      "// "+key+"\n" +
+      (if (debugBlockKeys) "// "+key+"\n" else "") +
       "def BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit = {\n" +
       code+"\n"+
       "}"
@@ -227,6 +234,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
     // config options
 
     var debugBlocks = false
+    var debugBlockKeys = true
     var debugMethods = false
     var debugReturns = false
     var debugLoops = false

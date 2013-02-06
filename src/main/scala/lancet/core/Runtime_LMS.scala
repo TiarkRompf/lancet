@@ -388,10 +388,12 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
 
     def setArrayByte(value: Rep[Byte], index: Rep[Long], array: Rep[Object]): Unit = {
         checkArray(array, index);
-        if (array.isInstanceOf[Array[Boolean]]) {
+        if_ (objectIsInstanceOf[Array[Boolean]](array)) { //TODO: check
             checkArrayType(array, classOf[Boolean]);
-        } else {
+            liftConst(())
+        } {
             checkArrayType(array, classOf[Byte]);
+            liftConst(())
         }
         unsafe.putByte(array, Unsafe.ARRAY_BYTE_BASE_OFFSET + Unsafe.ARRAY_BYTE_INDEX_SCALE * index, value);
     }

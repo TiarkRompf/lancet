@@ -1,5 +1,5 @@
-// constants: scala.collection.Seq$@24bed68d,public final native java.lang.Class java.lang.Object.getClass(),java.lang.ref.ReferenceQueue$Null@6b02bcf5,public abstract java.lang.reflect.Method scala.runtime.MethodCache.find(java.lang.Class),Array(),scala.runtime.ScalaRunTime$@14a8f057,public boolean java.lang.reflect.AccessibleObject.isAccessible(),public void java.lang.reflect.AccessibleObject.setAccessible(boolean) throws java.lang.SecurityException,public abstract scala.runtime.MethodCache scala.runtime.MethodCache.add(java.lang.Class,java.lang.reflect.Method)
-class Generated(CONST_0: scala.collection.Seq$,CONST_1: java.lang.reflect.Method,CONST_2: Object /*java.lang.ref.ReferenceQueue$Null*/,CONST_3: java.lang.reflect.Method,CONST_4: Array[java.lang.Class[_]],CONST_5: scala.runtime.ScalaRunTime$,CONST_6: java.lang.reflect.Method,CONST_7: java.lang.reflect.Method,CONST_8: java.lang.reflect.Method) extends (scala.collection.Seq[_]=>scala.collection.Seq[_]){
+// constants: scala.collection.Seq$@7f7d597e,public final native java.lang.Class java.lang.Object.getClass(),public abstract java.lang.reflect.Method scala.runtime.MethodCache.find(java.lang.Class),scala.runtime.ScalaRunTime$@706415bb,public boolean java.lang.reflect.AccessibleObject.isAccessible(),public void java.lang.reflect.AccessibleObject.setAccessible(boolean) throws java.lang.SecurityException,public abstract scala.runtime.MethodCache scala.runtime.MethodCache.add(java.lang.Class,java.lang.reflect.Method)
+class Generated(CONST_0: scala.collection.Seq$,CONST_1: java.lang.reflect.Method,CONST_2: java.lang.reflect.Method,CONST_3: scala.runtime.ScalaRunTime$,CONST_4: java.lang.reflect.Method,CONST_5: java.lang.reflect.Method,CONST_6: java.lang.reflect.Method) extends (scala.collection.Seq[_]=>scala.collection.Seq[_]){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -9,359 +9,384 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
   var RES = null.asInstanceOf[scala.collection.Seq[_]]
   val x0 = ARG
   val x1 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$4"))
-  val x2 = unsafe.allocateInstance(Class.forName("scala.collection.generic.GenTraversableFactory$GenericCanBuildFrom"))
-  unsafe.putObject(x2,16.asInstanceOf[Long], CONST_0.asInstanceOf[Object])
-  val x13 = x0.asInstanceOf[Traversable[Object]].map { (x3:Object) =>
+  val x11 = x0.asInstanceOf[Traversable[Object]].map { (x2:Object) =>
     var RES = null.asInstanceOf[Object]
-    val x4 = x3.asInstanceOf[lancet.interpreter.TestInterpreter4$Person] // checkCast
-    val x5 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$4$$anon$1"))
-    val x6 = x4 eq null.asInstanceOf[Null]
-    val x8 = if (x6) {
-      val x7 = throw new NullPointerException()
-      x7
+    val x3 = x2.asInstanceOf[lancet.interpreter.TestInterpreter4$Person] // checkCast
+    val x4 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$4$$anon$1"))
+    val x5 = x3 eq null
+    val x7 = if (x5) {
+      val x6 = throw new NullPointerException()
+      x6
     } else {
-      x4
+      x3
     }
     // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-    val x9 = x4 eq null.asInstanceOf[Null]
-    val x11 = if (x9) {
-      val x10 = throw new NullPointerException()
-      x10
+    /* cse: x3 eq null = x5*/
+    val x9 = if (x5) {
+      val x8 = throw new NullPointerException()
+      x8
     } else {
-      x4
+      x3
     }
-    val x12 = unsafe.getInt(x4,16.asInstanceOf[Long])
-    unsafe.putInt(x5,16.asInstanceOf[Long], x12)
-    (RES = x5) // return to root
+    val x10 = unsafe.getInt(x3,16.asInstanceOf[Long])
+    unsafe.putInt(x4,16.asInstanceOf[Long], x10)
+    (RES = x4) // return to root
     // (no return?)
     RES.asInstanceOf[Boolean]
   }
-  val x14 = x13.asInstanceOf[scala.collection.TraversableLike[_,_]] // checkCast
-  val x15 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5"))
-  val x16 = unsafe.allocateInstance(Class.forName("scala.collection.generic.GenTraversableFactory$GenericCanBuildFrom"))
-  unsafe.putObject(x16,16.asInstanceOf[Long], CONST_0.asInstanceOf[Object])
-  val x140 = x14.asInstanceOf[Traversable[Object]].map { (x17:Object) =>
+  val x12 = x11.asInstanceOf[scala.collection.TraversableLike[_,_]] // checkCast
+  val x13 = x12.asInstanceOf[Object] // work around value classes, which aren't classes
+  val x14 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5"))
+  val x115 = x13.asInstanceOf[Traversable[Object]].map { (x15:Object) =>
     var RES = null.asInstanceOf[Object]
-    val x18 = x17 eq null.asInstanceOf[Null]
-    val x20 = if (x18) {
-      val x19 = throw new NullPointerException()
-      x19
-    } else {
+    val x16 = x15 eq null
+    val x18 = if (x16) {
+      val x17 = throw new NullPointerException()
       x17
+    } else {
+      x15
     }
-    val x21 = CONST_1.asInstanceOf[java.lang.reflect.Method].invoke(x17).asInstanceOf[Object] // java.lang.Object.getClass
+    val x19 = CONST_1.asInstanceOf[java.lang.reflect.Method].invoke(x15).asInstanceOf[Object] // java.lang.Object.getClass
     // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5.reflMethod$Method1>
     ;{
-      var vPHI_3_8 = null.asInstanceOf[Object]
+      var vPHI_3_7 = null.asInstanceOf[Object]
+      var vx0 = null.asInstanceOf[scala.collection.Seq[_]]
       var vx1 = null.asInstanceOf[Object]
+      var vx13 = null.asInstanceOf[Object]
+      var vx14 = null.asInstanceOf[Object]
       var vx15 = null.asInstanceOf[Object]
-      var vx16 = null.asInstanceOf[Object]
-      var vx17 = null.asInstanceOf[Object]
-      var vx2 = null.asInstanceOf[Object]
-      val x22 = unsafe.getObjectVolatile(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5").asInstanceOf[Object],208.asInstanceOf[Long])
-      val x23 = x22 eq null.asInstanceOf[Null]
-      val x25 = if (x23) {
+      var vx16 = null.asInstanceOf[Boolean]
+      var vx19 = null.asInstanceOf[Object]
+      var vx20 = null.asInstanceOf[Object]
+      var vx21 = null.asInstanceOf[Boolean]
+      var vx28 = null.asInstanceOf[Object]
+      var vx29 = null.asInstanceOf[Boolean]
+      var vx42 = null.asInstanceOf[Object]
+      var vx43 = null.asInstanceOf[Boolean]
+      var vx67 = null.asInstanceOf[Object]
+      var vx68 = null.asInstanceOf[Boolean]
+      val x20 = unsafe.getObjectVolatile(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5").asInstanceOf[Object],208.asInstanceOf[Long])
+      val x21 = x20 eq null
+      val x23 = if (x21) {
+        val x22 = throw new NullPointerException()
+        x22
+      } else {
+        x20
+      }
+      // unique method: HotSpotMethod<SoftReference.get> TODO: guard
+      /* cse: x20 eq null = x21*/
+      val x25 = if (x21) {
         val x24 = throw new NullPointerException()
         x24
       } else {
-        x22
+        x20
       }
-      // unique method: HotSpotMethod<SoftReference.get> TODO: guard
-      val x26 = x22 eq null.asInstanceOf[Null]
-      val x28 = if (x26) {
-        val x27 = throw new NullPointerException()
-        x27
+      /* cse: x20 eq null = x21*/
+      val x27 = if (x21) {
+        val x26 = throw new NullPointerException()
+        x26
       } else {
-        x22
+        x20
       }
-      val x29 = x22 eq null.asInstanceOf[Null]
-      val x31 = if (x29) {
-        val x30 = throw new NullPointerException()
-        x30
-      } else {
-        x22
-      }
-      val x32 = unsafe.getObject(x22,16.asInstanceOf[Long])
-      val x33 = x32 eq null.asInstanceOf[Null]
-      if (x33) {
+      val x28 = unsafe.getObject(x20,16.asInstanceOf[Long])
+      val x29 = x28 eq null
+      if (x29) {
         ;{
-        BLOCK_50(x1,x15,x16,x17,x2,x21,x22,x32)}
+          BLOCK_48(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29)}
         ().asInstanceOf[Unit]
       } else {
-        val x34 = x22 eq null.asInstanceOf[Null]
-        val x36 = if (x34) {
-          val x35 = throw new NullPointerException()
-          x35
+        /* cse: x20 eq null = x21*/
+        val x31 = if (x21) {
+          val x30 = throw new NullPointerException()
+          x30
         } else {
-          x22
+          x20
         }
-        val x37 = unsafe.getLong(x22,48.asInstanceOf[Long])
-        val x38 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])
-        val x39 = x37 < x38
-        val x42 = if (x39) {
+        val x32 = unsafe.getLong(x20,48.asInstanceOf[Long])
+        val x33 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])
+        val x34 = x32 < x33
+        val x37 = if (x34) {
           -1.asInstanceOf[Int]
         } else {
-          val x40 = x37 == x38
-          val x41 = if (x40) {
+          val x35 = x32 == x33
+          val x36 = if (x35) {
             0.asInstanceOf[Int]
           } else {
             1.asInstanceOf[Int]
           }
-          x41
+          x36
         }
-        val x43 = x42 == 0.asInstanceOf[Int]
-        if (x43) {
+        val x38 = x37 == 0.asInstanceOf[Int]
+        if (x38) {
           ;{
-          BLOCK_50(x1,x15,x16,x17,x2,x21,x22,x32)}
+            BLOCK_48(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29)}
           ().asInstanceOf[Unit]
         } else {
-          val x44 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])
-          val x45 = x22 eq null.asInstanceOf[Null]
-          val x47 = if (x45) {
-            val x46 = throw new NullPointerException()
-            x46
+          /* cse: unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long]) = x33*/
+          /* cse: x20 eq null = x21*/
+          val x40 = if (x21) {
+            val x39 = throw new NullPointerException()
+            x39
           } else {
-            x22
+            x20
           }
-          val x48 = x44.toDouble
-          unsafe.putDouble(x22,48.asInstanceOf[Long], x48)
+          val x41 = x33.toDouble
+          unsafe.putDouble(x20,48.asInstanceOf[Long], x41)
+          ERROR // write to unknown: Top
           ;{
-          BLOCK_50(x1,x15,x16,x17,x2,x21,x22,x32)}
+            BLOCK_48(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29)}
           ().asInstanceOf[Unit]
         }
         ().asInstanceOf[Unit]
       }
-      def BLOCK_50(x1:Object,x15:Object,x16:Object,x17:Object,x2:Object,x21:Object,x22:Object,x32:Object): Unit = {
-        val x49 = x32.asInstanceOf[scala.runtime.MethodCache] // checkCast
-        val x50 = x49 ne null.asInstanceOf[Null]
-        if (x50) {
-          ;{// strange lub: x51 -> Some(Top), None
-            // strange lub: x52 -> Some(Top), None
-            // strange lub: x51 -> None,Some(Top)
-            // strange lub: x52 -> None,Some(Top)
-          BLOCK_69(x1,x15,x16,x17,x2,x21)}
+      def BLOCK_48(x0:scala.collection.Seq[_],x1:Object,x13:Object,x14:Object,x15:Object,x16:Boolean,x19:Object,x20:Object,x21:Boolean,x28:Object,x29:Boolean): Unit = {
+        val x42 = x28.asInstanceOf[scala.runtime.MethodCache] // checkCast
+        val x43 = x42 ne null
+        if (x43) {
+          ;{
+            BLOCK_67(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43)}
           ().asInstanceOf[Unit]
         } else {
-          val x51 = unsafe.allocateInstance(Class.forName("java.lang.ref.SoftReference"))
-          val x52 = unsafe.allocateInstance(Class.forName("scala.runtime.EmptyMethodCache"))
-          unsafe.putObject(x51,16.asInstanceOf[Long], x52)
-          unsafe.putObject(x51,24.asInstanceOf[Long], CONST_2.asInstanceOf[Object])
-          val x53 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])
-          val x54 = x53.toDouble
-          unsafe.putDouble(x51,48.asInstanceOf[Long], x54)
-          unsafe.putObjectVolatile(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5").asInstanceOf[Object],208.asInstanceOf[Long], x51)
+          val x44 = unsafe.allocateInstance(Class.forName("java.lang.ref.SoftReference"))
+          val x45 = unsafe.allocateInstance(Class.forName("scala.runtime.EmptyMethodCache"))
+          unsafe.putObject(x44,16.asInstanceOf[Long], x45)
+          val x46 = unsafe.getObject(Class.forName("java.lang.ref.ReferenceQueue").asInstanceOf[Object],200.asInstanceOf[Long])
+          unsafe.putObject(x44,24.asInstanceOf[Long], x46)
+          val x47 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])
+          val x48 = x47.toDouble
+          unsafe.putDouble(x44,48.asInstanceOf[Long], x48)
+          unsafe.putObjectVolatile(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5").asInstanceOf[Object],208.asInstanceOf[Long], x44)
           ;{
-          BLOCK_69(x1,x15,x16,x17,x2,x21)}
+            BLOCK_67(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43)}
           ().asInstanceOf[Unit]
         }
       }
-      def BLOCK_69(x1:Object,x15:Object,x16:Object,x17:Object,x2:Object,x21:Object): Unit = {
-        val x55 = unsafe.getObjectVolatile(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5").asInstanceOf[Object],208.asInstanceOf[Long])
-        val x56 = x55 eq null.asInstanceOf[Null]
-        val x58 = if (x56) {
-          val x57 = throw new NullPointerException()
-          x57
+      def BLOCK_67(x0:scala.collection.Seq[_],x1:Object,x13:Object,x14:Object,x15:Object,x16:Boolean,x19:Object,x20:Object,x21:Boolean,x28:Object,x29:Boolean,x42:Object,x43:Boolean): Unit = {
+        /* cse: unsafe.getObjectVolatile(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5").asInstanceOf[Object],208.asInstanceOf[Long]) = x20*/
+        /* cse: x20 eq null = x21*/
+        val x50 = if (x21) {
+          val x49 = throw new NullPointerException()
+          x49
         } else {
-          x55
+          x20
         }
         // unique method: HotSpotMethod<SoftReference.get> TODO: guard
-        val x59 = x55 eq null.asInstanceOf[Null]
-        val x61 = if (x59) {
-          val x60 = throw new NullPointerException()
-          x60
+        /* cse: x20 eq null = x21*/
+        val x52 = if (x21) {
+          val x51 = throw new NullPointerException()
+          x51
         } else {
-          x55
+          x20
         }
-        val x62 = x55 eq null.asInstanceOf[Null]
-        val x64 = if (x62) {
-          val x63 = throw new NullPointerException()
-          x63
+        /* cse: x20 eq null = x21*/
+        val x54 = if (x21) {
+          val x53 = throw new NullPointerException()
+          x53
         } else {
-          x55
+          x20
         }
-        val x65 = unsafe.getObject(x55,16.asInstanceOf[Long])
-        val x66 = x65 eq null.asInstanceOf[Null]
-        if (x66) {
+        /* cse: unsafe.getObject(x20,16.asInstanceOf[Long]) = x28*/
+        /* cse: x28 eq null = x29*/
+        if (x29) {
           ;{
-          BLOCK_75(x1,x15,x16,x17,x2,x21,x55,x65)}
+            BLOCK_73(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43)}
           ().asInstanceOf[Unit]
         } else {
-          val x67 = x55 eq null.asInstanceOf[Null]
-          val x69 = if (x67) {
-            val x68 = throw new NullPointerException()
-            x68
-          } else {
+          /* cse: x20 eq null = x21*/
+          val x56 = if (x21) {
+            val x55 = throw new NullPointerException()
             x55
+          } else {
+            x20
           }
-          val x70 = unsafe.getLong(x55,48.asInstanceOf[Long])
-          val x71 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])
-          val x72 = x70 < x71
-          val x75 = if (x72) {
+          val x57 = unsafe.getLong(x20,48.asInstanceOf[Long])
+          val x58 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])
+          val x59 = x57 < x58
+          val x62 = if (x59) {
             -1.asInstanceOf[Int]
           } else {
-            val x73 = x70 == x71
-            val x74 = if (x73) {
+            val x60 = x57 == x58
+            val x61 = if (x60) {
               0.asInstanceOf[Int]
             } else {
               1.asInstanceOf[Int]
             }
-            x74
+            x61
           }
-          val x76 = x75 == 0.asInstanceOf[Int]
-          if (x76) {
+          val x63 = x62 == 0.asInstanceOf[Int]
+          if (x63) {
             ;{
-            BLOCK_75(x1,x15,x16,x17,x2,x21,x55,x65)}
+              BLOCK_73(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43)}
             ().asInstanceOf[Unit]
           } else {
-            val x77 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])
-            val x78 = x55 eq null.asInstanceOf[Null]
-            val x80 = if (x78) {
-              val x79 = throw new NullPointerException()
-              x79
+            /* cse: unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long]) = x58*/
+            /* cse: x20 eq null = x21*/
+            val x65 = if (x21) {
+              val x64 = throw new NullPointerException()
+              x64
             } else {
-              x55
+              x20
             }
-            val x81 = x77.toDouble
-            unsafe.putDouble(x55,48.asInstanceOf[Long], x81)
+            val x66 = x58.toDouble
+            unsafe.putDouble(x20,48.asInstanceOf[Long], x66)
+            ERROR // write to unknown: Top
             ;{
-            BLOCK_75(x1,x15,x16,x17,x2,x21,x55,x65)}
+              BLOCK_73(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43)}
             ().asInstanceOf[Unit]
           }
           ().asInstanceOf[Unit]
         }
-        def BLOCK_75(x1:Object,x15:Object,x16:Object,x17:Object,x2:Object,x21:Object,x55:Object,x65:Object): Unit = {
-          val x82 = x65.asInstanceOf[scala.runtime.MethodCache] // checkCast
-          val x83 = CONST_3.asInstanceOf[java.lang.reflect.Method].invoke(x82.asInstanceOf[AnyRef],x21.asInstanceOf[AnyRef]).asInstanceOf[Object] // scala.runtime.MethodCache.find
-          val x84 = x83 ne null.asInstanceOf[Null]
-          if (x84) {
-            /*R1*/val PHI_3_8 = x83 // LUBC(x88,x83)
-            val x92 = null // lub Partial(Map(alloc -> x92, clazz -> Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object], 16 -> x121, 24 -> CONST_2.asInstanceOf[Object])), None
-            // strange lub: x92 -> None,Some(Top)
-            vPHI_3_8 = PHI_3_8
-            vx1 = x1
-            vx15 = x15
-            vx16 = x16
-            vx17 = x17
-            vx2 = x2
+        def BLOCK_73(x0:scala.collection.Seq[_],x1:Object,x13:Object,x14:Object,x15:Object,x16:Boolean,x19:Object,x20:Object,x21:Boolean,x28:Object,x29:Boolean,x42:Object,x43:Boolean): Unit = {
+          /* cse: x28.asInstanceOf[scala.runtime.MethodCache] // checkCast = x42*/
+          val x67 = CONST_2.asInstanceOf[java.lang.reflect.Method].invoke(x42.asInstanceOf[AnyRef],x19.asInstanceOf[AnyRef]).asInstanceOf[Object] // scala.runtime.MethodCache.find
+          val x68 = x67 ne null
+          if (x68) {
+            /*R_14_0;*/;{val PHI_3_7 = x67 // LUBC(x73:Object,x67:Object)vPHI_3_7 = PHI_3_7
+              vx0 = x0
+              vx1 = x1
+              vx13 = x13
+              vx14 = x14
+              vx15 = x15
+              vx16 = x16
+              vx19 = x19
+              vx20 = x20
+              vx21 = x21
+              vx28 = x28
+              vx29 = x29
+              vx42 = x42
+              vx43 = x43
+              vx67 = x67
+              vx68 = x68};
             ().asInstanceOf[Unit]
           } else {
-            val x85 = x21 eq null.asInstanceOf[Null]
-            val x87 = if (x85) {
-              val x86 = throw new NullPointerException()
-              x86
+            val x69 = unsafe.getObject(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5").asInstanceOf[Object],200.asInstanceOf[Long])
+            val x70 = x19 eq null
+            val x72 = if (x70) {
+              val x71 = throw new NullPointerException()
+              x71
             } else {
-              x21
+              x19
             }
-            val x88 = x21.asInstanceOf[Class[_]].getMethod("foo".asInstanceOf[Object].asInstanceOf[String],CONST_4.asInstanceOf[Object].asInstanceOf[Class[_]])
-            val x89 = CONST_6.asInstanceOf[java.lang.reflect.Method].invoke(x88).asInstanceOf[Boolean] // java.lang.reflect.AccessibleObject.isAccessible
-            val x90 = if (x89) {
+            val x73 = x19.asInstanceOf[Class[_]].getMethod("foo".asInstanceOf[Object].asInstanceOf[String],x69.asInstanceOf[Class[_]])
+            val x74 = CONST_4.asInstanceOf[java.lang.reflect.Method].invoke(x73).asInstanceOf[Boolean] // java.lang.reflect.AccessibleObject.isAccessible
+            val x75 = if (x74) {
               1.asInstanceOf[Int]
             } else {
               0.asInstanceOf[Int]
             }
-            val x91 = x90 != 0.asInstanceOf[Int]
-            if (x91) {
+            val x76 = x75 != 0.asInstanceOf[Int]
+            if (x76) {
               ;{
-              BLOCK_84(x1,x15,x16,x17,x2,x21,x83,x88)}
+                BLOCK_82(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43,x67,x68,x69,x70,x73,x74,x76)}
               ().asInstanceOf[Unit]
             } else {
-              CONST_7.asInstanceOf[java.lang.reflect.Method].invoke(x88.asInstanceOf[AnyRef],true.asInstanceOf[Boolean].asInstanceOf[AnyRef]).asInstanceOf[Unit] // java.lang.reflect.AccessibleObject.setAccessible
+              CONST_5.asInstanceOf[java.lang.reflect.Method].invoke(x73.asInstanceOf[AnyRef],true.asInstanceOf[Boolean].asInstanceOf[AnyRef]).asInstanceOf[Unit] // java.lang.reflect.AccessibleObject.setAccessible
               ;{
-              BLOCK_84(x1,x15,x16,x17,x2,x21,x83,x88)}
+                BLOCK_82(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43,x67,x68,x69,x70,x73,x74,x76)}
               ().asInstanceOf[Unit]
             }
-            def BLOCK_84(x1:Object,x15:Object,x16:Object,x17:Object,x2:Object,x21:Object,x83:Object,x88:Object): Unit = {
-              val x92 = unsafe.allocateInstance(Class.forName("java.lang.ref.SoftReference"))
-              val x93 = unsafe.getObjectVolatile(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5").asInstanceOf[Object],208.asInstanceOf[Long])
-              val x94 = x93 eq null.asInstanceOf[Null]
-              val x96 = if (x94) {
-                val x95 = throw new NullPointerException()
-                x95
+            def BLOCK_82(x0:scala.collection.Seq[_],x1:Object,x13:Object,x14:Object,x15:Object,x16:Boolean,x19:Object,x20:Object,x21:Boolean,x28:Object,x29:Boolean,x42:Object,x43:Boolean,x67:Object,x68:Boolean,x69:Object,x70:Boolean,x73:Object,x74:Boolean,x76:Boolean): Unit = {
+              val x77 = unsafe.allocateInstance(Class.forName("java.lang.ref.SoftReference"))
+              /* cse: unsafe.getObjectVolatile(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5").asInstanceOf[Object],208.asInstanceOf[Long]) = x20*/
+              /* cse: x20 eq null = x21*/
+              val x79 = if (x21) {
+                val x78 = throw new NullPointerException()
+                x78
               } else {
-                x93
+                x20
               }
               // unique method: HotSpotMethod<SoftReference.get> TODO: guard
-              val x97 = x93 eq null.asInstanceOf[Null]
-              val x99 = if (x97) {
-                val x98 = throw new NullPointerException()
-                x98
+              /* cse: x20 eq null = x21*/
+              val x81 = if (x21) {
+                val x80 = throw new NullPointerException()
+                x80
               } else {
-                x93
+                x20
               }
-              val x100 = x93 eq null.asInstanceOf[Null]
-              val x102 = if (x100) {
-                val x101 = throw new NullPointerException()
-                x101
+              /* cse: x20 eq null = x21*/
+              val x83 = if (x21) {
+                val x82 = throw new NullPointerException()
+                x82
               } else {
-                x93
+                x20
               }
-              val x103 = unsafe.getObject(x93,16.asInstanceOf[Long])
-              val x104 = x103 eq null.asInstanceOf[Null]
-              if (x104) {
+              /* cse: unsafe.getObject(x20,16.asInstanceOf[Long]) = x28*/
+              /* cse: x28 eq null = x29*/
+              if (x29) {
                 ;{
-                BLOCK_91(x1,x103,x15,x16,x17,x2,x21,x88,x92,x93)}
+                  BLOCK_89(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43,x67,x68,x69,x70,x73,x74,x76,x77)}
                 ().asInstanceOf[Unit]
               } else {
-                val x105 = x93 eq null.asInstanceOf[Null]
-                val x107 = if (x105) {
-                  val x106 = throw new NullPointerException()
-                  x106
+                /* cse: x20 eq null = x21*/
+                val x85 = if (x21) {
+                  val x84 = throw new NullPointerException()
+                  x84
                 } else {
-                  x93
+                  x20
                 }
-                val x108 = unsafe.getLong(x93,48.asInstanceOf[Long])
-                val x109 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])
-                val x110 = x108 < x109
-                val x113 = if (x110) {
+                val x86 = unsafe.getLong(x20,48.asInstanceOf[Long])
+                val x87 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])
+                val x88 = x86 < x87
+                val x91 = if (x88) {
                   -1.asInstanceOf[Int]
                 } else {
-                  val x111 = x108 == x109
-                  val x112 = if (x111) {
+                  val x89 = x86 == x87
+                  val x90 = if (x89) {
                     0.asInstanceOf[Int]
                   } else {
                     1.asInstanceOf[Int]
                   }
-                  x112
+                  x90
                 }
-                val x114 = x113 == 0.asInstanceOf[Int]
-                if (x114) {
+                val x92 = x91 == 0.asInstanceOf[Int]
+                if (x92) {
                   ;{
-                  BLOCK_91(x1,x103,x15,x16,x17,x2,x21,x88,x92,x93)}
+                    BLOCK_89(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43,x67,x68,x69,x70,x73,x74,x76,x77)}
                   ().asInstanceOf[Unit]
                 } else {
-                  val x115 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])
-                  val x116 = x93 eq null.asInstanceOf[Null]
-                  val x118 = if (x116) {
-                    val x117 = throw new NullPointerException()
-                    x117
-                  } else {
+                  /* cse: unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long]) = x87*/
+                  /* cse: x20 eq null = x21*/
+                  val x94 = if (x21) {
+                    val x93 = throw new NullPointerException()
                     x93
+                  } else {
+                    x20
                   }
-                  val x119 = x115.toDouble
-                  unsafe.putDouble(x93,48.asInstanceOf[Long], x119)
+                  val x95 = x87.toDouble
+                  unsafe.putDouble(x20,48.asInstanceOf[Long], x95)
+                  ERROR // write to unknown: Top
                   ;{
-                  BLOCK_91(x1,x103,x15,x16,x17,x2,x21,x88,x92,x93)}
+                    BLOCK_89(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43,x67,x68,x69,x70,x73,x74,x76,x77)}
                   ().asInstanceOf[Unit]
                 }
                 ().asInstanceOf[Unit]
               }
-              def BLOCK_91(x1:Object,x103:Object,x15:Object,x16:Object,x17:Object,x2:Object,x21:Object,x88:Object,x92:Object,x93:Object): Unit = {
-                val x120 = x103.asInstanceOf[scala.runtime.MethodCache] // checkCast
-                val x121 = CONST_8.asInstanceOf[java.lang.reflect.Method].invoke(x120.asInstanceOf[AnyRef],x21.asInstanceOf[AnyRef],x88.asInstanceOf[AnyRef]).asInstanceOf[Object] // scala.runtime.MethodCache.add
-                unsafe.putObject(x92,16.asInstanceOf[Long], x121)
-                unsafe.putObject(x92,24.asInstanceOf[Long], CONST_2.asInstanceOf[Object])
-                val x122 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])
-                val x123 = x122.toDouble
-                unsafe.putDouble(x92,48.asInstanceOf[Long], x123)
-                unsafe.putObjectVolatile(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5").asInstanceOf[Object],208.asInstanceOf[Long], x92)
-                /*R0*/val PHI_3_8 = x88 // LUBC(x83,x88)
-                // strange lub: x92 -> None,Some(Partial(Map(alloc -> x92, clazz -> Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object], 16 -> x121, 24 -> CONST_2.asInstanceOf[Object])))
-                vPHI_3_8 = PHI_3_8
-                vx1 = x1
-                vx15 = x15
-                vx16 = x16
-                vx17 = x17
-                vx2 = x2
+              def BLOCK_89(x0:scala.collection.Seq[_],x1:Object,x13:Object,x14:Object,x15:Object,x16:Boolean,x19:Object,x20:Object,x21:Boolean,x28:Object,x29:Boolean,x42:Object,x43:Boolean,x67:Object,x68:Boolean,x69:Object,x70:Boolean,x73:Object,x74:Boolean,x76:Boolean,x77:Object): Unit = {
+                /* cse: x28.asInstanceOf[scala.runtime.MethodCache] // checkCast = x42*/
+                val x96 = CONST_6.asInstanceOf[java.lang.reflect.Method].invoke(x42.asInstanceOf[AnyRef],x19.asInstanceOf[AnyRef],x73.asInstanceOf[AnyRef]).asInstanceOf[Object] // scala.runtime.MethodCache.add
+                unsafe.putObject(x77,16.asInstanceOf[Long], x96)
+                val x97 = unsafe.getObject(Class.forName("java.lang.ref.ReferenceQueue").asInstanceOf[Object],200.asInstanceOf[Long])
+                unsafe.putObject(x77,24.asInstanceOf[Long], x97)
+                val x98 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])
+                val x99 = x98.toDouble
+                unsafe.putDouble(x77,48.asInstanceOf[Long], x99)
+                unsafe.putObjectVolatile(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5").asInstanceOf[Object],208.asInstanceOf[Long], x77)
+                /*R_13_0;*/;{val PHI_3_7 = x73 // LUBC(x67:Object,x73:Object)vPHI_3_7 = PHI_3_7
+                  vx0 = x0
+                  vx1 = x1
+                  vx13 = x13
+                  vx14 = x14
+                  vx15 = x15
+                  vx16 = x16
+                  vx19 = x19
+                  vx20 = x20
+                  vx21 = x21
+                  vx28 = x28
+                  vx29 = x29
+                  vx42 = x42
+                  vx43 = x43
+                  vx67 = x67
+                  vx68 = x68};
               }
             }
             ().asInstanceOf[Unit]
@@ -369,62 +394,70 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         }
       }
       ;{
-        val PHI_3_8 = vPHI_3_8
+        val PHI_3_7 = vPHI_3_7
+        val x0 = vx0
         val x1 = vx1
+        val x13 = vx13
+        val x14 = vx14
         val x15 = vx15
         val x16 = vx16
-        val x17 = vx17
-        val x2 = vx2
-        val x124 = new Array[java.lang.Object](0.asInstanceOf[Int])
-        val x125 = PHI_3_8 eq null.asInstanceOf[Null]
-        val x127 = if (x125) {
-          val x126 = throw new NullPointerException()
-          x126
+        val x19 = vx19
+        val x20 = vx20
+        val x21 = vx21
+        val x28 = vx28
+        val x29 = vx29
+        val x42 = vx42
+        val x43 = vx43
+        val x67 = vx67
+        val x68 = vx68
+        val x100 = new Array[java.lang.Object](0.asInstanceOf[Int])
+        val x101 = PHI_3_7 eq null
+        val x103 = if (x101) {
+          val x102 = throw new NullPointerException()
+          x102
         } else {
-          PHI_3_8
+          PHI_3_7
         }
-        val x128 = PHI_3_8.asInstanceOf[java.lang.reflect.Method].invoke(x17,x124)
-        val x129 = x128.asInstanceOf[java.lang.Integer] // checkCast
-        val x130 = x129 ne null.asInstanceOf[Null]
-        if (x130) {
-          val x131 = x129.asInstanceOf[java.lang.Integer] // checkCast
-          val x132 = x131 eq null.asInstanceOf[Null]
-          val x134 = if (x132) {
-            val x133 = throw new NullPointerException()
-            x133
+        val x104 = PHI_3_7.asInstanceOf[java.lang.reflect.Method].invoke(x15,x100)
+        val x105 = x104.asInstanceOf[java.lang.Integer] // checkCast
+        val x106 = x105 ne null
+        if (x106) {
+          val x107 = x105.asInstanceOf[java.lang.Integer] // checkCast
+          val x108 = x107 eq null
+          val x110 = if (x108) {
+            val x109 = throw new NullPointerException()
+            x109
           } else {
-            x131
+            x107
           }
-          val x135 = x131 eq null.asInstanceOf[Null]
-          val x137 = if (x135) {
-            val x136 = throw new NullPointerException()
-            x136
+          /* cse: x107 eq null = x108*/
+          val x112 = if (x108) {
+            val x111 = throw new NullPointerException()
+            x111
           } else {
-            x131
+            x107
           }
-          val x138 = unsafe.getInt(x131,16.asInstanceOf[Long])
-          ;{val PHI_4_4 = x138 // LUBC(PHI_4_4,x138)
-          BLOCK_111(PHI_4_4,x1,x124,x128,x129,x15,x16,x17,x2)}
+          val x113 = unsafe.getInt(x107,16.asInstanceOf[Long])
+          ;{val PHI_4_4 = x113 // LUBC(PHI_4_4:Int,x113:Int)
+            BLOCK_109(PHI_4_4,x0,x1,x100,x101,x104,x105,x106,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43,x67,x68)}
           ().asInstanceOf[Unit]
         } else {
-          ;{val PHI_4_4 = 0.asInstanceOf[Int] // LUBC(PHI_4_4,0.asInstanceOf[Int])
-          BLOCK_111(PHI_4_4,x1,x124,x128,x129,x15,x16,x17,x2)}
+          ;{val PHI_4_4 = 0.asInstanceOf[Int] // LUBC(PHI_4_4:Int,0.asInstanceOf[Int]:Int)
+            BLOCK_109(PHI_4_4,x0,x1,x100,x101,x104,x105,x106,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43,x67,x68)}
           ().asInstanceOf[Unit]
         }
-        def BLOCK_111(PHI_4_4:Int,x1:Object,x124:Object,x128:Object,x129:Object,x15:Object,x16:Object,x17:Object,x2:Object): Unit = {
-          val x139 = Integer.valueOf(PHI_4_4)
-          (RES = x139) // return to root
+        def BLOCK_109(PHI_4_4:Int,x0:scala.collection.Seq[_],x1:Object,x100:Object,x101:Boolean,x104:Object,x105:Object,x106:Boolean,x13:Object,x14:Object,x15:Object,x16:Boolean,x19:Object,x20:Object,x21:Boolean,x28:Object,x29:Boolean,x42:Object,x43:Boolean,x67:Object,x68:Boolean): Unit = {
+          val x114 = Integer.valueOf(PHI_4_4)
+          (RES = x114) // return to root
         }
-      }}
-      // (no return?)
-      RES.asInstanceOf[Boolean]
-    }
-    val x141 = x140.asInstanceOf[scala.collection.Seq[_]] // checkCast
-    (RES = x141) // return to root
+    }}
     // (no return?)
-
+    RES.asInstanceOf[Boolean]
+  }
+  val x116 = x115.asInstanceOf[scala.collection.Seq[_]] // checkCast
+  (RES = x116) // return to root
+  // (no return?)
 }; BODY.RES }
 }
-
 compilation: ok
 <decompiled>

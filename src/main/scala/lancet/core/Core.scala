@@ -261,6 +261,7 @@ trait Core extends Base {
   def objectEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean]
   def objectNotEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean]
   def objectAsInstanceOf[T:TypeRep](x: Rep[Object]): Rep[T]
+  def objectIsInstanceOf[T:TypeRep](x: Rep[Object]): Rep[Boolean]
 
   def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T]
 

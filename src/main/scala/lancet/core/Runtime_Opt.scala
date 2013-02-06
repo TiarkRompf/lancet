@@ -177,6 +177,72 @@ class Runtime_Generic(metaProvider: MetaAccessProvider) extends Runtime_LMS(meta
 
 
 
+
+
+  // overridable ...
+  def isSafeRead(base: Object, offset: Long, field: ResolvedJavaField, typ: TypeRep[_]): Boolean = {
+    if (base == null) {
+      println("// base is null, dammit"); false
+    } else {
+/*
+      val unsafePrefixes = "sun.nio."::"java.io."::"java.nio."::Nil
+      val safeFields = "java.io.PrintStream.16"::
+                       "java.io.PrintStream.40"::
+                       "java.io.PrintStream.48"::
+                       "java.io.BufferedWriter.32":: /*.40 Int .44 Int */
+                       "java.io.BufferedWriter.48"::
+                       "java.io.BufferedWriter.56"::
+                       "java.io.BufferedWriter.64"::
+                       "java.io.OutputStreamWriter.40"::
+                       "sun.nio.cs.StreamEncoder.32"::
+                       "sun.nio.cs.StreamEncoder.56"::
+                       "sun.nio.cs.StreamEncoder.64"::
+                       "sun.nio.cs.StreamEncoder.72"::
+                       "sun.nio.cs.StreamEncoder.80"::
+                       "sun.nio.cs.StreamEncoder.88"::
+                       "java.nio.HeapByteBuffer[pos=0 lim=8192 cap=8192].48":: //HACK/FIXME
+                       "sun.nio.cs.UTF_8$Encoder.72"::
+                       "java.nio.charset.CoderResult$1.16"::
+                       Nil
+      val str = base.toString
+      val lookup = str.replaceAll("@[a-z0-9]+","")+"."+offset
+      //println("// " + lookup + "/" + safeFields)
+      val r = lookup.startsWith("Class.forName") || safeFields.contains(lookup) || !unsafePrefixes.exists(str startsWith _)
+      if (debugReadWrite) {
+        val pred = if (r) "safe" else "unsafe"
+        println("// " + pred + " read: " + base.toString.replace("\n","\\n") + "." + offset + ":" + typ)
+      }
+      r
+*/
+
+      if (Modifier.isFinal(field.accessFlags)) return true
+
+      val name = field.holder.toJava.getName + "." + field.name
+
+      name match {
+        case "java.io.FilterOutputStream.out" => true
+        case "java.io.PrintStream.charOut" => true
+        case "java.io.PrintStream.textOut" => true
+        case "java.io.Writer.lock" => true
+        case "java.io.BufferedWriter.out" => true
+        case "java.io.BufferedWriter.cb" => true
+        case "sun.nio.cs.StreamEncoder.encoder" => true
+        case "sun.nio.cs.StreamEncoder.bb" => true
+        case "java.nio.charset.CharsetEncoder.stateNames" => true
+        case _ =>
+         false
+      }
+    }
+  }
+
+  def isSafeReadArray(base: Object, typ: TypeRep[_]): Boolean = {
+    false
+  }
+
+
+
+
+
 class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(metaProvider) {
 
 
@@ -313,7 +379,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
       val base = resolveBase(base0,field)
       val volatile = isVolatile(field) // TODO!
 
-      //println("// getField " + base0 + ":" + field.holder.toJava.getName + "." + field.name)
+      if (debugReadWrite) println("// getField " + base0 + ":" + field.holder.toJava.getName + "." + field.name)
 
       if (base+","+offset == "Class.forName(\"sun.misc.VM\").asInstanceOf[Object],261.asInstanceOf[Long]") return unit(true).asInstanceOf[Rep[T]]
 
@@ -428,71 +494,6 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
       checkArrayType(array, classOf[T]);
       unsafe.putLong(array, Unsafe.ARRAY_LONG_BASE_OFFSET + Unsafe.ARRAY_LONG_INDEX_SCALE * index, value);*/
     }
-
-
-
-  // TODO: should inspect reflect.Field objects
-
-  def isSafeRead(base: Object, offset: Long, field: ResolvedJavaField, typ: TypeRep[_]): Boolean = {
-    if (base == null) {
-      println("// base is null, dammit"); false
-    } else {
-/*
-      val unsafePrefixes = "sun.nio."::"java.io."::"java.nio."::Nil
-      val safeFields = "java.io.PrintStream.16"::
-                       "java.io.PrintStream.40"::
-                       "java.io.PrintStream.48"::
-                       "java.io.BufferedWriter.32":: /*.40 Int .44 Int */
-                       "java.io.BufferedWriter.48"::
-                       "java.io.BufferedWriter.56"::
-                       "java.io.BufferedWriter.64"::
-                       "java.io.OutputStreamWriter.40"::
-                       "sun.nio.cs.StreamEncoder.32"::
-                       "sun.nio.cs.StreamEncoder.56"::
-                       "sun.nio.cs.StreamEncoder.64"::
-                       "sun.nio.cs.StreamEncoder.72"::
-                       "sun.nio.cs.StreamEncoder.80"::
-                       "sun.nio.cs.StreamEncoder.88"::
-                       "java.nio.HeapByteBuffer[pos=0 lim=8192 cap=8192].48":: //HACK/FIXME
-                       "sun.nio.cs.UTF_8$Encoder.72"::
-                       "java.nio.charset.CoderResult$1.16"::
-                       Nil
-      val str = base.toString
-      val lookup = str.replaceAll("@[a-z0-9]+","")+"."+offset
-      //println("// " + lookup + "/" + safeFields)
-      val r = lookup.startsWith("Class.forName") || safeFields.contains(lookup) || !unsafePrefixes.exists(str startsWith _)
-      if (debugReadWrite) {
-        val pred = if (r) "safe" else "unsafe"
-        println("// " + pred + " read: " + base.toString.replace("\n","\\n") + "." + offset + ":" + typ)
-      }
-      r
-*/
-
-      if (Modifier.isFinal(field.accessFlags)) return true
-
-      val name = field.holder.toJava.getName + "." + field.name
-
-      name match {
-        case "java.io.FilterOutputStream.out" => true
-        case "java.io.PrintStream.charOut" => true
-        case "java.io.PrintStream.textOut" => true
-        case "java.io.Writer.lock" => true
-        case "java.io.BufferedWriter.out" => true
-        case "java.io.BufferedWriter.cb" => true
-        case "sun.nio.cs.StreamEncoder.encoder" => true
-        case "sun.nio.cs.StreamEncoder.bb" => true
-        case "java.nio.charset.CharsetEncoder.stateNames" => true
-        case _ =>
-         false
-      }
-    }
-  }
-
-  def isSafeReadArray(base: Object, typ: TypeRep[_]): Boolean = {
-    false
-  }
-
-
 
 
 

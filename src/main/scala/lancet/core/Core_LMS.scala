@@ -123,6 +123,7 @@ trait Core_LMS extends Base_LMS {
   def objectEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflect[Boolean](x," eq ",y)
   def objectNotEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflect[Boolean](x," ne ",y)
   def objectAsInstanceOf[T:TypeRep](x: Rep[Object]): Rep[T] = reflect[T](x,".asInstanceOf[",typeRep[T],"]")
+  def objectIsInstanceOf[T:TypeRep](x: Rep[Object]): Rep[Boolean] = reflect[Boolean](x,".isInstanceOf[",typeRep[T],"]")
 
   def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] = {
     val save = exprs

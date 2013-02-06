@@ -123,6 +123,7 @@ trait Core_Exec extends Base_Exec with Core {
   def objectEqual(x: Object, y: Object): Boolean = x eq y
   def objectNotEqual(x: Object, y: Object): Boolean = x ne y
   def objectAsInstanceOf[T:TypeRep](x: Object): T = x.asInstanceOf[T]
+  def objectIsInstanceOf[T:TypeRep](x: Object): Boolean = x.isInstanceOf[T] // TODO: erasure -- does this work?
 
   def if_[T:TypeRep](x: Boolean)(y: =>T)(z: =>T): T = if (x) y else z
 

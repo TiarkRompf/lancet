@@ -2,6 +2,8 @@ package lancet.core
 
 import scala.virtualization.lms.common._
 
+import java.lang.reflect.Modifier
+
 /*
 trait Base_LMS extends Base {
   val IR: EffectExp
@@ -44,7 +46,7 @@ trait Base_LMS0 extends Base {
 
   case class TypeRep[T](s: String) { override def toString = s }
 
-  implicit def anyType[T:Manifest] = new TypeRep[T](manifest[T].toString)
+  implicit def anyType[T:Manifest] = new TypeRep[T](manifestStr(manifest[T]))
 
   implicit object booleanType extends TypeRep[Boolean]("Boolean")
   implicit object byteType extends TypeRep[Byte]("Byte")
@@ -90,6 +92,29 @@ trait Base_LMS0 extends Base {
       "CONST_" + idx
   }
 
+  def classStr(x: Class[_]): String = if (x.isArray()) "Array["+classStr(x.getComponentType)+"]" else x.getName match {
+    case "int" => "Int"
+    case "byte" => "Byte"
+    case "char" => "Char"
+    case "long" => "Long"
+    case "void" => "Unit"
+    //TODO/FIXME
+    case s if !Modifier.isPublic(x.getModifiers) => "Object /*" + s + "*/" //s <-- class may be private...
+    case s => s
+      val params = x.getTypeParameters
+      if (params.length == 0) s
+      else s + "[" + params.map(x=>"_").mkString(",") + "]"
+  }
+
+  def manifestStr(x: Manifest[_]) = classStr(x.erasure)
+
+  def specCls(x: AnyRef): (AnyRef,Class[_]) = {
+    val cls = x.getClass
+    if (Modifier.isPublic(cls.getModifiers)) (x,cls) else (x,classOf[Object])
+  }
+
+
+
 }
 
 trait Base_LMS extends Base_LMS0 {
@@ -102,7 +127,7 @@ trait Base_LMS extends Base_LMS0 {
 
   case class Static[+T:TypeRep](x: T) extends Rep[T] { // IR.Const
     // adding a type cast everywhere: TestC was having issues with literal 8 passed to Object param?
-    override def toString = constToString(x) + ".asInstanceOf[" + typ + "]"
+    override def toString = if (x == null) "null" else constToString(x) + ".asInstanceOf[" + typ + "]" // skip null's type
   }
 
   case class Dyn[+T:TypeRep](s: String) extends Rep[T] { // extends IR.Exp
@@ -118,8 +143,8 @@ trait Base_LMS extends Base_LMS0 {
     def blocks: List[Block[Any]]
   }
 
-  case class ValDef[T](x: String, rhs: List[Any]) /*rhs: Either[String,Rep[Any]]*/ extends Stm { // IR.TP
-    override def toString = if (x == "_") rhs.mkString("") else "val "+x+" = "+rhs.mkString("")
+  case class ValDef[T](x: String, typ: TypeRep[T], rhs: List[Any]) /*rhs: Either[String,Rep[Any]]*/ extends Stm { // IR.TP with IR.Def
+    override def toString = if (x == "_") rhs.mkString("") else "val "+x+/*":"+typ+*/" = "+rhs.mkString("")
     def deps: List[Dyn[Any]] = rhs collect { case x: Dyn[t] => x }
     def blocks: List[Block[Any]] = rhs collect { case x: Block[t] => x }
   }
@@ -139,16 +164,16 @@ trait Base_LMS extends Base_LMS0 {
   def reflect[T:TypeRep](s: Any*): Rep[T] = { 
     val rhs = s.mkString("")
 
-    (exprs.get(rhs) match {
+    (exprs.get(rhs) match { // cse?
       case Some(y) =>
         println("/* cse: "+rhs+" = "+y + "*/")
         y
       case None =>
       if (typeRep[T] == typeRep[Unit]) {
-        emit(ValDef("_", s.toList)); liftConst(()).asInstanceOf[Rep[T]]
+        emit(ValDef("_", typeRep[T], s.toList)); liftConst(()).asInstanceOf[Rep[T]]
       } else {
         val x = fresh; 
-        emit(ValDef(x,s.toList)); 
+        emit(ValDef(x,typeRep[T],s.toList)); 
         val y = Dyn[T](x)
         //FIXME: can't cse if stm has effects
         //FIXME: not everything is SSA (CONST_LUB) -- need to kill! (TODO: in emit if lhs not a fresh var)
@@ -175,7 +200,8 @@ trait Base_LMS extends Base_LMS0 {
 */
 
 
-  var exprs: Map[String, Rep[Any]] = Map.empty
+  var exprs: Map[String, Rep[Any]] = Map.empty // maps
+  //var envdef: Map[String, ValDef[T]] = Map.empty
 
   def rewrite(s: String, x: Rep[Any]): Unit = {
     // not used yet
@@ -217,7 +243,7 @@ trait Base_LMS extends Base_LMS0 {
 
   def captureOutput[A](func: => Rep[A]): String = {
     val (s,r) = captureOutputResult(func)
-    s + r
+    s + "\n" + r
   }
   def captureOutputResult[A](func: => Rep[A]): (String,Rep[A]) = {
     val Block(stms,res) = reify(func)

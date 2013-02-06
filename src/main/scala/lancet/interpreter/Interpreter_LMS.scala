@@ -75,26 +75,6 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       }
     }
 
-    def classStr(x: Class[_]): String = if (x.isArray()) "Array["+classStr(x.getComponentType)+"]" else x.getName match {
-      case "int" => "Int"
-      case "byte" => "Byte"
-      case "char" => "Char"
-      case "long" => "Long"
-      //TODO/FIXME
-      case s if !Modifier.isPublic(x.getModifiers) => "Object /*" + s + "*/" //s <-- class may be private...
-      case s => s
-        val params = x.getTypeParameters
-        if (params.length == 0) s
-        else s + "[" + params.map(x=>"_").mkString(",") + "]"
-    }
-
-    def manifestStr(x: Manifest[_]) = classStr(x.erasure)
-
-    def specCls(x: AnyRef): (AnyRef,Class[_]) = {
-      val cls = x.getClass
-      if (Modifier.isPublic(cls.getModifiers)) (x,cls) else (x,classOf[Object])
-    }
-
 
     def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
 
