@@ -88,33 +88,36 @@ trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpret
     }
 
     // calc lubs and backpatch info for jumps
-    type State = (InterpreterFrame, StoreLattice.Elem)
+    type State = (InterpreterFrame, StoreLattice.Elem, ExprLattice.Elem)
 
     def allLubs(states: List[State]): (State,List[String]) = {
       if (states.length == 1) return (states.head, Nil) // fast path
       // backpatch info: foreach state, commands needed to initialize lub vars
-      val gos = states map { case (frameX,storeX) =>
+      val gos = states map { case (frameX,storeX,exprX) =>
         val frameY = freshFrameSimple(frameX)
         var storeY = storeX
+        var exprY = exprX
         val (go, _) = captureOutputResult { // start with 'this' state, make it match all others
-          states foreach { case (f,s) => 
+          states foreach { case (f,s,e) => 
             FrameLattice.lub(f, frameY) 
             storeY = StoreLattice.lub(s,storeY)
+            exprY = ExprLattice.lub(e,exprY)
           }
           //val locals = FrameLattice.getFields(frameY).filter(_.toString.startsWith("PHI"))
           //val fields = StoreLattice.getFields(storeY).filter(_.toString.startsWith("LUB"))
           //for (v <- locals ++ fields) println("v"+v+" = "+v)
           liftConst(())
         }
-        (go,frameY,storeY)
+        (go,frameY,storeY,exprY)
       }
-      val (_,f02,s02) = gos(0)
-      for ((_,fx,sx) <- gos) { // sanity check
+      val (_,f02,s02,e02) = gos(0)
+      for ((_,fx,sx,ex) <- gos) { // sanity check
         assert(contextKey(f02) == contextKey(fx))
         assert(getAllArgs(f02) == getAllArgs(fx))
         assert(s02 == sx, s02+"!=="+sx)
+        assert(e02 == ex, e02+"!=="+ex)
       }
-      ((f02,s02),gos.map(_._1))
+      ((f02,s02,e02),gos.map(_._1))
     }
 
     def getFrame(s: State) = s._1
@@ -136,8 +139,8 @@ trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpret
 
     def getAllArgs(frame: InterpreterFrame) = frame.getReturnValue()::getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
 
-    def getState(frame: InterpreterFrame) = (freshFrameSimple(frame), store)
-    def withState[A](state: State)(f: InterpreterFrame => A): A = { store = state._2; f(state._1) }
+    def getState(frame: InterpreterFrame) = (freshFrameSimple(frame), store, exprs)
+    def withState[A](state: State)(f: InterpreterFrame => A): A = { store = state._2; exprs = state._3; f(state._1) }
 
 }
 

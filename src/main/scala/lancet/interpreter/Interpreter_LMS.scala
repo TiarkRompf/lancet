@@ -100,7 +100,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
       //def captureOutputResult[T](x:T) = ("", x)
 
-      val (src0, res) = captureOutputResult {
+      val Block(stms, res) = reify {
 
         val arg = reflect[A]("ARG")
 
@@ -112,7 +112,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       
         val (maStr, mbStr) = (manifestStr(manifest[A]), manifestStr(manifest[B]))
 
-        val cst = constantPool.zipWithIndex.map(p=>"CONST_"+p._2+": "+classStr(p._1.getClass)).mkString(",")
+        val cst = constantPool.zipWithIndex.map(p=>"CONST_"+p._2+": "+classStr(p._1.getClass)).mkString(",") // only available after source reify
 
         println("// constants: " + constantPool.toArray.deep.mkString(",").replace("\n","\\n"))
         println("class Generated("+ cst +") extends ("+maStr+"=>"+mbStr+"){")
@@ -125,7 +125,12 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
         println("def apply(ARG: "+maStr+"): "+mbStr+" = { object BODY {")
         println("  var RES = null.asInstanceOf["+mbStr+"]")
 
-        printIndented(src0)
+        printIndented(stms.mkString("\n"))
+
+        //def traverseStm(s: Stm)
+
+
+
         //println()
 
         println("}; BODY.RES }")

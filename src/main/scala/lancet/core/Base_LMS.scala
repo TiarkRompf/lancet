@@ -139,14 +139,50 @@ trait Base_LMS extends Base_LMS0 {
   def reflect[T:TypeRep](s: Any*): Rep[T] = { 
     val rhs = s.mkString("")
 
+    (exprs.get(rhs) match {
+      case Some(y) =>
+        println("// cse: "+rhs+" = "+y)
+        y
+      case None =>
+      if (typeRep[T] == typeRep[Unit]) {
+        emit(ValDef("_", s.toList)); liftConst(()).asInstanceOf[Rep[T]]
+      } else {
+        val x = fresh; 
+        emit(ValDef(x,s.toList)); 
+        val y = Dyn[T](x)
+        rewrite(rhs, y) //FIXME: not allowed if have effects
+        y
+      }
+    }).asInstanceOf[Rep[T]]
+  }
+/*
+  def reflect[T:TypeRep](s: Any*)(s: Summary): Rep[T] = {
+    val rhs = s.mkString("")
+
     ({//exprs.getOrElse(rhs, {
       if (typeRep[T] == typeRep[Unit]) {
         emit(ValDef("_", s.toList)); liftConst(()).asInstanceOf[Rep[T]]
       } else {
+        rewrite(rhs)
         val x = fresh; emit(ValDef(x,s.toList)); Dyn[T](x)
       }
     }).asInstanceOf[Rep[T]]
   }
+*/
+
+
+  var exprs: Map[String, Rep[Any]] = Map.empty
+
+  def rewrite(s: String, x: Rep[Any]): Unit = {
+    // not used yet
+    //assert(false, "REWRITE not used yet")
+    exprs += (s -> x)
+  }
+
+  //FIXME: need lub!
+
+
+
 
   //var d = 0
   var stms: List[Stm] = null
@@ -233,6 +269,29 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
     for (a <- mayAddrs diff mstAddr)
   }
  */
+
+
+  object ExprLattice {
+    type Elem = Map[String, Rep[Any]]
+
+    def bottom: Elem = Map.empty
+
+    // x is 'target' elem, y is 'current' elem
+    def lub(x: Elem, y: Elem): Elem = {
+
+      val ks = x.keys.toSet intersect y.keys.toSet
+
+      val r1 = ks.map { k =>
+        (k, (x.get(k), y.get(k)) match {
+          case (Some(a),Some(b)) if a == b => Some(a)
+          case _ => None
+        })
+      }
+
+      val r2 = r1.collect{case (k,Some(v)) => (k,v)}.toMap
+      r2
+    }
+  }
 
 
 
@@ -414,13 +473,13 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
 
       val removed = r1.collect { case (k,Top) => k }
 
-      if (removed.nonEmpty)
-        println("//removed: "+removed)
+      //if (removed.nonEmpty)
+      //  println("//removed: "+removed)
 
       val r2 = r1.filter(_._2 != Top).toMap
 
-      if (removed.exists(e => r2.toString.contains(e.toString)))
-        println("// PROBLEMO "+r2+" contains "+removed)
+      //if (removed.exists(e => r2.toString.contains(e.toString)))
+      //  println("// PROBLEMO "+r2+" contains "+removed)
 
       r2
     }
