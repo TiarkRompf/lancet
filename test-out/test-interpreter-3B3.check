@@ -1,4 +1,4 @@
-// constants: <function1>,lancet.interpreter.TestInterpreter3$Bar@446d1d5f
+// constants: <function1>,lancet.interpreter.TestInterpreter3$Bar@24dddf15
 class Generated(CONST_0: lancet.interpreter.TestInterpreter3$$anonfun$testB3$1$$anonfun$6,CONST_1: lancet.interpreter.TestInterpreter3$Bar) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -10,52 +10,40 @@ def apply(ARG: Int): Int = { object BODY {
   val x0 = ARG
   val x1 = x0.asInstanceOf[Int]
   val x2 = 0.asInstanceOf[Int] >= x1
-  val x20 = if (x2) {
-    val x3 = unsafe.putInt(CONST_1.asInstanceOf[Object],16.asInstanceOf[Long], 6.asInstanceOf[Int])
-    val PHI_3_5 = 1.asInstanceOf[Int] // LUBC(0.asInstanceOf[Int],1.asInstanceOf[Int])
-    val LUB_CONST_1_16 = 6.asInstanceOf[Int] // Alias(None,Some(6.asInstanceOf[Int]))
-    def loop3(PHI_3_5:Int)(LUB_CONST_1_16:Int): Unit = {
-    val x4 = 0.asInstanceOf[Int] >= LUB_CONST_1_16
-    val x9 = if (x4) {
-      val x5 = (RES = PHI_3_5) // return to root
-      x5
-    } else {
-      val x6 = -1.asInstanceOf[Int] + LUB_CONST_1_16
-      val x7 = unsafe.putInt(CONST_1.asInstanceOf[Object],16.asInstanceOf[Long], x6)
-      val x8 = 1.asInstanceOf[Int] + PHI_3_5
-      ;{val PHI_3_5 = x8 // LUBC(0.asInstanceOf[Int],x8)
-      val LUB_CONST_1_16 = x6 // Alias(None,Some(x6))
-      loop3(PHI_3_5)(LUB_CONST_1_16)}
-    }
-    x9
-    }
-    val x10 = loop3(PHI_3_5)(LUB_CONST_1_16)
-    x10
+  if (x2) {
+    ;{val x9 = unsafe.getInt(CONST_1.asInstanceOf[Object],16.asInstanceOf[Long])
+      val LUB_CONST_1_intField = x9 // XXX LUBC(Some(LUB_CONST_1_intField),None)
+      BLOCK_4(LUB_CONST_1_intField,x0,x1,x2)}
+    ().asInstanceOf[Unit]
   } else {
-    val x11 = unsafe.putInt(CONST_1.asInstanceOf[Object],16.asInstanceOf[Long], 9.asInstanceOf[Int])
-    val x12 = unsafe.putInt(CONST_1.asInstanceOf[Object],16.asInstanceOf[Long], 8.asInstanceOf[Int])
-    val PHI_3_5 = 1.asInstanceOf[Int] // LUBC(0.asInstanceOf[Int],1.asInstanceOf[Int])
-    val LUB_CONST_1_16 = 8 // LUBC(9,8)
-    def loop3(PHI_3_5:Int)(LUB_CONST_1_16:Int): Unit = {
-    val x13 = 0.asInstanceOf[Int] >= LUB_CONST_1_16
-    val x18 = if (x13) {
-      val x14 = (RES = PHI_3_5) // return to root
-      x14
-    } else {
-      val x15 = -1.asInstanceOf[Int] + LUB_CONST_1_16
-      val x16 = unsafe.putInt(CONST_1.asInstanceOf[Object],16.asInstanceOf[Long], x15)
-      val x17 = 1.asInstanceOf[Int] + PHI_3_5
-      ;{val PHI_3_5 = x17 // LUBC(0.asInstanceOf[Int],x17)
-      val LUB_CONST_1_16 = x15 // Alias(Some(9.asInstanceOf[Int]),Some(x15))
-      loop3(PHI_3_5)(LUB_CONST_1_16)}
-    }
-    x18
-    }
-    val x19 = loop3(PHI_3_5)(LUB_CONST_1_16)
-    x19
+    unsafe.putInt(CONST_1.asInstanceOf[Object],16.asInstanceOf[Long], 9.asInstanceOf[Int])
+    ;{val LUB_CONST_1_intField = 9.asInstanceOf[Int] // Alias(Some(LUB_CONST_1_intField),Some(9.asInstanceOf[Int]))
+      BLOCK_4(LUB_CONST_1_intField,x0,x1,x2)}
+    ().asInstanceOf[Unit]
   }
+  // 14:<TestInterpreter3$$anonfun$testB3$1$$anonfun$6.apply$mcII$sp>(I)I // 5:<TestInterpreter3$$anonfun$testB3$1$$anonfun$6.apply>(I)I // 0:<BytecodeInterpreter_Exec.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
+  def BLOCK_4(LUB_CONST_1_intField:Int,x0:Int,x1:Int,x2:Boolean): Unit = {
+    ;{val PHI_3_5 = 0.asInstanceOf[Int] // LUBC(PHI_3_5:Int,0.asInstanceOf[Int]:Int)
+      BLOCK_5(LUB_CONST_1_intField,PHI_3_5,x0,x1,x2)}
+  }
+  // 16:<TestInterpreter3$$anonfun$testB3$1$$anonfun$6.apply$mcII$sp>(I)I // 5:<TestInterpreter3$$anonfun$testB3$1$$anonfun$6.apply>(I)I // 0:<BytecodeInterpreter_Exec.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
+  def BLOCK_5(LUB_CONST_1_intField:Int,PHI_3_5:Int,x0:Int,x1:Int,x2:Boolean): Unit = {
+    val x6 = 0.asInstanceOf[Int] >= LUB_CONST_1_intField
+    if (x6) {
+      (RES = PHI_3_5) // return to root
+      ().asInstanceOf[Unit]
+    } else {
+      val x7 = -1.asInstanceOf[Int] + LUB_CONST_1_intField
+      unsafe.putInt(CONST_1.asInstanceOf[Object],16.asInstanceOf[Long], x7)
+      val x8 = 1.asInstanceOf[Int] + PHI_3_5
+      ;{val PHI_3_5 = x8 // LUBC(PHI_3_5:Int,x8:Int)
+        val LUB_CONST_1_intField = x7 // Alias(Some(LUB_CONST_1_intField),Some(x7))
+        BLOCK_5(LUB_CONST_1_intField,PHI_3_5,x0,x1,x2)}
+      ().asInstanceOf[Unit]
+    }
+  }
+  // (no return?)
 }; BODY.RES }
 }
-
 compilation: ok
 9

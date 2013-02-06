@@ -10,54 +10,41 @@ def apply(ARG: Int): Int = { object BODY {
   val x0 = ARG
   val x1 = x0.asInstanceOf[Int]
   val x2 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter3$Bar"))
-  val x3 = unsafe.putInt(x2,16.asInstanceOf[Long], 7.asInstanceOf[Int])
-  val x4 = 0.asInstanceOf[Int] >= x1
-  val x22 = if (x4) {
-    val x5 = unsafe.putInt(x2,16.asInstanceOf[Long], 6.asInstanceOf[Int])
-    val PHI_3_6 = 1.asInstanceOf[Int] // LUBC(0.asInstanceOf[Int],1.asInstanceOf[Int])
-    val LUB_x2_16 = 6 // LUBC(7,6)
-    def loop11(PHI_3_6:Int)(LUB_x2_16:Int): Unit = {
-    val x6 = 0.asInstanceOf[Int] >= LUB_x2_16
-    val x11 = if (x6) {
-      val x7 = (RES = PHI_3_6) // return to root
-      x7
-    } else {
-      val x8 = -1.asInstanceOf[Int] + LUB_x2_16
-      val x9 = unsafe.putInt(x2,16.asInstanceOf[Long], x8)
-      val x10 = 1.asInstanceOf[Int] + PHI_3_6
-      ;{val PHI_3_6 = x10 // LUBC(0.asInstanceOf[Int],x10)
-      val LUB_x2_16 = x8 // Alias(Some(7.asInstanceOf[Int]),Some(x8))
-      loop11(PHI_3_6)(LUB_x2_16)}
-    }
-    x11
-    }
-    val x12 = loop11(PHI_3_6)(LUB_x2_16)
-    x12
+  unsafe.putInt(x2,16.asInstanceOf[Long], 7.asInstanceOf[Int])
+  val x3 = 0.asInstanceOf[Int] >= x1
+  if (x3) {
+    ;{val LUB_x2_intField = 7.asInstanceOf[Int] // Alias(Some(LUB_x2_intField),Some(7.asInstanceOf[Int]))
+      BLOCK_12(LUB_x2_intField,x0,x1,x2,x3)}
+    ().asInstanceOf[Unit]
   } else {
-    val x13 = unsafe.putInt(x2,16.asInstanceOf[Long], 9.asInstanceOf[Int])
-    val x14 = unsafe.putInt(x2,16.asInstanceOf[Long], 8.asInstanceOf[Int])
-    val PHI_3_6 = 1.asInstanceOf[Int] // LUBC(0.asInstanceOf[Int],1.asInstanceOf[Int])
-    val LUB_x2_16 = 8 // LUBC(9,8)
-    def loop11(PHI_3_6:Int)(LUB_x2_16:Int): Unit = {
-    val x15 = 0.asInstanceOf[Int] >= LUB_x2_16
-    val x20 = if (x15) {
-      val x16 = (RES = PHI_3_6) // return to root
-      x16
-    } else {
-      val x17 = -1.asInstanceOf[Int] + LUB_x2_16
-      val x18 = unsafe.putInt(x2,16.asInstanceOf[Long], x17)
-      val x19 = 1.asInstanceOf[Int] + PHI_3_6
-      ;{val PHI_3_6 = x19 // LUBC(0.asInstanceOf[Int],x19)
-      val LUB_x2_16 = x17 // Alias(Some(9.asInstanceOf[Int]),Some(x17))
-      loop11(PHI_3_6)(LUB_x2_16)}
-    }
-    x20
-    }
-    val x21 = loop11(PHI_3_6)(LUB_x2_16)
-    x21
+    unsafe.putInt(x2,16.asInstanceOf[Long], 9.asInstanceOf[Int])
+    ;{val LUB_x2_intField = 9.asInstanceOf[Int] // Alias(Some(LUB_x2_intField),Some(9.asInstanceOf[Int]))
+      BLOCK_12(LUB_x2_intField,x0,x1,x2,x3)}
+    ().asInstanceOf[Unit]
   }
+  // 32:<TestInterpreter3$$anonfun$testA3$1$$anonfun$3.apply$mcII$sp>(I)I // 5:<TestInterpreter3$$anonfun$testA3$1$$anonfun$3.apply>(I)I // 0:<BytecodeInterpreter_Exec.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
+  def BLOCK_12(LUB_x2_intField:Int,x0:Int,x1:Int,x2:Object,x3:Boolean): Unit = {
+    ;{val PHI_3_6 = 0.asInstanceOf[Int] // LUBC(PHI_3_6:Int,0.asInstanceOf[Int]:Int)
+      BLOCK_13(LUB_x2_intField,PHI_3_6,x0,x1,x2,x3)}
+  }
+  // 34:<TestInterpreter3$$anonfun$testA3$1$$anonfun$3.apply$mcII$sp>(I)I // 5:<TestInterpreter3$$anonfun$testA3$1$$anonfun$3.apply>(I)I // 0:<BytecodeInterpreter_Exec.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
+  def BLOCK_13(LUB_x2_intField:Int,PHI_3_6:Int,x0:Int,x1:Int,x2:Object,x3:Boolean): Unit = {
+    val x6 = 0.asInstanceOf[Int] >= LUB_x2_intField
+    if (x6) {
+      (RES = PHI_3_6) // return to root
+      ().asInstanceOf[Unit]
+    } else {
+      val x7 = -1.asInstanceOf[Int] + LUB_x2_intField
+      unsafe.putInt(x2,16.asInstanceOf[Long], x7)
+      val x8 = 1.asInstanceOf[Int] + PHI_3_6
+      ;{val PHI_3_6 = x8 // LUBC(PHI_3_6:Int,x8:Int)
+        val LUB_x2_intField = x7 // Alias(Some(LUB_x2_intField),Some(x7))
+        BLOCK_13(LUB_x2_intField,PHI_3_6,x0,x1,x2,x3)}
+      ().asInstanceOf[Unit]
+    }
+  }
+  // (no return?)
 }; BODY.RES }
 }
-
 compilation: ok
 9
