@@ -73,9 +73,9 @@ trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpret
           if (a != b) {
             val str = "PHI_"+x.depth+"_"+i
             if (b == null)
-              println("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")")
+              println("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
             else if (b.toString != str)
-              println("val "+str+" = " + b + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")")
+              println("val "+str+" = " + b + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
             val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
             val phi = Dyn[AnyRef](str)(tp)
             y.locals(i) = phi
@@ -125,17 +125,19 @@ trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpret
     def getFields(s: State) = {
       val locals = FrameLattice.getFields(s._1).filterNot(_.isInstanceOf[Static[_]])//filter(_.toString.startsWith("PHI"))
       val fields = StoreLattice.getFields(s._2).filterNot(_.isInstanceOf[Static[_]])//.filter(_.toString.startsWith("LUB"))
-      (locals ++ fields).distinct.sortBy(_.toString)
+      val exprs = ExprLattice.getFields(s._3).filterNot(_.isInstanceOf[Static[_]])//.filter(_.toString.startsWith("LUB"))
+      (locals ++ fields ++ exprs).distinct.sortBy(_.toString)
     }
 
     def statesDiffer(s0: State, s1: State) = 
-      getAllArgs(s0._1) != getAllArgs(s1._1) || s0._2 != s1._2
+      getAllArgs(s0._1) != getAllArgs(s1._1) || s0._2 != s1._2 || s0._3 != s1._3
 
     def freshFrameSimple(frame: InterpreterFrame): InterpreterFrame_Str = if (frame eq null) null else {
       val frame2 = frame.asInstanceOf[InterpreterFrame_Str].copy2(freshFrameSimple(frame.getParentFrame))
       val depth = frame2.depth
       frame2
     }
+
 
     def getAllArgs(frame: InterpreterFrame) = frame.getReturnValue()::getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
 

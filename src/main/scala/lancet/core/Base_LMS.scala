@@ -100,16 +100,16 @@ trait Base_LMS extends Base_LMS0 {
 
   abstract class Rep[+T:TypeRep] { def typ: TypeRep[_] = implicitly[TypeRep[T]] }
 
-  case class Static[+T:TypeRep](x: T) extends Rep[T] { 
+  case class Static[+T:TypeRep](x: T) extends Rep[T] { // IR.Const
     // adding a type cast everywhere: TestC was having issues with literal 8 passed to Object param?
     override def toString = constToString(x) + ".asInstanceOf[" + typ + "]"
   }
 
-  case class Dyn[+T:TypeRep](s: String) extends Rep[T] {
+  case class Dyn[+T:TypeRep](s: String) extends Rep[T] { // extends IR.Exp
     override def toString = s 
   }
 
-  case class Block[+T](stms: List[Stm], res: Rep[T]) {
+  case class Block[+T](stms: List[Stm], res: Rep[T]) { // IR.Block
     override def toString = "{\n"+stms.mkString("\n")+"\n" + res + "\n}"
   }
 
@@ -118,7 +118,7 @@ trait Base_LMS extends Base_LMS0 {
     def blocks: List[Block[Any]]
   }
 
-  case class ValDef[T](x: String, rhs: List[Any]) /*rhs: Either[String,Rep[Any]]*/ extends Stm {
+  case class ValDef[T](x: String, rhs: List[Any]) /*rhs: Either[String,Rep[Any]]*/ extends Stm { // IR.TP
     override def toString = if (x == "_") rhs.mkString("") else "val "+x+" = "+rhs.mkString("")
     def deps: List[Dyn[Any]] = rhs collect { case x: Dyn[t] => x }
     def blocks: List[Block[Any]] = rhs collect { case x: Block[t] => x }
@@ -141,7 +141,7 @@ trait Base_LMS extends Base_LMS0 {
 
     (exprs.get(rhs) match {
       case Some(y) =>
-        println("// cse: "+rhs+" = "+y)
+        println("/* cse: "+rhs+" = "+y + "*/")
         y
       case None =>
       if (typeRep[T] == typeRep[Unit]) {
@@ -150,7 +150,11 @@ trait Base_LMS extends Base_LMS0 {
         val x = fresh; 
         emit(ValDef(x,s.toList)); 
         val y = Dyn[T](x)
-        rewrite(rhs, y) //FIXME: not allowed if have effects
+        //FIXME: can't cse if stm has effects
+        //FIXME: not everything is SSA (CONST_LUB) -- need to kill! (TODO: in emit if lhs not a fresh var)
+        def isPure = !(rhs.contains("throw") || rhs.contains("new") || rhs.contains(".alloc") || rhs.contains(".put")) //HACK
+        if (isPure)
+          rewrite(rhs, y)
         y
       }
     }).asInstanceOf[Rep[T]]
@@ -291,6 +295,11 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
       val r2 = r1.collect{case (k,Some(v)) => (k,v)}.toMap
       r2
     }
+
+    def getFields(x: Elem): Set[Rep[Any]] = { // only unique aliases
+      x.values.toSet
+    }
+
   }
 
 
@@ -412,7 +421,7 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
             case (Some(Static(a)),Some(bb@Static(b))) => 
               val str = "LUB_"+p+"_"+k
               if (""+b != str)
-                println("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")")
+                println("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
               val tp = bb.typ.asInstanceOf[TypeRep[Any]]
               Dyn[Any](str)(tp)
             case (Some(a),None) if p.startsWith("CONST") && k == "clazz" => a // class is constant
@@ -424,7 +433,7 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
                 //  println("// PROBLEMO "+b.get+" not in "+y0)
                 //}
                 if (b.get.toString != str)
-                  println("val "+str+" = " + b.get + " // Alias(" + a + "," + b + ")")
+                  println("val "+str+" = " + b.get + " // Alias(" + a + "," + b + ")") // FIXME: kill in expr!
                 b.get.typ.asInstanceOf[TypeRep[Any]]
               } else {                
                 val tp = a.get.typ.asInstanceOf[TypeRep[Any]]
@@ -437,9 +446,9 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
                   //println("// lookup "+obj+"."+k+"="+fld)
                   // may fld and a.get be equal? unlikely ...
                   if (fld.toString != str)
-                    println("val "+str+" = " + fld + " // XXX LUBC(" + a + "," + b + ")")
+                    println("val "+str+" = " + fld + " // XXX LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
                 } else 
-                  println("val "+str+" = " + a.get + " // AAA Alias(" + a + "," + b + ")")
+                  println("val "+str+" = " + a.get + " // AAA Alias(" + a + "," + b + ")") // FIXME: kill in expr!
                 tp
               }
               Dyn[Any](str)(tp)
