@@ -19,7 +19,6 @@ def apply(ARG: Int): Int = { object BODY {
     val x5 = 0.asInstanceOf[Int] >= PHI_3_6
     if (x5) {
       (RES = LUB_x2_intField) // return to root
-      ().asInstanceOf[Unit]
     } else {
       val x6 = 1.asInstanceOf[Int] + LUB_x2_intField
       unsafe.putInt(x2,16.asInstanceOf[Long], x6)
@@ -27,11 +26,11 @@ def apply(ARG: Int): Int = { object BODY {
       ;{val PHI_3_6 = x7 // LUBC(PHI_3_6:Int,x7:Int)
         val LUB_x2_intField = x6 // Alias(Some(LUB_x2_intField),Some(x6))
         BLOCK_10(LUB_x2_intField,PHI_3_6,x0,x1,x2)}
-      ().asInstanceOf[Unit]
     }
   }
   // (no return?)
 }; BODY.RES }
 }
+
 compilation: ok
 14

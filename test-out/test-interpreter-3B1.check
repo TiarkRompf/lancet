@@ -14,12 +14,10 @@ def apply(ARG: Int): Int = { object BODY {
     ;{val x4 = unsafe.getInt(CONST_1.asInstanceOf[Object],16.asInstanceOf[Long])
       val LUB_CONST_1_intField = x4 // XXX LUBC(Some(LUB_CONST_1_intField),None)
       BLOCK_4(LUB_CONST_1_intField,x0,x1,x2)}
-    ().asInstanceOf[Unit]
   } else {
     unsafe.putInt(CONST_1.asInstanceOf[Object],16.asInstanceOf[Long], 9.asInstanceOf[Int])
     ;{val LUB_CONST_1_intField = 9.asInstanceOf[Int] // Alias(Some(LUB_CONST_1_intField),Some(9.asInstanceOf[Int]))
       BLOCK_4(LUB_CONST_1_intField,x0,x1,x2)}
-    ().asInstanceOf[Unit]
   }
   // 14:<TestInterpreter3$$anonfun$testB1$1$$anonfun$4.apply$mcII$sp>(I)I // 5:<TestInterpreter3$$anonfun$testB1$1$$anonfun$4.apply>(I)I // 0:<BytecodeInterpreter_Exec.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
   def BLOCK_4(LUB_CONST_1_intField:Int,x0:Int,x1:Int,x2:Boolean): Unit = {
@@ -28,5 +26,6 @@ def apply(ARG: Int): Int = { object BODY {
   // (no return?)
 }; BODY.RES }
 }
+
 compilation: ok
 9

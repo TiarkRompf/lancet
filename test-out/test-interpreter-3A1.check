@@ -15,12 +15,10 @@ def apply(ARG: Int): Int = { object BODY {
   if (x3) {
     ;{val LUB_x2_intField = 7.asInstanceOf[Int] // Alias(Some(LUB_x2_intField),Some(7.asInstanceOf[Int]))
       BLOCK_12(LUB_x2_intField,x0,x1,x2,x3)}
-    ().asInstanceOf[Unit]
   } else {
     unsafe.putInt(x2,16.asInstanceOf[Long], 9.asInstanceOf[Int])
     ;{val LUB_x2_intField = 9.asInstanceOf[Int] // Alias(Some(LUB_x2_intField),Some(9.asInstanceOf[Int]))
       BLOCK_12(LUB_x2_intField,x0,x1,x2,x3)}
-    ().asInstanceOf[Unit]
   }
   // 32:<TestInterpreter3$$anonfun$testA1$1$$anonfun$1.apply$mcII$sp>(I)I // 5:<TestInterpreter3$$anonfun$testA1$1$$anonfun$1.apply>(I)I // 0:<BytecodeInterpreter_Exec.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
   def BLOCK_12(LUB_x2_intField:Int,x0:Int,x1:Int,x2:Object,x3:Boolean): Unit = {
@@ -29,5 +27,6 @@ def apply(ARG: Int): Int = { object BODY {
   // (no return?)
 }; BODY.RES }
 }
+
 compilation: ok
 9
