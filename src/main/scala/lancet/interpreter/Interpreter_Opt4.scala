@@ -190,11 +190,9 @@ class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpre
 
     def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = "BLOCK_"+keyid+"("+fields.mkString(",")+")"
 
-    def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: String): String = {
-      (if (debugBlockKeys) "// "+key+"\n" else "") +
-      "def BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit = {\n" +
-      code+"\n"+
-      "}"
+    def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]): Block[Unit] = reify {
+      if (debugBlockKeys) println("// "+key+"\n")
+      reflect[Unit]("def BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit = ", code)
     }
 
 
@@ -286,10 +284,29 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
     // abstract methods
 
     def genBlockCall(keyid: Int, fields: List[Rep[Any]]): String
-    def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: String): String
+    def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]): Block[Unit]
     def genVarDef(v: Rep[Any]): String
     def genVarWrite(v: Rep[Any]): String
     def genVarRead(v: Rep[Any]): String
+
+    def infix_replace[A,B](a: Block[A], key: String, b: Block[B]): Block[A] = {
+      var found = 0
+      val t = new StructuralTransformer {
+        override def transformStm(s: Stm): Stm = s match {
+          case Unstructured(`key`) => 
+            found += 1
+            ValDef("_", typeRep[Unit], List(b))
+          case Unstructured(k) => 
+            System.out.println("no match "+k)
+            super.transformStm(s)
+          case _ => super.transformStm(s)
+        }
+      }
+      val r = t.transformBlock(a)
+      if (found == 0) System.out.println("not found: "+key)
+      r
+    }
+
 
     // helpers
 
@@ -362,7 +379,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
       if (debugMethods) println("// << " + method)
 
       case class BlockInfo(inEdges: List[(Int,State)], inState: State)
-      case class BlockInfoOut(returns: List[State], gotos: List[State], code: String)
+      case class BlockInfoOut(returns: List[State], gotos: List[State], code: Block[Unit])
 
       val blockInfo: mutable.Map[Int, BlockInfo] = new mutable.HashMap
       val blockInfoOut: mutable.Map[Int, BlockInfoOut] = new mutable.HashMap
@@ -422,7 +439,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
 
       // *** compute fixpoint ***
 
-      val (src, res) = captureOutputResult {
+      val block = reify {
         //gotoBlock(mframe) // alternative; just do it ourselves ...
         val s = getState(mframe)
         val b = getGraalBlock(mframe)
@@ -434,9 +451,9 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
           worklist = worklist.tail
           assert(blockInfo.contains(i))
           curBlock = i
-          blockInfoOut(i) = BlockInfoOut(Nil,Nil,"") // reset gotos
+          blockInfoOut(i) = BlockInfoOut(Nil,Nil,Block(Nil,liftConst(()))) // reset gotos
           val BlockInfo(edges,s) = blockInfo(i)
-          val (src,_) = captureOutputResult {
+          val src = reify {
             withState(s)(execFoReal)
           }
           blockInfoOut(i) = blockInfoOut(i).copy(code=src)
@@ -466,7 +483,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
               val (key,keyid) = contextKeyId(getFrame(s1))
               val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
               val call = genBlockCall(keyid, fields)
-              ";{"+head.trim + "\n" + call + "}"
+              reify { println(";{"+head.trim + "\n" + call + "}"); liftConst(()) }
             }
             src = src.replace("GOTO_"+i+";", rhs)
           }
@@ -506,17 +523,18 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
         out.returns.zipWithIndex.map { case (st, j) => ("RETURN_"+i+"_"+j+";",st) }
       }
 
+      def emitAll(b: Block[Unit]) = b.stms foreach emit
+
       if (returns.length == 0) {
-        println(src)
+        emitAll(block)
         println("// (no return?)")
       } else if (returns.length == 1) { 
         val (k,s) = returns(0)
-        val (retSrc,res) = captureOutputResult {
+        val ret = reify {
           if (debugReturns) println("// ret single "+method)
           withState(s)(exec)
         }
-        println(src.replace(k, retSrc.trim))
-        res
+        emitAll(block.replace(k, ret))
       } else {
         println("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
 
@@ -527,12 +545,16 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
 
         for (v <- fields) println(genVarDef(v))
 
-        var src1 = src
+        var block1 = block
         for ((k,go) <- (returns.map(_._1)) zip gos) {
           val assign = fields.map(genVarWrite).mkString("\n")
-          src1 = src1.replace(k,"/*R"+k.substring(6)+"*/;{" + go+assign+"};") // substr prevents further matches
+          val ret = reify {
+            println("/*R"+k.substring(6)+"*/;{" + go+assign+"};") // substr prevents further matches
+            liftConst(())
+          }
+          block1 = block1.replace(k,ret)
         }
-        println(src1)
+        emitAll(block1)
         
         println(";{")
         if (debugReturns) println("// ret multi "+method)
@@ -540,7 +562,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
         withState(ss)(exec)
         println("}}")
       }
-      res
+      liftConst(())
     }
 
 

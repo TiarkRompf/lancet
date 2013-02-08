@@ -121,6 +121,58 @@ trait Base_LMS extends Base_LMS0 {
 
   //def constToString(x:Any): String
 
+  trait Traverser {
+
+    def traverseBlock(b: Block[Any]): Unit = b match {
+      case Block(stms,res) =>
+        stms foreach traverseStm
+    }
+
+    def traverseStm(s: Stm): Unit = {
+      s.blocks foreach traverseBlock
+    }
+
+  }
+
+  trait StructuralTransformer {
+
+    def transformBlock[A](b: Block[A]): Block[A] = b match {
+      case Block(stms,res) =>
+        Block(stms map transformStm,res)
+    }
+
+    def transformStm(s: Stm): Stm = s match {
+      case ValDef(x,typ,rhs) => 
+        ValDef(x,typ,rhs map {
+          case b: Block[_] => transformBlock(b)
+          case e => e
+        })
+      case Unstructured(s) => Unstructured(s)
+    }
+  }
+
+
+  trait CodeGen extends Traverser {
+
+    override def traverseStm(s: Stm): Unit = s match {
+      case ValDef(x,typ,rhs) => 
+        rhs foreach {
+          case b: Block[_] => 
+            Console.print("{")
+            traverseBlock(b)
+            Console.print("}")
+          case e =>
+            Console.print(e.toString)
+        }
+        Console.println()
+      case Unstructured(s) => 
+        Console.println(s)
+    }
+
+  }
+
+
+
 
 
   abstract class Rep[+T:TypeRep] { def typ: TypeRep[_] = implicitly[TypeRep[T]] }
@@ -135,7 +187,7 @@ trait Base_LMS extends Base_LMS0 {
   }
 
   case class Block[+T](stms: List[Stm], res: Rep[T]) { // IR.Block
-    override def toString = "{\n"+stms.mkString("\n")+"\n" + res + "\n}"
+    //override def toString = "{\n"+stms.mkString("\n")+"\n" + res + "\n}"
   }
 
   abstract class Stm {
@@ -249,6 +301,30 @@ trait Base_LMS extends Base_LMS0 {
     val Block(stms,res) = reify(func)
     (stms.mkString("\n"),res)
   }
+
+
+  import java.io._
+  def captureConsoleOutputResult[A](func: => A): (String,A) = {
+    val bstream = new ByteArrayOutputStream
+    val r = withConsoleOutput(new PrintStream(bstream))(func) //func
+    (bstream.toString, r)
+  }
+  def withConsoleOutput[A](out: PrintStream)(func: => A): A = {
+    //val oldStdOut = System.out
+    //val oldStdErr = System.err
+    try {
+      //System.setOut(out)
+      //System.setErr(out)
+      scala.Console.withOut(out)(scala.Console.withErr(out)(func))
+    } finally {
+      out.flush()
+      out.close()
+      //System.setOut(oldStdOut)
+      //System.setErr(oldStdErr)
+    }
+  }
+
+
 
 }
 

@@ -80,7 +80,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
       //def captureOutputResult[T](x:T) = ("", x)
 
-      val Block(stms, res) = reify {
+      val b@Block(stms, res) = reify {
 
         val arg = reflect[A]("ARG")
 
@@ -88,35 +88,35 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
       }
 
-      val (source, _) = captureOutputResult {
+      val (source, _) = captureConsoleOutputResult {
       
         val (maStr, mbStr) = (manifestStr(manifest[A]), manifestStr(manifest[B]))
 
         val cst = constantPool.zipWithIndex.map(p=>"CONST_"+p._2+": "+classStr(p._1.getClass)).mkString(",") // only available after source reify
 
-        println("// constants: " + constantPool.toArray.deep.mkString(",").replace("\n","\\n"))
-        println("class Generated("+ cst +") extends ("+maStr+"=>"+mbStr+"){")
-        println("import sun.misc.Unsafe")
-        println("val unsafe = { val fld = classOf[Unsafe].getDeclaredField(\"theUnsafe\"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }")
-        println("type char = Char")
-        println("def WARN = assert(false, \"WARN\")")
-        println("def ERROR = assert(false, \"ERROR\")")
+        Console.println("// constants: " + constantPool.toArray.deep.mkString(",").replace("\n","\\n"))
+        Console.println("class Generated("+ cst +") extends ("+maStr+"=>"+mbStr+"){")
+        Console.println("import sun.misc.Unsafe")
+        Console.println("val unsafe = { val fld = classOf[Unsafe].getDeclaredField(\"theUnsafe\"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }")
+        Console.println("type char = Char")
+        Console.println("def WARN = assert(false, \"WARN\")")
+        Console.println("def ERROR = assert(false, \"ERROR\")")
 
-        println("def apply(ARG: "+maStr+"): "+mbStr+" = { object BODY {")
-        println("  var RES = null.asInstanceOf["+mbStr+"]")
+        Console.println("def apply(ARG: "+maStr+"): "+mbStr+" = { object BODY {")
+        Console.println("  var RES = null.asInstanceOf["+mbStr+"]")
 
-        printIndented(stms.mkString("\n"))
+        //printIndented(stms.mkString("\n"))
 
         //def traverseStm(s: Stm)
 
+        val cg = new CodeGen {}
+        cg.traverseBlock(b)
 
 
         //println()
 
-        println("}; BODY.RES }")
-        println("}")
-
-        liftConst(())
+        Console.println("}; BODY.RES }")
+        Console.println("}")
       }
 
       System.out.println(source)
