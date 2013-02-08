@@ -1,4 +1,4 @@
-// constants: <function1>,lancet.interpreter.TestInterpreter3$Bar@617e8b4
+// constants: <function1>,lancet.interpreter.TestInterpreter3$Bar@5fb7fa6e
 class Generated(CONST_0: lancet.interpreter.TestInterpreter3$$anonfun$testB2$1$$anonfun$5,CONST_1: lancet.interpreter.TestInterpreter3$Bar) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -9,10 +9,12 @@ def apply(ARG: Int): Int = { object BODY {
   var RES = null.asInstanceOf[Int]
   val x0 = ARG
   val x1 = x0.asInstanceOf[Int]
-  ;{val PHI_3_5 = x1 // LUBC(PHI_3_5:Int,x1:Int)
+  ;{
+    val PHI_3_5 = x1 // LUBC(PHI_3_5:Int,x1:Int)
     val x10 = unsafe.getInt(CONST_1.asInstanceOf[Object],16.asInstanceOf[Long])
     val LUB_CONST_1_intField = x10 // XXX LUBC(Some(LUB_CONST_1_intField),None)
-    BLOCK_2(LUB_CONST_1_intField,PHI_3_5,x0,x1)}
+    BLOCK_2(LUB_CONST_1_intField,PHI_3_5,x0,x1)
+  }
   // 2:<TestInterpreter3$$anonfun$testB2$1$$anonfun$5.apply$mcII$sp>(I)I // 5:<TestInterpreter3$$anonfun$testB2$1$$anonfun$5.apply>(I)I // 0:<BytecodeInterpreter_Exec.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
   def BLOCK_2(LUB_CONST_1_intField:Int,PHI_3_5:Int,x0:Int,x1:Int): Unit = {
     val x6 = 0.asInstanceOf[Int] >= PHI_3_5
@@ -22,9 +24,11 @@ def apply(ARG: Int): Int = { object BODY {
       val x7 = 1.asInstanceOf[Int] + LUB_CONST_1_intField
       unsafe.putInt(CONST_1.asInstanceOf[Object],16.asInstanceOf[Long], x7)
       val x8 = -1.asInstanceOf[Int] + PHI_3_5
-      ;{val PHI_3_5 = x8 // LUBC(PHI_3_5:Int,x8:Int)
+      ;{
+        val PHI_3_5 = x8 // LUBC(PHI_3_5:Int,x8:Int)
         val LUB_CONST_1_intField = x7 // Alias(Some(LUB_CONST_1_intField),Some(x7))
-        BLOCK_2(LUB_CONST_1_intField,PHI_3_5,x0,x1)}
+        BLOCK_2(LUB_CONST_1_intField,PHI_3_5,x0,x1)
+      }
     }
   }
   // (no return?)

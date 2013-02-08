@@ -90,14 +90,14 @@ trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpret
     // calc lubs and backpatch info for jumps
     type State = (InterpreterFrame, StoreLattice.Elem, ExprLattice.Elem)
 
-    def allLubs(states: List[State]): (State,List[String]) = {
+    def allLubs(states: List[State]): (State,List[Block[Unit]]) = {
       if (states.length == 1) return (states.head, Nil) // fast path
       // backpatch info: foreach state, commands needed to initialize lub vars
       val gos = states map { case (frameX,storeX,exprX) =>
         val frameY = freshFrameSimple(frameX)
         var storeY = storeX
         var exprY = exprX
-        val (go, _) = captureOutputResult { // start with 'this' state, make it match all others
+        val go = reify { // start with 'this' state, make it match all others
           states foreach { case (f,s,e) => 
             FrameLattice.lub(f, frameY) 
             storeY = StoreLattice.lub(s,storeY)
@@ -159,7 +159,7 @@ trait AbstractInterpreterIntf extends BytecodeInterpreter_LMS with Core_LMS {
     def getFrame(s: State): InterpreterFrame
     def getFields(s: State): List[Rep[Any]]
 
-    def allLubs(states: List[State]): (State,List[String])
+    def allLubs(states: List[State]): (State,List[Block[Unit]])
     def statesDiffer(s0: State, s1: State): Boolean
 
     def freshFrameSimple(frame: InterpreterFrame): InterpreterFrame_Str
@@ -486,7 +486,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
               val (key,keyid) = contextKeyId(getFrame(s1))
               val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
               val call = genBlockCall(keyid, fields)
-              reify { println(";{"+head.trim + "\n" + call + "}"); liftConst(()) }
+              reify { reflect[Unit](";", Block[Unit](head.stms:+Unstructured(call), head.res)) }
             }
             src = src.replace("GOTO_"+i+";", rhs)
           }
@@ -549,10 +549,9 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
 
         var block1 = block
         for ((k,go) <- (returns.map(_._1)) zip gos) {
-          val assign = fields.map(genVarWrite).mkString("\n")
+          val assign = Block(fields.map(genVarWrite).map(Unstructured(_)), liftConst(()))
           val ret = reify {
-            println("/*R"+k.substring(6)+"*/;{" + go+assign+"};") // substr prevents further matches
-            liftConst(())
+            reflect[Unit]("/*R"+k.substring(6)+"*/;", Block(go.stms++assign.stms,assign.res),";") // substr prevents further matches            
           }
           block1 = block1.replace(k,ret)
         }

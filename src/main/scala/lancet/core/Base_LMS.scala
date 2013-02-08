@@ -154,6 +154,11 @@ trait Base_LMS extends Base_LMS0 {
 
   trait CodeGen extends Traverser {
 
+    override def traverseBlock(b: Block[Any]): Unit = b match {
+      case Block(List(ValDef("_",_,List(";",b:Block[_]))),_) => traverseBlock(b) // flatten block ...
+      case _ => super.traverseBlock(b)
+    }
+
     override def traverseStm(s: Stm): Unit = s match {
       case ValDef(x,typ,rhs) => 
         if (x != "_") Console.print("val "+x+" = ")
@@ -198,7 +203,9 @@ trait Base_LMS extends Base_LMS0 {
   }
 
   case class ValDef[T](x: String, typ: TypeRep[T], rhs: List[Any]) /*rhs: Either[String,Rep[Any]]*/ extends Stm { // IR.TP with IR.Def
-    override def toString = if (x == "_") rhs.mkString("") else "val "+x+/*":"+typ+*/" = "+rhs.mkString("")
+    // we shouldn't recurse in toString because things will get big
+    // unfortunately cse still depends on it (need to move to node ids)
+    override def toString = if (x == "_") rhs.mkString("") else "val "+x+/*":"+typ+*/" = "+rhs.mkString("") 
     def deps: List[Dyn[Any]] = rhs collect { case x: Dyn[t] => x }
     def blocks: List[Block[Any]] = rhs collect { case x: Block[t] => x }
   }
@@ -216,7 +223,7 @@ trait Base_LMS extends Base_LMS0 {
   def fresh = { nSyms += 1; "x" + (nSyms - 1) }
 
   def reflect[T:TypeRep](s: Any*): Rep[T] = { 
-    val rhs = s.mkString("")
+    val rhs = s.toString // FIXME: don't want to do this! (--> big?)
 
     (exprs.get(rhs) match { // cse?
       case Some(y) =>

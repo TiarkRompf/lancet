@@ -74,9 +74,9 @@ class TestInterpreter4 extends FileDiffSuite {
 
   class Decompiler extends BytecodeInterpreter_Opt {
 
-    def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],String) = {
+    def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],Block[Object]) = {
       val arg = Dyn[Object](fresh)
-      val body = captureOutput {
+      val body = reify {
         val Partial(fs) = eval(f)
         val Static(cls: Class[_]) = fs("clazz")
         withScope {
@@ -85,7 +85,7 @@ class TestInterpreter4 extends FileDiffSuite {
           execute(cls.getMethod("apply", classOf[Object]), Array[Rep[Object]](f,arg)(repManifest[Object]))
           //println("}")
           //"BODY.RES.asInstanceOf["+typeRep[B]+"]}"
-          Dyn[Unit]("RES.asInstanceOf["+typeRep[B]+"]")
+          Dyn[Object]("RES.asInstanceOf["+typeRep[B]+"]")
         }
       }
       (arg,body)
@@ -115,12 +115,12 @@ class TestInterpreter4 extends FileDiffSuite {
         case "scala.collection.GenTraversableLike.filter" => handle {
           case receiver::f::Nil =>
             val (arg,body) = decompileInternal[Object,Boolean](f)
-            reflect[Object](""+receiver+".asInstanceOf[Traversable[Object]].filter "+ "{ ("+arg+":"+arg.typ+")" + " => \n" + body + "\n}")
+            reflect[Object](receiver, ".asInstanceOf[Traversable[Object]].filter ", "{ ("+arg+":"+arg.typ+")" + " => ", body, "}")
         }
         case "scala.collection.generic.FilterMonadic.map" | "scala.collection.TraversableLike.map" => handle {
           case receiver::f::cbf::Nil =>
             val (arg,body) = decompileInternal[Object,Boolean](f)
-            reflect[Object](""+receiver+".asInstanceOf[Traversable[Object]].map "+ "{ ("+arg+":"+arg.typ+")" + " => \n" + body + "\n}")
+            reflect[Object](""+receiver, ".asInstanceOf[Traversable[Object]].map ", "{ ("+arg+":"+arg.typ+")" + " => ", body, "}")
         }
         /*case s if s contains ".reflMethod$" => handle { // structural call
           case args =>
@@ -132,7 +132,7 @@ class TestInterpreter4 extends FileDiffSuite {
         }
         case "java.lang.reflect.Method.invoke" => handle { // structural call
           case receiver::args =>
-            reflect[Object](""+receiver+".asInstanceOf[java.lang.reflect.Method].invoke("+args.mkString(",")+")")
+            reflect[Object](receiver,".asInstanceOf[java.lang.reflect.Method].invoke(",args.mkString(","),")") // FIXME: args!
         }
         case s if className.startsWith("java.lang.reflect") => handle {
           case args =>
