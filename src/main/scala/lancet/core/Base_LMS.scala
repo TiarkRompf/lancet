@@ -156,6 +156,7 @@ trait Base_LMS extends Base_LMS0 {
 
     override def traverseStm(s: Stm): Unit = s match {
       case ValDef(x,typ,rhs) => 
+        if (x != "_") Console.print("val "+x+" = ")
         rhs foreach {
           case b: Block[_] => 
             Console.print("{")
