@@ -289,6 +289,8 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
     def genVarWrite(v: Rep[Any]): String
     def genVarRead(v: Rep[Any]): String
 
+    def emitAll(b: Block[Unit]) = b.stms foreach emit
+
     def infix_replace[A,B](a: Block[A], key: String, b: Block[B]): Block[A] = {
       var found = 0
       val t = new StructuralTransformer {
@@ -492,7 +494,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
 
         // initial block -- do we ever need to lub here?
         assert(getPreds(b.blockID) == List(-1))
-        println(blockInfoOut(b.blockID).code)
+        emitAll(blockInfoOut(b.blockID).code)
 
         // emit all non-inlined blocks
         for (b <- graalBlocks.blocks if blockInfo.contains(b.blockID)) {
@@ -504,7 +506,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
             val fields = getFields(stateBeforeBlock)
             val (key,keyid) = contextKeyId(getFrame(stateBeforeBlock))
 
-            println(genBlockDef(key, keyid, fields, code))
+            emitAll(genBlockDef(key, keyid, fields, code))
           }
         }
 
@@ -523,7 +525,6 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
         out.returns.zipWithIndex.map { case (st, j) => ("RETURN_"+i+"_"+j+";",st) }
       }
 
-      def emitAll(b: Block[Unit]) = b.stms foreach emit
 
       if (returns.length == 0) {
         emitAll(block)
