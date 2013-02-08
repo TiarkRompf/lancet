@@ -294,12 +294,13 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
     def infix_replace[A,B](a: Block[A], key: String, b: Block[B]): Block[A] = {
       var found = 0
       val t = new StructuralTransformer {
-        override def transformStm(s: Stm): Stm = s match {
+        override def transformStm(s: Stm): List[Stm] = s match {
           case Unstructured(`key`) => 
             found += 1
-            ValDef("_", typeRep[Unit], List(b))
+            // not replacing a valdef so we can discard result
+            b.stms
           case Unstructured(k) => 
-            System.out.println("no match "+k)
+            //System.out.println("no match "+k)
             super.transformStm(s)
           case _ => super.transformStm(s)
         }

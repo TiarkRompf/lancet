@@ -138,16 +138,16 @@ trait Base_LMS extends Base_LMS0 {
 
     def transformBlock[A](b: Block[A]): Block[A] = b match {
       case Block(stms,res) =>
-        Block(stms map transformStm,res)
+        Block(stms flatMap transformStm,res)
     }
 
-    def transformStm(s: Stm): Stm = s match {
+    def transformStm(s: Stm): List[Stm] = s match {
       case ValDef(x,typ,rhs) => 
-        ValDef(x,typ,rhs map {
+        List(ValDef(x,typ,rhs map {
           case b: Block[_] => transformBlock(b)
           case e => e
-        })
-      case Unstructured(s) => Unstructured(s)
+        }))
+      case Unstructured(s) => List(Unstructured(s))
     }
   }
 
@@ -159,8 +159,9 @@ trait Base_LMS extends Base_LMS0 {
         if (x != "_") Console.print("val "+x+" = ")
         rhs foreach {
           case b: Block[_] => 
-            Console.print("{")
+            Console.println("{")
             traverseBlock(b)
+            if (b.res != liftConst(())) Console.println(b.res)
             Console.print("}")
           case e =>
             Console.print(e.toString)

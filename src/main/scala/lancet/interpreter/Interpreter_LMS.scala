@@ -70,7 +70,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
         var close = 0
         l foreach { case '{' => open += 1 case '}' => close += 1 case _ => }
         val d = if (close == 0) 0 else l.takeWhile(_ == '}').length
-        println("  "*(indent-d) + l)
+        Console.println("  "*(indent-d) + l)
         indent += (open - close)
       }
     }
@@ -105,15 +105,12 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
         Console.println("def apply(ARG: "+maStr+"): "+mbStr+" = { object BODY {")
         Console.println("  var RES = null.asInstanceOf["+mbStr+"]")
 
-        //printIndented(stms.mkString("\n"))
+        val (src, _) = captureConsoleOutputResult {
+          val cg = new CodeGen {}
+          cg.traverseBlock(b)
+        }
 
-        //def traverseStm(s: Stm)
-
-        val cg = new CodeGen {}
-        cg.traverseBlock(b)
-
-
-        //println()
+        printIndented(src)
 
         Console.println("}; BODY.RES }")
         Console.println("}")
