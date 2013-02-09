@@ -472,29 +472,7 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
     def getAllRefs(x: Elem) = getAllocs(x) ++ getFields(x).collect { case Dyn(s) => s }
 
 
-    def getLubParamArgs(x: Elem, y: Elem): Map[String, Rep[Any]] = {
-      
-      type PElem = Map[String, Rep[Any]]
-
-      def lubPartial(p: String)(x: PElem, y: PElem): PElem = {
-        val ks = x.keys ++ y.keys
-        ks.flatMap { k =>
-          ((x.get(k), y.get(k)) match {
-            case (Some(Dyn(s:String)),Some(b)) /*if s.startsWith("LUB_")*/ => Map(s->b):PElem
-            case _ => Map.empty:PElem
-          })
-        }.toMap
-      }
-
-      val ks = x.keys ++ y.keys
-
-      ks.flatMap { k =>
-        ((x.get(k), y.get(k)) match {
-          case (Some(Partial(as)),Some(Partial(bs))) => (lubPartial(k)(as,bs))
-          case _ => Map.empty:PElem
-        })
-      }.toMap
-    }
+    
 
     // x is 'target' elem, y is 'current' elem
     def lub(x: Elem, y: Elem): Elem = {
@@ -604,58 +582,7 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
       r2
     }
 
-
-    def alpha(sto: Elem, from: List[Rep[Any]], to: List[Rep[Any]]): Elem = {
-
-      val subst = (to zip from).toMap
-
-/*      def alphaRep(x: Rep[Any]): Rep[Any] = x match {
-        case Dyn(s) => subst.getOrElse(x, x)
-        case _ => x
-      }
-
-      sto map { 
-        case (k, Partial(fields)) => 
-          subst get Dyn(k) match {
-            case Some(Dyn)
-          }
-          (k, Partial(fields map (p => (p._1, alphaRep(p._2)))))
-        case p => p
-      }
-*/
-      
-      def dealias[T](x: Rep[T]): Rep[T] = x match {
-        case Dyn(s) => sto.get(s) match {
-            case Some(Alias(List(y:Rep[T]))) => dealias(y)
-            //case Some(Const(c:T)) => Static(c)(x.typ.asInstanceOf[TypeRep[T]])
-            case _ => x
-          }
-        case _ => x
-      }
-
-      val sto2 = sto.filter { case (k,Alias(_)) => false case _ => true }
-
-      sto2 ++ (to flatMap {
-        case x@Dyn(s) => subst.get(x).flatMap { 
-          case y@Dyn(s2) => 
-            eval(y) match {
-              case z@Const(_) => 
-                Some(s -> z)
-              case _ =>
-                val z = dealias(y)
-                if (z != x)  //HACK
-                  Some(s -> Alias(List(z))) else None
-            }
-          case Static(y) => Some(s -> Const(y))
-          case null => Some(s -> null)
-        }
-        case _ => Nil
-      }).toMap
-
-    }
-    // TBD: need explicit compare op?
   }
-
 }
 
 
