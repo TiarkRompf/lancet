@@ -81,7 +81,7 @@ class TestInterpreter4 extends FileDiffSuite {
         val Static(cls: Class[_]) = fs("clazz")
         withScope {
           //println("{ object BODY {")
-          println("  var RES = null.asInstanceOf[Object]")
+          emitString("  var RES = null.asInstanceOf[Object]")
           execute(cls.getMethod("apply", classOf[Object]), Array[Rep[Object]](f,arg)(repManifest[Object]))
           //println("}")
           //"BODY.RES.asInstanceOf["+typeRep[B]+"]}"

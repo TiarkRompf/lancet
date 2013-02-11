@@ -182,7 +182,7 @@ class Runtime_Generic(metaProvider: MetaAccessProvider) extends Runtime_LMS(meta
   // overridable ...
   def isSafeRead(base: Object, offset: Long, field: ResolvedJavaField, typ: TypeRep[_]): Boolean = {
     if (base == null) {
-      println("// base is null, dammit"); false
+      emitString("// base is null, dammit"); false
     } else {
 /*
       val unsafePrefixes = "sun.nio."::"java.io."::"java.nio."::Nil
@@ -210,7 +210,7 @@ class Runtime_Generic(metaProvider: MetaAccessProvider) extends Runtime_LMS(meta
       val r = lookup.startsWith("Class.forName") || safeFields.contains(lookup) || !unsafePrefixes.exists(str startsWith _)
       if (debugReadWrite) {
         val pred = if (r) "safe" else "unsafe"
-        println("// " + pred + " read: " + base.toString.replace("\n","\\n") + "." + offset + ":" + typ)
+        emitString("// " + pred + " read: " + base.toString.replace("\n","\\n") + "." + offset + ":" + typ)
       }
       r
 */
@@ -318,7 +318,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
 
 
     override def nullCheck(value: Rep[Object]): Rep[Object] = {
-      if (debugNullCheck) println("// nullcheck "+value + "=" + eval(value))
+      if (debugNullCheck) emitString("// nullcheck "+value + "=" + eval(value))
       super.nullCheck(value)
     }
 
@@ -379,7 +379,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
       val base = resolveBase(base0,field)
       val volatile = isVolatile(field) // TODO!
 
-      if (debugReadWrite) println("// getField " + base0 + ":" + field.holder.toJava.getName + "." + field.name)
+      if (debugReadWrite) emitString("// getField " + base0 + ":" + field.holder.toJava.getName + "." + field.name)
 
       if (base+","+offset == "Class.forName(\"sun.misc.VM\").asInstanceOf[Object],261.asInstanceOf[Long]") return unit(true).asInstanceOf[Rep[T]]
 
@@ -424,11 +424,11 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
         case s@Partial(_) => s
         case s@Const(c) => Partial(Map("alloc" -> Static(c), "clazz" -> Static(c.getClass)))
         // Alias: update all partials with lub value for field
-        case s => println("ERROR // write to unknown: " + s); return // need to trash the whole store?? sigh ...
+        case s => emitString("ERROR // write to unknown: " + s); return // need to trash the whole store?? sigh ...
       }
       store += (s -> Partial(fs + (k -> dealias(value))))
 
-      if (debugReadWrite) println("// storing: " + (s -> Partial(fs + (k -> value))))
+      if (debugReadWrite) emitString("// storing: " + (s -> Partial(fs + (k -> value))))
 
       /*val offset = resolveOffset(field);
       if (isVolatile(field)) {
@@ -483,11 +483,11 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
         case s@Partial(_) => s
         case s@Const(c) => Partial(Map("alloc" -> Static(c), "clazz" -> Static(c.getClass), "size" -> Static(c.length)))
         // Alias: update all partials with lub value for field
-        case s => println("ERROR // write to unknown: " + s); return // need to trash the whole store?? sigh ...
+        case s => emitString("ERROR // write to unknown: " + s); return // need to trash the whole store?? sigh ...
       }
       store += (s -> Partial(fs + ("array" -> dealias(value))))
 
-      if (debugReadWrite) println("// storing: " + (s -> Partial(fs + ("array" -> value))))
+      if (debugReadWrite) emitString("// storing: " + (s -> Partial(fs + ("array" -> value))))
 */
 
       /*checkArray(array, index);

@@ -227,7 +227,7 @@ trait Base_LMS extends Base_LMS0 {
 
     (exprs.get(rhs) match { // cse?
       case Some(y) =>
-        println("/* cse: "+rhs+" = "+y + "*/")
+        emitString("/* cse: "+rhs+" = "+y + "*/")
         y
       case None =>
       if (typeRep[T] == typeRep[Unit]) {
@@ -300,7 +300,11 @@ trait Base_LMS extends Base_LMS0 {
   }
 
 
-  def println(s: Any) = emit(Unstructured(s.toString))
+  def emitString(s: String) = emit(Unstructured(s.toString))
+
+  def emitBlock(s: Block[Any]) = assert(false) // TODO
+
+  def println(s: Any) = assert(false)
 
   def captureOutput[A](func: => Rep[A]): String = {
     val (s,r) = captureOutputResult(func)
@@ -437,7 +441,7 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
       case x => x
     }
     case _ => 
-      println("ERROR // can't eval: " + x)
+      emitString("ERROR // can't eval: " + x)
       Top
   }
 
@@ -472,7 +476,7 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
     def getAllRefs(x: Elem) = getAllocs(x) ++ getFields(x).collect { case Dyn(s) => s }
 
 
-    
+
 
     // x is 'target' elem, y is 'current' elem
     def lub(x: Elem, y: Elem): Elem = {
@@ -510,7 +514,7 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
             case (Some(Static(a)),Some(bb@Static(b))) => 
               val str = "LUB_"+p+"_"+k
               if (""+b != str)
-                println("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
+                emitString("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
               val tp = bb.typ.asInstanceOf[TypeRep[Any]]
               Dyn[Any](str)(tp)
             case (Some(a),None) if p.startsWith("CONST") && k == "clazz" => a // class is constant
@@ -519,10 +523,10 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
               val str = "LUB_"+p+"_"+k
               val tp = if (b.nonEmpty) {
                 //if (b.get.toString != str && !y0.contains(b.get.toString)) {
-                //  println("// PROBLEMO "+b.get+" not in "+y0)
+                //  emitString("// PROBLEMO "+b.get+" not in "+y0)
                 //}
                 if (b.get.toString != str)
-                  println("val "+str+" = " + b.get + " // Alias(" + a + "," + b + ")") // FIXME: kill in expr!
+                  emitString("val "+str+" = " + b.get + " // Alias(" + a + "," + b + ")") // FIXME: kill in expr!
                 b.get.typ.asInstanceOf[TypeRep[Any]]
               } else {                
                 val tp = a.get.typ.asInstanceOf[TypeRep[Any]]
@@ -535,9 +539,9 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
                   //println("// lookup "+obj+"."+k+"="+fld)
                   // may fld and a.get be equal? unlikely ...
                   if (fld.toString != str)
-                    println("val "+str+" = " + fld + " // XXX LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
+                    emitString("val "+str+" = " + fld + " // XXX LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
                 } else 
-                  println("val "+str+" = " + a.get + " // AAA Alias(" + a + "," + b + ")") // FIXME: kill in expr!
+                  emitString("val "+str+" = " + a.get + " // AAA Alias(" + a + "," + b + ")") // FIXME: kill in expr!
                 tp
               }
               Dyn[Any](str)(tp)
@@ -557,7 +561,7 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
           // allocs: may be null in alternative
           //case (Some(Partial(as)),None) => Partial(lubPartial(k)(as,Map("alloc"->liftConst(null))))
           //case (None,Some(Partial(bs))) => Partial(lubPartial(k)(Map("alloc"->liftConst(null)),bs))
-          //case (Some(Partial(as)),None) => println("val "+k+" = null // lub "+Partial(as)+", None "); Top
+          //case (Some(Partial(as)),None) => emitString("val "+k+" = null // lub "+Partial(as)+", None "); Top
           case (Some(Alias(as)),Some(Alias(bs))) => Alias(as ++ bs)
           case (Some(a),Some(b)) => Top
           case (Some(a),b) => 
@@ -572,7 +576,7 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
       val removed = r1.collect { case (k,Top) => k }
 
       //if (removed.nonEmpty)
-      //  println("//removed: "+removed)
+      //  emitString("//removed: "+removed)
 
       val r2 = r1.filter(_._2 != Top).toMap
 

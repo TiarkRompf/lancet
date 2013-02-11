@@ -73,9 +73,9 @@ trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpret
           if (a != b) {
             val str = "PHI_"+x.depth+"_"+i
             if (b == null)
-              println("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
+              emitString("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
             else if (b.toString != str)
-              println("val "+str+" = " + b + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
+              emitString("val "+str+" = " + b + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
             val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
             val phi = Dyn[AnyRef](str)(tp)
             y.locals(i) = phi
@@ -105,7 +105,7 @@ trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpret
           }
           //val locals = FrameLattice.getFields(frameY).filter(_.toString.startsWith("PHI"))
           //val fields = StoreLattice.getFields(storeY).filter(_.toString.startsWith("LUB"))
-          //for (v <- locals ++ fields) println("v"+v+" = "+v)
+          //for (v <- locals ++ fields) emitString("v"+v+" = "+v)
           liftConst(())
         }
         (go,frameY,storeY,exprY)
@@ -191,7 +191,7 @@ class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpre
     def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = "BLOCK_"+keyid+"("+fields.mkString(",")+")"
 
     def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]): Block[Unit] = reify {
-      if (debugBlockKeys) println("// "+key+"\n")
+      if (debugBlockKeys) emitString("// "+key+"\n")
       reflect[Unit]("def BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit = ", code)
     }
 
@@ -209,7 +209,7 @@ class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpre
     // print stats after compiling
     override def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
       val f1 = try super.compile(f) finally if (debugStats) {
-        println("--- stats ---")
+        emitString("--- stats ---")
         val stats1 = stats.toList.map { case (k,v) => 
           val frame = k.split("//").map { s => 
             val Array(bci,meth) = s.split(":")
@@ -217,8 +217,8 @@ class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpre
           }
           frame.reverse.mkString(" // ") + "    " + v
         }
-        stats1.sorted foreach println
-        println("total: " + stats.map(_._2).sum)
+        stats1.sorted foreach emitString
+        emitString("total: " + stats.map(_._2).sum)
       }
       f1
     }
@@ -338,7 +338,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
     def exec(frame: InterpreterFrame): Rep[Unit] = { // called internally to initiate control transfer
       
       if (budget <= 0) {
-        println("// *** BUDGET EXCEEDED ***")
+        emitString("// *** BUDGET EXCEEDED ***")
         return unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
       }
 
@@ -349,7 +349,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
 
       val method = frame.getMethod()
       if (!emitRecursive && getContext(frame).drop(1).exists(_.getMethod() == method)) { // recursive (TODO: faster test)
-        println("// *** RECURSIVE: "+method+" *** " + contextKey(frame))
+        emitString("// *** RECURSIVE: "+method+" *** " + contextKey(frame))
         return reflect[Unit]("throw new Exception(\"RECURSIVE: "+frame.getMethod+"\")")
       }
 
@@ -368,18 +368,18 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
       def getGraalBlock(fr: InterpreterFrame) = graalBlocks.blocks.find(_.startBci == fr.getBCI).get
 
 /*
-      println("/*")
+      emitString("/*")
       val postDom = postDominators(graalBlock.blocks.toList)
       for (b <- graalBlock.blocks) {
-          println(b + " succ [" + postDom(b).map("B"+_.blockID).mkString(",") + "]")
+          emitString(b + " succ [" + postDom(b).map("B"+_.blockID).mkString(",") + "]")
       }
-      println("*/")
+      emitString("*/")
 */
 
       val saveHandler = handler
       val saveDepth = getContext(mframe).length
 
-      if (debugMethods) println("// << " + method)
+      if (debugMethods) emitString("// << " + method)
 
       case class BlockInfo(inEdges: List[(Int,State)], inState: State)
       case class BlockInfoOut(returns: List[State], gotos: List[State], code: Block[Unit])
@@ -399,7 +399,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
         else if (d < saveDepth) { 
           val s = getState(blockFrame)
           val out = blockInfoOut(curBlock)
-          println("RETURN_"+curBlock+"_"+(out.returns.length)+";")
+          emitString("RETURN_"+curBlock+"_"+(out.returns.length)+";")
           blockInfoOut(curBlock) = out.copy(returns = out.returns :+ s)
           //returns = returns :+ (freshFrameSimple(blockFrame), store)
           //println("RETURN_"+(returns.length-1)+";")
@@ -434,7 +434,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
         }
 
         val out = blockInfoOut(curBlock)
-        println("GOTO_"+(out.gotos.length)+";")
+        emitString("GOTO_"+(out.gotos.length)+";")
         blockInfoOut(curBlock) = out.copy(gotos = out.gotos :+ s)
         liftConst(())
       }
@@ -520,7 +520,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
 
       // *** backpatch returns and continue ***
 
-      if (debugMethods) println("// >> " + method)
+      if (debugMethods) emitString("// >> " + method)
 
       val returns = blockInfoOut.toList flatMap { case (i, out) =>
         out.returns.zipWithIndex.map { case (st, j) => ("RETURN_"+i+"_"+j+";",st) }
@@ -529,23 +529,23 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
 
       if (returns.length == 0) {
         emitAll(block)
-        println("// (no return?)")
+        emitString("// (no return?)")
       } else if (returns.length == 1) { 
         val (k,s) = returns(0)
         val ret = reify {
-          if (debugReturns) println("// ret single "+method)
+          if (debugReturns) emitString("// ret single "+method)
           withState(s)(exec)
         }
         emitAll(block.replace(k, ret))
       } else {
-        println("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
+        emitString("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
 
         val (ss, gos) = allLubs(returns.map(_._2))
         val fields = getFields(ss)
 
-        println(";{")
+        emitString(";{")
 
-        for (v <- fields) println(genVarDef(v))
+        for (v <- fields) emitString(genVarDef(v))
 
         var block1 = block
         for ((k,go) <- (returns.map(_._1)) zip gos) {
@@ -557,11 +557,11 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
         }
         emitAll(block1)
         
-        println(";{")
-        if (debugReturns) println("// ret multi "+method)
-        for (v <- fields) println(genVarRead(v))
+        emitString(";{")
+        if (debugReturns) emitString("// ret multi "+method)
+        for (v <- fields) emitString(genVarRead(v))
         withState(ss)(exec)
-        println("}}")
+        emitString("}}")
       }
       liftConst(())
     }
@@ -597,7 +597,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
 
       if (debugStats) stats(key) = stats.getOrElse(key,0) + 1
 
-      if (debugBlocks) println("// *** " + key)
+      if (debugBlocks) emitString("// *** " + key)
 
       val frame1 = freshFrameSimple(frame) // necessary?
       val bci = frame1.getBCI()
@@ -605,14 +605,14 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
       //bs.setBCI(globalFrame.getBCI())
       val res = try { executeBlock(frame1, bs, bci) } catch {
         case e: InterpreterException =>
-          println("// caught " + e)
+          emitString("// caught " + e)
           reflect[Unit]("throw "+e.cause+".asInstanceOf[Throwable]")
         case e: Throwable =>
-          println("ERROR /*")
-          println(key)
-          println(e.toString)
-          e.getStackTrace().take(100).map(println)
-          println("*/")
+          emitString("ERROR /*")
+          emitString(key)
+          emitString(e.toString)
+          emitString(e.getStackTrace().take(100).mkString("\n"))
+          emitString("*/")
           liftConst(())
       }
 

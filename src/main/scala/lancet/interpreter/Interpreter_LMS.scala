@@ -241,15 +241,15 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       var low = 0;
       var high = switchHelper.numberOfCases() - 1;
 
-      println(""+key+" match {")
+      emitString(""+key+" match {")
       for (i <- low to high) {
         val midVal = switchHelper.keyAt(i);
-        println("case "+midVal+" => ")
-        println(reify(k(switchHelper.bci() + switchHelper.offsetAt(i))))
+        emitString("case "+midVal+" => ")
+        emitBlock(reify(k(switchHelper.bci() + switchHelper.offsetAt(i)))) // FIXME
       }
-      println("case _ => ")
-      println(reify(k(switchHelper.defaultTarget)))
-      println("}")
+      emitString("case _ => ")
+      emitBlock(reify(k(switchHelper.defaultTarget)))
+      emitString("}")
       liftConst(())
     }
     /*{
@@ -276,14 +276,14 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
       assert(low <= high);
 
-      println(""+index+" match {")
+      emitString(""+index+" match {")
       for (i <- low to high) {
-        println("case "+i+" => ")
-        println(reify(k(switchHelper.targetAt(i-low))))
+        emitString("case "+i+" => ")
+        emitBlock(reify(k(switchHelper.targetAt(i-low))))
       }
-      println("case _ => ")
-      println(reify(k(switchHelper.defaultTarget)))
-      println("}")
+      emitString("case _ => ")
+      emitBlock(reify(k(switchHelper.defaultTarget)))
+      emitString("}")
 
       /*
       if (index < low || index > high) {
@@ -328,7 +328,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
         // TODO: will require registering an assumption ...
         val unique = if (emitUniqueOpt) m.holder.uniqueConcreteMethod(m) else null
         if (unique ne null) {
-          println("// unique method: "+m+" TODO: guard")
+          emitString("// unique method: "+m+" TODO: guard")
           return invokeDirect(parent, unique, true)
         }
 
