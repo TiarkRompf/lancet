@@ -97,6 +97,8 @@ trait Base_LMS0 extends Base {
     case "byte" => "Byte"
     case "char" => "Char"
     case "long" => "Long"
+    case "float" => "Float"
+    case "double" => "Double"
     case "void" => "Unit"
     //TODO/FIXME
     case s if !Modifier.isPublic(x.getModifiers) => "Object /*" + s + "*/" //s <-- class may be private...
