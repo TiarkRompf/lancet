@@ -64,7 +64,13 @@ class TestInterpreter5 extends FileDiffSuite {
       // check for known collection methods
       fullName match {
         case "lancet.interpreter.TestInterpreter5$Decompiler.dropdead" => handle {
-          case r::Nil => reflect[Object]("() // drop into interpreter")
+          case r::Nil => 
+            // get caller frame from compiler
+            // create interpreter object (or reuse?)
+            // initialize interpreter with corresponding chain of frames
+            // exec interpreter to resume at caller frame
+            // discard compiler state
+            reflect[Object]("() // drop into interpreter")
         }
         case _ => 
           //println(fullName)
