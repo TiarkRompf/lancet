@@ -65,12 +65,20 @@ class TestInterpreter5 extends FileDiffSuite {
       fullName match {
         case "lancet.interpreter.TestInterpreter5$Decompiler.dropdead" => handle {
           case r::Nil => 
-            // get caller frame from compiler
+            // get caller frame from compiler ('parent')
+            // emit code to construct interpreter state            
+            def rec(frame: InterpreterFrame): Rep[Object] = if (frame == null) liftConst(null) else {
+              val p = rec(frame.getParentFrame)
+              val frame1 = frame.asInstanceOf[InterpreterFrame_Str]
+              reflect[Object]("new InterpreterFrame(locals=Array("+frame1.locals.mkString(",")+"), method="+liftConst(frame1.getMethod)+", parent="+p+")")
+            }
+            val frame = rec(parent)
             // create interpreter object (or reuse?)
+            //val interp = new BytecodeInterpreter_Exec
             // initialize interpreter with corresponding chain of frames
             // exec interpreter to resume at caller frame
             // discard compiler state
-            reflect[Object]("() // drop into interpreter")
+            reflect[Object]("execInterpreter("+frame+") // drop into interpreter")
         }
         case _ => 
           //println(fullName)
