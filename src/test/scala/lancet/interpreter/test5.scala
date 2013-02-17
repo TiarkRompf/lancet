@@ -31,7 +31,13 @@ class TestInterpreter5 extends FileDiffSuite {
 
   class Decompiler extends BytecodeInterpreter_Opt {
 
+    // macro interface
     def dropdead(): Unit = assert(false, "needs to be compiled with LancetJIT")
+
+    // macro implementations
+    trait SlowpathFrame
+    def execInterpreter(frame: SlowpathFrame): Unit = ???
+    def mkInterpreterFrame(locals: Array[AnyRef], bci: Int, method: ResolvedJavaMethod, parent: SlowpathFrame): SlowpathFrame = ???
 
     /*def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],Block[Object]) = {
       val arg = Dyn[Object](fresh)
@@ -65,13 +71,15 @@ class TestInterpreter5 extends FileDiffSuite {
       fullName match {
         case "lancet.interpreter.TestInterpreter5$Decompiler.dropdead" => handle {
           case r::Nil => 
+            val self = liftConst(Decompiler.this)
             // get caller frame from compiler ('parent')
             // emit code to construct interpreter state            
             def rec(frame: InterpreterFrame): Rep[Object] = if (frame == null) liftConst(null) else {
               val p = rec(frame.getParentFrame)
               val frame1 = frame.asInstanceOf[InterpreterFrame_Str]
-              // TODO: use factory method instead of constructor?
-              reflect[Object]("new InterpreterFrame(locals=Array("+frame1.locals.mkString(",")+"), method="+liftConst(frame1.getMethod)+", parent="+p+")")
+              reflect[Object](self,".mkInterpreterFrame(Array[Object]("+
+                frame1.locals.map(x=>x+".asInstanceOf[AnyRef]").mkString(",")+"), "+ // cast is not nice
+                frame1.bci+", "+liftConst(frame1.getMethod)+", "+p+")")
             }
             val frame = rec(parent)
             // create interpreter object (or reuse?)
@@ -79,7 +87,7 @@ class TestInterpreter5 extends FileDiffSuite {
             // initialize interpreter with corresponding chain of frames
             // exec interpreter to resume at caller frame
             // discard compiler state
-            reflect[Object]("execInterpreter("+frame+") // drop into interpreter")
+            reflect[Object](self,".execInterpreter("+frame+") // drop into interpreter")
         }
         case _ => 
           //println(fullName)
