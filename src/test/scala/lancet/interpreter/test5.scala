@@ -70,6 +70,7 @@ class TestInterpreter5 extends FileDiffSuite {
             def rec(frame: InterpreterFrame): Rep[Object] = if (frame == null) liftConst(null) else {
               val p = rec(frame.getParentFrame)
               val frame1 = frame.asInstanceOf[InterpreterFrame_Str]
+              // TODO: use factory method instead of constructor?
               reflect[Object]("new InterpreterFrame(locals=Array("+frame1.locals.mkString(",")+"), method="+liftConst(frame1.getMethod)+", parent="+p+")")
             }
             val frame = rec(parent)
