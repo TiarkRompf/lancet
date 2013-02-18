@@ -36,7 +36,12 @@ class TestInterpreter5 extends FileDiffSuite {
 
     // macro implementations
     trait SlowpathFrame
-    def execInterpreter(frame: SlowpathFrame): Unit = ???
+    def execInterpreter(frame: SlowpathFrame): Unit = {
+      val it = Lancet.newInterpreter
+      it.TRACE = true
+      it.TRACE_BYTE_CODE = true
+      val res = it.execute(frame)
+    }
     def mkInterpreterFrame(locals: Array[AnyRef], bci: Int, method: ResolvedJavaMethod, parent: SlowpathFrame): SlowpathFrame = ???
 
     /*def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],Block[Object]) = {
