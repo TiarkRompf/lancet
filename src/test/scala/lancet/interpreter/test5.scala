@@ -98,7 +98,7 @@ class TestInterpreter5 extends FileDiffSuite {
     def dropdead(): Unit = assert(false, "needs to be compiled with LancetJIT")
 
     // macro implementations
-    trait SlowpathFrame
+    type SlowpathFrame = AnyRef
     def execInterpreter(frame: SlowpathFrame): Unit = {
       val it = Lancet.newInterpreter
       it.TRACE = true
@@ -134,7 +134,7 @@ class TestInterpreter5 extends FileDiffSuite {
         true
       }
 
-      Console.println(fullName)
+      Console.println("// "+fullName)
 
       // check for known methods
       fullName match {

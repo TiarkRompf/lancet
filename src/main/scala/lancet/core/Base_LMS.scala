@@ -102,6 +102,7 @@ trait Base_LMS0 extends Base {
     case "void" => "Unit"
     // FIXME
     case "lancet.core.Base_LMS$Rep" => "lancet.core.Base_LMS$Rep" // scalac complains 'no type params' -- huh??
+    case "lancet.interpreter.TestInterpreter5$Decompiler" => "lancet.interpreter.TestInterpreter5#Decompiler" // scalac crash
     //TODO/FIXME
     case s if !Modifier.isPublic(x.getModifiers) => "Object /*" + s + "*/" //s <-- class may be private...
     case s => s
