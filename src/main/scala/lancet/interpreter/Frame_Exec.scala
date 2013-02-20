@@ -234,7 +234,7 @@ with InterpreterFrame {
 
     setMethod(method);
     setBCI(0);
-        
+    
 
     /** Pointer to the top-most stack frame element. */
     private var tos: Int = BASE_LENGTH;

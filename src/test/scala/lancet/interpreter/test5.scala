@@ -29,6 +29,7 @@ class TestInterpreter5 extends FileDiffSuite {
   }
 
   def test2 = withOutFileChecked(prefix+"slowpath2") {
+    assert(false)
     val it = new Decompiler
 
     abstract class Exp
@@ -106,16 +107,20 @@ class TestInterpreter5 extends FileDiffSuite {
 
     def mkInterpreterFrame(locals: Array[AnyRef], bci: Int, method: ResolvedJavaMethod, parent: SlowpathFrame): SlowpathFrame = {
 
-      val additionalStackSpace = 0
+      // encapsulation -- shouldn't do this calculation here
+      val additionalStackSpace = locals.length - (method.maxLocals() + method.maxStackSize() + InterpreterFrame.BASE_LENGTH)
       val frame = new it.InterpreterFrame_Exec(method, parent.asInstanceOf[it.InterpreterFrame_Exec], additionalStackSpace);
       frame.setBCI(bci)
+      assert(locals.length == frame.locals.length)
+      System.arraycopy(locals, 0, frame.locals, 0, locals.length)
       frame
-      // TODO: stack space and copy locals -- Frame_Exec has separate arrays for refs and primitives
 
     }
 
     def execInterpreter(frame: SlowpathFrame): Unit = {
+      Console.println("-- start interpreting")
       val res = it.executeRootImplicit(frame.asInstanceOf[it.InterpreterFrame])
+      Console.println("-- done interpreting")
       // need to abort -- throw new InterpreterException
     }
 
@@ -176,18 +181,15 @@ class TestInterpreter5 extends FileDiffSuite {
     }
 
 
-    override def isSafeRead(base: Object, offset: Long, field: ResolvedJavaField, typ: TypeRep[_]): Boolean = {
-    super.isSafeRead(base, offset, field, typ) || {
-      val name = field.holder.toJava.getName + "." + field.name
-      name match {
-        case _ =>
-         false
+    override def isSafeRead(base: Object, offset: Long, field: ResolvedJavaField, typ: TypeRep[_]): Boolean =
+      super.isSafeRead(base, offset, field, typ) || {
+        val name = field.holder.toJava.getName + "." + field.name
+        name match {
+          case _ =>
+           false
+        }
       }
-    }}
 
-
-
-    // TODO: do we need to reconstruct generic types, i.e. Seq[A] ?
 
     override def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame =
       if (handleMethodCall(parent,m)) null else super.resolveAndInvoke(parent, m)
