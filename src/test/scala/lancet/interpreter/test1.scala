@@ -65,6 +65,7 @@ class TestInterpreter1 extends FileDiffSuite {
 
   // compile optimized
   def testC = withOutFileChecked(prefix+"C") {
+    assert(false) // crashes the vm at the moment
 
     class Foo {
       def bar(x: Int) = { System.out.println("hello: "+x); 9 }
