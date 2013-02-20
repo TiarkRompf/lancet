@@ -12,6 +12,22 @@ class TestInterpreter5 extends FileDiffSuite {
   val prefix = "test-out/test-interpreter-5"
 
 
+  def test1a = withOutFileChecked(prefix+"slowpath1a") {
+    val it = new Decompiler
+
+    def compute(i: Int) = if (i == 50) it.dropdead
+
+    val f = it.interpret { (x:Int) => 
+      var i = 0
+      while (i < x) {
+        compute(i)
+        i += 1
+      }
+      i
+    }
+    println(f(100))
+  }
+
   def test1 = withOutFileChecked(prefix+"slowpath1") {
     val it = new Decompiler
 
@@ -132,6 +148,14 @@ class TestInterpreter5 extends FileDiffSuite {
       Console.println("-- done interpreting")
       dump(frame1)
       // need to abort -- throw new InterpreterException
+    }
+
+
+    // global interpreter interface
+    def interpret[A:Manifest,B:Manifest](f: A=>B): A=>B = { arg =>
+      val meth = f.getClass.getMethod("apply", manifest[A].erasure)
+      val res = it.execute(meth, Array[Object](f,arg.asInstanceOf[Object]))
+      res.asInstanceOf[B]
     }
 
     /*def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],Block[Object]) = {
