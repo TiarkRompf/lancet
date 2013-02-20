@@ -112,7 +112,7 @@ class TestInterpreter5 extends FileDiffSuite {
   class Decompiler extends BytecodeInterpreter_Opt {
 
     // macro interface
-    def dropdead(): Unit = assert(false, "needs to be compiled with LancetJIT")
+    def dropdead(): Unit = () // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
     // macro implementations
     type SlowpathFrame = AnyRef
@@ -121,13 +121,14 @@ class TestInterpreter5 extends FileDiffSuite {
     it.TRACE = true
     it.TRACE_BYTE_CODE = true
 
-    def mkInterpreterFrame(locals: Array[AnyRef], bci: Int, method: ResolvedJavaMethod, parent: SlowpathFrame): SlowpathFrame = {
+    def mkInterpreterFrame(locals: Array[AnyRef], bci: Int, tos: Int, method: ResolvedJavaMethod, parent: SlowpathFrame): SlowpathFrame = {
 
       // encapsulation -- shouldn't do this calculation here
       import InterpreterFrame.BASE_LENGTH
       val additionalStackSpace = locals.length - (method.maxLocals() + method.maxStackSize() + BASE_LENGTH)
       val frame = new it.InterpreterFrame_Exec(method, parent.asInstanceOf[it.InterpreterFrame_Exec], additionalStackSpace);
       frame.setBCI(bci)
+      frame.setStackTop(tos)
       assert(locals.length == frame.locals.length)
       // 0-2 are reserved for parent link, bci etc. don't overwrite
       System.arraycopy(locals, BASE_LENGTH, frame.locals, BASE_LENGTH, locals.length - BASE_LENGTH)
@@ -198,7 +199,9 @@ class TestInterpreter5 extends FileDiffSuite {
               val frame1 = frame.asInstanceOf[InterpreterFrame_Str]
               reflect[Object](self,".mkInterpreterFrame(Array[Object]("+
                 frame1.locals.map(x=>x+".asInstanceOf[AnyRef]").mkString(",")+"), "+ // cast is not nice
-                frame1.bci+", "+liftConst(frame1.getMethod)+", "+p+")")
+                frame1.bci+", "+
+                frame1.getStackTop()+", "+
+                liftConst(frame1.getMethod)+", "+p+")")
             }
             val frame = rec(parent)
             // create interpreter object (or reuse?)
