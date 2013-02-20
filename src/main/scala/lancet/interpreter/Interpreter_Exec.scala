@@ -128,6 +128,13 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
         loop(root);
     }
 
+    def executeRootImplicit(frame: InterpreterFrame): Unit = {
+        def findRoot(frame: InterpreterFrame): InterpreterFrame = 
+            if (frame.getParentFrame == null) frame else findRoot(frame.getParentFrame)
+        executeRoot(findRoot(frame), frame)
+    }
+
+
     var globalFrame: InterpreterFrame = _
 
     def exec(frame: InterpreterFrame): Unit = { // called internally to initiate control transfer

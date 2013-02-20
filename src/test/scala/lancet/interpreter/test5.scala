@@ -103,7 +103,8 @@ class TestInterpreter5 extends FileDiffSuite {
       val it = Lancet.newInterpreter
       it.TRACE = true
       it.TRACE_BYTE_CODE = true
-      val res = it.execute(frame)
+      val res = it.executeRootImplicit(frame.asInstanceOf[it.InterpreterFrame])
+      // need to abort -- throw new InterpreterException
     }
     def mkInterpreterFrame(locals: Array[AnyRef], bci: Int, method: ResolvedJavaMethod, parent: SlowpathFrame): SlowpathFrame = ???
 
