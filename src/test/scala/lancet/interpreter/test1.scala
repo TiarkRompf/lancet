@@ -30,8 +30,6 @@ class TestInterpreter1 extends FileDiffSuite {
     it.TRACE = true
     it.TRACE_BYTE_CODE = true
 
-    println("xxx start")
-
     val res = it.execute(method, Array[Object](o, 8:Integer))
     
     println("res: " + res)
@@ -63,6 +61,7 @@ class TestInterpreter1 extends FileDiffSuite {
     contextKey        10s
     compile           7s
 */
+
 
   // compile optimized
   def testC = withOutFileChecked(prefix+"C") {
