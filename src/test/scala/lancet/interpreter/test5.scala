@@ -108,11 +108,13 @@ class TestInterpreter5 extends FileDiffSuite {
     def mkInterpreterFrame(locals: Array[AnyRef], bci: Int, method: ResolvedJavaMethod, parent: SlowpathFrame): SlowpathFrame = {
 
       // encapsulation -- shouldn't do this calculation here
-      val additionalStackSpace = locals.length - (method.maxLocals() + method.maxStackSize() + InterpreterFrame.BASE_LENGTH)
+      import InterpreterFrame.BASE_LENGTH
+      val additionalStackSpace = locals.length - (method.maxLocals() + method.maxStackSize() + BASE_LENGTH)
       val frame = new it.InterpreterFrame_Exec(method, parent.asInstanceOf[it.InterpreterFrame_Exec], additionalStackSpace);
       frame.setBCI(bci)
       assert(locals.length == frame.locals.length)
-      System.arraycopy(locals, 0, frame.locals, 0, locals.length)
+      // 0-2 are reserved for parent link, bci etc. don't overwrite
+      System.arraycopy(locals, BASE_LENGTH, frame.locals, BASE_LENGTH, locals.length - BASE_LENGTH)
       frame
 
     }
@@ -122,7 +124,7 @@ class TestInterpreter5 extends FileDiffSuite {
       val frame1 = frame.asInstanceOf[it.InterpreterFrame_Exec]
       def dump(f: it.InterpreterFrame_Exec): Unit = if (f != null) {
         Console.println(f.getMethod)
-        Console.println(f.locals.mkString(","))
+        Console.println(f.locals.drop(InterpreterFrame.BASE_LENGTH).mkString(","))
         dump(f.getParentFrame.asInstanceOf[it.InterpreterFrame_Exec])
       }
       dump(frame1)
