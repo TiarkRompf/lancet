@@ -99,14 +99,25 @@ class TestInterpreter5 extends FileDiffSuite {
 
     // macro implementations
     type SlowpathFrame = AnyRef
+
+    val it = Lancet.newInterpreter
+    it.TRACE = true
+    it.TRACE_BYTE_CODE = true
+
+    def mkInterpreterFrame(locals: Array[AnyRef], bci: Int, method: ResolvedJavaMethod, parent: SlowpathFrame): SlowpathFrame = {
+
+      val additionalStackSpace = 
+      val frame = new it.InterpreterFrame_Exec(method, parent.asInstanceOf[it.InterpreterFrame_Exec], additionalStackSpace);
+      frame.setBCI(bci)
+      System.arraycopy()
+      frame
+
+    }
+
     def execInterpreter(frame: SlowpathFrame): Unit = {
-      val it = Lancet.newInterpreter
-      it.TRACE = true
-      it.TRACE_BYTE_CODE = true
       val res = it.executeRootImplicit(frame.asInstanceOf[it.InterpreterFrame])
       // need to abort -- throw new InterpreterException
     }
-    def mkInterpreterFrame(locals: Array[AnyRef], bci: Int, method: ResolvedJavaMethod, parent: SlowpathFrame): SlowpathFrame = ???
 
     /*def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],Block[Object]) = {
       val arg = Dyn[Object](fresh)
