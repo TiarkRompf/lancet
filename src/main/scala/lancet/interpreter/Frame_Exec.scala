@@ -1000,13 +1000,14 @@ with InterpreterFrame {
         val b = new StringBuilder(getMethod().toStackTraceElement(getBCI()).toString());
         for (i <- 0 until tos) {
             val obj = getObject(tosSingle(i));
-            val primitive = getLong(tosSingle(i));
+            //val primitive = getLong(tosSingle(i));
 
             var objectString: String = null;
             if (obj != null) {
                 objectString = obj.getClass().getSimpleName() + "@" + Integer.toHexString(obj.hashCode());
             }
-            val primitiveString = "0x" + java.lang.Long.toHexString(primitive).toUpperCase();
+            //val primitiveString = "0x" + java.lang.Long.toHexString(primitive).toUpperCase();
+            val primitiveString = "(primitive?)"
             var typeString: String = null;
 
             val index = tosSingle(i);
