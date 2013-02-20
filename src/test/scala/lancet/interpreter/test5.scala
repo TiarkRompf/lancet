@@ -119,8 +119,16 @@ class TestInterpreter5 extends FileDiffSuite {
 
     def execInterpreter(frame: SlowpathFrame): Unit = {
       Console.println("-- start interpreting")
-      val res = it.executeRootImplicit(frame.asInstanceOf[it.InterpreterFrame])
+      val frame1 = frame.asInstanceOf[it.InterpreterFrame_Exec]
+      def dump(f: it.InterpreterFrame_Exec): Unit = if (f != null) {
+        Console.println(f.getMethod)
+        Console.println(f.locals.mkString(","))
+        dump(f.getParentFrame.asInstanceOf[it.InterpreterFrame_Exec])
+      }
+      dump(frame1)
+      val res = it.executeRootImplicit(frame1)
       Console.println("-- done interpreting")
+      dump(frame1)
       // need to abort -- throw new InterpreterException
     }
 
