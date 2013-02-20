@@ -29,6 +29,9 @@ class TestInterpreter1 extends FileDiffSuite {
     val it = Lancet.newInterpreter
     it.TRACE = true
     it.TRACE_BYTE_CODE = true
+
+    println("xxx start")
+
     val res = it.execute(method, Array[Object](o, 8:Integer))
     
     println("res: " + res)

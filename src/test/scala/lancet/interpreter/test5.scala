@@ -106,11 +106,11 @@ class TestInterpreter5 extends FileDiffSuite {
 
     def mkInterpreterFrame(locals: Array[AnyRef], bci: Int, method: ResolvedJavaMethod, parent: SlowpathFrame): SlowpathFrame = {
 
-      val additionalStackSpace = 
+      val additionalStackSpace = 0
       val frame = new it.InterpreterFrame_Exec(method, parent.asInstanceOf[it.InterpreterFrame_Exec], additionalStackSpace);
       frame.setBCI(bci)
-      System.arraycopy()
       frame
+      // TODO: stack space and copy locals -- Frame_Exec has separate arrays for refs and primitives
 
     }
 
