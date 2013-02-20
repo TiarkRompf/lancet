@@ -100,9 +100,12 @@ trait Base_LMS0 extends Base {
     case "float" => "Float"
     case "double" => "Double"
     case "void" => "Unit"
+    // FIXME
+    case "lancet.core.Base_LMS$Rep" => "lancet.core.Base_LMS$Rep" // scalac complains 'no type params' -- huh??
     //TODO/FIXME
     case s if !Modifier.isPublic(x.getModifiers) => "Object /*" + s + "*/" //s <-- class may be private...
     case s => s
+      //if (s.contains("$")) println("careful: "+s)
       val params = x.getTypeParameters
       if (params.length == 0) s
       else s + "[" + params.map(x=>"_").mkString(",") + "]"
