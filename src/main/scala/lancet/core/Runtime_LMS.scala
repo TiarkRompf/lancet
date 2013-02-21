@@ -388,7 +388,17 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
 
     def setArrayByte(value: Rep[Byte], index: Rep[Long], array: Rep[Object]): Unit = {
         checkArray(array, index);
-        if_ (objectIsInstanceOf[Array[Boolean]](array)) { //TODO: check
+
+        val m = manifest[Array[Boolean]]
+        val s = m.toString
+        val p = new TypeRep[Array[Boolean]](s)
+        //val q = anyType(m) // crashes!!!
+        val t = typeRep[Array[Boolean]](p)
+        val z = objectIsInstanceOf[Array[Boolean]](array)(t)
+
+        // INVESTIGATE: weird vm crash if not doing it all by hand
+
+        if_ (z/*objectIsInstanceOf[Array[Boolean]](array)*/) { //TODO: check
             checkArrayType(array, classOf[Boolean]);
             liftConst(())
         } {
