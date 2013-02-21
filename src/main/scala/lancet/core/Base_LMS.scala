@@ -206,6 +206,18 @@ trait Base_LMS extends Base_LMS0 {
   abstract class Def[+T]
 
 
+  def fblocks(e: Any): List[Block[Any]] = e match {
+    case b: Block[Any] => List(b)
+    case p: Product => p.productIterator.toList.flatMap(fblocks(_))
+    case _ => Nil
+  }
+  def fdeps(e: Any): List[Dyn[Any]] = e match {
+    case s: Dyn[Any] => List(s)
+    case p: Product => p.productIterator.toList.flatMap(fdeps(_))
+    case _ => Nil
+  }
+
+
   abstract class Stm {
     def deps: List[Dyn[Any]]
     def blocks: List[Block[Any]]
@@ -215,8 +227,8 @@ trait Base_LMS extends Base_LMS0 {
     // we shouldn't recurse in toString because things will get big
     // unfortunately cse still depends on it (need to move to node ids)
     override def toString = if (x == "_") rhs.mkString("") else "val "+x+/*":"+typ+*/" = "+rhs.mkString("") 
-    def deps: List[Dyn[Any]] = rhs collect { case x: Dyn[t] => x }
-    def blocks: List[Block[Any]] = rhs collect { case x: Block[t] => x }
+    def deps: List[Dyn[Any]] = fdeps(rhs)
+    def blocks: List[Block[Any]] = fblocks(rhs)
   }
 
   case class Unstructured(s: String) extends Stm {
