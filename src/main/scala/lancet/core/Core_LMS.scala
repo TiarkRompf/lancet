@@ -19,7 +19,7 @@ trait Core_LMS extends Base_LMS {
   def unit(x: Object): Rep[Object] = liftConst(x)
 
   case class PrimConvert[A:TypeRep,B:TypeRep](x:Rep[A]) extends Def[A]
-  
+
   case class PrimNegate[A:TypeRep](x: Rep[A]) extends Def[A]
   case class PrimPlus[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
   case class PrimMinus[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
@@ -140,6 +140,13 @@ trait Core_LMS extends Base_LMS {
   def doubleGreaterEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect[Boolean](x," >= ",y)
   def doubleEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect[Boolean](x," == ",y)
   def doubleNotEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect[Boolean](x," != ",y)
+
+  case class ObjectEqual(x: Rep[Object], y: Rep[Object]) extends Def[Boolean]
+  case class ObjectNotEqual(x: Rep[Object], y: Rep[Object]) extends Def[Boolean]
+  case class ObjectAsInstanceOf[T:TypeRep](x: Rep[Object]) extends Def[T]
+  case class ObjectIsInstanceOf[T:TypeRep](x: Rep[Object]) extends Def[Boolean]
+
+  case class IfThenElse[T:TypeRep](x: Rep[Boolean], y: Block[T], z: Block[T]) extends Def[Boolean]
 
   def objectEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflect[Boolean](x," eq ",y)
   def objectNotEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflect[Boolean](x," ne ",y)
