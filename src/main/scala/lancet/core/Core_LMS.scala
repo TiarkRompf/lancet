@@ -18,6 +18,27 @@ trait Core_LMS extends Base_LMS {
   def unit(x: Null): Rep[Object] = liftConst(null)
   def unit(x: Object): Rep[Object] = liftConst(x)
 
+  case class PrimConvert[A:TypeRep,B:TypeRep](x:Rep[A]) extends Def[A]
+  
+  case class PrimNegate[A:TypeRep](x: Rep[A]) extends Def[A]
+  case class PrimPlus[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
+  case class PrimMinus[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
+  case class PrimTimes[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
+  case class PrimDiv[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
+  case class PrimMod[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
+  case class PrimAnd[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
+  case class PrimOr[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
+  case class PrimXor[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
+  case class PrimShiftLeft[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
+  case class PrimShiftRight[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
+  case class PrimShiftRightUnsigned[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
+  case class PrimLess[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean]
+  case class PrimLessEqual[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean]
+  case class PrimGreater[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean]
+  case class PrimGreaterEqual[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean]
+  case class PrimEqual[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean]
+  case class PrimNotEqual[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean]
+
 
   def byteToInt(x: Rep[Byte]): Rep[Int] = reflect[Int](x,".toInt")
   def charToInt(x: Rep[Char]): Rep[Int] = reflect[Int](x,".toInt")

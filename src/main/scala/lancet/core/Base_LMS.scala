@@ -203,6 +203,9 @@ trait Base_LMS extends Base_LMS0 {
     //override def toString = "{\n"+stms.mkString("\n")+"\n" + res + "\n}"
   }
 
+  abstract class Def[+T]
+
+
   abstract class Stm {
     def deps: List[Dyn[Any]]
     def blocks: List[Block[Any]]
