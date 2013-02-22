@@ -401,8 +401,6 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
   }
 
 
-
-
   var store: StoreLattice.Elem = Map.empty
 
   // strategy for static values:
