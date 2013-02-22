@@ -369,7 +369,6 @@ trait Base_LMS_Abs extends Base {
   abstract class Val[+T]
   case class Const[+T](x: T) extends Val[T] { override def toString = ("Const("+x+")").replace("\n","\\n") }
   case class Partial[+T](fields: Map[String, Rep[Any]]) extends Val[T]
-  case class Alias[+T](y: List[Rep[T]]) extends Val[T]
   case object Top extends Val[Nothing]
 
   def eval[T](x: Rep[T]): Val[T]
@@ -381,61 +380,24 @@ trait Base_Opt extends Base_LMS_Opt
 
 trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
 
-/*
-  var exprs: Map[String, Rep[Any]] = Map.empty
-
-  def rewrite(s: String, x: Rep[Any]): Unit = {
-    // not used yet
-    assert(false, "REWRITE not used yet")
-    exprs += (s -> x)
-  }
-*/
-
-/*
-  new idea: need to track const modifications, too
-
-  abstract class Addr
-  abstract class Null
-  abstract class Static(c)
-  abstract class Alloc(site: String, mult: Int)  // site: finite unique id, mult: 1 single alloc/unique ref, 2 alloc in loop
-
-  type Store = Map[Addr, AbsObj] // map Dyn ref to 
-  type AbsObj = Map[String, Set[Rep[Any]]] // map field to value
-
-  type Env = Map[String, Addr]
-  def joinStore(a,b) = {  }
-  def putObject(target, field) = {
-    val (mstAddr, mayAddrs) = store(target)
-    for (a <- mayAddrs diff mstAddr)
-  }
- */
-
-
   object ExprLattice {
     type Elem = Map[String, Rep[Any]]
-
     def bottom: Elem = Map.empty
-
     // x is 'target' elem, y is 'current' elem
     def lub(x: Elem, y: Elem): Elem = {
-
       val ks = x.keys.toSet intersect y.keys.toSet
-
       val r1 = ks.map { k =>
         (k, (x.get(k), y.get(k)) match {
           case (Some(a),Some(b)) if a == b => Some(a)
           case _ => None
         })
       }
-
       val r2 = r1.collect{case (k,Some(v)) => (k,v)}.toMap
       r2
     }
-
     def getFields(x: Elem): Set[Rep[Any]] = { // only unique aliases
       x.values.toSet
     }
-
   }
 
 
@@ -457,8 +419,6 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
       case None => Const(x)
     }
     case Dyn(s) => store.getOrElse(s, Top).asInstanceOf[Val[T]] match {
-      case Alias(List(x)) => eval(x) // TBD: cycles?
-      case Alias(_) => Top // more than one alias
       case x => x
     }
     case _ => 
@@ -468,36 +428,20 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
 
   // TODO: generalize and move elsewhere
   
-  def dealias[T](x: Rep[T]): Rep[T] = x match {
-    case Dyn(s) => store.get(s) match {
-        case Some(Alias(List(y:Rep[T]))) => dealias(y)
-        case Some(Const(c:T)) => Static(c)(x.typ.asInstanceOf[TypeRep[T]])
-        case _ => x
-      }
-    case _ => x
-  }
-
-
   def getFieldForLub[T:TypeRep](base: Rep[Object], cls: Class[_], k: String): Rep[T] = throw new Exception
 
   object StoreLattice {
     type Elem = Map[String, Val[Any]]
-
     def bottom: Elem = Map.empty
-
     def getAllocs(x: Elem): Set[String] = x.collect { case (k,Partial(as)) => k }.toSet
 
     def getFields(x: Elem): Set[Rep[Any]] = { // only unique aliases
-      x.values.collect { case Partial(as) => as.values case Alias(a::Nil) => a::Nil } .flatten.toSet
+      x.values.collect { case Partial(as) => as.values } .flatten.toSet
     }
 
     def getDynFields(x: Elem): Set[Rep[Any]] = getFields(x).collect { case s@Dyn(_) => s }
 
-
     def getAllRefs(x: Elem) = getAllocs(x) ++ getFields(x).collect { case Dyn(s) => s }
-
-
-
 
     // x is 'target' elem, y is 'current' elem
     def lub(x: Elem, y: Elem): Elem = {
@@ -583,7 +527,6 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
           //case (Some(Partial(as)),None) => Partial(lubPartial(k)(as,Map("alloc"->liftConst(null))))
           //case (None,Some(Partial(bs))) => Partial(lubPartial(k)(Map("alloc"->liftConst(null)),bs))
           //case (Some(Partial(as)),None) => emitString("val "+k+" = null // lub "+Partial(as)+", None "); Top
-          case (Some(Alias(as)),Some(Alias(bs))) => Alias(as ++ bs)
           case (Some(a),Some(b)) => Top
           case (Some(a),b) => 
             //println("// strange lub: "+k+" -> Some("+a+"), "+b); 

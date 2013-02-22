@@ -18,6 +18,7 @@ trait Core_LMS extends Base_LMS {
   def unit(x: Null): Rep[Object] = liftConst(null)
   def unit(x: Object): Rep[Object] = liftConst(x)
 
+
   case class PrimConvert[A:TypeRep,B:TypeRep](x:Rep[A]) extends Def[A]
 
   case class PrimNegate[A:TypeRep](x: Rep[A]) extends Def[A]

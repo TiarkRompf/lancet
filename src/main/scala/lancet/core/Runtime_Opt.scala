@@ -241,6 +241,11 @@ class Runtime_Generic(metaProvider: MetaAccessProvider) extends Runtime_LMS(meta
 
 
 
+val writeAfterWrite: List[(Rep[Any],Rep[Any])] = Nil
+val readAfterWrite: List[(Rep[Any],Rep[Any])] = Nil
+val writeAfterRead: List[(Rep[Any],Rep[Any])] = Nil
+
+
 
 
 class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(metaProvider) {
@@ -280,7 +285,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
     override def newArray(typ: ResolvedJavaType, size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
       import scala.collection.immutable.Map
 
-      val rs = dealias(size)
+      val rs = size
 
       // FIXME: size may be extracted later and may point to a stack var
 
@@ -294,7 +299,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
     override def newArray(typ: Class[_], size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
       import scala.collection.immutable.Map
 
-      val rs = dealias(size)
+      val rs = size
 
       // FIXME: size may be extracted later and may point to a stack var
 
@@ -383,6 +388,20 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
 
       if (base+","+offset == "Class.forName(\"sun.misc.VM\").asInstanceOf[Object],261.asInstanceOf[Long]") return unit(true).asInstanceOf[Rep[T]]
 
+      /*
+        value = base.field
+
+        let S/T be the set of all objects base may/must point to:
+        this statement may/must read from all s/t in S/T
+
+        value may/must point to all s/t in S/T
+
+        write after read (soft):  for all statements that may read from s.field where s in S
+        write after write (soft): for all statements that may write to  s.field where s in S
+      */
+
+
+
       (eval(base), eval(offset)) match {
           case (Const(base), Const(offset)) if isSafeRead(base, offset, field, typeRep[T]) => 
             liftConst(getFieldUnsafe[T](base,offset))
@@ -415,18 +434,31 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
       val base = resolveBase(base0,field)
       val volatile = isVolatile(field) // TODO!
 
+      /*
+        base.field = value
+
+        let S/T be the set of all objects base may/must point to:
+        this statement may/must write to all s/t in S/T
+
+        let U/V be the set of all objects value may/must point to
+        base.field may/must point to u/v in U/V
+
+        write after read (soft):  for all statements that may read from s.field where s in S
+        write after write (soft): for all statements that may write to  s.field where s in S
+      */
+
       super.setField(value, base0, field)
       //val Static(off) = offset
       val k = field.name // off.toString
 
-      val s = dealias(base) match { case Static(x) => constToString(x) case x => x.toString }
+      val s = base match { case Static(x) => constToString(x) case x => x.toString }
       val Partial(fs) = eval(base) match {
         case s@Partial(_) => s
         case s@Const(c) => Partial(Map("alloc" -> Static(c), "clazz" -> Static(c.getClass)))
         // Alias: update all partials with lub value for field
         case s => emitString("ERROR // write to unknown: " + s); return // need to trash the whole store?? sigh ...
       }
-      store += (s -> Partial(fs + (k -> dealias(value))))
+      store += (s -> Partial(fs + (k -> value)))
 
       if (debugReadWrite) emitString("// storing: " + (s -> Partial(fs + (k -> value))))
 
