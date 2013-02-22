@@ -172,13 +172,18 @@ class TestAnalysis1 extends FileDiffSuite {
     type Store = Map[Addr,Obj]
 
     def objJoin(a: Obj, b: Obj): Obj = {
-      ???
+      val m = (a.keys ++ b.keys).map(k => k -> ((a.get(k),b.get(k)) match {
+        case (Some(u),Some(v)) => u join v
+        case (Some(u),_) => u
+        case (u,Some(v)) => v
+      }))
+      m.toMap
     }
     def objJoin(os: List[Obj]): Option[Obj] =
       if (os.isEmpty) None else Some(os.reduceLeft(objJoin))
 
     abstract class AbsStore { self =>
-      override def toString = List.range(0,100).flatMap(a=>get(Set(a)).map(a -> _)).toMap.toString
+      override def toString = List.range(0,1000).flatMap(a=>get(Set(a)).map(a -> _)).toMap.toString
       def getOrElse(a: AbsAddr, b: => Obj): Obj = get(a).getOrElse(b)
       def apply(a: AbsAddr): Obj = get(a).get
       def get(a: AbsAddr): Option[Obj]
