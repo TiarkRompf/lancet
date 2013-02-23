@@ -1,6 +1,6 @@
 package lancet.core
 
-import scala.virtualization.lms.common._
+//import scala.virtualization.lms.common._
 
 import java.lang.reflect.Modifier
 

@@ -19,7 +19,7 @@ libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.10.0"
 
 libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "test"
 
-libraryDependencies += "EPFL" %% "lms" % "0.3-SNAPSHOT"
+//libraryDependencies += "EPFL" %% "lms" % "0.3-SNAPSHOT"
 
 libraryDependencies += "junit" % "junit" % "4.8.1" % "test"
 
