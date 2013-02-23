@@ -1,0 +1,12 @@
+prog: {
+  Put(Static(0),counter,Const(1))
+  If(Get(Static(0),counter),{
+    Put(Static(1),a,New())
+    Put(Get(Static(1),a),foo,Const(5))
+  },{
+    Put(Static(1),a,New())
+    Put(Get(Static(1),a),bar,Const(5))
+  })
+}
+res: Prim(0)
+store: Map(0 -> Map(counter -> Prim(1)), 100 -> Map(foo -> Prim(5)), 1 -> Map(a -> Ref(100)))

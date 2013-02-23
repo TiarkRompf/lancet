@@ -1,0 +1,38 @@
+prog: {
+  If(Get(Static(0),counter),{
+    Put(Static(1),a,New())
+    Put(Get(Static(1),a),foo,Const(5))
+  },{
+    Put(Static(1),a,New())
+    Put(Get(Static(1),a),bar,Const(5))
+  })
+}
+c Set(0, 5, 1, 6, 9, 2, 7, 3, 8, 4)
+res: Prim(Set(0))
+store: 
+(0,Map(counter -> Prim(Set(0, 5, 1, 6, 9, 2, 7, 3, 8, 4))))
+(1,Map(a -> Ref(Set(100, 101))))
+(100,Map(foo -> Prim(Set(5))))
+(101,Map(bar -> Prim(Set(5))))
+prog: {
+  Put(Static(1),a,New())
+  Put(Get(Static(1),a),baz,Const(3))
+  If(Get(Static(0),counter),{
+    Put(Static(1),a,New())
+    Put(Get(Static(1),a),foo,Const(5))
+  },{
+    Put(Static(1),a,New())
+    Put(Get(Static(1),a),bar,Const(5))
+  })
+  Put(Get(Static(1),a),bar,Const(7))
+}
+c Set(0, 5, 1, 6, 9, 2, 7, 3, 8, 4)
+res: Prim(Set(0))
+store: 
+(0,Map(counter -> Prim(Set(0, 5, 1, 6, 9, 2, 7, 3, 8, 4))))
+(1,Map(a -> Ref(Set(102, 103, 104))))
+(102,Map(baz -> Prim(Set(3)), foo -> Prim(Set(5)), bar -> Prim(Set(5, 7))))
+(103,Map(baz -> Prim(Set(3)), foo -> Prim(Set(5)), bar -> Prim(Set(7))))
+(104,Map(baz -> Prim(Set(3)), bar -> Prim(Set(5, 7)), foo -> Prim(Set(5))))
+imprecision due to lack of strong updates:
+1.a still seems to have a baz field, but cannot!
