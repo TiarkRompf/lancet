@@ -2,6 +2,7 @@ package lancet.core
 
 trait Core extends Base {
 
+
   implicit def booleanType: TypeRep[Boolean]
 
   implicit def anyType[T:Manifest]: TypeRep[T]

@@ -55,6 +55,9 @@ class HasUnsafe {
 
 trait RuntimeUniverse extends Core {
 
+def infix_toJava(typ: ResolvedJavaType) = MetaUtil.getMirrorOrFail(typ, null)
+
+
 trait Runtime {
   def invoke(method: ResolvedJavaMethod, args: Array[Rep[Object]]): Rep[Object]
   def typeIsInstance(typ: ResolvedJavaType, value: Rep[Object]): Rep[Boolean]

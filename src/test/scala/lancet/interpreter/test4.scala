@@ -93,10 +93,10 @@ class TestInterpreter4 extends FileDiffSuite {
 
     def handleMethodCall(parent: InterpreterFrame, m: ResolvedJavaMethod): Boolean = {
       val className = m.holder.toJava.getName
-      val fullName = className + "." + m.name
+      val fullName = className + "." + m.getName
       def handle(f: List[Rep[Object]] => Rep[Object]): Boolean = {
-        val returnValue = f(popArgumentsAsObject(parent, m, !java.lang.reflect.Modifier.isStatic(m.accessFlags)).toList)
-        pushAsObject(parent, m.signature().returnKind(), returnValue)
+        val returnValue = f(popArgumentsAsObject(parent, m, !java.lang.reflect.Modifier.isStatic(m.getModifiers)).toList)
+        pushAsObject(parent, m.getSignature().getReturnKind(), returnValue)
         true
       }
 
@@ -138,11 +138,11 @@ class TestInterpreter4 extends FileDiffSuite {
           case args =>
             runtimeInterface.invoke(m,args.toArray)
         }
-        case s if className.startsWith("scala.runtime.MethodCache") && m.name != "<init>" => handle {
+        case s if className.startsWith("scala.runtime.MethodCache") && m.getName != "<init>" => handle {
           case args =>
             runtimeInterface.invoke(m,args.toArray)
         }
-        case s if className.startsWith("scala.runtime.EmptyMethodCache") && m.name != "<init>" => handle {
+        case s if className.startsWith("scala.runtime.EmptyMethodCache") && m.getName != "<init>" => handle {
           case args =>
             runtimeInterface.invoke(m,args.toArray)
         }
@@ -155,7 +155,7 @@ class TestInterpreter4 extends FileDiffSuite {
 
     override def isSafeRead(base: Object, offset: Long, field: ResolvedJavaField, typ: TypeRep[_]): Boolean = {
     super.isSafeRead(base, offset, field, typ) || {
-      val name = field.holder.toJava.getName + "." + field.name
+      val name = field.holder.toJava.getName + "." + field.getName
       name match {
         case "scala.collection.generic.GenTraversableFactory.bitmap$0" => true // lazy field, treat as const
         case "scala.collection.generic.GenTraversableFactory.ReusableCBF" => true

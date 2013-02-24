@@ -125,7 +125,7 @@ class TestInterpreter5 extends FileDiffSuite {
 
       // encapsulation -- shouldn't do this calculation here
       import InterpreterFrame.BASE_LENGTH
-      val additionalStackSpace = locals.length - (method.maxLocals() + method.maxStackSize() + BASE_LENGTH)
+      val additionalStackSpace = locals.length - (method.getMaxLocals() + method.getMaxStackSize() + BASE_LENGTH)
       val frame = new it.InterpreterFrame_Exec(method, parent.asInstanceOf[it.InterpreterFrame_Exec], additionalStackSpace);
       frame.setBCI(bci)
       frame.setStackTop(tos)
@@ -156,7 +156,7 @@ class TestInterpreter5 extends FileDiffSuite {
       dump(root)
 
       // retrieve value returned to interpreter root frame
-      val res = it.popAsObject(root, root.getMethod.signature.returnKind()) // should take actual method (root-1) frame
+      val res = it.popAsObject(root, root.getMethod.getSignature.getReturnKind()) // should take actual method (root-1) frame
 
       Console.println("result: " + res)
       res
@@ -192,10 +192,10 @@ class TestInterpreter5 extends FileDiffSuite {
 
     def handleMethodCall(parent: InterpreterFrame, m: ResolvedJavaMethod): Boolean = {
       val className = m.holder.toJava.getName
-      val fullName = className + "." + m.name
+      val fullName = className + "." + m.getName
       def handle(f: List[Rep[Object]] => Rep[Object]): Boolean = {
-        val returnValue = f(popArgumentsAsObject(parent, m, !java.lang.reflect.Modifier.isStatic(m.accessFlags)).toList)
-        pushAsObject(parent, m.signature().returnKind(), returnValue)
+        val returnValue = f(popArgumentsAsObject(parent, m, !java.lang.reflect.Modifier.isStatic(m.getModifiers)).toList)
+        pushAsObject(parent, m.getSignature().getReturnKind(), returnValue)
         true
       }
 
@@ -235,7 +235,7 @@ class TestInterpreter5 extends FileDiffSuite {
 
     override def isSafeRead(base: Object, offset: Long, field: ResolvedJavaField, typ: TypeRep[_]): Boolean =
       super.isSafeRead(base, offset, field, typ) || {
-        val name = field.holder.toJava.getName + "." + field.name
+        val name = field.holder.toJava.getName + "." + field.getName
         name match {
           case _ =>
            false

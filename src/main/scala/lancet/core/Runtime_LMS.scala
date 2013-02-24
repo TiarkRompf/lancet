@@ -149,8 +149,8 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
 
     def invoke(method: ResolvedJavaMethod, args: Array[Rep[Object]]): Rep[Object] = {
         
-        val holder = method.holder.toJava.getName
-        val name = method.name
+        val holder = method.getDeclaringClass.toJava.getName
+        val name = method.getName
 
         assert(name != "<init>", "not handling constructors here...")
 
@@ -159,9 +159,9 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
         val m = methToJava(method)        
         m.setAccessible(true)
 
-        val static = Modifier.isStatic(method.accessFlags)
+        val static = Modifier.isStatic(method.getModifiers)
 
-        val mtyp = TypeRep[Object](method.signature.returnKind.toString match {  //TODO: cleanup
+        val mtyp = TypeRep[Object](method.getSignature.getReturnKind.toString match {  //TODO: cleanup
             case "void" => "Unit"
             case "char" => "Char"
             case "int" => "Int"
@@ -483,7 +483,7 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
     }
 
     def isVolatile(field: ResolvedJavaField): Boolean = {
-        return Modifier.isVolatile(field.accessFlags());
+        return Modifier.isVolatile(field.getModifiers());
     }
 
     def resolveOffset(field: ResolvedJavaField): Long = {
@@ -491,7 +491,7 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
     }
 
     def resolveBase(base: Rep[Object], field: ResolvedJavaField): Rep[Object] =
-      if (Modifier.isStatic(field.accessFlags)) unit(field.holder().toJava()) else base
+      if (Modifier.isStatic(field.getModifiers)) unit(field.getDeclaringClass().toJava()) else base
 
 
 

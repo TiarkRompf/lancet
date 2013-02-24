@@ -215,9 +215,9 @@ class Runtime_Generic(metaProvider: MetaAccessProvider) extends Runtime_LMS(meta
       r
 */
 
-      if (Modifier.isFinal(field.accessFlags)) return true
+      if (Modifier.isFinal(field.getModifiers)) return true
 
-      val name = field.holder.toJava.getName + "." + field.name
+      val name = field.getDeclaringClass.toJava.getName + "." + field.getName
 
       name match {
         case "java.io.FilterOutputStream.out" => true
@@ -335,7 +335,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
         if (arrayType == null) {
             return;
         }
-        val typ: ResolvedJavaType = metaProvider.getResolvedJavaType(array.getClass()).componentType();
+        val typ: ResolvedJavaType = metaProvider.lookupJavaType(array.getClass()).getComponentType();
         if (!typ.toJava().isAssignableFrom(arrayType)) {
             throw new ArrayStoreException(arrayType.getName());
         }
@@ -343,7 +343,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
 
     def checkArray(array: Rep[Object], index: Rep[Long]): Unit = reflect("""{
         nullCheck(array);
-        val typ: ResolvedJavaType = metaProvider.getResolvedJavaType(array.getClass());
+        val typ: ResolvedJavaType = metaProvider.lookupJavaType(array.getClass());
         if (!typ.isArrayClass()) {
             throw new ArrayStoreException(array.getClass().getName());
         }
@@ -384,7 +384,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
       val base = resolveBase(base0,field)
       val volatile = isVolatile(field) // TODO!
 
-      if (debugReadWrite) emitString("// getField " + base0 + ":" + field.holder.toJava.getName + "." + field.name)
+      if (debugReadWrite) emitString("// getField " + base0 + ":" + field.getDeclaringClass.toJava.getName + "." + field.getName)
 
       if (base+","+offset == "Class.forName(\"sun.misc.VM\").asInstanceOf[Object],261.asInstanceOf[Long]") return unit(true).asInstanceOf[Rep[T]]
 
@@ -412,7 +412,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
                 else super.getField[T](base0, field)
               case _ => liftConst[T](null.asInstanceOf[T])
             }
-            val k = field.name//offset.toString
+            val k = field.getName//offset.toString
             if (typeRep[T] == typeRep[Boolean])
               fs.get(k).
                 map{x=>(if(x.typ==typeRep[Int]) (x.asInstanceOf[Rep[Int]] === 1) else x).asInstanceOf[Rep[T]]}.
@@ -449,7 +449,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
 
       super.setField(value, base0, field)
       //val Static(off) = offset
-      val k = field.name // off.toString
+      val k = field.getName // off.toString
 
       val s = base match { case Static(x) => constToString(x) case x => x.toString }
       val Partial(fs) = eval(base) match {

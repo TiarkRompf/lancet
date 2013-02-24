@@ -108,7 +108,7 @@ class TestInterpreter2 extends FileDiffSuite {
 
       val (receiver, args) = (arguments(0), arguments.drop(1))
 
-      reflect[Object](""+receiver+"."+method.name+"("+args.mkString(",")+")")
+      reflect[Object](""+receiver+"."+method.getName+"("+args.mkString(",")+")")
     }
   }
 
@@ -162,8 +162,8 @@ class TestInterpreter2 extends FileDiffSuite {
         //println("*** XXX JSM " + classOf[Program.JS] + " / " + holder.toJava)
         val receiver = parent.peekReceiver(m)
         val parameters = popArgumentsAsObject(parent, m, true)
-        val returnValue = reflect[Object](""+receiver+"."+m.name+"("+parameters.mkString(",")+")")
-        pushAsObject(parent, m.signature().returnKind(), returnValue)
+        val returnValue = reflect[Object](""+receiver+"."+m.getName+"("+parameters.mkString(",")+")")
+        pushAsObject(parent, m.getSignature().getReturnKind(), returnValue)
         true
       } else false
     }

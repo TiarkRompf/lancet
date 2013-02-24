@@ -112,7 +112,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
   }
 
   def traceCall(frame: InterpreterFrame, typ: String) {
-    trace(frame.depth(), typ + " " + frame.getMethod() + " - " + frame.getMethod().signature().asString());
+    trace(frame.depth(), typ + " " + frame.getMethod() + " - " + frame.getMethod().getSignature().asString());
   }
 
   def trace(level: Int, message: String) {
@@ -190,7 +190,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
     val returnValue = frame.getReturnValue()
     popFrame(frame)
     
-    pushAsObjectInternal(parentFrame, frame.getMethod.signature().returnKind(), returnValue);
+    pushAsObjectInternal(parentFrame, frame.getMethod.getSignature().getReturnKind(), returnValue);
 
     exec(parentFrame)
   }
@@ -205,7 +205,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
     println("THROW "+t)
 
 
-    pushAsObjectInternal(parentFrame, frame.getMethod.signature().returnKind(), t);
+    pushAsObjectInternal(parentFrame, frame.getMethod.getSignature().getReturnKind(), t);
 
     exec(parentFrame)
   }
@@ -224,12 +224,12 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
           if (TRACE) {
               traceCall(nextFrame, "Call");
           }
-          if (Modifier.isSynchronized(nextFrame.getMethod().accessFlags())) {
+          if (Modifier.isSynchronized(nextFrame.getMethod().getModifiers())) {
               if (TRACE) {
                   traceOp(frame, "Method monitor enter");
               }
-              if (Modifier.isStatic(nextFrame.getMethod().accessFlags())) {
-                  runtimeInterface.monitorEnter(unit(nextFrame.getMethod().holder().toJava()));
+              if (Modifier.isStatic(nextFrame.getMethod().getModifiers())) {
+                  runtimeInterface.monitorEnter(unit(nextFrame.getMethod().getDeclaringClass().toJava()));
               } else {
                   val enterObject = nextFrame.getObject(frame.resolveLocalIndex(0));
                   //assert(enterObject =!= null);
@@ -246,12 +246,12 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
 
   def popFrame(frame: InterpreterFrame): InterpreterFrame = {
       //val parent: InterpreterFrame = frame.getParentFrame();
-      if (Modifier.isSynchronized(frame.getMethod().accessFlags())) {
+      if (Modifier.isSynchronized(frame.getMethod().getModifiers())) {
           if (TRACE) {
               traceOp(frame, "Method monitor exit");
           }
-          if (Modifier.isStatic(frame.getMethod().accessFlags())) {
-              runtimeInterface.monitorExit(unit(frame.getMethod().holder().toJava()));
+          if (Modifier.isStatic(frame.getMethod().getModifiers())) {
+              runtimeInterface.monitorExit(unit(frame.getMethod().getDeclaringClass().toJava()));
           } else {
               val exitObject = frame.getObject(frame.resolveLocalIndex(0));
               //if (exitObject =!= null) {
@@ -869,11 +869,11 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
     protected def resolveType(frame: InterpreterFrame, opcode: Int, cpi: Char): ResolvedJavaType = {
         val constantPool: ConstantPool = frame.getConstantPool();
         constantPool.loadReferencedType(cpi, opcode);
-        return constantPool.lookupType(cpi, opcode).resolve(frame.getMethod().holder());
+        return constantPool.lookupType(cpi, opcode).resolve(frame.getMethod().getDeclaringClass());
     }
 
     protected def resolveType(frame: InterpreterFrame, javaClass: Class[_]): ResolvedJavaType = {
-        return metaAccessProvider.getResolvedJavaType(javaClass).resolve(frame.getMethod().holder());
+        return metaAccessProvider.lookupJavaType(javaClass).resolve(frame.getMethod().getDeclaringClass());
     }
 
     protected def resolveMethod(frame: InterpreterFrame, opcode: Int, cpi: Char): ResolvedJavaMethod = {
@@ -909,7 +909,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
                     assert(false, "unspecified case")
             }
         } else if (constant.isInstanceOf[JavaType]) {
-            frame.pushObject(unit((constant.asInstanceOf[JavaType]).resolve(method.holder()).toJava()));
+            frame.pushObject(unit((constant.asInstanceOf[JavaType]).resolve(method.getDeclaringClass()).toJava()));
         } else {
             assert(false, "unexpected case");
         }
@@ -967,7 +967,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
 
     private def invokeVirtual(frame: InterpreterFrame, cpi: Char): InterpreterFrame = {// throws Throwable {
         val m: ResolvedJavaMethod = resolveMethod(frame, Bytecodes.INVOKEVIRTUAL, cpi);
-        val isFinal = Modifier.isFinal(m.holder.accessFlags) || m.isLeafMethod
+        val isFinal = Modifier.isFinal(m.getDeclaringClass.getModifers) || m.isLeafMethod
         if (isFinal) {
             return invoke(frame, m, nullCheck(frame.peekReceiver(m)), true);
         } else {
@@ -990,7 +990,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
         if (redirectedMethod != null) {
             return invokeRedirectedMethod(caller, method, redirectedMethod, hasReceiver);
         } else {
-          if (Modifier.isNative(method.accessFlags())) {
+          if (Modifier.isNative(method.getModifiers())) {
             return invokeNativeMethod(caller, method, hasReceiver);
           } else {
             return invokeDirect(caller, method, hasReceiver);
@@ -1007,7 +1007,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
         // mark the current thread as high level and execute the native method
         val parameters = popArgumentsAsObject(caller, method, hasReceiver);
         val returnValue = runtimeInterface.invoke(method, parameters);
-        pushAsObject(caller, method.signature().returnKind(), returnValue);
+        pushAsObject(caller, method.getSignature().getReturnKind(), returnValue);
 
         return null;
     }
@@ -1021,7 +1021,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
         // current thread is low level and we also execute the target method in the low-level interpreter
         val originalCalleeParameters = popArgumentsAsObject(caller, originalMethod, hasReceiver);
         val returnValue: Rep[Object] = redirectionInfo.receiver.invoke(caller, originalMethod, originalCalleeParameters);
-        pushAsObject(caller, originalMethod.signature().returnKind(), returnValue);
+        pushAsObject(caller, originalMethod.getSignature().getReturnKind(), returnValue);
 
         return null;
     }
@@ -1038,12 +1038,12 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
             traceCall(calleeFrame, "Call");
         }
 
-        if (Modifier.isSynchronized(method.accessFlags())) {
+        if (Modifier.isSynchronized(method.getModifiers())) {
             if (TRACE) {
                 traceOp(calleeFrame, "Method monitor enter");
             }
-            if (Modifier.isStatic(method.accessFlags())) {
-                runtimeInterface.monitorEnter(method.holder().toJava());
+            if (Modifier.isStatic(method.getModifiers())) {
+                runtimeInterface.monitorEnter(method.getDeclaringClass().toJava());
             } else {
                 Object enterObject = calleeFrame.getObject(calleeFrame.resolveLocalIndex(0));
                 assert enterObject != null;
@@ -1055,14 +1055,14 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
     def popArgumentsAsObject(frame: InterpreterFrame, method: ResolvedJavaMethod, hasReceiver: Boolean): Array[Rep[Object]] = {
         implicit val mf: Manifest[Rep[Object]] = repManifest[Object]
 
-        val signature: Signature = method.signature();
-        val argumentCount: Int = method.signature().argumentCount(hasReceiver);
+        val signature: Signature = method.getSignature();
+        val argumentCount: Int = method.getSignature().argumentCount(hasReceiver);
         val parameters = new Array[Rep[Object]](argumentCount);
 
         val lastSignatureIndex: Int = if (hasReceiver) 1 else 0;
         var i = argumentCount - 1
         while (i >= lastSignatureIndex) {
-            val typ: ResolvedJavaType = signature.argumentTypeAt(i - lastSignatureIndex, method.holder()).resolve(method.holder());
+            val typ: ResolvedJavaType = signature.argumentTypeAt(i - lastSignatureIndex, method.getDeclaringClass()).resolve(method.getDeclaringClass());
             parameters(i) = popAsObject(frame, typ.kind());
             i -= 1
         }
@@ -1091,7 +1091,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
     def getLastDimensionType(typ: ResolvedJavaType): ResolvedJavaType = {
         var result: ResolvedJavaType = typ;
         while (result.isArrayClass()) {
-            result = result.componentType();
+            result = result.getComponentType();
         }
         return result;
     }
@@ -1339,7 +1339,7 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
     }
 
     def addDelegate(method: Method, callable: InterpreterCallable): Unit = {
-        val resolvedMethod: ResolvedJavaMethod = metaAccessProvider.getResolvedJavaMethod(method);
+        val resolvedMethod: ResolvedJavaMethod = metaAccessProvider.lookupJavaMethod(method);
         if (methodDelegates.containsKey(resolvedMethod)) {
             throw new IllegalArgumentException("Delegate for method " + method + " already added.");
         }
@@ -1348,7 +1348,7 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
     }
 
     def removeDelegate(method: Method): Unit = {
-        methodDelegates.remove(metaAccessProvider.getResolvedJavaMethod(method));
+        methodDelegates.remove(metaAccessProvider.lookupJavaMethod(method));
     }
 
     def addClassDelegate(clazz: Class[_], callable: InterpreterCallable): Unit = {
@@ -1407,7 +1407,7 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
 
     protected def resolveRootMethod(): ResolvedJavaMethod = {
         try {
-            return metaAccessProvider.getResolvedJavaMethod(classOf[BytecodeInterpreter_Exec].getDeclaredMethod("execute", classOf[Method], classOf[Array[Object]]));
+            return metaAccessProvider.lookupJavaMethod(classOf[BytecodeInterpreter_Exec].getDeclaredMethod("execute", classOf[Method], classOf[Array[Object]]));
         } catch {
             case e: Exception =>
             throw new RuntimeException(e);
@@ -1508,7 +1508,7 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
     }
 
     protected def filterStackElement(frame: InterpreterFrame): Boolean = {
-        return classOf[Throwable].isAssignableFrom(frame.getMethod().holder().toJava());
+        return classOf[Throwable].isAssignableFrom(frame.getMethod().getDeclaringClass().toJava());
     }
 
     protected def findThrowableField(frame: InterpreterFrame, name: String): ResolvedJavaField = {
@@ -1516,7 +1516,7 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
         val fields: Array[ResolvedJavaField] = throwableType.declaredFields();
         var i = 0
         while (i < fields.length) {
-            if (fields(i).name().equals(name)) {
+            if (fields(i).getName().equals(name)) {
                 return fields(i);
             }
             i += 1

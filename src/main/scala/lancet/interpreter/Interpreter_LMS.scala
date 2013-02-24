@@ -125,7 +125,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
     def execute(method: ResolvedJavaMethod, boxedArguments: Array[Rep[Object]]): Rep[Object] = {// throws Throwable {
         try {
             val receiver: Boolean = hasReceiver(method);
-            val signature: Signature = method.signature();
+            val signature: Signature = method.getSignature();
             assert(boxedArguments != null);
             assert(signature.argumentCount(receiver) == boxedArguments.length);
 
@@ -161,7 +161,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
             }*/
 
 
-            return popAsObject(rootFrame, signature.returnKind()); // only works if rootFrame not copied internally...
+            return popAsObject(rootFrame, signature.getReturnKind()); // only works if rootFrame not copied internally...
         } catch {
             case e: Exception =>
             // TODO (chaeubl): remove this exception handler (only used for debugging)
@@ -173,7 +173,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
     def initializeLocals(rootFrame: InterpreterFrame, method: ResolvedJavaMethod, boxedArguments: Array[Rep[Object]]) {
         val receiver: Boolean = hasReceiver(method);
-        val signature: Signature = method.signature();
+        val signature: Signature = method.getSignature();
         var index = 0;
         if (receiver) {
             pushAsObject(rootFrame, Kind.Object, boxedArguments(index));
@@ -191,11 +191,11 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
     }
 
     def execute(javaMethod: Method, boxedArguments: Array[Rep[Object]]): Rep[Object] = {// throws Throwable {
-        return execute(metaAccessProvider.getResolvedJavaMethod(javaMethod), boxedArguments);
+        return execute(metaAccessProvider.lookupJavaMethod(javaMethod), boxedArguments);
     }
 
     def hasReceiver(method: ResolvedJavaMethod): Boolean = {
-        return !Modifier.isStatic(method.accessFlags());
+        return !Modifier.isStatic(method.getModifiers());
     }
 
     def executeRoot(root: InterpreterFrame, frame: InterpreterFrame): Unit = { // throws Throwable {
@@ -216,7 +216,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
     def contextKey(frame: InterpreterFrame) = getContext(frame).map(frameKey).mkString(" // ")
 
-    def frameKey(frame: InterpreterFrame) = ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().signature().asString()).replace("HotSpotMethod","")
+    def frameKey(frame: InterpreterFrame) = ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().getSignature().asString()).replace("HotSpotMethod","")
 
 
     override def retn() = local { (frame, bs) =>
@@ -225,7 +225,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       val parentFrame = frame.getParentFrame.asInstanceOf[InterpreterFrame_Str].copy
       val returnValue = frame.getReturnValue()
       popFrame(frame)
-      pushAsObjectInternal(parentFrame, frame.getMethod.signature().returnKind(), returnValue);
+      pushAsObjectInternal(parentFrame, frame.getMethod.getSignature().getReturnKind(), returnValue);
 
       //println("### return "+contextKey(frame))
 
@@ -339,7 +339,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
         val parameters = popArgumentsAsObject(parent, m, true);
         val returnValue = runtimeInterface.invoke(m, parameters);
-        pushAsObject(parent, m.signature().returnKind(), returnValue);
+        pushAsObject(parent, m.getSignature().getReturnKind(), returnValue);
         null
 
         /*val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethodImpl(m);

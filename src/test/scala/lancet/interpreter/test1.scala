@@ -24,7 +24,7 @@ class TestInterpreter1 extends FileDiffSuite {
 
     val cls = o.getClass
     val reflectMeth = cls.getDeclaredMethod("bar", classOf[Int])
-    val method = runtime.getResolvedJavaMethod(reflectMeth)
+    val method = runtime.lookupJavaMethod(reflectMeth)
 
     val it = Lancet.newInterpreter
     it.TRACE = true

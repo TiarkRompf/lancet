@@ -48,7 +48,7 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
     def execute(method: ResolvedJavaMethod, boxedArguments: Array[Object]): Object = {// throws Throwable {
         try {
             val receiver: Boolean = hasReceiver(method);
-            val signature: Signature = method.signature();
+            val signature: Signature = method.getSignature();
             assert(boxedArguments != null);
             assert(signature.argumentCount(receiver) == boxedArguments.length);
 
@@ -83,7 +83,7 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
                 }
             }*/
 
-            return popAsObject(rootFrame, signature.returnKind());
+            return popAsObject(rootFrame, signature.getReturnKind());
         } catch {
             case e: Exception =>
             // TODO (chaeubl): remove this exception handler (only used for debugging)
@@ -95,7 +95,7 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
 
     def initializeLocals(rootFrame: InterpreterFrame, method: ResolvedJavaMethod, boxedArguments: Array[Object]) {
         val receiver: Boolean = hasReceiver(method);
-        val signature: Signature = method.signature();
+        val signature: Signature = method.getSignature();
         var index = 0;
         if (receiver) {
             pushAsObject(rootFrame, Kind.Object, boxedArguments(index));
@@ -113,11 +113,11 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
     }
 
     def execute(javaMethod: Method, boxedArguments: Array[Object]): Object = {// throws Throwable {
-        return execute(metaAccessProvider.getResolvedJavaMethod(javaMethod), boxedArguments);
+        return execute(metaAccessProvider.lookupJavaMethod(javaMethod), boxedArguments);
     }
 
     def hasReceiver(method: ResolvedJavaMethod): Boolean = {
-        return !Modifier.isStatic(method.accessFlags());
+        return !Modifier.isStatic(method.getModifiers());
     }
 
     def executeRoot(root: InterpreterFrame, frame: InterpreterFrame): Unit = { // throws Throwable {

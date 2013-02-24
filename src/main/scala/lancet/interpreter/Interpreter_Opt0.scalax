@@ -43,7 +43,7 @@ class BytecodeInterpreter_Opt0 extends BytecodeInterpreter_Str with RuntimeUnive
       }
 
       if (frame.getParentFrame == null) { // TODO: cleanup?
-        val p = popAsObject(frame, frame.getMethod.signature.returnKind())
+        val p = popAsObject(frame, frame.getMethod.getSignature.getReturnKind())
         return reflect[Unit]("(RES = "+p+") // return to root")
       }
 
@@ -75,7 +75,7 @@ class BytecodeInterpreter_Opt0 extends BytecodeInterpreter_Str with RuntimeUnive
 
     def loop(root: InterpreterFrame, main: InterpreterFrame): Unit = {// throws Throwable {
 
-      pushAsObjectInternal(root, main.getMethod.signature().returnKind(), Dyn[Object]("null /* stub return value "+main.getMethod.signature().returnKind()+" */")); // TODO: cleanup?
+      pushAsObjectInternal(root, main.getMethod.getSignature().getReturnKind(), Dyn[Object]("null /* stub return value "+main.getMethod.getSignature().getReturnKind()+" */")); // TODO: cleanup?
 
       val info = new scala.collection.mutable.HashMap[String, Int]
 
@@ -99,7 +99,7 @@ class BytecodeInterpreter_Opt0 extends BytecodeInterpreter_Str with RuntimeUnive
           val bs = new BytecodeStream(frame.getMethod.code())
           //bs.setBCI(globalFrame.getBCI())
 
-          //def frameStr(frame: InterpreterFrame) = getContext(frame).map(frame => ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().signature().asString()).replace("HotSpotMethod",""))
+          //def frameStr(frame: InterpreterFrame) = getContext(frame).map(frame => ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().getSignature().asString()).replace("HotSpotMethod",""))
 
           if (emitControlFlow) {
             println("// *** begin block " + key)

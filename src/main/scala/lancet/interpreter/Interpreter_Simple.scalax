@@ -48,7 +48,7 @@ final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with Runt
     def exec(frame: InterpreterFrame): Rep[Unit] = { // called internally to initiate control transfer
 
       if (frame.getParentFrame == null) { // TODO: cleanup?
-        val p = popAsObject(frame, frame.getMethod.signature.returnKind())
+        val p = popAsObject(frame, frame.getMethod.getSignature.getReturnKind())
         return reflect[Unit]("(RES = "+p+") // return to root")
       }
 
@@ -99,7 +99,7 @@ final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with Runt
 
     def loop(root: InterpreterFrame, main: InterpreterFrame): Unit = {
 
-      pushAsObjectInternal(root, main.getMethod.signature().returnKind(), reflect[Object]("null // stub return value "+main.getMethod.signature().returnKind())); // TODO: cleanup?
+      pushAsObjectInternal(root, main.getMethod.getSignature().getReturnKind(), reflect[Object]("null // stub return value "+main.getMethod.getSignature().getReturnKind())); // TODO: cleanup?
 
       while (worklist.nonEmpty) {
         var frame = worklist.head

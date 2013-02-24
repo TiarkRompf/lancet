@@ -139,7 +139,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
       }
 
       if (frame.getParentFrame == null) { // TODO: cleanup?
-        val p = popAsObject(frame, frame.getMethod.signature.returnKind())
+        val p = popAsObject(frame, frame.getMethod.getSignature.getReturnKind())
         return reflect[Unit]("(RES = "+p+") // return to root")
       }
 
@@ -589,7 +589,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
     def loop(root: InterpreterFrame, main: InterpreterFrame): Unit = {// throws Throwable {
 
-      pushAsObjectInternal(root, main.getMethod.signature().returnKind(), Dyn[Object]("null /* stub return value "+main.getMethod.signature().returnKind()+" */")); // TODO: cleanup?
+      pushAsObjectInternal(root, main.getMethod.getSignature().getReturnKind(), Dyn[Object]("null /* stub return value "+main.getMethod.getSignature().getReturnKind()+" */")); // TODO: cleanup?
 
       while (worklist.nonEmpty) {
         var frame = worklist.head

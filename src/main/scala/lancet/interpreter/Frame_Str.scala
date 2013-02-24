@@ -226,7 +226,7 @@ object InterpreterFrame {
 
 
 class InterpreterFrame_Str(var method: ResolvedJavaMethod, parent: InterpreterFrame, additionalStackSpace: Int) 
-extends Frame_Str(method.maxLocals() + method.maxStackSize() + InterpreterFrame.BASE_LENGTH + additionalStackSpace, parent) 
+extends Frame_Str(method.getMaxLocals() + method.getMaxStackSize() + InterpreterFrame.BASE_LENGTH + additionalStackSpace, parent) 
 with InterpreterFrame {
 
     import Frame._
@@ -253,10 +253,10 @@ with InterpreterFrame {
         val frame = new InterpreterFrame_Str(method, this, additionalStackSpace);
 
         if (useParentArguments) {
-            val length = method.signature().argumentSlots(hasReceiver);
+            val length = method.getSignature().argumentSlots(hasReceiver);
             assert(length >= 0);
 
-            frame.pushVoid(method.maxLocals());
+            frame.pushVoid(method.getMaxLocals());
             if (length > 0) {
                 copyArguments(frame, length);
                 popVoid(length);
@@ -306,7 +306,7 @@ with InterpreterFrame {
     }
 
     def stackTos(): Int = {
-        return BASE_LENGTH + getMethod().maxLocals();
+        return BASE_LENGTH + getMethod().getMaxLocals();
     }
 
     private def copyArguments(dest: InterpreterFrame_Str, length: Int): Unit = {
@@ -334,7 +334,7 @@ with InterpreterFrame {
     }
 
     def peekReceiver(method: ResolvedJavaMethod): Rep[Object] = {
-        return getObject(tosSingle(method.signature().argumentSlots(false)));
+        return getObject(tosSingle(method.getSignature().argumentSlots(false)));
     }
 
     def pushBoth(oValue: Rep[Object], intValue: Rep[Int]): Unit = {
@@ -638,7 +638,7 @@ with InterpreterFrame {
                 typeString = "bci";
             } else if (index == PARENT_FRAME_SLOT) {
                 typeString = "parent";
-            } else if (index < BASE_LENGTH + method.maxLocals()) {
+            } else if (index < BASE_LENGTH + method.getMaxLocals()) {
                 typeString = "local " + (index - BASE_LENGTH);
             } else {
                 typeString = "stack";

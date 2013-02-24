@@ -24,7 +24,7 @@ trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpret
 
     // hack: base_opt doesn't have access to runtime
     override def getFieldForLub[T:TypeRep](base: Rep[Object], cls: Class[_], k: String): Rep[T] = {
-      val fld = metaAccessProvider.getResolvedJavaType(cls).declaredFields.find(_.name == k)
+      val fld = metaAccessProvider.lookupJavaType(cls).declaredFields.find(_.getName == k)
       fld.map(f => runtimeInterface.asInstanceOf[Runtime_Opt].getFieldConst[T](base,f)).
         getOrElse(getFieldForLub[T](base,cls.getSuperclass,k))
     }
@@ -203,7 +203,7 @@ class BytecodeInterpreter_Opt4 extends AbstractInterpreter with BytecodeInterpre
 
     // not used -- we manage local worklists in execMethod
     def loop(root: InterpreterFrame, main: InterpreterFrame): Unit = {
-      pushAsObjectInternal(root, main.getMethod.signature().returnKind(), Dyn[Object]("null /* stub return value "+main.getMethod.signature().returnKind()+" */")); // TODO: cleanup?
+      pushAsObjectInternal(root, main.getMethod.getSignature().getReturnKind(), Dyn[Object]("null /* stub return value "+main.getMethod.getSignature().getReturnKind()+" */")); // TODO: cleanup?
     }
 
     // print stats after compiling
@@ -343,7 +343,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
       }
 
       if (frame.getParentFrame == null) { // TODO: cleanup?
-        val p = popAsObject(frame, frame.getMethod.signature.returnKind())
+        val p = popAsObject(frame, frame.getMethod.getSignature.getReturnKind())
         return reflect[Unit]("(RES = "+p+") // return to root")
       }
 
