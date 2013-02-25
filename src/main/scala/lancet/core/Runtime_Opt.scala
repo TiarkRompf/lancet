@@ -292,7 +292,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
       //println("// array size " + size + "=" + rs + "=" + eval(size))
 
       val r@Dyn(s) = super.newArray(typ, size)
-      store += (s -> Partial(Map("alloc" -> r, "clazz" -> unit(typ.arrayOf.toJava), "size" -> rs)))
+      store += (s -> Partial(Map("alloc" -> r, "clazz" -> unit(typ.getArrayClass.toJava), "size" -> rs)))
       r
     }
 
@@ -344,7 +344,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
     def checkArray(array: Rep[Object], index: Rep[Long]): Unit = reflect("""{
         nullCheck(array);
         val typ: ResolvedJavaType = metaProvider.lookupJavaType(array.getClass());
-        if (!typ.isArrayClass()) {
+        if (!typ.isArray()) {
             throw new ArrayStoreException(array.getClass().getName());
         }
         if (index < 0 || index >= arrayLength(array)) {

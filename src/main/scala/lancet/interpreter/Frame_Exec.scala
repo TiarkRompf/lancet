@@ -247,7 +247,7 @@ with InterpreterFrame {
         val frame = new InterpreterFrame_Exec1(method, this, additionalStackSpace);
 
         if (useParentArguments) {
-            val length = method.getSignature().argumentSlots(hasReceiver);
+            val length = method.getSignature().getParameterSlots(hasReceiver);
             assert(length >= 0);
 
             frame.pushVoid(method.getMaxLocals());
@@ -306,7 +306,7 @@ with InterpreterFrame {
     }
 
     def peekReceiver(method: ResolvedJavaMethod): Object = {
-        return getObject(tosSingle(method.getSignature().argumentSlots(false)));
+        return getObject(tosSingle(method.getSignature().getParameterSlots(false)));
     }
 
     def pushBoth(oValue: Object, intValue: Int): Unit = {
@@ -581,7 +581,7 @@ with InterpreterFrame {
 
     override def toString(): String = {
         val method = getMethod();
-        val b = new StringBuilder(getMethod().toStackTraceElement(getBCI()).toString());
+        val b = new StringBuilder(getMethod().asStackTraceElement(getBCI()).toString());
         for (i <- 0 until tos) {
             val obj = getObject(tosSingle(i));
             val primitive = getLong(tosSingle(i));
@@ -647,7 +647,7 @@ with InterpreterFrame {
         val frame = new InterpreterFrame_Exec(method, this, additionalStackSpace);
 
         if (useParentArguments) {
-            val length = method.getSignature().argumentSlots(hasReceiver);
+            val length = method.getSignature().getParameterSlots(hasReceiver);
             assert(length >= 0);
 
             frame.pushVoid(method.getMaxLocals());
@@ -706,7 +706,7 @@ with InterpreterFrame {
     }
 
     def peekReceiver(method: ResolvedJavaMethod): Object = {
-        return getObject(tosSingle(method.getSignature().argumentSlots(false)));
+        return getObject(tosSingle(method.getSignature().getParameterSlots(false)));
     }
 
     /*def pushBoth(oValue: Object, intValue: Int): Unit = {
@@ -1002,7 +1002,7 @@ with InterpreterFrame {
 
     override def toString(): String = {
         val method = getMethod();
-        val b = new StringBuilder(getMethod().toStackTraceElement(getBCI()).toString());
+        val b = new StringBuilder(getMethod().asStackTraceElement(getBCI()).toString());
         for (i <- 0 until tos) {
             val obj = getObject(tosSingle(i));
             //val primitive = getLong(tosSingle(i));

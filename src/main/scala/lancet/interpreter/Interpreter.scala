@@ -112,7 +112,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
   }
 
   def traceCall(frame: InterpreterFrame, typ: String) {
-    trace(frame.depth(), typ + " " + frame.getMethod() + " - " + frame.getMethod().getSignature().asString());
+    trace(frame.depth(), typ + " " + frame.getMethod() + " - " + frame.getMethod().getSignature().toString());
   }
 
   def trace(level: Int, message: String) {
@@ -682,8 +682,8 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
           return call(invokeStatic(frame, bs.readCPI()));
       case Bytecodes.INVOKEINTERFACE =>
           return call(invokeInterface(frame, bs.readCPI()));
-      case Bytecodes.XXXUNUSEDXXX =>
-          assert(false, "unused bytecode used. behaviour unspecified.");
+      case Bytecodes.INVOKEDYNAMIC =>
+          assert(false, "invokeDynamic not yet supported.");
           // nop
       case Bytecodes.NEW =>
           frame.pushObject(allocateInstance(frame, bs.readCPI()));
@@ -894,7 +894,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
 
         if (constant.isInstanceOf[Constant]) {
             val c: Constant = constant.asInstanceOf[Constant]
-            c.kind match {
+            c.getKind match {
                 case Kind.Int =>
                     frame.pushInt(c.asInt());
                 case Kind.Float =>
@@ -967,7 +967,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
 
     private def invokeVirtual(frame: InterpreterFrame, cpi: Char): InterpreterFrame = {// throws Throwable {
         val m: ResolvedJavaMethod = resolveMethod(frame, Bytecodes.INVOKEVIRTUAL, cpi);
-        val isFinal = Modifier.isFinal(m.getDeclaringClass.getModifers) || m.isLeafMethod
+        val isFinal = Modifier.isFinal(m.getDeclaringClass.getModifiers) || m.isLeafMethod
         if (isFinal) {
             return invoke(frame, m, nullCheck(frame.peekReceiver(m)), true);
         } else {
@@ -1056,14 +1056,14 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
         implicit val mf: Manifest[Rep[Object]] = repManifest[Object]
 
         val signature: Signature = method.getSignature();
-        val argumentCount: Int = method.getSignature().argumentCount(hasReceiver);
+        val argumentCount: Int = method.getSignature().getParameterCount(hasReceiver);
         val parameters = new Array[Rep[Object]](argumentCount);
 
         val lastSignatureIndex: Int = if (hasReceiver) 1 else 0;
         var i = argumentCount - 1
         while (i >= lastSignatureIndex) {
-            val typ: ResolvedJavaType = signature.argumentTypeAt(i - lastSignatureIndex, method.getDeclaringClass()).resolve(method.getDeclaringClass());
-            parameters(i) = popAsObject(frame, typ.kind());
+            val typ: ResolvedJavaType = signature.getParameterType(i - lastSignatureIndex, method.getDeclaringClass()).resolve(method.getDeclaringClass());
+            parameters(i) = popAsObject(frame, typ.getKind());
             i -= 1
         }
 
@@ -1090,7 +1090,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
 
     def getLastDimensionType(typ: ResolvedJavaType): ResolvedJavaType = {
         var result: ResolvedJavaType = typ;
-        while (result.isArrayClass()) {
+        while (result.isArray()) {
             result = result.getComponentType();
         }
         return result;
@@ -1144,7 +1144,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
     }
 
     def putFieldStatic(frame: InterpreterFrame, field: ResolvedJavaField): Unit = {
-        field.kind() match {
+        field.getKind() match {
             case Kind.Boolean | Kind.Byte | Kind.Char | Kind.Short | Kind.Int =>
                 runtimeInterface.setFieldInt(frame.popInt(), null, field);                
             case Kind.Double =>
@@ -1161,7 +1161,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
     }
 
     def putFieldVirtual(frame: InterpreterFrame, field: ResolvedJavaField): Unit = {
-        field.kind() match {
+        field.getKind() match {
             case Kind.Boolean | Kind.Byte | Kind.Char | Kind.Short | Kind.Int =>
                 runtimeInterface.setFieldInt(frame.popInt(), nullCheck(frame.popObject()), field);
             case Kind.Double =>
@@ -1179,7 +1179,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
 
     def getField(frame: InterpreterFrame, base: Rep[Object], opcode: Int, cpi: Char): Unit = {
         val field: ResolvedJavaField = resolveField(frame, opcode, cpi);
-        field.kind() match {
+        field.getKind() match {
             case Kind.Boolean =>
                 frame.pushInt(if_ (runtimeInterface.getFieldBoolean(base, field)) (1) (0));
             case Kind.Byte =>
@@ -1500,7 +1500,7 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
         while (tmp != null) {
             if (first || !filterStackElement(tmp)) {
                 first = true;
-                elements.add(tmp.getMethod().toStackTraceElement(tmp.getBCI()));
+                elements.add(tmp.getMethod().asStackTraceElement(tmp.getBCI()));
             }
             tmp = tmp.getParentFrame();
         }
@@ -1513,7 +1513,7 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
 
     protected def findThrowableField(frame: InterpreterFrame, name: String): ResolvedJavaField = {
         val throwableType: ResolvedJavaType = resolveType(frame, classOf[Throwable]);
-        val fields: Array[ResolvedJavaField] = throwableType.declaredFields();
+        val fields: Array[ResolvedJavaField] = throwableType.getInstanceFields(false);
         var i = 0
         while (i < fields.length) {
             if (fields(i).getName().equals(name)) {

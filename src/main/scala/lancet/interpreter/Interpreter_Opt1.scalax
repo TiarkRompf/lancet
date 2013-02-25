@@ -239,7 +239,7 @@ class BytecodeInterpreter_Opt1 extends BytecodeInterpreter_Str with RuntimeUnive
 
           if (frame.getParentFrame != null) { // don't eval root frame -- careful, this is a copy of it!
             val bci = frame.getBCI()
-            val bs = new BytecodeStream(frame.getMethod.code())
+            val bs = new BytecodeStream(frame.getMethod.getCode())
             //bs.setBCI(globalFrame.getBCI())
             val res = executeBlock(frame, bs, bci)
             println(res)

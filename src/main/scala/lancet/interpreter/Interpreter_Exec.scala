@@ -50,7 +50,7 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
             val receiver: Boolean = hasReceiver(method);
             val signature: Signature = method.getSignature();
             assert(boxedArguments != null);
-            assert(signature.argumentCount(receiver) == boxedArguments.length);
+            assert(signature.getParameterCount(receiver) == boxedArguments.length);
 
             if (TRACE) {
                 //if (nativeFrame == null) {
@@ -63,7 +63,7 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
 
             var rootFrame: InterpreterFrame_Exec = null // nativeFrame
             if (rootFrame == null) {
-              rootFrame = new InterpreterFrame_Exec(rootMethod, signature.argumentSlots(true));
+              rootFrame = new InterpreterFrame_Exec(rootMethod, signature.getParameterSlots(true));
               rootFrame.pushObject(this);
               rootFrame.pushObject(method);
               rootFrame.pushObject(boxedArguments);
@@ -141,7 +141,7 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
 
     private def loop(root: InterpreterFrame): Unit = {// throws Throwable {
       while (globalFrame != root) {
-        val bs = new BytecodeStream(globalFrame.getMethod.code())
+        val bs = new BytecodeStream(globalFrame.getMethod.getCode())
         //bs.setBCI(globalFrame.getBCI())
         executeBlock(globalFrame, bs, globalFrame.getBCI())
       }
@@ -154,13 +154,13 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
         // TODO reflection redirection
         var prevFrame: InterpreterFrame = frame;
         var currentFrame: InterpreterFrame = frame;
-        var bs: BytecodeStream = new BytecodeStream(currentFrame.getMethod().code());
+        var bs: BytecodeStream = new BytecodeStream(currentFrame.getMethod().getCode());
         if (TRACE) {
             traceCall(frame, "RootCall");
         }
         while (currentFrame != root) {
             if (prevFrame != currentFrame) {
-                bs = new BytecodeStream(currentFrame.getMethod().code());
+                bs = new BytecodeStream(currentFrame.getMethod().getCode());
             }
             bs.setBCI(currentFrame.getBCI());
 

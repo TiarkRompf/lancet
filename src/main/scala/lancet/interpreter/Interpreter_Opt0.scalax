@@ -96,10 +96,10 @@ class BytecodeInterpreter_Opt0 extends BytecodeInterpreter_Str with RuntimeUnive
 
         if (!seenEnough && frame.getParentFrame != null) {
           val bci = frame.getBCI()
-          val bs = new BytecodeStream(frame.getMethod.code())
+          val bs = new BytecodeStream(frame.getMethod.getCode())
           //bs.setBCI(globalFrame.getBCI())
 
-          //def frameStr(frame: InterpreterFrame) = getContext(frame).map(frame => ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().getSignature().asString()).replace("HotSpotMethod",""))
+          //def frameStr(frame: InterpreterFrame) = getContext(frame).map(frame => ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().getSignature().toString()).replace("HotSpotMethod",""))
 
           if (emitControlFlow) {
             println("// *** begin block " + key)

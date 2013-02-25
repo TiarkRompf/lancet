@@ -24,7 +24,7 @@ trait AbstractInterpreter extends AbstractInterpreterIntf with BytecodeInterpret
 
     // hack: base_opt doesn't have access to runtime
     override def getFieldForLub[T:TypeRep](base: Rep[Object], cls: Class[_], k: String): Rep[T] = {
-      val fld = metaAccessProvider.lookupJavaType(cls).declaredFields.find(_.getName == k)
+      val fld = metaAccessProvider.lookupJavaType(cls).getInstanceFields(false).find(_.getName == k)
       fld.map(f => runtimeInterface.asInstanceOf[Runtime_Opt].getFieldConst[T](base,f)).
         getOrElse(getFieldForLub[T](base,cls.getSuperclass,k))
     }
@@ -601,7 +601,7 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
 
       val frame1 = freshFrameSimple(frame) // necessary?
       val bci = frame1.getBCI()
-      val bs = new BytecodeStream(frame1.getMethod.code())
+      val bs = new BytecodeStream(frame1.getMethod.getCode())
       //bs.setBCI(globalFrame.getBCI())
       val res = try { executeBlock(frame1, bs, bci) } catch {
         case e: InterpreterException =>

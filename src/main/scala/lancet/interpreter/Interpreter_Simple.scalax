@@ -115,7 +115,7 @@ final class BytecodeInterpreter_Simple extends BytecodeInterpreter_Str with Runt
 
         if (frame.getParentFrame != null) { // don't eval root frame -- careful, this is a copy of it!
           val bci = frame.getBCI()
-          val bs = new BytecodeStream(frame.getMethod.code())
+          val bs = new BytecodeStream(frame.getMethod.getCode())
           //bs.setBCI(globalFrame.getBCI())
           try {
             val res = executeBlock(frame, bs, bci)

@@ -475,7 +475,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
       }
 
       val bci = frame3.getBCI()
-      val bs = new BytecodeStream(frame3.getMethod.code())
+      val bs = new BytecodeStream(frame3.getMethod.getCode())
       //bs.setBCI(globalFrame.getBCI())
       val res1 = try { executeBlock(frame3, bs, bci) } catch {
         case e: InterpreterException =>
@@ -616,7 +616,7 @@ class BytecodeInterpreter_Opt3 extends BytecodeInterpreter_Str with RuntimeUnive
 
           if (frame.getParentFrame != null) { // don't eval root frame -- careful, this is a copy of it!
             val bci = frame.getBCI()
-            val bs = new BytecodeStream(frame.getMethod.code())
+            val bs = new BytecodeStream(frame.getMethod.getCode())
             //bs.setBCI(globalFrame.getBCI())
             val res = executeBlock(frame, bs, bci)
             println(res)

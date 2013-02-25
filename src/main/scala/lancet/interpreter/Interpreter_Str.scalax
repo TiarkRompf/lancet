@@ -163,7 +163,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
             val receiver: Boolean = hasReceiver(method);
             val signature: Signature = method.getSignature();
             assert(boxedArguments != null);
-            assert(signature.argumentCount(receiver) == boxedArguments.length);
+            assert(signature.getParameterCount(receiver) == boxedArguments.length);
 
             if (TRACE) {
                 //if (nativeFrame == null) {
@@ -176,7 +176,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
             var rootFrame: InterpreterFrame_Str = null // nativeFrame
             if (rootFrame == null) {
-              rootFrame = new InterpreterFrame_Str(rootMethod, signature.argumentSlots(true)+1);
+              rootFrame = new InterpreterFrame_Str(rootMethod, signature.getParameterSlots(true)+1);
               rootFrame.pushObject(unit(this));
               rootFrame.pushObject(unit(method));
               rootFrame.pushObject(unit(boxedArguments));
@@ -252,7 +252,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
     def contextKey(frame: InterpreterFrame) = getContext(frame).map(frameKey).mkString(" // ")
 
-    def frameKey(frame: InterpreterFrame) = ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().getSignature().asString()).replace("HotSpotMethod","")
+    def frameKey(frame: InterpreterFrame) = ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().getSignature().toString()).replace("HotSpotMethod","")
 
 
     override def retn() = local { (frame, bs) =>

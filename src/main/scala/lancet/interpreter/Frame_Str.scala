@@ -253,7 +253,7 @@ with InterpreterFrame {
         val frame = new InterpreterFrame_Str(method, this, additionalStackSpace);
 
         if (useParentArguments) {
-            val length = method.getSignature().argumentSlots(hasReceiver);
+            val length = method.getSignature().getParameterSlots(hasReceiver);
             assert(length >= 0);
 
             frame.pushVoid(method.getMaxLocals());
@@ -334,7 +334,7 @@ with InterpreterFrame {
     }
 
     def peekReceiver(method: ResolvedJavaMethod): Rep[Object] = {
-        return getObject(tosSingle(method.getSignature().argumentSlots(false)));
+        return getObject(tosSingle(method.getSignature().getParameterSlots(false)));
     }
 
     def pushBoth(oValue: Rep[Object], intValue: Rep[Int]): Unit = {
@@ -619,7 +619,7 @@ with InterpreterFrame {
 
 /*    override def toString(): String = {
         val method = getMethod();
-        val b = new StringBuilder(getMethod().toStackTraceElement(getBCI()).toString());
+        val b = new StringBuilder(getMethod().asStackTraceElement(getBCI()).toString());
         for (i <- 0 until tos) {
             val obj = getObject(tosSingle(i));
             val primitive = getLong(tosSingle(i));
