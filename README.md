@@ -224,12 +224,13 @@ environment variables.
 
 3. Download and build the Graal VM anywhere on your file system. Follow the
 instructions on the [Graal website](http://openjdk.java.net/projects/graal/).
+Get commit `7839:838293a77af7`.
 
 4. Set `JAVA_HOME` and `JAVA_OPTS` environment variables.
 
 ```
   export JAVA_HOME="~/graal/jdk1.7.0/product/" # Graal build from step 3
-  export JAVA_OPTS="-graal"
+  export JAVA_OPTS="-graal" 
 ```
 
    Alternatively, modify the `gsbt` file to reflect your paths and use that
