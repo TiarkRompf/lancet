@@ -182,7 +182,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
         var i = 0
         while (index < boxedArguments.length) {
-            pushAsObject(rootFrame, signature.argumentKindAt(i), boxedArguments(index));
+            pushAsObject(rootFrame, signature.getParameterKind(i), boxedArguments(index));
             i += 1
             index += 1
         }
@@ -319,14 +319,14 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
         objectGetClass(receiver) match {
           case Some(clazz) => 
-            val method = resolveType(parent, clazz).resolveMethodImpl(m);
+            val method = resolveType(parent, clazz).resolveMethod(m);
             return invokeDirect(parent, method, true)
           case _ =>
         }
 
 
         // TODO: will require registering an assumption ...
-        val unique = if (emitUniqueOpt) m.holder.uniqueConcreteMethod(m) else null
+        val unique = if (emitUniqueOpt) m.getDeclaringClass.findUniqueConcreteMethod(m) else null
         if (unique ne null) {
           emitString("// unique method: "+m+" TODO: guard")
           return invokeDirect(parent, unique, true)
@@ -335,14 +335,14 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
         // TODO: if non unique, may want to switch on all possible targets
 
 
-        //val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethodImpl(m);
+        //val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethod(m);
 
         val parameters = popArgumentsAsObject(parent, m, true);
         val returnValue = runtimeInterface.invoke(m, parameters);
         pushAsObject(parent, m.getSignature().getReturnKind(), returnValue);
         null
 
-        /*val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethodImpl(m);
+        /*val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethod(m);
 
         if (method == null) {
             throw new AbstractMethodError();

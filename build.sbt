@@ -31,6 +31,7 @@ unmanagedClasspath in Compile <++= baseDirectory map { base =>
     "com.oracle.graal.api.code",
     "com.oracle.graal.api.interpreter",
     "com.oracle.graal.api.meta",
+    "com.oracle.graal.api.runtime",
     "com.oracle.graal.api.test",
     "com.oracle.graal.boot",
     "com.oracle.graal.boot.test",

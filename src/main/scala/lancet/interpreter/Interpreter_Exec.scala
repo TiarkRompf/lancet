@@ -104,7 +104,7 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
 
         var i = 0
         while (index < boxedArguments.length) {
-            pushAsObject(rootFrame, signature.argumentKindAt(i), boxedArguments(index));
+            pushAsObject(rootFrame, signature.getParameterKind(i), boxedArguments(index));
             i += 1
             index += 1
         }
@@ -278,7 +278,7 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
     def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame = {// throws Throwable {
         val receiver: Object = nullCheck(parent.peekReceiver(m));
 
-        val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethodImpl(m);
+        val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethod(m);
 
         if (method == null) {
             throw new AbstractMethodError();

@@ -30,6 +30,7 @@ import sun.misc._;
 
 import com.oracle.graal.api._;
 import com.oracle.graal.api.meta._;
+import com.oracle.graal.api.runtime._;
 import com.oracle.graal.hotspot.meta._;
 import com.oracle.graal.bytecode._;
 
@@ -956,7 +957,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
     def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame /*= {// throws Throwable {
         val receiver: Object = nullCheck(parent.peekReceiver(m));
 
-        val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethodImpl(m);
+        val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethod(m);
 
         if (method == null) {
             throw new AbstractMethodError();
@@ -967,7 +968,8 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
 
     private def invokeVirtual(frame: InterpreterFrame, cpi: Char): InterpreterFrame = {// throws Throwable {
         val m: ResolvedJavaMethod = resolveMethod(frame, Bytecodes.INVOKEVIRTUAL, cpi);
-        val isFinal = Modifier.isFinal(m.getDeclaringClass.getModifiers) || m.isLeafMethod
+        val isFinal = Modifier.isFinal(m.getDeclaringClass.getModifiers) || 
+          Modifier.isFinal(m.getModifiers) || Modifier.isPrivate(m.getModifiers)
         if (isFinal) {
             return invoke(frame, m, nullCheck(frame.peekReceiver(m)), true);
         } else {
@@ -1434,7 +1436,7 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
                 currentFrame = popFrame(currentFrame);
             } else {
                 // found a handler -> execute it
-                currentFrame.setBCI(handler.handlerBCI());
+                currentFrame.setBCI(handler.getHandlerBCI());
                 currentFrame.popStack();
                 currentFrame.pushObject(t);
                 return currentFrame;
@@ -1472,11 +1474,11 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
     }
 
     private def resolveExceptionHandlers(frame: InterpreterFrame, bci: Int, t: Rep[Throwable]): ExceptionHandler = {
-        val handlers: Array[ExceptionHandler] = frame.getMethod().exceptionHandlers();
+        val handlers: Array[ExceptionHandler] = frame.getMethod().getExceptionHandlers();
         var i = 0
         while (i < handlers.length) {
             val handler: ExceptionHandler = handlers(i);
-            if (bci >= handler.startBCI() && bci <= handler.endBCI()) {
+            if (bci >= handler.getStartBCI() && bci <= handler.getEndBCI()) {
                 var catchType: ResolvedJavaType = null;
                 if (!handler.isCatchAll()) {
                     // exception handlers are similar to instanceof bytecodes, so we pass instanceof
