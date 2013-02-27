@@ -1,4 +1,4 @@
-// constants: <function1>,lancet.interpreter.TestInterpreter3$Bar@46c90ca1
+// constants: <function1>,lancet.interpreter.TestInterpreter3$Bar@1e98184
 class Generated(CONST_0: lancet.interpreter.TestInterpreter3$$anonfun$testB1$1$$anonfun$4,CONST_1: lancet.interpreter.TestInterpreter3$Bar) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -21,7 +21,7 @@ def apply(ARG: Int): Int = { object BODY {
       BLOCK_4(LUB_CONST_1_intField,x0,x1,x2)
     }
   }
-  // 14:<TestInterpreter3$$anonfun$testB1$1$$anonfun$4.apply$mcII$sp>(I)I // 5:<TestInterpreter3$$anonfun$testB1$1$$anonfun$4.apply>(I)I // 0:<BytecodeInterpreter_Exec.execute>(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;
+  // 14:<TestInterpreter3$$anonfun$testB1$1$$anonfun$4.apply$mcII$sp>HotSpotSignature<(I)I> // 5:<TestInterpreter3$$anonfun$testB1$1$$anonfun$4.apply>HotSpotSignature<(I)I> // 0:<BytecodeInterpreter_Exec.execute>HotSpotSignature<(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
   def BLOCK_4(LUB_CONST_1_intField:Int,x0:Int,x1:Int,x2:Boolean): Unit = {
     (RES = LUB_CONST_1_intField) // return to root
   }
