@@ -362,7 +362,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
 
         // TODO: will require registering an assumption ...
-        val unique = if (emitUniqueOpt) m.holder.uniqueConcreteMethod(m) else null
+        val unique = if (emitUniqueOpt) m.getDeclaringClass.findUniqueConcreteMethod(m) else null
         if (unique ne null) {
           println("// unique method: "+m+" TODO: guard")
           return invokeDirect(parent, unique, true)

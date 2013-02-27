@@ -157,7 +157,7 @@ class TestInterpreter2 extends FileDiffSuite {
     }
 
     def handleJsMethod(parent: InterpreterFrame, m: ResolvedJavaMethod): Boolean = {
-      val holder = m.holder
+      val holder = m.getDeclaringClass
       if (classOf[Program.JS].isAssignableFrom(holder.toJava())) {
         //println("*** XXX JSM " + classOf[Program.JS] + " / " + holder.toJava)
         val receiver = parent.peekReceiver(m)

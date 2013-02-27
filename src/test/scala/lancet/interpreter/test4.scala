@@ -92,7 +92,7 @@ class TestInterpreter4 extends FileDiffSuite {
     }
 
     def handleMethodCall(parent: InterpreterFrame, m: ResolvedJavaMethod): Boolean = {
-      val className = m.holder.toJava.getName
+      val className = m.getDeclaringClass.toJava.getName
       val fullName = className + "." + m.getName
       def handle(f: List[Rep[Object]] => Rep[Object]): Boolean = {
         val returnValue = f(popArgumentsAsObject(parent, m, !java.lang.reflect.Modifier.isStatic(m.getModifiers)).toList)
@@ -155,7 +155,7 @@ class TestInterpreter4 extends FileDiffSuite {
 
     override def isSafeRead(base: Object, offset: Long, field: ResolvedJavaField, typ: TypeRep[_]): Boolean = {
     super.isSafeRead(base, offset, field, typ) || {
-      val name = field.holder.toJava.getName + "." + field.getName
+      val name = field.getDeclaringClass.toJava.getName + "." + field.getName
       name match {
         case "scala.collection.generic.GenTraversableFactory.bitmap$0" => true // lazy field, treat as const
         case "scala.collection.generic.GenTraversableFactory.ReusableCBF" => true
