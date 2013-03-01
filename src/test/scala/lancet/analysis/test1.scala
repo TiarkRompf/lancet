@@ -541,7 +541,7 @@ class TestAnalysis1 extends FileDiffSuite {
 
   // TODO: 
   // loops (finite set of addrs, need to analyze uniqueness)
-  // abstract GC (we now the baz record is no longer accessible after the if -> remove it)
+  // abstract GC (we know the baz record is no longer accessible after the if -> remove it)
   // construct dependency graph
 
   // run it

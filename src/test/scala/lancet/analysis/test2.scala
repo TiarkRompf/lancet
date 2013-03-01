@@ -11,7 +11,6 @@ class TestAnalysis2 extends FileDiffSuite {
 */
 
   object Test1 {
-    // concrete evaluation semantics
 
     type Var = String
 
