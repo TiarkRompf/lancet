@@ -8,7 +8,6 @@ class TestAnalysis2 extends FileDiffSuite {
 /* 
   making fixpoints explicit in the ai lattice
   test integer ranges
-
 */
 
   object Test1 {
@@ -30,10 +29,10 @@ class TestAnalysis2 extends FileDiffSuite {
       override def toString = a+"+"+b
     }
     case class VIf(c: Val, a: Val, b: Val) extends Val {
-      override def toString = "phi("+a+","+b+")"
+      override def toString = "phi("+c+":"+a+","+b+")"
     }
     case class VWhile(c: Val, a: Val, b: Val) extends Val {
-      override def toString = "lphi("+a+","+b+")"
+      override def toString = "lphi("+c+":"+a+","+b+")"
     }
 
     def vconst(x: Int) = VConst(x)
@@ -52,31 +51,63 @@ class TestAnalysis2 extends FileDiffSuite {
 
 
 
-    case class Store(m: Map[Var,Val]) {
+    case class Store(m: Map[Var,Val], rec: Map[Var,Val], factsTrue: Set[Val], factsFalse: Set[Val]) {
       def apply(x:Var) = m(x)
-      def +(x:(Var,Val)) = Store(m+x)
-      override def toString = m.mkString("\n")
-      def bound = 
+      def +(x:(Var,Val)) = Store(m+x, rec, factsTrue, factsFalse)
+      override def toString = "env: \n" + m.mkString("\n") + 
+        "\nrec: \n" + rec.mkString("\n") +
+        "\ntrue: " + factsTrue + "\nfalse: " + factsFalse
+    
+      def printBounds = {
+        for ((k,v) <- m) {
+          v match {
+            case VConst(x) => println(k+" -> ["+x+","+x+"]")
+            case VIf(
+              VLess(low,VPlus(VRef(k0),VConst(-1))),
+              high,
+              VPlus(VRef(k1),VConst(-1))) 
+              if k0 == k+"0" && k1 == k+"0" => println(k+" -> ["+low+","+high+"]")
+            case VIf(
+              VLess(low,VPlus(VRef(k0),VConst(-1))),
+              high,
+              VPlus(VRef(k1),VConst(-1))) 
+              if k0 == k+"0" && k1 == k+"0" => println(k+" -> ["+low+","+high+"]")
+            case _ => println(k+" -> [?]")
+          }
+        }
+      }
     }
 
-    def infix_join(a: Store, b: Store): Store = {
+    def infix_join(a: Store, c: Val, b: Store): Store = {
       val m = (a.m.keys ++ b.m.keys).map { k => (k, (a.m.get(k),b.m.get(k)) match {
         case (Some(a),Some(b)) if a == b => a
-        case (Some(a),Some(b)) => vif(vconst(-2), a, b)
+        case (Some(a),Some(b)) => vif(c, a, b)
         //case (Some(a),_) => a
         //case (_,Some(b)) => b
       })}.toMap
-      Store(m)
+      Store(m, a.rec ++ b.rec, a.factsTrue intersect b.factsTrue, a.factsFalse intersect b.factsFalse)
     }
 
-    def infix_joinFix(a: Store, b: Store): Store = {
+    def infix_joinGen(a: Store, c: Val, b: Store): Store = { // a previous, b next
+      var r = Map.empty[Var,Val]
       val m = (a.m.keys ++ b.m.keys).map { k => (k, (a.m.get(k),b.m.get(k)) match {
         case (Some(a),Some(b)) if a == b => a
-        case (Some(a),Some(b)) => println(k+"0="+a+" or "+b); vref(k+"0")
+        case (Some(a),Some(b)) => r = r + ((k+"0")->vref(k+"0")); vref(k+"0")
         //case (Some(a),_) => a
         //case (_,Some(b)) => b
       })}.toMap
-      Store(m)
+      Store(m, a.rec ++ b.rec ++ r, a.factsTrue intersect b.factsTrue, a.factsFalse intersect b.factsFalse)
+    }
+
+    def infix_joinFix(a: Store, c: Val, b: Store): Store = { // a previous, b next
+      var r = a.rec ++ b.rec // ??
+      val m = (a.m.keys ++ b.m.keys).map { k => (k, (a.m.get(k),b.m.get(k)) match {
+        case (Some(a),Some(b)) if a == b => a
+        case (Some(a),Some(b)) => r = r + ((k+"0")->vwhile(c, a, b)); vref(k+"0")
+        //case (Some(a),_) => a
+        //case (_,Some(b)) => b
+      })}.toMap
+      Store(m, r, a.factsTrue intersect b.factsTrue, a.factsFalse intersect b.factsFalse)
     }
 
     def infix_join(a: Val, b: Val): Val  = vif(vconst(-3),a,b)
@@ -84,6 +115,12 @@ class TestAnalysis2 extends FileDiffSuite {
 
     def mayZero(a: Val): Boolean = true
     def mustZero(a: Val): Boolean = false
+
+    def assert(a: Val): Unit = store = Store(store.m, store.rec, store.factsTrue + a, store.factsFalse)
+    def assertNot(a: Val): Unit = store = Store(store.m, store.rec, store.factsTrue, store.factsFalse + a)
+
+    val store0: Store = Store(Map.empty, Map.empty, Set.empty, Set.empty)
+    var store: Store = _
 
 
     abstract class Exp
@@ -98,8 +135,6 @@ class TestAnalysis2 extends FileDiffSuite {
       override def toString = "{\n  " + xs.map(_.toString).mkString("\n").replace("\n","\n  ") + "\n}"
     }
 
-    var store: Store = Store(Map.empty)
-
     def eval(e: Exp): Val = e match {
       case Const(x) => vconst(x)
       case Ref(x) => store(x)
@@ -110,26 +145,31 @@ class TestAnalysis2 extends FileDiffSuite {
         val c1 = eval(c)
         if (!mayZero(c1)) eval(a) else if (mustZero(c1)) eval(b) else {
           val save = store
+          assert(c1)
           val e1 = eval(a)
           val s1 = store
           store = save
+          assertNot(c1)
           val e2 = eval(b)
           val s2 = store
-          store = s1 join s2
+          store = s1 join (c1,s2)
           e1 join e2
         }
       case While(c,b) => 
-        eval(c)
+        val c0 = eval(c)
         val sBefore0 = store
+        assert(c0)
         eval(b)
-        eval(c)
+        val c1 = eval(c)
         val sAfter0 = store
-        val sBefore1 = sBefore0 joinFix sAfter0
+        val sBefore1 = sBefore0 joinGen (c1,sAfter0)
         store = sBefore1
+        assert(c1)
         eval(b)
-        eval(c)
+        val c2 = eval(c)
         val sAfter1 = store
-        store = sBefore0 join sAfter1
+        store = sBefore0 joinFix (c2,sAfter1)
+        assertNot(c2)
         vconst(-668)
       case Block(Nil) => vconst(-667)
       case Block(xs) => xs map eval reduceLeft ((a,b) => b)
@@ -143,17 +183,35 @@ class TestAnalysis2 extends FileDiffSuite {
       While(Less(Ref("i"),Const(100)), Block(List(
         Assign("x", Const(7)),
         Assign("x", Plus(Ref("x"), Const(1))),
-        Assign("y", Plus(Ref("i"), Const(1))),
+        Assign("y", Plus(Ref("y"), Const(1))), // TOOD: how to relate to loop var??
         Assign("i", Plus(Ref("i"), Const(1)))
       )))
     ))
 
+    val testProg2 = Block(List(
+      Assign("x", Const(900)), // input
+      Assign("y", Const(0)),
+      Assign("z", Const(0)),
+      While(Less(Const(0), Ref("x")), Block(List(
+        Assign("z", Plus(Ref("z"), Ref("x"))),
+        If(Less(Ref("y"),Const(17)), 
+          Block(List(
+            Assign("y", Plus(Ref("y"), Const(1)))
+          )),
+          Block(Nil)
+        ),
+        Assign("x", Plus(Ref("x"), Const(-1)))
+      )))
+    ))
 
     def run(testProg: Exp) = {
       println("prog: " + testProg)
+      store = store0
       val res = eval(testProg)
       println("res: " + res)
-      println("store: \n" + store)
+      println(store)
+      store.printBounds
+      println("----")
     }
 
   }
@@ -162,6 +220,7 @@ class TestAnalysis2 extends FileDiffSuite {
   // run it
   def testA = withOutFileChecked(prefix+"A") {
     Test1.run(Test1.testProg1)
+    Test1.run(Test1.testProg2)
   }
 
 
