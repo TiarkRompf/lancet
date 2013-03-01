@@ -90,6 +90,7 @@ class TestAnalysis2 extends FileDiffSuite {
       Store(m, a.rec ++ b.rec, a.factsTrue intersect b.factsTrue, a.factsFalse intersect b.factsFalse)
     }
 
+/* no longer used
     def infix_joinGen(a: Store, c: Val, b: Store): Store = { // a previous, b next
       var r = Map.empty[Var,Val]
       val m = (a.m.keys ++ b.m.keys).map { k => (k, (a.m.get(k),b.m.get(k)) match {
@@ -103,7 +104,7 @@ class TestAnalysis2 extends FileDiffSuite {
       })}.toMap
       Store(m, a.rec ++ b.rec ++ r, a.factsTrue intersect b.factsTrue, a.factsFalse intersect b.factsFalse)
     }
-
+*/
     def infix_joinFix(a: Store, c: Val, b: Store): Store = { // a previous, b next
       var r = a.rec ++ b.rec // ??
       val m = (a.m.keys ++ b.m.keys).map { k => (k, (a.m.get(k),b.m.get(k)) match {
@@ -112,17 +113,7 @@ class TestAnalysis2 extends FileDiffSuite {
           val k0 = k+"0"
           val fix = vwhile(c, a, b)
           r = r + (k0->fix); 
-          // simplify (some) fixpoint equations to closed forms
-          // QUESTION: need to think about overflow?
-          fix match {
-            // x = high; while (low < x-1) x = x-1    -->    if (low < high-1) low else high
-            case VWhile(VLess(low,VPlus(VRef(`k0`),VConst(-1))),high,VPlus(VRef(`k0`),VConst(-1))) => 
-              vif(vless(low, vplus(high, vconst(-1))), low, high)
-            // x = low; while (x+1 < high) x = x+1    -->    if (low+1 < high) high else low
-            case VWhile(VLess(VPlus(VRef(`k0`),VConst(1)),high),low,VPlus(VRef(`k0`),VConst(1))) => 
-              vif(vless(vplus(low, vconst(1)), high), high, low)
-            case _ => vref(k0)
-          }
+          vref(k0)
         //case (Some(a),_) => a
         //case (_,Some(b)) => b
       })}.toMap
@@ -132,11 +123,41 @@ class TestAnalysis2 extends FileDiffSuite {
     def infix_join(a: Val, b: Val): Val  = vif(vconst(-3),a,b)
 
 
-    def mayZero(a: Val): Boolean = true
+    def mayZero(a: Val): Boolean = a match {
+      case VLess(VRef(k),VConst(c)) =>
+        println("mayZero "+a)
+        println(store)
+        store.rec(k) match {
+          case VConst(k0) => !(k0 < c) // ok?
+          case _ => true
+        }
+      case _ => 
+        println("default case for mayZero "+a)
+        true 
+    }
     def mustZero(a: Val): Boolean = false
 
     def assert(a: Val): Unit = store = Store(store.m, store.rec, store.factsTrue + a, store.factsFalse)
-    def assertNot(a: Val): Unit = store = Store(store.m, store.rec, store.factsTrue, store.factsFalse + a)
+
+    def assertNot(a: Val): Unit = {
+      // simplify store mappings after loop has terminated
+      val m = store.m.map {
+        case (k,VIf(`a`,u,v)) => (k,v)
+        case (k,VRef(k0)) => (k, store.rec(k0) match {
+          // x = high; while (low < x-1) x = x-1    -->    if (low < high-1) low else high
+          case VWhile(a1 @ VLess(low,VPlus(VRef(`k0`),VConst(-1))),high,VPlus(VRef(`k0`),VConst(-1))) if a == a1 => 
+            vif(vless(low, vplus(high, vconst(-1))), low, high)
+          // x = low; while (x+1 < high) x = x+1    -->    if (low+1 < high) high else low
+          case VWhile(a1 @ VLess(VPlus(VRef(`k0`),VConst(1)),high),low,VPlus(VRef(`k0`),VConst(1))) if a == a1 => 
+            vif(vless(vplus(low, vconst(1)), high), high, low)
+          // how to handle 3rd case with nested if?
+          case _ => vref(k0)            
+        })
+        case (k,v) => (k,v)
+      }
+
+      store = Store(m, store.rec, store.factsTrue, store.factsFalse + a)
+    }
 
     val store0: Store = Store(Map.empty, Map.empty, Set.empty, Set.empty)
     var store: Store = _
@@ -181,15 +202,23 @@ class TestAnalysis2 extends FileDiffSuite {
         eval(b)
         val c1 = eval(c)
         val sAfter0 = store
-        val sBefore1 = sBefore0 joinGen (c1,sAfter0)
+        val sBefore1 = sBefore0 joinFix (c1,sAfter0)
         store = sBefore1
         assert(c1)
         eval(b)
         val c2 = eval(c)
         val sAfter1 = store
-        store = sBefore0 joinFix (c2,sAfter1)
-        assertNot(c2)
+        val sBefore2 = sBefore0 joinFix (c2,sAfter1)
+        store = sBefore2
+        assert(c2)
+        eval(b)
+        val c3 = eval(c)
+        val sAfter2 = store
+        val sBefore3 = sBefore0 joinFix (c3,sAfter2)
+        store = sBefore3
+        assertNot(c3)
         vconst(-668)
+        // TODO: need more iterations?
       case Block(Nil) => vconst(-667)
       case Block(xs) => xs map eval reduceLeft ((a,b) => b)
     }
