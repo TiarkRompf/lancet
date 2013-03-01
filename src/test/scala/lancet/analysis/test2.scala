@@ -45,8 +45,10 @@ class TestAnalysis2 extends FileDiffSuite {
       case (VConst(a),VConst(b)) => VConst(a+b)
       case _ => VPlus(a,b)
     }
-    def vif(c: Val, a: Val, b: Val) = if (a == b) a else VIf(c,a,b)
-    def vwhile(c: Val, a: Val, b: Val) = if (a == b) a else VWhile(c,a,b)
+    def vif(c: Val, a: Val, b: Val) = 
+      if (a == b) a else if (c == VConst(1)) a else if (c == VConst(0)) b else VIf(c,a,b)
+    def vwhile(c: Val, a: Val, b: Val) = 
+      if (a == b) a else if (c == VConst(1)) a else if (c == VConst(0)) b else VWhile(c,a,b)
 
 
 
@@ -92,7 +94,10 @@ class TestAnalysis2 extends FileDiffSuite {
       var r = Map.empty[Var,Val]
       val m = (a.m.keys ++ b.m.keys).map { k => (k, (a.m.get(k),b.m.get(k)) match {
         case (Some(a),Some(b)) if a == b => a
-        case (Some(a),Some(b)) => r = r + ((k+"0")->vref(k+"0")); vref(k+"0")
+        case (Some(a),Some(b)) => 
+          // QUESTION: what is the right base value here? a? phi(a,b) ? we still want to be optimistic!
+          r = r + ((k+"0")->vwhile(c, a, b)); 
+          vref(k+"0")
         //case (Some(a),_) => a
         //case (_,Some(b)) => b
       })}.toMap
@@ -103,7 +108,21 @@ class TestAnalysis2 extends FileDiffSuite {
       var r = a.rec ++ b.rec // ??
       val m = (a.m.keys ++ b.m.keys).map { k => (k, (a.m.get(k),b.m.get(k)) match {
         case (Some(a),Some(b)) if a == b => a
-        case (Some(a),Some(b)) => r = r + ((k+"0")->vwhile(c, a, b)); vref(k+"0")
+        case (Some(a),Some(b)) => 
+          val k0 = k+"0"
+          val fix = vwhile(c, a, b)
+          r = r + (k0->fix); 
+          // simplify (some) fixpoint equations to closed forms
+          // QUESTION: need to think about overflow?
+          fix match {
+            // x = high; while (low < x-1) x = x-1    -->    if (low < high-1) low else high
+            case VWhile(VLess(low,VPlus(VRef(`k0`),VConst(-1))),high,VPlus(VRef(`k0`),VConst(-1))) => 
+              vif(vless(low, vplus(high, vconst(-1))), low, high)
+            // x = low; while (x+1 < high) x = x+1    -->    if (low+1 < high) high else low
+            case VWhile(VLess(VPlus(VRef(`k0`),VConst(1)),high),low,VPlus(VRef(`k0`),VConst(1))) => 
+              vif(vless(vplus(low, vconst(1)), high), high, low)
+            case _ => vref(k0)
+          }
         //case (Some(a),_) => a
         //case (_,Some(b)) => b
       })}.toMap
@@ -201,7 +220,8 @@ class TestAnalysis2 extends FileDiffSuite {
           Block(Nil)
         ),
         Assign("x", Plus(Ref("x"), Const(-1)))
-      )))
+      ))),
+      Assign("r", Ref("x"))
     ))
 
     def run(testProg: Exp) = {
