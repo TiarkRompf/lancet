@@ -76,12 +76,26 @@ class TestAnalysis3 extends FileDiffSuite {
 
 
     abstract class Obj {
-      def apply(f: Field): Val = ???
-      def +(x:(Field,Val)): Obj = ???
+      def apply(f: Field): Val = vundef
+      def +(x:(Field,Val)): Obj = OUpdate(this,Map(x._1->x._2))
     }
     case class OUndef() extends Obj
-    case class OIf(c: Val, a: Obj, b: Obj) extends Obj
-    case class OUpdate(a: Obj, f: Field, b: Val) extends Obj
+    case class OStatic(x:Addr) extends Obj {
+      //override def apply(f: Field) = vref(x+"."+f)
+    }
+    case class ORef(x:String) extends Obj {
+      override def apply(f: Field) = vref(x+"."+f)
+    }
+    case class ONew(x:Alloc) extends Obj
+    case class OIf(c: Val, a: Obj, b: Obj) extends Obj {
+      override def apply(f: Field) = vif(c,a(f),b(f))
+    }
+    case class OWhile(c: Val, a: Obj, b: Obj) extends Obj
+    case class OUpdate(a: Obj, m: Map[Field,Val]) extends Obj {
+      override def apply(f: Field) = m.getOrElse(f,a(f))
+      override def +(x:(Field,Val)) = OUpdate(a,m+x)
+      override def toString = a+"+{" + m.mkString(",") + "}"
+    }
 
     case class OFlat(m: Map[Field,Val]) extends Obj {
       override def apply(f: Field) = m(f)
@@ -91,30 +105,32 @@ class TestAnalysis3 extends FileDiffSuite {
 
     def oif(c: Val, a: Obj, b: Obj) = (a,b) match {
       case (OFlat(ma),OFlat(mb)) =>
-      val m = (ma.keys ++ mb.keys).map { k => (k, (ma.get(k),mb.get(k)) match {
-        case (Some(a),Some(b)) if a == b => a
-        case (Some(a),Some(b)) => vif(c, a, b)
-        //case (Some(a),_) => a
-        //case (_,Some(b)) => b
-      })}.toMap
-      OFlat(m)
+        val m = (ma.keys ++ mb.keys).map { k => (k, (ma.get(k),mb.get(k)) match {
+          case (Some(a),Some(b)) if a == b => a
+          case (Some(a),Some(b)) => vif(c, a, b)
+          //case (Some(a),_) => a
+          //case (_,Some(b)) => b
+        })}.toMap
+        OFlat(m)
+      case (a,b) => OIf(c,a,b)
     }
 
     def owhile(c: Val, a: Obj, b: Obj) = (a,b) match {
       case (OFlat(ma),OFlat(mb)) =>
-      val m = (ma.keys ++ mb.keys).map { k => (k, (ma.get(k),mb.get(k)) match {
-        case (Some(a),Some(b)) if a == b => a
-        case (Some(a),Some(b)) => vwhile(c, a, b)
-        case (None,Some(b)) => vwhile(c, vundef, b)
-        //case (Some(a),_) => a
-        //case (_,Some(b)) => b
-      })}.toMap
-      OFlat(m)
+        val m = (ma.keys ++ mb.keys).map { k => (k, (ma.get(k),mb.get(k)) match {
+          case (Some(a),Some(b)) if a == b => a
+          case (Some(a),Some(b)) => vwhile(c, a, b)
+          case (None,Some(b)) => vwhile(c, vundef, b)
+          //case (Some(a),_) => a
+          //case (_,Some(b)) => b
+        })}.toMap
+        OFlat(m)
+      case (a,b) => OWhile(c,a,b)
     }
 
 
-    case class Store(m: Map[Var,Obj], rec: Map[Var,Val], factsTrue: Set[Val], factsFalse: Set[Val]) {
-      def apply(x:Var) = m(x)
+    case class Store(m: Map[Var,Obj], rec: Map[Var,Obj], factsTrue: Set[Val], factsFalse: Set[Val]) {
+      def apply(x:Var) = m.getOrElse(x,OUndef())
       def +(x:(Var,Obj)) = Store(m+x, rec, factsTrue, factsFalse)
       override def toString = "env: \n" + m.mkString("\n") + 
         "\nrec: \n" + rec.mkString("\n") +
@@ -124,59 +140,28 @@ class TestAnalysis3 extends FileDiffSuite {
 
 
     def infix_join(a: Store, c: Val, b: Store): Store = {
-      val m = (a.m.keys ++ b.m.keys).map { k => (k, (a.m.get(k),b.m.get(k)) match {
-        case (Some(a),Some(b)) if a == b => a
-        case (Some(a),Some(b)) => oif(c, a, b)
+      val m = (a.m.keys ++ b.m.keys).map { k => (k, (a(k),b(k)) match {
+        case (a,b) if a == b => a
+        case (a,b) => oif(c, a, b)
         //case (Some(a),_) => a
         //case (_,Some(b)) => b
       })}.toMap
       Store(m, a.rec ++ b.rec, a.factsTrue intersect b.factsTrue, a.factsFalse intersect b.factsFalse)
     }
 
-/* no longer used
-    def infix_joinGen(a: Store, c: Val, b: Store): Store = { // a previous, b next
-      var r = Map.empty[Var,Val]
-      val m = (a.m.keys ++ b.m.keys).map { k => (k, (a.m.get(k),b.m.get(k)) match {
-        case (Some(a),Some(b)) if a == b => a
-        case (Some(a),Some(b)) => 
-          // QUESTION: what is the right base value here? a? phi(a,b) ? we still want to be optimistic!
-          r = r + ((k+"0")->vwhile(c, a, b)); 
-          vref(k+"0")
-        //case (Some(a),_) => a
-        //case (_,Some(b)) => b
-      })}.toMap
-      Store(m, a.rec ++ b.rec ++ r, a.factsTrue intersect b.factsTrue, a.factsFalse intersect b.factsFalse)
-    }
-*/
+
     def infix_joinFix(a: Store, c: Val, b: Store): Store = { // a previous, b next
       //println("++++ join")
       //println(a)
       //println(b)
       var r = a.rec ++ b.rec // ??
-      val m = (a.m.keys ++ b.m.keys).map { k => (k, (a.m.get(k),b.m.get(k)) match {
-        case (Some(a),Some(b)) if a == b => a
-        case (Some(a),Some(b)) => 
-          // extract VWhiles from joined object and create recursive bindings
-          val OFlat(o) = owhile(c,a,b)
-          OFlat(o.map{
-            case(k1,fix@VWhile(c,a,b)) =>
-              val k0 = k+"."+k1+"0"
-              r = r + (k0->fix); 
-              (k1 -> vref(k0))
-            case(k,v) => (k -> v)
-          })
-        case (None,Some(b)) => // TODO: use OUndef
-          val OFlat(o) = b
-          OFlat(o.map{
-            case(k1,b) =>
-              val fix = vwhile(c,vundef,b)
-              val k0 = k+"."+k1+"0"
-              r = r + (k0->fix); 
-              (k1 -> vref(k0))
-            case(k,v) => (k -> v)
-          })
-        //case (Some(a),_) => a
-        //case (_,Some(b)) => b
+      val m = (a.m.keys ++ b.m.keys).map { k => (k, (a(k),b(k)) match {
+        case (a,b) if a == b => a
+        case (a,b) => 
+          val k0 = k+"0"
+          val fix = owhile(c,a,b)
+          r = r + (k0->fix); 
+          ORef(k0)
       })}.toMap
       Store(m, r, a.factsTrue intersect b.factsTrue, a.factsFalse intersect b.factsFalse)
     }
@@ -185,13 +170,13 @@ class TestAnalysis3 extends FileDiffSuite {
 
 
     def mayZero(a: Val): Boolean = a match {
-      case VLess(VRef(k),VInt(c)) =>
+      //case VLess(VRef(k),VInt(c)) =>
         //println("mayZero "+a)
         //println(store)
-        store.rec(k) match {
+        /*store.rec(k) match {
           case VInt(k0) => !(k0 < c) // ok?
           case _ => true
-        }
+        }*/
       case VInt(c) if c != 0 => 
         false
       case _ => 
@@ -251,13 +236,14 @@ class TestAnalysis3 extends FileDiffSuite {
       case Ref(x) => store("&"+x)("val")
       case Assign(x,y) => 
         val y1 = eval(y)
-        store = store + ("&"+x -> OFlat(Map("val" -> y1))); vundef
+        store = store + ("&"+x -> (OStatic("&"+x) + ("val" -> y1))); vundef
       case Plus(x,y) => vplus(eval(x),eval(y))
       case Less(x,y) => vless(eval(x),eval(y))
       case New(x) => 
         val a = freshAddr(x)
         //store = store + (a -> OFlat(Map.empty))
-        store = store + (a -> OFlat(Map.empty))
+        val key = if (store(a) == OUndef()) x else x+"_loop"
+        store = store + (a -> ONew(key))
         //println("about to "+e+"/"+a)
         //println(store)
         vaddr(a)
@@ -287,6 +273,7 @@ class TestAnalysis3 extends FileDiffSuite {
           e1 join (c1,e2)
         }
       case While(c,b) => 
+
         val c0 = eval(c)
         val sBefore0 = store
         assert(c0)
@@ -314,6 +301,17 @@ class TestAnalysis3 extends FileDiffSuite {
       case Block(xs) => xs map eval reduceLeft ((a,b) => b)
     }
 
+    def run(testProg: Exp) = {
+      println("prog: " + testProg)
+      store = store0
+      val res = eval(testProg)
+      println("res: " + res)
+      println(store)
+      //store.printBounds
+      println("----")
+    }
+
+    // test some integer computations
 
     val testProg1 = Block(List(
       Assign("i", Const(0)),
@@ -344,6 +342,8 @@ class TestAnalysis3 extends FileDiffSuite {
       Assign("r", Ref("x"))
     ))
 
+    // test store logic
+
     val testProg3 = Block(List(
       Assign("i", Const(0)),
       Assign("z", New("A")),
@@ -370,26 +370,49 @@ class TestAnalysis3 extends FileDiffSuite {
       )))
     ))
 
-    def run(testProg: Exp) = {
-      println("prog: " + testProg)
-      store = store0
-      val res = eval(testProg)
-      println("res: " + res)
-      println(store)
-      //store.printBounds
-      println("----")
-    }
+    val testProg5 = Block(List(
+      Assign("i", Const(0)),
+      Assign("z", New("A")),
+      Assign("x", Ref("z")),
+      While(Less(Ref("i"),Const(100)), Block(List(
+        Put(Ref("x"), "head", Ref("i")),
+        Assign("i", Plus(Ref("i"), Const(1)))
+      )))
+    ))
+
+    // modify stuff after a loop
+
+    val testProg6 = Block(List(
+      Assign("i", Const(0)),
+      Assign("z", New("A")),
+      Assign("x", Ref("z")),
+      Assign("y", New("B")),
+      While(Less(Ref("i"),Const(100)), Block(List(
+        Put(Ref("y"), "head", Ref("i")),
+        Put(Ref("y"), "tail", Ref("x")),
+        Assign("x", Ref("y")),
+        Assign("i", Plus(Ref("i"), Const(1)))
+      ))),
+      Put(Ref("y"), "tail", Ref("z")),
+      Put(Ref("y"), "head", Const(7))
+    ))
 
   }
 
-
-  // run it
   def testA = withOutFileChecked(prefix+"A") {
     Test1.run(Test1.testProg1)
     Test1.run(Test1.testProg2)
+  }
+
+  def testB = withOutFileChecked(prefix+"B") {
     Test1.run(Test1.testProg3)
     Test1.run(Test1.testProg4) // 3 and 4 should be different: alloc within the loop vs before
+    Test1.run(Test1.testProg5)
   }
+  def testC = withOutFileChecked(prefix+"C") {
+    Test1.run(Test1.testProg6)
+  }
+
 
 
 }
