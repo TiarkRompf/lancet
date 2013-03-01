@@ -48,7 +48,7 @@ class TestAnalysis2 extends FileDiffSuite {
     def vif(c: Val, a: Val, b: Val) = 
       if (a == b) a else if (c == VConst(1)) a else if (c == VConst(0)) b else VIf(c,a,b)
     def vwhile(c: Val, a: Val, b: Val) = 
-      if (a == b) a else if (c == VConst(1)) a else if (c == VConst(0)) b else VWhile(c,a,b)
+      if (a == b) a else VWhile(c,a,b)
 
 
 
@@ -131,6 +131,8 @@ class TestAnalysis2 extends FileDiffSuite {
           case VConst(k0) => !(k0 < c) // ok?
           case _ => true
         }
+      case VConst(c) if c != 0 => 
+        false
       case _ => 
         println("default case for mayZero "+a)
         true 
