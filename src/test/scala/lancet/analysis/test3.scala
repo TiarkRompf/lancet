@@ -69,15 +69,37 @@ class TestAnalysis3 extends FileDiffSuite {
     }
     def vupdate(a: Val, f: Field, b: Val) = VUpdate(a,f,b)
 
-    def vif(c: Val, a: Val, b: Val) = 
-      if (a == b) a else if (c == VInt(1)) a else if (c == VInt(0)) b else VIf(c,a,b)
-    def vwhile(c: Val, a: Val, b: Val) = 
-      if (a == b) a else VWhile(c,a,b)
+    def vif(c: Val, a: Val, b: Val) =
+      if (c == VInt(1)) a else if (c == VInt(0)) b 
+      else {
+        // resolved nested conditionals by substitution (inefficient, but hey ...)
+        // TODO: implication would be nice, too (e.g. for inequalities)
+        val u = vsubst(a,c,vint(1))
+        val v = vsubst(b,c,vint(0))
+        println("--> phi "+c+" "+u+" "+v)
+        if (u == v) u
+        else VIf(c,u,v)
+      }
+    def vwhile(c: Val, a: Val, b: Val) = {
+      val v = vsubst(b,c,vint(1))
+      if (a == v) a else VWhile(c,a,v)
+    }
+
+
+    def vsubst(term: Val, a: Val, b: Val): Val = term match { // a->b in term
+      case VLess(x,y) => vless(vsubst(x,a,b),vsubst(y,a,b))
+      case VPlus(x,y) => vplus(vsubst(x,a,b),vsubst(y,a,b))
+      case VIf(z,x,y) => vif(vsubst(z,a,b),vsubst(x,a,b),vsubst(y,a,b))
+      case VWhile(z,x,y) => vwhile(vsubst(z,a,b),vsubst(x,a,b),vsubst(y,a,b))
+      case `a` => b
+      case _ => term
+    }
 
 
     abstract class Obj {
       def apply(f: Field): Val = vundef
       def +(x:(Field,Val)): Obj = OUpdate(this,Map(x._1->x._2))
+      def ++(xs:(Field,Val)*): Obj = xs.foldLeft(this)(_+_)
     }
     case class OUndef() extends Obj
     case class OStatic(x:Addr) extends Obj {
@@ -97,26 +119,31 @@ class TestAnalysis3 extends FileDiffSuite {
       override def toString = a+"+{" + m.mkString(",") + "}"
     }
 
-    case class OFlat(m: Map[Field,Val]) extends Obj {
-      override def apply(f: Field) = m(f)
-      override def +(x:(Field,Val)) = OFlat(m+x)
-      override def toString = "{" + m.mkString(",") + "}"
+    def osubst(term: Obj, a: Val, b: Val): Obj = term match { // a->b in term
+      case OUpdate(x,m) => osubst(x,a,b) ++ (m.map {case(k,v)=>(k,vsubst(v,a,b))}.toSeq:_*)
+      case OIf(z,x,y) => oif(vsubst(z,a,b),osubst(x,a,b),osubst(y,a,b))
+      case OWhile(z,x,y) => owhile(vsubst(z,a,b),osubst(x,a,b),osubst(y,a,b))
+      case _ => term
     }
 
-    def oif(c: Val, a: Obj, b: Obj) = (a,b) match {
-      case (OFlat(ma),OFlat(mb)) =>
+    def oif(c: Val, a: Obj, b: Obj): Obj = (a,b) match {
+      case (OUpdate(za,ma),OUpdate(zb,mb)) =>
         val m = (ma.keys ++ mb.keys).map { k => (k, (ma.get(k),mb.get(k)) match {
           case (Some(a),Some(b)) if a == b => a
           case (Some(a),Some(b)) => vif(c, a, b)
-          //case (Some(a),_) => a
-          //case (_,Some(b)) => b
+          case (Some(a),_) => vif(c, a, vundef)
+          case (_,Some(b)) => vif(c, vundef, b)
         })}.toMap
-        OFlat(m)
-      case (a,b) => OIf(c,a,b)
+        oif(c,za,zb) ++ (m.toSeq:_*)
+      case (a,b) => 
+        if (c == vint(1)) a else if (c == vint(0)) b else {
+          val (u,v) = (osubst(a,c,vint(1)), osubst(b,c,vint(0)))
+          if (u == v) u else OIf(c,u,v)
+        }
     }
 
-    def owhile(c: Val, a: Obj, b: Obj) = (a,b) match {
-      case (OFlat(ma),OFlat(mb)) =>
+    def owhile(c: Val, a: Obj, b: Obj): Obj = (a,b) match {
+      case (OUpdate(za,ma),OUpdate(zb,mb)) =>
         val m = (ma.keys ++ mb.keys).map { k => (k, (ma.get(k),mb.get(k)) match {
           case (Some(a),Some(b)) if a == b => a
           case (Some(a),Some(b)) => vwhile(c, a, b)
@@ -124,14 +151,25 @@ class TestAnalysis3 extends FileDiffSuite {
           //case (Some(a),_) => a
           //case (_,Some(b)) => b
         })}.toMap
-        OFlat(m)
+        owhile(c,za,zb) ++ (m.toSeq:_*)
       case (a,b) => OWhile(c,a,b)
     }
 
 
     case class Store(m: Map[Var,Obj], rec: Map[Var,Obj], factsTrue: Set[Val], factsFalse: Set[Val]) {
-      def apply(x:Var) = m.getOrElse(x,OUndef())
-      def +(x:(Var,Obj)) = Store(m+x, rec, factsTrue, factsFalse)
+      def apply(x:Var): Obj = m.getOrElse(x,OUndef())
+      def updated(x:(Var,Obj)): Store = Store(m+x, rec, factsTrue, factsFalse)
+
+      def apply(x:Val): Obj = x match {
+        case VAddr(x) => this(x)
+        case VIf(c,a,b) => oif(c,this(a),this(b))
+      }
+
+      def +(x:(Val,Obj)): Store = x match {
+        case (VAddr(x), o) => this updated (x->o)
+        case (VIf(c,a,b), o) => this + (a -> oif(c,o,this(a))) + (b -> oif(c,this(b),o))
+      }
+
       override def toString = "env: \n" + m.mkString("\n") + 
         "\nrec: \n" + rec.mkString("\n") +
         "\ntrue: " + factsTrue + "\nfalse: " + factsFalse
@@ -216,6 +254,7 @@ class TestAnalysis3 extends FileDiffSuite {
 
     abstract class Exp
     case class Const(x: Int) extends Exp
+    case class Direct(x: Val) extends Exp
     case class Ref(x: Var) extends Exp
     case class Assign(x: Var, y: Exp) extends Exp
     case class Plus(x: Exp, y: Exp) extends Exp
@@ -229,14 +268,15 @@ class TestAnalysis3 extends FileDiffSuite {
       override def toString = "{\n  " + xs.map(_.toString).mkString("\n").replace("\n","\n  ") + "\n}"
     }
 
-    def freshAddr(x:Alloc) = "alloc"+x
+    def freshAddr(x:Alloc) = VAddr("alloc"+x)
 
     def eval(e: Exp): Val = e match {
       case Const(x) => vint(x)
+      case Direct(x) => x
       case Ref(x) => store("&"+x)("val")
       case Assign(x,y) => 
         val y1 = eval(y)
-        store = store + ("&"+x -> (OStatic("&"+x) + ("val" -> y1))); vundef
+        store = store + (VAddr("&"+x) -> (OStatic("&"+x) + ("val" -> y1))); vundef
       case Plus(x,y) => vplus(eval(x),eval(y))
       case Less(x,y) => vless(eval(x),eval(y))
       case New(x) => 
@@ -246,12 +286,12 @@ class TestAnalysis3 extends FileDiffSuite {
         store = store + (a -> ONew(key))
         //println("about to "+e+"/"+a)
         //println(store)
-        vaddr(a)
+        a
       case Get(x, f) => 
-        val VAddr(a) = eval(x)
+        val a = eval(x)
         store(a)(f)
       case Put(x, f, y) => 
-        val VAddr(a) = eval(x)
+        val a = eval(x)
         val y1 = eval(y)
         //println("about to "+e+"/"+a+","+y1)
         //println(store)
@@ -296,10 +336,18 @@ class TestAnalysis3 extends FileDiffSuite {
         store = sBefore3
         assertNot(c3)
         vundef
-        // TODO: need more iterations?
+        // TODO: fixpoint!
       case Block(Nil) => vundef
       case Block(xs) => xs map eval reduceLeft ((a,b) => b)
     }
+
+    // codegen
+
+    //def emit()
+
+
+
+
 
     def run(testProg: Exp) = {
       println("prog: " + testProg)
@@ -397,6 +445,43 @@ class TestAnalysis3 extends FileDiffSuite {
       Put(Ref("y"), "head", Const(7))
     ))
 
+    // strong update for if
+
+    val testProg7 = Block(List(
+      Assign("x", New("A")),
+      If(Direct(vref("input")),
+        Block(List(
+          Put(Ref("x"), "a", New("B")),
+          Put(Get(Ref("x"), "a"), "foo", Const(5))
+        )),
+        Block(List(
+          Put(Ref("x"), "a", New("C")),
+          Put(Get(Ref("x"), "a"), "bar", Const(5))
+        ))
+      ),
+      Assign("foo", Get(Get(Ref("x"), "a"), "foo")),
+      Assign("bar", Get(Get(Ref("x"), "a"), "bar"))
+    ))
+
+    val testProg8 = Block(List(
+      //Put(Static(0), "counter", Const(1)),
+      Assign("x", New("A")),
+      Put(Ref("x"), "a", New("A2")),
+      Put(Get(Ref("x"), "a"), "baz", Const(3)),
+      If(Direct(vref("input")),
+        Block(List(
+          Put(Ref("x"), "a", New("B")), // strong update, overwrite
+          Put(Get(Ref("x"), "a"), "foo", Const(5))
+        )),
+        Block(List(
+          Put(Ref("x"), "a", New("C")), // strong update, overwrite
+          Put(Get(Ref("x"), "a"), "bar", Const(5))
+        ))
+      ),
+      Put(Get(Ref("x"), "a"), "bar", Const(7)), // this is not a strong update, because 1.a may be one of two allocs
+      Assign("xbar", Get(Get(Ref("x"), "a"), "bar")) // should still yield 7!
+    ))
+
   }
 
   def testA = withOutFileChecked(prefix+"A") {
@@ -411,6 +496,10 @@ class TestAnalysis3 extends FileDiffSuite {
   }
   def testC = withOutFileChecked(prefix+"C") {
     Test1.run(Test1.testProg6)
+  }
+  def testD = withOutFileChecked(prefix+"D") {
+    Test1.run(Test1.testProg7)
+    Test1.run(Test1.testProg8)
   }
 
 
