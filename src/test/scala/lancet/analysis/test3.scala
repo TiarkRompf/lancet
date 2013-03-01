@@ -105,6 +105,7 @@ class TestAnalysis3 extends FileDiffSuite {
       val m = (ma.keys ++ mb.keys).map { k => (k, (ma.get(k),mb.get(k)) match {
         case (Some(a),Some(b)) if a == b => a
         case (Some(a),Some(b)) => vwhile(c, a, b)
+        case (None,Some(b)) => vwhile(c, vundef, b)
         //case (Some(a),_) => a
         //case (_,Some(b)) => b
       })}.toMap
@@ -148,9 +149,9 @@ class TestAnalysis3 extends FileDiffSuite {
     }
 */
     def infix_joinFix(a: Store, c: Val, b: Store): Store = { // a previous, b next
-      println("++++ join")
-      println(a)
-      println(b)
+      //println("++++ join")
+      //println(a)
+      //println(b)
       var r = a.rec ++ b.rec // ??
       val m = (a.m.keys ++ b.m.keys).map { k => (k, (a.m.get(k),b.m.get(k)) match {
         case (Some(a),Some(b)) if a == b => a
@@ -255,9 +256,10 @@ class TestAnalysis3 extends FileDiffSuite {
       case Less(x,y) => vless(eval(x),eval(y))
       case New(x) => 
         val a = freshAddr(x)
+        //store = store + (a -> OFlat(Map.empty))
         store = store + (a -> OFlat(Map.empty))
-        println("about to "+e+"/"+a)
-        println(store)
+        //println("about to "+e+"/"+a)
+        //println(store)
         vaddr(a)
       case Get(x, f) => 
         val VAddr(a) = eval(x)
@@ -265,8 +267,8 @@ class TestAnalysis3 extends FileDiffSuite {
       case Put(x, f, y) => 
         val VAddr(a) = eval(x)
         val y1 = eval(y)
-        println("about to "+e+"/"+a+","+y1)
-        println(store)
+        //println("about to "+e+"/"+a+","+y1)
+        //println(store)
         val x1 = store(a) //.getOrElse(a, UndefinedObj())  assert it's defined?
         store = store + (a -> (x1 + (f -> y1)))
         vint(0)
@@ -355,6 +357,18 @@ class TestAnalysis3 extends FileDiffSuite {
       )))
     ))
 
+    val testProg4 = Block(List(
+      Assign("i", Const(0)),
+      Assign("z", New("A")),
+      Assign("x", Ref("z")),
+      Assign("y", New("B")),
+      While(Less(Ref("i"),Const(100)), Block(List(
+        Put(Ref("y"), "head", Ref("i")),
+        Put(Ref("y"), "tail", Ref("x")),
+        Assign("x", Ref("y")),
+        Assign("i", Plus(Ref("i"), Const(1)))
+      )))
+    ))
 
     def run(testProg: Exp) = {
       println("prog: " + testProg)
@@ -374,6 +388,7 @@ class TestAnalysis3 extends FileDiffSuite {
     Test1.run(Test1.testProg1)
     Test1.run(Test1.testProg2)
     Test1.run(Test1.testProg3)
+    Test1.run(Test1.testProg4) // 3 and 4 should be different: alloc within the loop vs before
   }
 
 
