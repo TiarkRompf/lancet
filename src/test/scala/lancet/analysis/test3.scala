@@ -152,7 +152,7 @@ class TestAnalysis3 extends FileDiffSuite {
           //case (_,Some(b)) => b
         })}.toMap
         owhile(c,za,zb) ++ (m.toSeq:_*)
-      case (a,b) => OWhile(c,a,b)
+      case (a,b) => if (a == b) a else OWhile(c,a,b)
     }
 
 
