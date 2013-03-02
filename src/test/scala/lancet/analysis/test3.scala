@@ -490,7 +490,6 @@ class TestAnalysis3 extends FileDiffSuite {
     ))
 
     val testProg8 = Block(List(
-      //Put(Static(0), "counter", Const(1)),
       Assign("x", New("A")),
       Put(Ref("x"), "a", New("A2")),
       Put(Get(Ref("x"), "a"), "baz", Const(3)),
@@ -502,6 +501,22 @@ class TestAnalysis3 extends FileDiffSuite {
         Block(List(
           Put(Ref("x"), "a", New("C")), // strong update, overwrite
           Put(Get(Ref("x"), "a"), "bar", Const(5))
+        ))
+      ),
+      Put(Get(Ref("x"), "a"), "bar", Const(7)), // this is not a strong update, because 1.a may be one of two allocs
+      Assign("xbar", Get(Get(Ref("x"), "a"), "bar")) // should still yield 7!
+    ))
+
+    // update stuff allocated in a loop
+
+    val testProg9 = Block(List(
+      Assign("x", New("X")),
+      Put(Ref("x"), "a", New("A")),
+      Put(Get(Ref("x"), "a"), "baz", Const(3)),
+      While(Direct(vref("input")),
+        Block(List(
+          Put(Ref("x"), "a", New("B")), // strong update, overwrite
+          Put(Get(Ref("x"), "a"), "foo", Const(5))
         ))
       ),
       Put(Get(Ref("x"), "a"), "bar", Const(7)), // this is not a strong update, because 1.a may be one of two allocs
@@ -526,6 +541,9 @@ class TestAnalysis3 extends FileDiffSuite {
   def testD = withOutFileChecked(prefix+"D") {
     Test1.run(Test1.testProg7)
     Test1.run(Test1.testProg8)
+  }
+  def testE = withOutFileChecked(prefix+"E") {
+    Test1.run(Test1.testProg9)
   }
 
 
