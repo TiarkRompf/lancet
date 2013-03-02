@@ -241,7 +241,7 @@ class TestAnalysis3 extends FileDiffSuite {
                 // x = low; while (x+1 < high) x = x+1    -->    if (low+1 < high) high else low
                 case VWhile(a1 @ VLess(VPlus(VRef(`kf`),VInt(1)),high),low,VPlus(VRef(`kf`),VInt(1))) if a == a1 => 
                   vif(vless(vplus(low, vint(1)), high), high, low)
-                // how to handle 3rd case with nested if?
+                // how to handle 3rd case of testA (nested if)?
                 case _ => vref(kf)
               })})
           case o => ORef(k0)
