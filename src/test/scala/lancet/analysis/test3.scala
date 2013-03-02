@@ -224,7 +224,33 @@ class TestAnalysis3 extends FileDiffSuite {
     def mustZero(a: Val): Boolean = false
 
     def assert(a: Val): Unit = store = Store(store.m, store.rec, store.factsTrue + a, store.factsFalse)
-    def assertNot(a: Val): Unit = store = Store(store.m, store.rec, store.factsTrue, store.factsFalse + a)
+    //def assertNot(a: Val): Unit = store = Store(store.m, store.rec, store.factsTrue, store.factsFalse + a)
+
+    def assertNot(a: Val): Unit = {
+      // simplify store mappings after loop has terminated
+      val m = store.m.map {
+        case (k,OIf(`a`,u,v)) => (k,v)
+        case (k,ORef(k0)) => (k, store.rec(k0) match {
+          case OUpdate(OStatic(`k`),m) =>
+            OUpdate(OStatic(`k`),m map { case (k,v) => 
+              val kf = k0+"."+k
+              (k, v match {
+                // x = high; while (low < x-1) x = x-1    -->    if (low < high-1) low else high
+                case VWhile(a1 @ VLess(low,VPlus(VRef(`kf`),VInt(-1))),high,VPlus(VRef(`kf`),VInt(-1))) if a == a1 => 
+                  vif(vless(low, vplus(high, vint(-1))), low, high)
+                // x = low; while (x+1 < high) x = x+1    -->    if (low+1 < high) high else low
+                case VWhile(a1 @ VLess(VPlus(VRef(`kf`),VInt(1)),high),low,VPlus(VRef(`kf`),VInt(1))) if a == a1 => 
+                  vif(vless(vplus(low, vint(1)), high), high, low)
+                // how to handle 3rd case with nested if?
+                case _ => vref(kf)
+              })})
+          case o => ORef(k0)
+        })
+        case (k,v) => (k,v)
+      }
+
+      store = Store(m, store.rec, store.factsTrue, store.factsFalse + a)
+    }
 
 /*
     def assertNot(a: Val): Unit = {
