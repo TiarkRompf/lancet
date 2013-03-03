@@ -367,11 +367,6 @@ class TestAnalysis3 extends FileDiffSuite {
       case Block(xs) => xs map eval reduceLeft ((a,b) => b)
     }
 
-    // codegen
-
-    //def emit()
-
-
 
 
 
