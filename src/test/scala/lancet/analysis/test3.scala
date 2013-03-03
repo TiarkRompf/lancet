@@ -82,8 +82,17 @@ class TestAnalysis3 extends FileDiffSuite {
         else VIf(c,u,v)
       }
     def vwhile(c: Val, a: Val, b: Val) = {
-      val v = vsubst(b,c,vint(1))
-      if (a == v) a else VWhile(c,a,v)
+      //val v = vsubst(b,c,vint(1))
+      //if (a == v) a else VWhile(c,a,v)
+      if (c == VInt(0)) a else if (c == VInt(1)) b 
+      else {
+        // is this sound this?? -- after the loop c will be false!
+        val u = vsubst(a,c,vint(0))
+        val v = vsubst(b,c,vint(1))
+        //println("--> lphi "+c+" "+u+" "+v)
+        if (u == v) u
+        else VWhile(c,u,v)
+      }
     }
 
 
@@ -149,11 +158,22 @@ class TestAnalysis3 extends FileDiffSuite {
           case (Some(a),Some(b)) if a == b => a
           case (Some(a),Some(b)) => vwhile(c, a, b)
           case (None,Some(b)) => vwhile(c, vundef, b)
+          case (Some(a),None) => vwhile(c, a, vundef)
           //case (Some(a),_) => a
           //case (_,Some(b)) => b
         })}.toMap
         owhile(c,za,zb) ++ (m.toSeq:_*)
+      // TODO: traversal instead of simple matching
+      case (OWhile(`c`,a,b),b1) => owhile(c,a,b1) // same condition: take prev
+      case (OUpdate(OWhile(`c`,a,b),m),b1) => owhile(c,a++(m.toSeq:_*),b1)
+      case (a1, OWhile(`c`,a,b)) => owhile(c,a1,b)
+      case (a1, OUpdate(OWhile(`c`,a,b),m)) => owhile(c,a1,b++(m.toSeq:_*))      
       case (a,b) => if (a == b) a else OWhile(c,a,b)
+      /*case (a,b) => why doesn't this work?
+        if (c == vint(0)) a else if (c == vint(1)) b else {
+          val (u,v) = (osubst(a,c,vint(0)), osubst(b,c,vint(1)))
+          if (u == v) u else OWhile(c,u,v)
+        }*/
     }
 
 
@@ -164,11 +184,19 @@ class TestAnalysis3 extends FileDiffSuite {
       def apply(x:Val): Obj = x match {
         case VAddr(x) => this(x)
         case VIf(c,a,b) => oif(c,this(a),this(b))
+        // stuff below is tentative (not sure if correct:)
+        case VRef(x,f) => apply(rec(x)(f))
+        case VWhile(c,a,b) => owhile(c,this(a),this(b))
+        //case VWhile(c,a,b) => oif(c,this(a),this(b))
       }
 
       def +(x:(Val,Obj)): Store = x match {
         case (VAddr(x), o) => this updated (x->o)
         case (VIf(c,a,b), o) => this + (a -> oif(c,o,this(a))) + (b -> oif(c,this(b),o))
+        // stuff below is tentative (not sure if correct:)
+        case (VRef(x,f),o) => this + (rec(x)(f) -> o)
+        case (VWhile(c,a,b),o) => this + (a -> owhile(c,o,this(a))) + (b -> owhile(c,this(b),o))
+        //case (VWhile(c,a,b),o) => this + (a -> oif(c,o,this(a))) + (b -> oif(c,this(b),o))
       }
 
       override def toString = "env: \n" + m.mkString("\n") + 
@@ -499,7 +527,7 @@ class TestAnalysis3 extends FileDiffSuite {
           Put(Get(Ref("x"), "a"), "bar", Const(5))
         ))
       ),
-      Put(Get(Ref("x"), "a"), "bar", Const(7)), // this is not a strong update, because 1.a may be one of two allocs
+      Put(Get(Ref("x"), "a"), "bar", Const(7)), // this is not a strong update, because x.a may be one of two allocs
       Assign("xbar", Get(Get(Ref("x"), "a"), "bar")) // should still yield 7!
     ))
 
@@ -515,7 +543,7 @@ class TestAnalysis3 extends FileDiffSuite {
           Put(Get(Ref("x"), "a"), "foo", Const(5))
         ))
       ),
-      Put(Get(Ref("x"), "a"), "bar", Const(7)), // this is not a strong update, because 1.a may be one of two allocs
+      Put(Get(Ref("x"), "a"), "bar", Const(7)), // this is not a strong update, because x.a may be one of two allocs
       Assign("xbar", Get(Get(Ref("x"), "a"), "bar")) // should still yield 7!
     ))
 
