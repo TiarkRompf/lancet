@@ -1,0 +1,24 @@
+prog: {
+  Assign(x,New(X))
+  Put(Ref(x),a,New(A))
+  Put(Get(Ref(x),a),baz,Const(3))
+  While(Direct(top.input),{
+    Put(Ref(x),a,New(B))
+    Put(Get(Ref(x),a),foo,Const(5))
+  })
+  Put(Get(Ref(x),a),bar,Const(7))
+  Assign(xbar,Get(Get(Ref(x),a),bar))
+}
+res: undef
+env: 
+allocX -> ORef(allocX0)
+allocB -> OWhile(top.input,ORef(allocB0),ORef(allocB0)+{bar -> 7})
+&x -> OStatic(&x)+{val -> allocX}
+&xbar -> OStatic(&xbar)+{val -> 7}
+allocA -> OWhile(top.input,ONew(A)+{baz -> 3},ONew(A))+{bar -> lphi(top.input:7,undef),baz -> lphi(top.input:undef,3)}
+rec: 
+allocX0 -> OWhile(top.input,ONew(X),ORef(allocX0))+{a -> lphi(top.input:allocA,allocB)}
+allocB0 -> OWhile(top.input,OUndef(),ONew(B_loop)+{foo -> 5})
+true: Set()
+false: Set(top.input)
+----

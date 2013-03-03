@@ -1,0 +1,79 @@
+prog: {
+  Assign(i,Const(0))
+  Assign(y,Const(0))
+  Assign(x,Const(8))
+  While(Less(Ref(i),Const(100)),{
+    Assign(x,Const(7))
+    Assign(x,Plus(Ref(x),Const(1)))
+    Assign(y,Plus(Ref(y),Const(1)))
+    Assign(i,Plus(Ref(i),Const(1)))
+  })
+}
+res: -668
+env: 
+i -> 100
+y -> y0
+x -> 8
+rec: 
+i0 -> lphi(i0+1<100:0,i0+1)
+y0 -> lphi(i0+1<100:0,y0+1)
+true: Set()
+false: Set(i0+1<100)
+i -> [100,100]
+y -> [?]
+x -> [8,8]
+----
+prog: {
+  Assign(x,Const(900))
+  Assign(y,Const(0))
+  Assign(z,Const(0))
+  While(Less(Const(0),Ref(x)),{
+    Assign(z,Plus(Ref(z),Ref(x)))
+    If(Less(Ref(y),Const(17)),{
+      Assign(y,Plus(Ref(y),Const(1)))
+    },{
+      
+    })
+    Assign(x,Plus(Ref(x),Const(-1)))
+  })
+  Assign(r,Ref(x))
+}
+mayZero y0<17
+env: 
+x -> x0
+y -> y0
+z -> z0+x0
+rec: 
+x0 -> lphi(1:900,899)
+y0 -> lphi(1:0,1)
+z0 -> lphi(1:0,900)
+true: Set(1)
+false: Set()
+mayZero y0<17
+env: 
+x -> x0
+y -> y0
+z -> z0+x0
+rec: 
+x0 -> lphi(0<x0+-1:900,x0+-1)
+y0 -> lphi(0<x0+-1:0,phi(y0<17:y0+1,y0))
+z0 -> lphi(0<x0+-1:0,z0+x0)
+true: Set(0<x0+-1)
+false: Set()
+res: -666
+env: 
+x -> 0
+y -> y0
+z -> z0
+r -> 0
+rec: 
+x0 -> lphi(0<x0+-1:900,x0+-1)
+y0 -> lphi(0<x0+-1:0,phi(y0<17:y0+1,y0))
+z0 -> lphi(0<x0+-1:0,z0+x0)
+true: Set()
+false: Set(0<x0+-1)
+x -> [0,0]
+y -> [?]
+z -> [?]
+r -> [0,0]
+----
