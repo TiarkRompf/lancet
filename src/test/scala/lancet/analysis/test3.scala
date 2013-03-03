@@ -31,8 +31,8 @@ class TestAnalysis3 extends FileDiffSuite {
       override def toString = "new"+x.toString
     }
 
-    case class VRef(x: Var) extends Val {
-      override def toString = x
+    case class VRef(x: Var, y: Field) extends Val {
+      override def toString = x + "." + y
     }
     case class VLess(a: Val, b: Val) extends Val {
       override def toString = a+"<"+b
@@ -58,7 +58,8 @@ class TestAnalysis3 extends FileDiffSuite {
     def vundef = VUndef()
     def vnew(x: Alloc) = VNew(x)
 
-    def vref(x: Var) = VRef(x)
+    def vref(x: Field): Val = VRef("top",x)
+    def vref(x: Var, y: Field): Val = VRef(x,y)
     def vless(a: Val, b: Val) = (a,b) match {
       case (VInt(a),VInt(b)) => VInt(if (a < b) 1 else 0)
       case _ => VLess(a,b)
@@ -106,7 +107,7 @@ class TestAnalysis3 extends FileDiffSuite {
       //override def apply(f: Field) = vref(x+"."+f)
     }
     case class ORef(x:String) extends Obj {
-      override def apply(f: Field) = vref(x+"."+f)
+      override def apply(f: Field) = vref(x,f)
     }
     case class ONew(x:Alloc) extends Obj
     case class OIf(c: Val, a: Obj, b: Obj) extends Obj {
@@ -233,16 +234,16 @@ class TestAnalysis3 extends FileDiffSuite {
         case (k,ORef(k0)) => (k, store.rec(k0) match {
           case OUpdate(OStatic(`k`),m) =>
             OUpdate(OStatic(`k`),m map { case (k,v) => 
-              val kf = k0+"."+k
+              val kf = vref(k0,k)
               (k, v match {
                 // x = high; while (low < x-1) x = x-1    -->    if (low < high-1) low else high
-                case VWhile(a1 @ VLess(low,VPlus(VRef(`kf`),VInt(-1))),high,VPlus(VRef(`kf`),VInt(-1))) if a == a1 => 
+                case VWhile(a1 @ VLess(low,VPlus(`kf`,VInt(-1))),high,VPlus(`kf`,VInt(-1))) if a == a1 => 
                   vif(vless(low, vplus(high, vint(-1))), low, high)
                 // x = low; while (x+1 < high) x = x+1    -->    if (low+1 < high) high else low
-                case VWhile(a1 @ VLess(VPlus(VRef(`kf`),VInt(1)),high),low,VPlus(VRef(`kf`),VInt(1))) if a == a1 => 
+                case VWhile(a1 @ VLess(VPlus(`kf`,VInt(1)),high),low,VPlus(`kf`,VInt(1))) if a == a1 => 
                   vif(vless(vplus(low, vint(1)), high), high, low)
                 // how to handle 3rd case of testA (nested if)?
-                case _ => vref(kf)
+                case _ => kf
               })})
           case o => ORef(k0)
         })
