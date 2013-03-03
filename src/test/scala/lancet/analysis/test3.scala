@@ -121,8 +121,12 @@ class TestAnalysis3 extends FileDiffSuite {
     case class ONew(x:Alloc) extends Obj
     case class OIf(c: Val, a: Obj, b: Obj) extends Obj {
       override def apply(f: Field) = vif(c,a(f),b(f))
+      //override def +(x:(Field,Val)): Obj = oif(c,a+x,b+x) which direction? won't terminate ...
     }
-    case class OWhile(c: Val, a: Obj, b: Obj) extends Obj
+    case class OWhile(c: Val, a: Obj, b: Obj) extends Obj {
+      override def apply(f: Field) = vwhile(c,a(f),b(f))
+      //override def +(x:(Field,Val)): Obj = owhile(c,a+x,b+x)
+    }
     case class OUpdate(a: Obj, m: Map[Field,Val]) extends Obj {
       override def apply(f: Field) = m.getOrElse(f,a(f))
       override def +(x:(Field,Val)) = OUpdate(a,m+x)
