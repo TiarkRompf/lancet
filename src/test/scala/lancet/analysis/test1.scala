@@ -6,15 +6,15 @@ class TestAnalysis1 extends FileDiffSuite {
   val prefix = "test-out/test-analysis-1"
 
 /* 
-    order of optimizations
+    generalizing the store abstraction
+
+    (general order of optimizations:)
       1) rewrite to constant (3+1 --> 4; x*0 --> 0)
       2) rewrite to previously defined value (x+0 --> x; x+y-y --> x)
       3) don't perform operation twice (cse)
 
 
-    generalizing the store abstraction
-
-    requirements:
+    (requirements:)
       1) forward analysis to shortcut and eliminate
          reads (propagate values through data structures)
       2) generate dependencies between statements,
