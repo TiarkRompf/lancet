@@ -21,7 +21,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         x3
       }
       // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-      /* cse: WrappedArray(x3,  eq , null) = x4*/
+      /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
       val x8 = if (x4) {
         val x7 = throw new NullPointerException()
         x7
@@ -39,7 +39,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         val PHI_4_5 = 1.asInstanceOf[Int] // LUBC(PHI_4_5:Int,1.asInstanceOf[Int]:Int)
         BLOCK_25(PHI_4_5,x0,x1,x11,x2,x3,x4,x9)
       } else {
-        /* cse: WrappedArray(x3,  eq , null) = x4*/
+        /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
         val x13 = if (x4) {
           val x12 = throw new NullPointerException()
           x12
@@ -47,7 +47,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
           x3
         }
         // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-        /* cse: WrappedArray(x3,  eq , null) = x4*/
+        /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
         val x15 = if (x4) {
           val x14 = throw new NullPointerException()
           x14

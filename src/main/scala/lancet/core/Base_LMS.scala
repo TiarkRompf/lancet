@@ -195,6 +195,10 @@ trait Base_LMS extends Base_LMS0 {
 
   }
 
+
+  def quickString[A:TypeRep](d: Def[A]): String = d.toString
+
+
   def emitScala[A:TypeRep](d: Def[A], f: CodeGen): Unit = ???
   def emitScalaBlock[A:TypeRep](b: Block[A], f: CodeGen): Unit = {
     Console.println("{")
@@ -266,7 +270,7 @@ trait Base_LMS extends Base_LMS0 {
 
     (exprs.get(rhs) match { // cse?
       case Some(y) =>
-        emitString("/* cse: "+rhs+" = "+y + "*/")
+        emitString("/* cse: "+rhs+" = "+ y + "*/")
         y
       case None =>
       if (typeRep[T] == typeRep[Unit]) {

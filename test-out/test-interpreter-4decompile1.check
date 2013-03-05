@@ -21,7 +21,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         x3
       }
       // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-      /* cse: WrappedArray(x3,  eq , null) = x4*/
+      /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
       val x8 = if (x4) {
         val x7 = throw new NullPointerException()
         x7

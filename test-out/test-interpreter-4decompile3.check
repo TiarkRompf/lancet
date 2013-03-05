@@ -20,7 +20,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         val PHI_4_8 = null.asInstanceOf[Int] // LUBC(PHI_4_8,null)
         BLOCK_26(PHI_4_6,PHI_4_7,PHI_4_8,x0,x1,x2,x3,x4)
       } else {
-        /* cse: WrappedArray(x3,  eq , null) = x4*/
+        /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
         val x6 = if (x4) {
           val x5 = throw new NullPointerException()
           x5
@@ -28,7 +28,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
           x3
         }
         // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-        /* cse: WrappedArray(x3,  eq , null) = x4*/
+        /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
         val x8 = if (x4) {
           val x7 = throw new NullPointerException()
           x7
@@ -36,7 +36,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
           x3
         }
         val x9 = unsafe.getInt(x3,16.asInstanceOf[Long])
-        /* cse: WrappedArray(x3,  eq , null) = x4*/
+        /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
         val x11 = if (x4) {
           val x10 = throw new NullPointerException()
           x10
@@ -44,7 +44,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
           x3
         }
         // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-        /* cse: WrappedArray(x3,  eq , null) = x4*/
+        /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
         val x13 = if (x4) {
           val x12 = throw new NullPointerException()
           x12
@@ -99,13 +99,13 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         }
       }
       def BLOCK_26(PHI_4_6:Int,PHI_4_7:Int,PHI_4_8:Int,x0:scala.collection.Seq[_],x1:Object,x2:Object,x3:Object,x4:Boolean): Unit = {
-        /* cse: WrappedArray(x3,  eq , null) = x4*/
+        /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
         if (x4) {
           val PHI_4_11 = null.asInstanceOf[Int] // LUBC(PHI_4_11,null)
           val PHI_4_12 = null.asInstanceOf[Int] // LUBC(PHI_4_12,null)
           BLOCK_35(PHI_4_11,PHI_4_12,PHI_4_6,PHI_4_7,PHI_4_8,x0,x1,x2,x3,x4)
         } else {
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x19 = if (x4) {
             val x18 = throw new NullPointerException()
             x18
@@ -113,7 +113,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x21 = if (x4) {
             val x20 = throw new NullPointerException()
             x20
@@ -121,7 +121,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           val x22 = unsafe.getInt(x3,16.asInstanceOf[Long])
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x24 = if (x4) {
             val x23 = throw new NullPointerException()
             x23
@@ -129,7 +129,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x26 = if (x4) {
             val x25 = throw new NullPointerException()
             x25
@@ -173,13 +173,13 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         }
       }
       def BLOCK_35(PHI_4_11:Int,PHI_4_12:Int,PHI_4_6:Int,PHI_4_7:Int,PHI_4_8:Int,x0:scala.collection.Seq[_],x1:Object,x2:Object,x3:Object,x4:Boolean): Unit = {
-        /* cse: WrappedArray(x3,  eq , null) = x4*/
+        /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
         if (x4) {
           val PHI_4_14 = null.asInstanceOf[Int] // LUBC(PHI_4_14,null)
           val PHI_4_15 = null.asInstanceOf[Int] // LUBC(PHI_4_15,null)
           BLOCK_44(PHI_4_11,PHI_4_12,PHI_4_14,PHI_4_15,PHI_4_6,PHI_4_7,PHI_4_8,x0,x1,x2,x3,x4)
         } else {
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x31 = if (x4) {
             val x30 = throw new NullPointerException()
             x30
@@ -187,7 +187,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x33 = if (x4) {
             val x32 = throw new NullPointerException()
             x32
@@ -195,7 +195,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           val x34 = unsafe.getInt(x3,16.asInstanceOf[Long])
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x36 = if (x4) {
             val x35 = throw new NullPointerException()
             x35
@@ -203,7 +203,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x38 = if (x4) {
             val x37 = throw new NullPointerException()
             x37
@@ -245,13 +245,13 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         }
       }
       def BLOCK_44(PHI_4_11:Int,PHI_4_12:Int,PHI_4_14:Int,PHI_4_15:Int,PHI_4_6:Int,PHI_4_7:Int,PHI_4_8:Int,x0:scala.collection.Seq[_],x1:Object,x2:Object,x3:Object,x4:Boolean): Unit = {
-        /* cse: WrappedArray(x3,  eq , null) = x4*/
+        /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
         if (x4) {
           val PHI_4_17 = null.asInstanceOf[Int] // LUBC(PHI_4_17,null)
           val PHI_4_18 = null.asInstanceOf[Int] // LUBC(PHI_4_18,null)
           BLOCK_53(PHI_4_11,PHI_4_12,PHI_4_14,PHI_4_15,PHI_4_17,PHI_4_18,PHI_4_6,PHI_4_7,PHI_4_8,x0,x1,x2,x3,x4)
         } else {
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x43 = if (x4) {
             val x42 = throw new NullPointerException()
             x42
@@ -259,7 +259,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x45 = if (x4) {
             val x44 = throw new NullPointerException()
             x44
@@ -267,7 +267,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           val x46 = unsafe.getInt(x3,16.asInstanceOf[Long])
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x48 = if (x4) {
             val x47 = throw new NullPointerException()
             x47
@@ -275,7 +275,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x50 = if (x4) {
             val x49 = throw new NullPointerException()
             x49
@@ -315,13 +315,13 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         }
       }
       def BLOCK_53(PHI_4_11:Int,PHI_4_12:Int,PHI_4_14:Int,PHI_4_15:Int,PHI_4_17:Int,PHI_4_18:Int,PHI_4_6:Int,PHI_4_7:Int,PHI_4_8:Int,x0:scala.collection.Seq[_],x1:Object,x2:Object,x3:Object,x4:Boolean): Unit = {
-        /* cse: WrappedArray(x3,  eq , null) = x4*/
+        /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
         if (x4) {
           val PHI_4_20 = null.asInstanceOf[Int] // LUBC(PHI_4_20,null)
           val PHI_4_21 = null.asInstanceOf[Int] // LUBC(PHI_4_21,null)
           BLOCK_62(PHI_4_11,PHI_4_12,PHI_4_14,PHI_4_15,PHI_4_17,PHI_4_18,PHI_4_20,PHI_4_21,PHI_4_6,PHI_4_7,PHI_4_8,x0,x1,x2,x3,x4)
         } else {
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x55 = if (x4) {
             val x54 = throw new NullPointerException()
             x54
@@ -329,7 +329,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x57 = if (x4) {
             val x56 = throw new NullPointerException()
             x56
@@ -337,7 +337,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           val x58 = unsafe.getInt(x3,16.asInstanceOf[Long])
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x60 = if (x4) {
             val x59 = throw new NullPointerException()
             x59
@@ -345,7 +345,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x62 = if (x4) {
             val x61 = throw new NullPointerException()
             x61
@@ -383,13 +383,13 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         }
       }
       def BLOCK_62(PHI_4_11:Int,PHI_4_12:Int,PHI_4_14:Int,PHI_4_15:Int,PHI_4_17:Int,PHI_4_18:Int,PHI_4_20:Int,PHI_4_21:Int,PHI_4_6:Int,PHI_4_7:Int,PHI_4_8:Int,x0:scala.collection.Seq[_],x1:Object,x2:Object,x3:Object,x4:Boolean): Unit = {
-        /* cse: WrappedArray(x3,  eq , null) = x4*/
+        /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
         if (x4) {
           val PHI_4_23 = null.asInstanceOf[Int] // LUBC(PHI_4_23,null)
           val PHI_4_24 = null.asInstanceOf[Int] // LUBC(PHI_4_24,null)
           BLOCK_71(PHI_4_11,PHI_4_12,PHI_4_14,PHI_4_15,PHI_4_17,PHI_4_18,PHI_4_20,PHI_4_21,PHI_4_23,PHI_4_24,PHI_4_6,PHI_4_7,PHI_4_8,x0,x1,x2,x3,x4)
         } else {
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x67 = if (x4) {
             val x66 = throw new NullPointerException()
             x66
@@ -397,7 +397,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x69 = if (x4) {
             val x68 = throw new NullPointerException()
             x68
@@ -405,7 +405,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           val x70 = unsafe.getInt(x3,16.asInstanceOf[Long])
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x72 = if (x4) {
             val x71 = throw new NullPointerException()
             x71
@@ -413,7 +413,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x74 = if (x4) {
             val x73 = throw new NullPointerException()
             x73
@@ -449,13 +449,13 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         }
       }
       def BLOCK_71(PHI_4_11:Int,PHI_4_12:Int,PHI_4_14:Int,PHI_4_15:Int,PHI_4_17:Int,PHI_4_18:Int,PHI_4_20:Int,PHI_4_21:Int,PHI_4_23:Int,PHI_4_24:Int,PHI_4_6:Int,PHI_4_7:Int,PHI_4_8:Int,x0:scala.collection.Seq[_],x1:Object,x2:Object,x3:Object,x4:Boolean): Unit = {
-        /* cse: WrappedArray(x3,  eq , null) = x4*/
+        /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
         if (x4) {
           val PHI_4_26 = null.asInstanceOf[Int] // LUBC(PHI_4_26,null)
           val PHI_4_27 = null.asInstanceOf[Int] // LUBC(PHI_4_27,null)
           BLOCK_80(PHI_4_11,PHI_4_12,PHI_4_14,PHI_4_15,PHI_4_17,PHI_4_18,PHI_4_20,PHI_4_21,PHI_4_23,PHI_4_24,PHI_4_26,PHI_4_27,PHI_4_6,PHI_4_7,PHI_4_8,x0,x1,x2,x3,x4)
         } else {
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x79 = if (x4) {
             val x78 = throw new NullPointerException()
             x78
@@ -463,7 +463,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x81 = if (x4) {
             val x80 = throw new NullPointerException()
             x80
@@ -471,7 +471,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           val x82 = unsafe.getInt(x3,16.asInstanceOf[Long])
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x84 = if (x4) {
             val x83 = throw new NullPointerException()
             x83
@@ -479,7 +479,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x3
           }
           // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-          /* cse: WrappedArray(x3,  eq , null) = x4*/
+          /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
           val x86 = if (x4) {
             val x85 = throw new NullPointerException()
             x85

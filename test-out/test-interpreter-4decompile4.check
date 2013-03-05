@@ -21,7 +21,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         x3
       }
       // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-      /* cse: WrappedArray(x3,  eq , null) = x5*/
+      /* cse: WrappedArray(ObjectEqual(x3,null)) = x5*/
       val x9 = if (x5) {
         val x8 = throw new NullPointerException()
         x8
@@ -74,14 +74,14 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
           x20
         }
         // unique method: HotSpotMethod<SoftReference.get> TODO: guard
-        /* cse: WrappedArray(x20,  eq , null) = x21*/
+        /* cse: WrappedArray(ObjectEqual(x20,null)) = x21*/
         val x25 = if (x21) {
           val x24 = throw new NullPointerException()
           x24
         } else {
           x20
         }
-        /* cse: WrappedArray(x20,  eq , null) = x21*/
+        /* cse: WrappedArray(ObjectEqual(x20,null)) = x21*/
         val x27 = if (x21) {
           val x26 = throw new NullPointerException()
           x26
@@ -93,7 +93,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         if (x29) {
           BLOCK_48(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29)
         } else {
-          /* cse: WrappedArray(x20,  eq , null) = x21*/
+          /* cse: WrappedArray(ObjectEqual(x20,null)) = x21*/
           val x31 = if (x21) {
             val x30 = throw new NullPointerException()
             x30
@@ -119,7 +119,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             BLOCK_48(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29)
           } else {
             /* cse: WrappedArray(unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])) = x33*/
-            /* cse: WrappedArray(x20,  eq , null) = x21*/
+            /* cse: WrappedArray(ObjectEqual(x20,null)) = x21*/
             val x40 = if (x21) {
               val x39 = throw new NullPointerException()
               x39
@@ -156,7 +156,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         }
         def BLOCK_67(x0:scala.collection.Seq[_],x1:Object,x13:Object,x14:Object,x15:Object,x16:Boolean,x19:Object,x20:Object,x21:Boolean,x28:Object,x29:Boolean,x42:Object,x43:Boolean): Unit = {
           /* cse: WrappedArray(unsafe.getObjectVolatile(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5").asInstanceOf[Object],208.asInstanceOf[Long])) = x20*/
-          /* cse: WrappedArray(x20,  eq , null) = x21*/
+          /* cse: WrappedArray(ObjectEqual(x20,null)) = x21*/
           val x50 = if (x21) {
             val x49 = throw new NullPointerException()
             x49
@@ -164,14 +164,14 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x20
           }
           // unique method: HotSpotMethod<SoftReference.get> TODO: guard
-          /* cse: WrappedArray(x20,  eq , null) = x21*/
+          /* cse: WrappedArray(ObjectEqual(x20,null)) = x21*/
           val x52 = if (x21) {
             val x51 = throw new NullPointerException()
             x51
           } else {
             x20
           }
-          /* cse: WrappedArray(x20,  eq , null) = x21*/
+          /* cse: WrappedArray(ObjectEqual(x20,null)) = x21*/
           val x54 = if (x21) {
             val x53 = throw new NullPointerException()
             x53
@@ -179,11 +179,11 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             x20
           }
           /* cse: WrappedArray(unsafe.getObject(x20,16.asInstanceOf[Long])) = x28*/
-          /* cse: WrappedArray(x28,  eq , null) = x29*/
+          /* cse: WrappedArray(ObjectEqual(x28,null)) = x29*/
           if (x29) {
             BLOCK_73(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43)
           } else {
-            /* cse: WrappedArray(x20,  eq , null) = x21*/
+            /* cse: WrappedArray(ObjectEqual(x20,null)) = x21*/
             val x56 = if (x21) {
               val x55 = throw new NullPointerException()
               x55
@@ -209,7 +209,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
               BLOCK_73(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43)
             } else {
               /* cse: WrappedArray(unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])) = x58*/
-              /* cse: WrappedArray(x20,  eq , null) = x21*/
+              /* cse: WrappedArray(ObjectEqual(x20,null)) = x21*/
               val x65 = if (x21) {
                 val x64 = throw new NullPointerException()
                 x64
@@ -276,7 +276,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
               def BLOCK_82(x0:scala.collection.Seq[_],x1:Object,x13:Object,x14:Object,x15:Object,x16:Boolean,x19:Object,x20:Object,x21:Boolean,x28:Object,x29:Boolean,x42:Object,x43:Boolean,x67:Object,x68:Boolean,x69:Object,x70:Boolean,x73:Object,x74:Boolean,x76:Boolean): Unit = {
                 val x77 = unsafe.allocateInstance(Class.forName("java.lang.ref.SoftReference"))
                 /* cse: WrappedArray(unsafe.getObjectVolatile(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5").asInstanceOf[Object],208.asInstanceOf[Long])) = x20*/
-                /* cse: WrappedArray(x20,  eq , null) = x21*/
+                /* cse: WrappedArray(ObjectEqual(x20,null)) = x21*/
                 val x79 = if (x21) {
                   val x78 = throw new NullPointerException()
                   x78
@@ -284,14 +284,14 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
                   x20
                 }
                 // unique method: HotSpotMethod<SoftReference.get> TODO: guard
-                /* cse: WrappedArray(x20,  eq , null) = x21*/
+                /* cse: WrappedArray(ObjectEqual(x20,null)) = x21*/
                 val x81 = if (x21) {
                   val x80 = throw new NullPointerException()
                   x80
                 } else {
                   x20
                 }
-                /* cse: WrappedArray(x20,  eq , null) = x21*/
+                /* cse: WrappedArray(ObjectEqual(x20,null)) = x21*/
                 val x83 = if (x21) {
                   val x82 = throw new NullPointerException()
                   x82
@@ -299,11 +299,11 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
                   x20
                 }
                 /* cse: WrappedArray(unsafe.getObject(x20,16.asInstanceOf[Long])) = x28*/
-                /* cse: WrappedArray(x28,  eq , null) = x29*/
+                /* cse: WrappedArray(ObjectEqual(x28,null)) = x29*/
                 if (x29) {
                   BLOCK_89(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43,x67,x68,x69,x70,x73,x74,x76,x77)
                 } else {
-                  /* cse: WrappedArray(x20,  eq , null) = x21*/
+                  /* cse: WrappedArray(ObjectEqual(x20,null)) = x21*/
                   val x85 = if (x21) {
                     val x84 = throw new NullPointerException()
                     x84
@@ -329,7 +329,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
                     BLOCK_89(x0,x1,x13,x14,x15,x16,x19,x20,x21,x28,x29,x42,x43,x67,x68,x69,x70,x73,x74,x76,x77)
                   } else {
                     /* cse: WrappedArray(unsafe.getLong(Class.forName("java.lang.ref.SoftReference").asInstanceOf[Object],200.asInstanceOf[Long])) = x87*/
-                    /* cse: WrappedArray(x20,  eq , null) = x21*/
+                    /* cse: WrappedArray(ObjectEqual(x20,null)) = x21*/
                     val x94 = if (x21) {
                       val x93 = throw new NullPointerException()
                       x93
@@ -415,7 +415,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             } else {
               x107
             }
-            /* cse: WrappedArray(x107,  eq , null) = x108*/
+            /* cse: WrappedArray(ObjectEqual(x107,null)) = x108*/
             val x112 = if (x108) {
               val x111 = throw new NullPointerException()
               x111

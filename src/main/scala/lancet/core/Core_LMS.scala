@@ -103,8 +103,8 @@ trait Core_LMS extends Base_LMS {
     case PrimEqual(x, y)                  => Console.print(x+" == "+y)
     case PrimNotEqual(x, y)               => Console.print(x+" != "+y)
     
-    case ObjectEqual(x, y)                => Console.print(x+"eq"+y)
-    case ObjectNotEqual(x, y)             => Console.print(x+"ne"+y)
+    case ObjectEqual(x, y)                => Console.print(x+" eq "+y)
+    case ObjectNotEqual(x, y)             => Console.print(x+" ne "+y)
     case ObjectAsInstanceOf(x)            => Console.print(x+".asInstanceOf["+typeRep[A]+"]")
     case ObjectIsInstanceOf(x)            => Console.print(x+".isInstanceOf["+typeRep[A]+"]")
 
@@ -115,6 +115,38 @@ trait Core_LMS extends Base_LMS {
 
     case _ => super.emitScala(d, f)
   }
+
+  override def quickString[A:TypeRep](d: Def[A]): String = d match {
+    case PrimConvert(x)                   => x+".to"+typeRep[A]
+
+    case PrimNegate(x)                    => "-"+x
+    case PrimPlus(x, y)                   => x+" + "+y
+    case PrimMinus(x, y)                  => x+" - "+y
+    case PrimTimes(x, y)                  => x+" * "+y
+    case PrimDiv(x, y)                    => x+" / "+y
+    case PrimMod(x, y)                    => x+" % "+y
+    case PrimAnd(x, y)                    => x+" & "+y
+    case PrimOr(x, y)                     => x+" | "+y
+    case PrimXor(x, y)                    => x+" ^ "+y
+    case PrimShiftLeft(x, y)              => x+" << "+y
+    case PrimShiftRight(x, y)             => x+" >> "+y
+    case PrimShiftRightUnsigned(x, y)     => x+" >>> "+y
+    case PrimLess(x, y)                   => x+" < "+y
+    case PrimLessEqual(x, y)              => x+" <= "+y
+    case PrimGreater(x, y)                => x+" > "+y
+    case PrimGreaterEqual(x, y)           => x+" >= "+y
+    case PrimEqual(x, y)                  => x+" == "+y
+    case PrimNotEqual(x, y)               => x+" != "+y
+    
+    case ObjectEqual(x, y)                => x+" eq "+y
+    case ObjectNotEqual(x, y)             => x+" ne "+y
+    case ObjectAsInstanceOf(x)            => x+".asInstanceOf["+typeRep[A]+"]"
+    case ObjectIsInstanceOf(x)            => x+".isInstanceOf["+typeRep[A]+"]"
+
+    //case IfThenElse(x, y, z)              => do default
+    case _ => super.quickString(d)
+  }
+
 
 
 
