@@ -51,31 +51,31 @@ trait Core_LMS extends Base_LMS {
   override def mirrorDef[A:TypeRep](d: Def[A], f: Transformer): Def[A] = (d match {
     case PrimConvert(x)                   => PrimConvert(f(x))(typeRep[Any], typeRep[A]) /// FIXME!!!! ---> GADTS
 
-    case PrimNegate(x)                       => PrimNegate(f(x))
-    case PrimPlus(x, y)                      => PrimPlus(f(x), f(y))
-    case PrimMinus(x, y)                     => PrimMinus(f(x), f(y))
-    case PrimTimes(x, y)                     => PrimTimes(f(x), f(y))
-    case PrimDiv(x, y)                       => PrimDiv(f(x), f(y))
-    case PrimMod(x, y)                       => PrimMod(f(x), f(y))
-    case PrimAnd(x, y)                       => PrimAnd(f(x), f(y))
-    case PrimOr(x, y)                        => PrimOr(f(x), f(y))
-    case PrimXor(x, y)                       => PrimXor(f(x), f(y))
-    case PrimShiftLeft(x, y)                 => PrimShiftLeft(f(x), f(y))
-    case PrimShiftRight(x, y)                => PrimShiftRight(f(x), f(y))
-    case PrimShiftRightUnsigned(x, y)        => PrimShiftRightUnsigned(f(x), f(y))
-    case PrimLess(x, y)                => PrimLess(f(x), f(y))
-    case PrimLessEqual(x, y)           => PrimLessEqual(f(x), f(y))
-    case PrimGreater(x, y)             => PrimGreater(f(x), f(y))
-    case PrimGreaterEqual(x, y)        => PrimGreaterEqual(f(x), f(y))
-    case PrimEqual(x, y)               => PrimEqual(f(x), f(y))
-    case PrimNotEqual(x, y)            => PrimNotEqual(f(x), f(y))
+    case PrimNegate(x)                    => PrimNegate(f(x))
+    case PrimPlus(x, y)                   => PrimPlus(f(x), f(y))
+    case PrimMinus(x, y)                  => PrimMinus(f(x), f(y))
+    case PrimTimes(x, y)                  => PrimTimes(f(x), f(y))
+    case PrimDiv(x, y)                    => PrimDiv(f(x), f(y))
+    case PrimMod(x, y)                    => PrimMod(f(x), f(y))
+    case PrimAnd(x, y)                    => PrimAnd(f(x), f(y))
+    case PrimOr(x, y)                     => PrimOr(f(x), f(y))
+    case PrimXor(x, y)                    => PrimXor(f(x), f(y))
+    case PrimShiftLeft(x, y)              => PrimShiftLeft(f(x), f(y))
+    case PrimShiftRight(x, y)             => PrimShiftRight(f(x), f(y))
+    case PrimShiftRightUnsigned(x, y)     => PrimShiftRightUnsigned(f(x), f(y))
+    case PrimLess(x, y)                   => PrimLess(f(x), f(y))
+    case PrimLessEqual(x, y)              => PrimLessEqual(f(x), f(y))
+    case PrimGreater(x, y)                => PrimGreater(f(x), f(y))
+    case PrimGreaterEqual(x, y)           => PrimGreaterEqual(f(x), f(y))
+    case PrimEqual(x, y)                  => PrimEqual(f(x), f(y))
+    case PrimNotEqual(x, y)               => PrimNotEqual(f(x), f(y))
+    
+    case ObjectEqual(x, y)                => ObjectEqual(f(x), f(y))
+    case ObjectNotEqual(x, y)             => ObjectNotEqual(f(x), f(y))
+    case ObjectAsInstanceOf(x)            => ObjectAsInstanceOf(f(x))(typeRep[A])
+    case ObjectIsInstanceOf(x)            => ObjectIsInstanceOf(f(x))(typeRep[A]) // <------- NOT A!!
 
-    case ObjectEqual(x, y)            => ObjectEqual(f(x), f(y))
-    case ObjectNotEqual(x, y)         => ObjectNotEqual(f(x), f(y))
-    case ObjectAsInstanceOf(x)        => ObjectAsInstanceOf(f(x))(typeRep[A])
-    case ObjectIsInstanceOf(x)        => ObjectIsInstanceOf(f(x))(typeRep[A]) // <------- NOT A!!
-
-    case IfThenElse(x, y, z) => IfThenElse(f(x), f(y), f(z))
+    case IfThenElse(x, y, z)              => IfThenElse(f(x), f(y), f(z))
 
     case _ => super.mirrorDef(d, f)    
   }).asInstanceOf[Def[A]]
