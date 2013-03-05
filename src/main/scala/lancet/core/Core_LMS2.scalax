@@ -40,6 +40,19 @@ trait Core_LMS extends Base_LMS {
   case class PrimEqual[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean]
   case class PrimNotEqual[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean]
 
+  case class ObjectEqual(x: Rep[Object], y: Rep[Object]) extends Def[Boolean]
+  case class ObjectNotEqual(x: Rep[Object], y: Rep[Object]) extends Def[Boolean]
+  case class ObjectAsInstanceOf[T:TypeRep](x: Rep[Object]) extends Def[T]
+  case class ObjectIsInstanceOf[T:TypeRep](x: Rep[Object]) extends Def[Boolean]
+
+  case class IfThenElse[T:TypeRep](x: Rep[Boolean], y: Block[T], z: Block[T]) extends Def[Boolean]
+
+
+  override def mirror[T](x: Rep[T], d: Def[T]): Rep[T] = x match {
+    case _ => super.mirror(x,d)
+  }
+
+
 
   def byteToInt(x: Rep[Byte]): Rep[Int] = reflect[Int](PrimConvert[Byte,Int](x))
   def charToInt(x: Rep[Char]): Rep[Int] = reflect[Int](PrimConvert[Char,Int](x))
@@ -142,12 +155,6 @@ trait Core_LMS extends Base_LMS {
   def doubleEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] =  reflect[Boolean](PrimEqual[Double](x,y))
   def doubleNotEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect[Boolean](PrimNotEqual[Double](x,y))
 
-  case class ObjectEqual(x: Rep[Object], y: Rep[Object]) extends Def[Boolean]
-  case class ObjectNotEqual(x: Rep[Object], y: Rep[Object]) extends Def[Boolean]
-  case class ObjectAsInstanceOf[T:TypeRep](x: Rep[Object]) extends Def[T]
-  case class ObjectIsInstanceOf[T:TypeRep](x: Rep[Object]) extends Def[Boolean]
-
-  case class IfThenElse[T:TypeRep](x: Rep[Boolean], y: Block[T], z: Block[T]) extends Def[Boolean]
 
   def objectEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflect[Boolean](ObjectEqual(x,y))
   def objectNotEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflect[Boolean](ObjectNotEqual(x,y))
