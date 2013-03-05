@@ -291,6 +291,8 @@ trait BytecodeInterpreter_Opt4Engine extends AbstractInterpreterIntf with Byteco
 
     def emitAll(b: Block[Unit]) = b.stms foreach emit
 
+    // TODO: proper subst transformer
+
     def infix_replace[A,B](a: Block[A], key: String, b: Block[B]): Block[A] = {
       var found = 0
       val t = new StructuralTransformer {

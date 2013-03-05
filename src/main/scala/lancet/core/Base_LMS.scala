@@ -127,6 +127,9 @@ trait Base_LMS extends Base_LMS0 {
 
   //def constToString(x:Any): String
 
+  def mirrorDef[A:TypeRep](d: Def[A], f: Transformer): Def[A] = d
+  def mirror[A:TypeRep](d: Def[A], f: Transformer): Rep[A] = ???
+
   trait Traverser {
 
     def traverseBlock(b: Block[Any]): Unit = b match {
@@ -140,9 +143,17 @@ trait Base_LMS extends Base_LMS0 {
 
   }
 
-  trait StructuralTransformer {
 
-    def transformBlock[A](b: Block[A]): Block[A] = b match {
+  trait Transformer {
+    def apply[A](x: Rep[A]): Rep[A] = x
+    def apply[A](b: Block[A]): Block[A] = transformBlock(b)
+    def transformBlock[A](b: Block[A]): Block[A] = b
+  }
+
+
+  trait StructuralTransformer extends Transformer {
+
+    override def transformBlock[A](b: Block[A]): Block[A] = b match {
       case Block(stms,res) =>
         Block(stms flatMap transformStm,res)
     }
@@ -151,6 +162,7 @@ trait Base_LMS extends Base_LMS0 {
       case ValDef(x,typ,rhs) => 
         List(ValDef(x,typ,rhs map {
           case b: Block[_] => transformBlock(b)
+          case d: Def[a] => mirrorDef(d,this)(typ.asInstanceOf[TypeRep[a]])
           case e => e
         }))
       case Unstructured(s) => List(Unstructured(s))

@@ -34,7 +34,7 @@ trait Base_LMS2 extends Base_LMS {
 */
 
 
-trait Base_LMS0 extends Base {
+trait Base_LIR0 extends Base {
   def reflect[T:TypeRep](s: Any*): Rep[T]
   def reify[T](x: => Rep[T]): Block[T]
 
@@ -101,7 +101,7 @@ trait Base_LMS0 extends Base {
     case "double" => "Double"
     case "void" => "Unit"
     // FIXME
-    case "lancet.core.Base_LMS$Rep" => "lancet.core.Base_LMS$Rep" // scalac complains 'no type params' -- huh??
+    case "lancet.core.Base_LIR$Rep" => "lancet.core.Base_LMS$Rep" // scalac complains 'no type params' -- huh??
     case "lancet.interpreter.TestInterpreter5$Decompiler" => "lancet.interpreter.TestInterpreter5#Decompiler" // scalac crash
     //TODO/FIXME
     case s if !Modifier.isPublic(x.getModifiers) => "Object /*" + s + "*/" //s <-- class may be private...
@@ -123,7 +123,7 @@ trait Base_LMS0 extends Base {
 
 }
 
-trait Base_LMS extends Base_LMS0 {
+trait Base_LIR extends Base_LIR0 {
 
   //def constToString(x:Any): String
 
@@ -364,7 +364,7 @@ trait Base_LMS extends Base_LMS0 {
 
 
 
-trait Base_LMS_Abs extends Base {
+trait Base_LIR_Abs extends Base {
 
   abstract class Val[+T]
   case class Const[+T](x: T) extends Val[T] { override def toString = ("Const("+x+")").replace("\n","\\n") }
@@ -376,9 +376,8 @@ trait Base_LMS_Abs extends Base {
 
 }
 
-trait Base_Opt extends Base_LMS_Opt
 
-trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
+trait Base_LIR_Opt extends Base_LIR_Abs with Base_LIR {
 
   object ExprLattice {
     type Elem = Map[String, Rep[Any]]
