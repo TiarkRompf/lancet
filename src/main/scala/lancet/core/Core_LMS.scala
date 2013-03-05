@@ -81,6 +81,43 @@ trait Core_LMS extends Base_LMS {
   }).asInstanceOf[Def[A]]
 
 
+  override def emitScala[A:TypeRep](d: Def[A], f: CodeGen): Unit = d match {
+    case PrimConvert(x)                   => Console.print(x+".to"+typeRep[A])
+
+    case PrimNegate(x)                    => Console.print("-"+x)
+    case PrimPlus(x, y)                   => Console.print(x+" + "+y)
+    case PrimMinus(x, y)                  => Console.print(x+" - "+y)
+    case PrimTimes(x, y)                  => Console.print(x+" * "+y)
+    case PrimDiv(x, y)                    => Console.print(x+" / "+y)
+    case PrimMod(x, y)                    => Console.print(x+" % "+y)
+    case PrimAnd(x, y)                    => Console.print(x+" & "+y)
+    case PrimOr(x, y)                     => Console.print(x+" | "+y)
+    case PrimXor(x, y)                    => Console.print(x+" ^ "+y)
+    case PrimShiftLeft(x, y)              => Console.print(x+" << "+y)
+    case PrimShiftRight(x, y)             => Console.print(x+" >> "+y)
+    case PrimShiftRightUnsigned(x, y)     => Console.print(x+" >>> "+y)
+    case PrimLess(x, y)                   => Console.print(x+" < "+y)
+    case PrimLessEqual(x, y)              => Console.print(x+" <= "+y)
+    case PrimGreater(x, y)                => Console.print(x+" > "+y)
+    case PrimGreaterEqual(x, y)           => Console.print(x+" >= "+y)
+    case PrimEqual(x, y)                  => Console.print(x+" == "+y)
+    case PrimNotEqual(x, y)               => Console.print(x+" != "+y)
+    
+    case ObjectEqual(x, y)                => Console.print(x+"eq"+y)
+    case ObjectNotEqual(x, y)             => Console.print(x+"ne"+y)
+    case ObjectAsInstanceOf(x)            => Console.print(x+".asInstanceOf["+typeRep[A]+"]")
+    case ObjectIsInstanceOf(x)            => Console.print(x+".isInstanceOf["+typeRep[A]+"]")
+
+    case IfThenElse(x, y, z)              => Console.print("if ("+x+") ")
+                                             emitScalaBlock(y,f)
+                                             Console.print(" else ")
+                                             emitScalaBlock(z,f)
+
+    case _ => super.emitScala(d, f)
+  }
+
+
+
 
 
 /*

@@ -181,11 +181,10 @@ trait Base_LMS extends Base_LMS0 {
       case ValDef(x,typ,rhs) => 
         if (x != "_") Console.print("val "+x+" = ")
         rhs foreach {
-          case b: Block[_] => 
-            Console.println("{")
-            traverseBlock(b)
-            if (b.res != liftConst(())) Console.println(b.res)
-            Console.print("}")
+          case b: Block[a] => 
+            emitScalaBlock(b, this)(typ.asInstanceOf[TypeRep[a]])
+          case d: Def[a] => 
+            emitScala(d, this)(typ.asInstanceOf[TypeRep[a]])
           case e =>
             Console.print(e.toString)
         }
@@ -196,6 +195,13 @@ trait Base_LMS extends Base_LMS0 {
 
   }
 
+  def emitScala[A:TypeRep](d: Def[A], f: CodeGen): Unit = ???
+  def emitScalaBlock[A:TypeRep](b: Block[A], f: CodeGen): Unit = {
+    Console.println("{")
+    f.traverseBlock(b)
+    if (b.res != liftConst(())) Console.println(b.res)
+    Console.print("}")
+  }
 
 
 
