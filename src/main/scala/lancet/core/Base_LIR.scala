@@ -1,11 +1,11 @@
 package lancet.core
 
-//import scala.virtualization.lms.common._
+//import scala.virtualization.LIR.common._
 
 import java.lang.reflect.Modifier
 
 /*
-trait Base_LMS extends Base {
+trait Base_LIR extends Base {
   val IR: EffectExp
 
   type Rep[+T] = IR.Rep[T]
@@ -15,7 +15,7 @@ trait Base_LMS extends Base {
 
 }
 
-trait Base_LMS2 extends Base_LMS {
+trait Base_LIR2 extends Base_LIR {
   import IR._
 
   type Static[+T] = IR.Const[T]
@@ -101,7 +101,7 @@ trait Base_LIR0 extends Base {
     case "double" => "Double"
     case "void" => "Unit"
     // FIXME
-    case "lancet.core.Base_LIR$Rep" => "lancet.core.Base_LMS$Rep" // scalac complains 'no type params' -- huh??
+    case "lancet.core.Base_LIR$Rep" => "lancet.core.Base_LIR$Rep" // scalac complains 'no type params' -- huh??
     case "lancet.interpreter.TestInterpreter5$Decompiler" => "lancet.interpreter.TestInterpreter5#Decompiler" // scalac crash
     //TODO/FIXME
     case s if !Modifier.isPublic(x.getModifiers) => "Object /*" + s + "*/" //s <-- class may be private...
@@ -127,6 +127,9 @@ trait Base_LIR extends Base_LIR0 {
 
   //def constToString(x:Any): String
 
+  def mirrorDef[A:TypeRep](d: Def[A], f: Transformer): Def[A] = d
+  def mirror[A:TypeRep](d: Def[A], f: Transformer): Rep[A] = ???
+
   trait Traverser {
 
     def traverseBlock(b: Block[Any]): Unit = b match {
@@ -140,9 +143,17 @@ trait Base_LIR extends Base_LIR0 {
 
   }
 
-  trait StructuralTransformer {
 
-    def transformBlock[A](b: Block[A]): Block[A] = b match {
+  trait Transformer {
+    def apply[A](x: Rep[A]): Rep[A] = x
+    def apply[A](b: Block[A]): Block[A] = transformBlock(b)
+    def transformBlock[A](b: Block[A]): Block[A] = b
+  }
+
+
+  trait StructuralTransformer extends Transformer {
+
+    override def transformBlock[A](b: Block[A]): Block[A] = b match {
       case Block(stms,res) =>
         Block(stms flatMap transformStm,res)
     }
@@ -151,6 +162,7 @@ trait Base_LIR extends Base_LIR0 {
       case ValDef(x,typ,rhs) => 
         List(ValDef(x,typ,rhs map {
           case b: Block[_] => transformBlock(b)
+          case d: Def[a] => mirrorDef(d,this)(typ.asInstanceOf[TypeRep[a]])
           case e => e
         }))
       case Unstructured(s) => List(Unstructured(s))
@@ -169,11 +181,10 @@ trait Base_LIR extends Base_LIR0 {
       case ValDef(x,typ,rhs) => 
         if (x != "_") Console.print("val "+x+" = ")
         rhs foreach {
-          case b: Block[_] => 
-            Console.println("{")
-            traverseBlock(b)
-            if (b.res != liftConst(())) Console.println(b.res)
-            Console.print("}")
+          case b: Block[a] => 
+            emitScalaBlock(b, this)(typ.asInstanceOf[TypeRep[a]])
+          case d: Def[a] => 
+            emitScala(d, this)(typ.asInstanceOf[TypeRep[a]])
           case e =>
             Console.print(e.toString)
         }
@@ -184,6 +195,17 @@ trait Base_LIR extends Base_LIR0 {
 
   }
 
+
+  def quickString[A:TypeRep](d: Def[A]): String = d.toString
+
+
+  def emitScala[A:TypeRep](d: Def[A], f: CodeGen): Unit = ???
+  def emitScalaBlock[A:TypeRep](b: Block[A], f: CodeGen): Unit = {
+    Console.println("{")
+    f.traverseBlock(b)
+    if (b.res != liftConst(())) Console.println(b.res)
+    Console.print("}")
+  }
 
 
 
@@ -248,7 +270,7 @@ trait Base_LIR extends Base_LIR0 {
 
     (exprs.get(rhs) match { // cse?
       case Some(y) =>
-        emitString("/* cse: "+rhs+" = "+y + "*/")
+        emitString("/* cse: "+rhs+" = "+ y + "*/")
         y
       case None =>
       if (typeRep[T] == typeRep[Unit]) {
@@ -376,6 +398,7 @@ trait Base_LIR_Abs extends Base {
 
 }
 
+//trait Base_Opt extends Base_LIR_Opt
 
 trait Base_LIR_Opt extends Base_LIR_Abs with Base_LIR {
 
