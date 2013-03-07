@@ -1,9 +1,9 @@
 package lancet.core
 
 
+trait Core_LMS extends Base_LMS
 
-
-trait Core_LMS extends Base_LMS {
+trait IR_LMS_Core extends IR_LMS_Base {
 
   implicit def unit(x: Boolean): Rep[Boolean] = liftConst(x)
   implicit def unit(x: Byte): Rep[Byte] = liftConst(x)
@@ -17,6 +17,9 @@ trait Core_LMS extends Base_LMS {
 
   def unit(x: Null): Rep[Object] = liftConst(null)
   def unit(x: Object): Rep[Object] = liftConst(x)
+
+
+  def reflect[T:TypeRep](d: Def[T]) = toAtom(d)
 
 
   case class PrimConvert[A:TypeRep,B:TypeRep](x:Rep[A]) extends Def[B]

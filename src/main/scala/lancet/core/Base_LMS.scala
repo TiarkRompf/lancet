@@ -1,40 +1,56 @@
 package lancet.core
 
-//import scala.virtualization.lms.common._
+import scala.virtualization.lms.common._
 
 import java.lang.reflect.Modifier
 
-/*
-trait Base_LMS extends Base {
-  val IR: EffectExp
 
-  type Rep[+T] = IR.Rep[T]
-  type TypeRep[T] = Manifest[T]
+trait IR_LMS_Base extends EffectExp {
 
-  def infix_typ[T](x: Rep[T]): TypeRep[T]
+  def liftConst[T:TypeRep](x:T): Rep[T]
+  type TypeRep[T]
 
 }
 
-trait Base_LMS2 extends Base_LMS {
+trait IR_LMS extends IR_LMS_Base with IR_LMS_Core
+
+
+
+
+trait Base_LMS1 extends Base with IR_LMS { self =>
+  //val IR: IR_LMS
+  val IR: self.type = self
+
+  //type Rep[+T] = IR.Rep[T]
+  type TypeRep[T]// = Manifest[T]
+
+  implicit def typeRepToManifest[T]: Manifest[T] = ???
+
+  def infix_typ[T](x: Rep[T]): TypeRep[T]
+
   import IR._
 
   type Static[+T] = IR.Const[T]
   type Dyn[+T] = IR.Sym[T]
 
+  case class DynExp[T:TypeRep](s: String) extends Exp[T]
+
   val Static = IR.Const
   object Dyn {
-    def apply
+    def apply[T:TypeRep](s: String) = DynExp(s)
     def unapply[T](x: Rep[T]): Option[String] = x match {
+      case DynExp(s) => Some(s)
       case Sym(n) => Some("x"+n)
       case _ => None
     }
   }
 
-  def constToString(x:Any): String
-*/
 
 
-trait Base_LMS0 extends Base {
+}
+
+
+trait Base_LMS0 extends Base_LMS1 {
   def reflect[T:TypeRep](s: Any*): Rep[T]
   def reify[T](x: => Rep[T]): Block[T]
 
@@ -126,7 +142,7 @@ trait Base_LMS0 extends Base {
 trait Base_LMS extends Base_LMS0 {
 
   //def constToString(x:Any): String
-
+/*
   def mirrorDef[A:TypeRep](d: Def[A], f: Transformer): Def[A] = d
   def mirror[A:TypeRep](d: Def[A], f: Transformer): Rep[A] = ???
 
@@ -205,12 +221,12 @@ trait Base_LMS extends Base_LMS0 {
     f.traverseBlock(b)
     if (b.res != liftConst(())) Console.println(b.res)
     Console.print("}")
-  }
+  }*/
 
 
 
 
-  abstract class Rep[+T:TypeRep] { def typ: TypeRep[_] = implicitly[TypeRep[T]] }
+  /*abstract class Rep[+T:TypeRep] { def typ: TypeRep[_] = implicitly[TypeRep[T]] }
 
   case class Static[+T:TypeRep](x: T) extends Rep[T] { // IR.Const
     // adding a type cast everywhere: TestC was having issues with literal 8 passed to Object param?
@@ -226,7 +242,7 @@ trait Base_LMS extends Base_LMS0 {
   }
 
   abstract class Def[+T]
-
+  */
 
   def fblocks(e: Any): List[Block[Any]] = e match {
     case b: Block[Any] => List(b)
@@ -240,6 +256,7 @@ trait Base_LMS extends Base_LMS0 {
   }
 
 
+/*
   abstract class Stm {
     def deps: List[Dyn[Any]]
     def blocks: List[Block[Any]]
@@ -343,12 +360,17 @@ trait Base_LMS extends Base_LMS0 {
   }
 
 
-  def emitString(s: String) = emit(Unstructured(s.toString))
 
   def emitBlock(s: Block[Any]) = assert(false) // TODO
 
   def println(s: Any) = assert(false)
+*/
 
+  def emitString(s: String) = ???//emit(Unstructured(s.toString))
+
+
+
+/*
   def captureOutput[A](func: => Rep[A]): String = {
     val (s,r) = captureOutputResult(func)
     s + "\n" + r
@@ -357,7 +379,7 @@ trait Base_LMS extends Base_LMS0 {
     val Block(stms,res) = reify(func)
     (stms.mkString("\n"),res)
   }
-
+*/
 
   import java.io._
   def captureConsoleOutputResult[A](func: => A): (String,A) = {
