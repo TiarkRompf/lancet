@@ -1,9 +1,9 @@
 package lancet.core
 
+import scala.virtualization.lms.common._
 
-trait Core_LMS extends Base_LMS
 
-trait IR_LMS_Core extends IR_LMS_Base {
+trait Core_LMS extends Base_LMS {
 
   implicit def unit(x: Boolean): Rep[Boolean] = liftConst(x)
   implicit def unit(x: Byte): Rep[Byte] = liftConst(x)
@@ -82,42 +82,6 @@ trait IR_LMS_Core extends IR_LMS_Base {
 
     case _ => super.mirrorDef(d, f)    
   }).asInstanceOf[Def[A]]
-
-
-  override def emitScala[A:TypeRep](d: Def[A], f: CodeGen): Unit = d match {
-    case PrimConvert(x)                   => Console.print(x+".to"+typeRep[A])
-
-    case PrimNegate(x)                    => Console.print("-"+x)
-    case PrimPlus(x, y)                   => Console.print(x+" + "+y)
-    case PrimMinus(x, y)                  => Console.print(x+" - "+y)
-    case PrimTimes(x, y)                  => Console.print(x+" * "+y)
-    case PrimDiv(x, y)                    => Console.print(x+" / "+y)
-    case PrimMod(x, y)                    => Console.print(x+" % "+y)
-    case PrimAnd(x, y)                    => Console.print(x+" & "+y)
-    case PrimOr(x, y)                     => Console.print(x+" | "+y)
-    case PrimXor(x, y)                    => Console.print(x+" ^ "+y)
-    case PrimShiftLeft(x, y)              => Console.print(x+" << "+y)
-    case PrimShiftRight(x, y)             => Console.print(x+" >> "+y)
-    case PrimShiftRightUnsigned(x, y)     => Console.print(x+" >>> "+y)
-    case PrimLess(x, y)                   => Console.print(x+" < "+y)
-    case PrimLessEqual(x, y)              => Console.print(x+" <= "+y)
-    case PrimGreater(x, y)                => Console.print(x+" > "+y)
-    case PrimGreaterEqual(x, y)           => Console.print(x+" >= "+y)
-    case PrimEqual(x, y)                  => Console.print(x+" == "+y)
-    case PrimNotEqual(x, y)               => Console.print(x+" != "+y)
-    
-    case ObjectEqual(x, y)                => Console.print(x+" eq "+y)
-    case ObjectNotEqual(x, y)             => Console.print(x+" ne "+y)
-    case ObjectAsInstanceOf(x)            => Console.print(x+".asInstanceOf["+typeRep[A]+"]")
-    case ObjectIsInstanceOf(x)            => Console.print(x+".isInstanceOf["+typeRep[A]+"]")
-
-    case IfThenElse(x, y, z)              => Console.print("if ("+x+") ")
-                                             emitScalaBlock(y,f)
-                                             Console.print(" else ")
-                                             emitScalaBlock(z,f)
-
-    case _ => super.emitScala(d, f)
-  }
 
   override def quickString[A:TypeRep](d: Def[A]): String = d match {
     case PrimConvert(x)                   => x+".to"+typeRep[A]
@@ -279,3 +243,45 @@ trait IR_LMS_Core extends IR_LMS_Base {
 
 }
 
+
+
+trait ScalaGenCore extends GEN_Scala_LMS_Base {
+  val IR: Core_LMS
+  import IR._
+ 
+  override def emitNode(sym: Sym[Any], rhs: Def[Any]) = rhs match {
+    case PrimConvert(x)                   => emtiValDef(sym, quote(x)+".to"+remap(sym.tp))
+
+    case PrimNegate(x)                    => emtiValDef(sym, "-"+x)
+    case PrimPlus(x, y)                   => emtiValDef(sym, x+" + "+y)
+    case PrimMinus(x, y)                  => emtiValDef(sym, x+" - "+y)
+    case PrimTimes(x, y)                  => emtiValDef(sym, x+" * "+y)
+    case PrimDiv(x, y)                    => emtiValDef(sym, x+" / "+y)
+    case PrimMod(x, y)                    => emtiValDef(sym, x+" % "+y)
+    case PrimAnd(x, y)                    => emtiValDef(sym, x+" & "+y)
+    case PrimOr(x, y)                     => emtiValDef(sym, x+" | "+y)
+    case PrimXor(x, y)                    => emtiValDef(sym, x+" ^ "+y)
+    case PrimShiftLeft(x, y)              => emtiValDef(sym, x+" << "+y)
+    case PrimShiftRight(x, y)             => emtiValDef(sym, x+" >> "+y)
+    case PrimShiftRightUnsigned(x, y)     => emtiValDef(sym, x+" >>> "+y)
+    case PrimLess(x, y)                   => emtiValDef(sym, x+" < "+y)
+    case PrimLessEqual(x, y)              => emtiValDef(sym, x+" <= "+y)
+    case PrimGreater(x, y)                => emtiValDef(sym, x+" > "+y)
+    case PrimGreaterEqual(x, y)           => emtiValDef(sym, x+" >= "+y)
+    case PrimEqual(x, y)                  => emtiValDef(sym, x+" == "+y)
+    case PrimNotEqual(x, y)               => emtiValDef(sym, x+" != "+y)
+    
+    case ObjectEqual(x, y)                => emtiValDef(sym, x+" eq "+y)
+    case ObjectNotEqual(x, y)             => emtiValDef(sym, x+" ne "+y)
+    case ObjectAsInstanceOf(x)            => emtiValDef(sym, x+".asInstanceOf["+typeRep[A]+"]")
+    case ObjectIsInstanceOf(x)            => emtiValDef(sym, x+".isInstanceOf["+typeRep[A]+"]")
+
+    case IfThenElse(x, y, z)              => stream.print("if ("+x+") ")
+                                             emitScalaBlock(y,f)
+                                             Console.print(" else ")
+                                             emitScalaBlock(z,f)
+
+    case _ => super.emitScala(d, f)
+  }
+
+}

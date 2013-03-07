@@ -9,10 +9,20 @@ trait IR_LMS_Base extends EffectExp {
 
   def liftConst[T:TypeRep](x:T): Rep[T]
   type TypeRep[T]
+  
+  def quickString[A:TypeRep](d: Def[A]): String
 
 }
 
-trait IR_LMS extends IR_LMS_Base with IR_LMS_Core
+trait IR_LMS extends IR_LMS_Base
+
+
+trait GEN_Scala_LMS_Base extends ScalaGenEffect {
+}
+
+trait GEN_Scala_LMS extends GEN_Scala_LMS_Base {
+}
+
 
 
 
@@ -79,9 +89,9 @@ trait Base_LMS0 extends Base_LMS1 {
   def typeRep[T:TypeRep]: TypeRep[T] = implicitly[TypeRep[T]]
 
 
-  var constantPool: Vector[AnyRef] = Vector.empty
+  var VConstantPool: Vector[AnyRef] = Vector.empty
 
-  def constToString[T](x:T): String = x match {
+  def VConstToString[T](x:T): String = x match {
     case x: Boolean => ""+x
     case x: Int => ""+x
     case x: Long => ""+x
@@ -99,13 +109,13 @@ trait Base_LMS0 extends Base_LMS1 {
     //case o: Array[Object] => ("(null:Array[Object])") // TODO
     //case o: Object => ("(null:"+o.getClass.getName+")")
     case _ => 
-      var idx = constantPool.indexOf(x) // FIXME: use eq
+      var idx = VConstantPool.indexOf(x) // FIXME: use eq
       if (idx < 0) {
-        constantPool = constantPool :+ x.asInstanceOf[AnyRef]
-        idx = constantPool.size - 1
+        VConstantPool = VConstantPool :+ x.asInstanceOf[AnyRef]
+        idx = VConstantPool.size - 1
       }
 
-      "CONST_" + idx
+      "VConst_" + idx
   }
 
   def classStr(x: Class[_]): String = if (x.isArray()) "Array["+classStr(x.getComponentType)+"]" else x.getName match {
@@ -141,7 +151,7 @@ trait Base_LMS0 extends Base_LMS1 {
 
 trait Base_LMS extends Base_LMS0 {
 
-  //def constToString(x:Any): String
+  //def VConstToString(x:Any): String
 /*
   def mirrorDef[A:TypeRep](d: Def[A], f: Transformer): Def[A] = d
   def mirror[A:TypeRep](d: Def[A], f: Transformer): Rep[A] = ???
@@ -228,9 +238,9 @@ trait Base_LMS extends Base_LMS0 {
 
   /*abstract class Rep[+T:TypeRep] { def typ: TypeRep[_] = implicitly[TypeRep[T]] }
 
-  case class Static[+T:TypeRep](x: T) extends Rep[T] { // IR.Const
+  case class Static[+T:TypeRep](x: T) extends Rep[T] { // IR.VConst
     // adding a type cast everywhere: TestC was having issues with literal 8 passed to Object param?
-    override def toString = if (x == null) "null" else constToString(x) + ".asInstanceOf[" + typ + "]" // skip null's type
+    override def toString = if (x == null) "null" else VConstToString(x) + ".asInstanceOf[" + typ + "]" // skip null's type
   }
 
   case class Dyn[+T:TypeRep](s: String) extends Rep[T] { // extends IR.Exp
@@ -297,7 +307,7 @@ trait Base_LMS extends Base_LMS0 {
         emit(ValDef(x,typeRep[T],s.toList)); 
         val y = Dyn[T](x)
         //FIXME: can't cse if stm has effects
-        //FIXME: not everything is SSA (CONST_LUB) -- need to kill! (TODO: in emit if lhs not a fresh var)
+        //FIXME: not everything is SSA (VConst_LUB) -- need to kill! (TODO: in emit if lhs not a fresh var)
         def isPure = !(rhs.contains("throw") || rhs.contains("new") || rhs.contains(".alloc") || rhs.contains(".put")) //HACK
         if (isPure)
           rewrite(rhs, y)
@@ -411,7 +421,7 @@ trait Base_LMS extends Base_LMS0 {
 trait Base_LMS_Abs extends Base {
 
   abstract class Val[+T]
-  case class Const[+T](x: T) extends Val[T] { override def toString = ("Const("+x+")").replace("\n","\\n") }
+  case class VConst[+T](x: T) extends Val[T] { override def toString = ("VConst("+x+")").replace("\n","\\n") }
   case class Partial[+T](fields: Map[String, Rep[Any]]) extends Val[T]
   case object Top extends Val[Nothing]
 
@@ -455,10 +465,10 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
   //   (lub should not be Top!)
 
   def eval[T](x: Rep[T]): Val[T] = x match {
-    //case Static(x) => Const(x)
-    case Static(x) => store.get(constToString(x)).asInstanceOf[Option[Val[T]]] match {
+    //case Static(x) => VConst(x)
+    case Static(x) => store.get(VConstToString(x)).asInstanceOf[Option[Val[T]]] match {
       case Some(x) => x
-      case None => Const(x)
+      case None => VConst(x)
     }
     case Dyn(s) => store.getOrElse(s, Top).asInstanceOf[Val[T]] match {
       case x => x
@@ -495,7 +505,7 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
       def lubVal[A](a: Val[A], b: Val[A]): Val[A] = (a,b) match {
         case (a,Top) => Top
         case (Top,b) => Top
-        case (Const(u), Const(v)) if u == v => Const(u)
+        case (VConst(u), VConst(v)) if u == v => VConst(u)
         case _ => Top
       }
 */
@@ -524,8 +534,8 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
                 emitString("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
               val tp = bb.typ.asInstanceOf[TypeRep[Any]]
               Dyn[Any](str)(tp)
-            case (Some(a),None) if p.startsWith("CONST") && k == "clazz" => a // class is constant
-            case (None,Some(b)) if p.startsWith("CONST") && k == "clazz" => b // class is constant
+            case (Some(a),None) if p.startsWith("VConst") && k == "clazz" => a // class is VConstant
+            case (None,Some(b)) if p.startsWith("VConst") && k == "clazz" => b // class is VConstant
             case (a,b) => 
               val str = "LUB_"+p+"_"+k
               val tp = if (b.nonEmpty) {
@@ -538,8 +548,8 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
               } else {                
                 val tp = a.get.typ.asInstanceOf[TypeRep[Any]]
                 // we don't have the b value in the store
-                // check if this refers to a const field; if so get the field value
-                if (p.startsWith("CONST")) {
+                // check if this refers to a VConst field; if so get the field value
+                if (p.startsWith("VConst")) {
                   val obj = y("alloc").asInstanceOf[Rep[Object]]
                   val cls:Class[_] = obj match { case Static(o) => o.getClass }
                   val fld = getFieldForLub(obj,cls,k)(tp)
@@ -562,9 +572,9 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
         (k, (x.get(k), y.get(k)) match {
           case (Some(a),Some(b)) if a == b => a
           case (Some(Partial(as)),Some(Partial(bs))) => Partial(lubPartial(k)(as,bs)) // two definitions ...
-          // const: lift on the other side if missing; todo: replace string check with as("alloc") check
-          case (Some(Partial(as)),None) if k.startsWith("CONST") => Partial(lubPartial(k)(as,Map("alloc"->as("alloc"),"clazz"->as("clazz")))) // final fields ...
-          case (None,Some(Partial(bs))) if k.startsWith("CONST") => Partial(lubPartial(k)(Map("alloc"->bs("alloc"),"clazz"->bs("clazz")),bs))
+          // VConst: lift on the other side if missing; todo: replace string check with as("alloc") check
+          case (Some(Partial(as)),None) if k.startsWith("VConst") => Partial(lubPartial(k)(as,Map("alloc"->as("alloc"),"clazz"->as("clazz")))) // final fields ...
+          case (None,Some(Partial(bs))) if k.startsWith("VConst") => Partial(lubPartial(k)(Map("alloc"->bs("alloc"),"clazz"->bs("clazz")),bs))
           // allocs: may be null in alternative
           //case (Some(Partial(as)),None) => Partial(lubPartial(k)(as,Map("alloc"->liftConst(null))))
           //case (None,Some(Partial(bs))) => Partial(lubPartial(k)(Map("alloc"->liftConst(null)),bs))
