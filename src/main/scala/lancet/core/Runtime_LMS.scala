@@ -35,6 +35,8 @@ import com.oracle.graal.bytecode._;
 
 trait RuntimeUniverse_LMS extends Core_LMS with RuntimeUniverse {
 
+def reflect[A:TypeRep](s: Any*): Exp[A] = ???
+
 def unsafe: Unsafe_LMS
 
 trait Unsafe_LMS {
