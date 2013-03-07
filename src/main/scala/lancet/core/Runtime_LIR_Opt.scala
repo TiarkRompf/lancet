@@ -35,14 +35,14 @@ import com.oracle.graal.bytecode._;
 trait RuntimeUniverse_LIR_Opt extends Core_LIR_Opt with RuntimeUniverse_LIR {
 
 object static extends HasUnsafe
-object unsafe extends Unsafe_LIR_Opt
+object unsafe extends Unsafe_Opt
 
 
 var debugReadWrite = false
 var debugNullCheck = false
 
 
-trait Unsafe_LIR_Opt extends Unsafe_LIR
+trait Unsafe_Opt extends Unsafe_LIR
 
 
 

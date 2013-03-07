@@ -32,7 +32,7 @@ import com.oracle.graal.bytecode._;
 
 
 
-trait RuntimeUniverse_Opt extends Core_Opt with RuntimeUniverse_LMS {
+trait RuntimeUniverse_LMS_Opt extends Core_LMS_Opt with RuntimeUniverse_LMS {
 
 object static extends HasUnsafe
 object unsafe extends Unsafe_Opt

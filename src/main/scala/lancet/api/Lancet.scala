@@ -20,7 +20,7 @@ object Lancet {
 */
 
   def newCompilerOpt = { 
-    val it = new BytecodeInterpreter_Opt
+    val it = new BytecodeInterpreter_LIR_Opt
     it.initialize
     it
   }

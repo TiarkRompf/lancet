@@ -80,6 +80,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
       //def captureOutputResult[T](x:T) = ("", x)
 
+/*FIXME
       val b@Block(stms, res) = reify {
 
         val arg = reflect[A]("ARG")
@@ -116,9 +117,13 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
         Console.println("}")
       }
 
+
       System.out.println(source)
 
       ScalaCompile.compile[A,B](source, "Generated", constantPool.map(x=>specCls(x)).toList)
+*/
+
+      ???
     }
 
     //@Override
@@ -241,7 +246,9 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       var low = 0;
       var high = switchHelper.numberOfCases() - 1;
 
-      emitString(""+key+" match {")
+      ???
+
+      /*emitString(""+key+" match {")
       for (i <- low to high) {
         val midVal = switchHelper.keyAt(i);
         emitString("case "+midVal+" => ")
@@ -250,7 +257,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       emitString("case _ => ")
       emitBlock(reify(k(switchHelper.defaultTarget)))
       emitString("}")
-      liftConst(())
+      liftConst(())*/
     }
     /*{
         while (low <= high) {
@@ -276,7 +283,9 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
       assert(low <= high);
 
-      emitString(""+index+" match {")
+      ???
+
+      /*emitString(""+index+" match {")
       for (i <- low to high) {
         emitString("case "+i+" => ")
         emitBlock(reify(k(switchHelper.targetAt(i-low))))
@@ -292,7 +301,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
           return switchHelper.targetAt(index - low);
       }
       */
-      liftConst(())
+      liftConst(())*/
     }
 
 
