@@ -34,8 +34,14 @@ import com.oracle.graal.hotspot.meta._;
 import com.oracle.graal.bytecode._;
 
 
+trait InterpreterUniverse_LMS extends RuntimeUniverse_LMS with InterpreterUniverse_Staged {
+}
 
-trait InterpreterUniverse_LMS extends RuntimeUniverse_LMS with InterpreterUniverse {
+trait InterpreterUniverse_LIR extends RuntimeUniverse_LIR with InterpreterUniverse_Staged {
+}
+
+
+trait InterpreterUniverse_Staged extends InterpreterUniverse {
 
 
 object Frame {
