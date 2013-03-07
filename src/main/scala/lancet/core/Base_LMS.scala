@@ -10,7 +10,7 @@ trait IR_LMS_Base extends EffectExp {
   def liftConst[T:TypeRep](x:T): Rep[T]
   type TypeRep[T]
   
-  def quickString[A:TypeRep](d: Def[A]): String
+  def quickString[A:TypeRep](d: Def[A]): String = d.toString
 
 }
 
@@ -71,7 +71,7 @@ trait Base_LMS1 extends Base with IR_LMS { self =>
 
 
 trait Base_LMS0 extends Base_LMS1 {
-  def reflect[T:TypeRep](s: Any*): Rep[T]
+  def reflect[T:TypeRep](d: Def[T]): Rep[T]
   def reify[T](x: => Rep[T]): Block[T]
 
   def liftConst[T:TypeRep](x:T): Rep[T]
@@ -141,7 +141,7 @@ trait Base_LMS0 extends Base_LMS1 {
     case "lancet.interpreter.TestInterpreter5$Decompiler" => "lancet.interpreter.TestInterpreter5#Decompiler" // scalac crash
     //TODO/FIXME
     case s if !Modifier.isPublic(x.getModifiers) => "Object /*" + s + "*/" //s <-- class may be private...
-    case s => s
+    case s => 
       //if (s.contains("$")) println("careful: "+s)
       val params = x.getTypeParameters
       if (params.length == 0) s
@@ -160,6 +160,19 @@ trait Base_LMS0 extends Base_LMS1 {
 }
 
 trait Base_LMS extends Base_LMS0 {
+
+
+  def reflect[T:TypeRep](d: Def[T]): Rep[T] = toAtom(d)
+  def reify[T](x: => Rep[T]): Block[T] = reifyEffects(x)
+
+  def liftConst[T:TypeRep](x:T): Rep[T] = unit(x)
+
+  def repManifest[T:Manifest]: Manifest[Rep[T]] = manifest[Rep[T]]
+
+  def infix_typ[T](x: Rep[T]): TypeRep[T] = manifestToTypeRep(x.tp)
+
+  def manifestToTypeRep[T](x: Manifest[T]): TypeRep[T] = ???
+
 
   //def VConstToString(x:Any): String
 /*

@@ -21,6 +21,7 @@ class BytecodeInterpreter_LMS_Opt extends BytecodeInterpreter_LMS_Opt4
 
 
 trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeInterpreter_LMS with RuntimeUniverse_LMS_Opt {
+  import IR._
 
     // hack: base_opt doesn't have access to runtime
     override def getFieldForLub[T:TypeRep](base: Rep[Object], cls: Class[_], k: String): Rep[T] = {
@@ -33,12 +34,12 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
     override def objectGetClass(receiver: Rep[Object]): Option[Class[_]] = {
       eval(receiver) match {
         case Partial(fs) if fs.contains("clazz") => 
-          val Const(clazz: Class[_]) = eval(fs("clazz"))
+          val VConst(clazz: Class[_]) = eval(fs("clazz"))
           Some(clazz)
         case Partial(fs) => 
-          val Static(x: NotNull) = fs("alloc") // unsafe? <-- could also set "clazz" field when lifting const
+          val Static(x: NotNull) = fs("alloc") // unsafe? <-- could also set "clazz" field when lifting VConst
           Some(x.getClass)
-        case Const(x: NotNull) =>
+        case VConst(x: NotNull) =>
           val clazz = x.getClass
           Some(clazz)
         case _ =>
@@ -88,9 +89,9 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
     }
 
     // calc lubs and backpatch info for jumps
-    type State = (InterpreterFrame, StoreLattice.Elem, ExprLattice.Elem)
+    type IState = (InterpreterFrame, StoreLattice.Elem, ExprLattice.Elem)
 
-    def allLubs(states: List[State]): (State,List[Block[Unit]]) = {
+    def allLubs(states: List[IState]): (IState,List[Block[Unit]]) = {
       if (states.length == 1) return (states.head, Nil) // fast path
       // backpatch info: foreach state, commands needed to initialize lub vars
       val gos = states map { case (frameX,storeX,exprX) =>
@@ -120,16 +121,16 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
       ((f02,s02,e02),gos.map(_._1))
     }
 
-    def getFrame(s: State) = s._1
+    def getFrame(s: IState) = s._1
 
-    def getFields(s: State) = {
+    def getFields(s: IState) = {
       val locals = FrameLattice.getFields(s._1).filterNot(_.isInstanceOf[Static[_]])//filter(_.toString.startsWith("PHI"))
       val fields = StoreLattice.getFields(s._2).filterNot(_.isInstanceOf[Static[_]])//.filter(_.toString.startsWith("LUB"))
       val exprs = ExprLattice.getFields(s._3).filterNot(_.isInstanceOf[Static[_]])//.filter(_.toString.startsWith("LUB"))
       (locals ++ fields ++ exprs).distinct.sortBy(_.toString)
     }
 
-    def statesDiffer(s0: State, s1: State) = 
+    def statesDiffer(s0: IState, s1: IState) = 
       getAllArgs(s0._1) != getAllArgs(s1._1) || s0._2 != s1._2 || s0._3 != s1._3
 
     def freshFrameSimple(frame: InterpreterFrame): InterpreterFrame_Str = if (frame eq null) null else {
@@ -138,14 +139,15 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
       frame2
     }
 
+    var exprs: ExprLattice.Elem = ExprLattice.bottom
 
     def getAllArgs(frame: InterpreterFrame) = frame.getReturnValue()::getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
 
     def getState(frame: InterpreterFrame) = (freshFrameSimple(frame), store, exprs)
-    def withState[A](state: State)(f: InterpreterFrame => A): A = { store = state._2; exprs = state._3; f(state._1) }
+    def withState[A](state: IState)(f: InterpreterFrame => A): A = { store = state._2; exprs = state._3; f(state._1) }
 
     def getState0 = (null, store, exprs) // TODO: cleanup
-    def setState0(state: State): Unit = { store = state._2; exprs = state._3 }
+    def setState0(state: IState): Unit = { store = state._2; exprs = state._3 }
 
 
 }
@@ -154,21 +156,21 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
 
 trait AbstractInterpreterIntf_LMS extends BytecodeInterpreter_LMS with Core_LMS {
 
-    type State
+    type IState
 
-    def getFrame(s: State): InterpreterFrame
-    def getFields(s: State): List[Rep[Any]]
+    def getFrame(s: IState): InterpreterFrame
+    def getFields(s: IState): List[Rep[Any]]
 
-    def allLubs(states: List[State]): (State,List[Block[Unit]])
-    def statesDiffer(s0: State, s1: State): Boolean
+    def allLubs(states: List[IState]): (IState,List[Block[Unit]])
+    def statesDiffer(s0: IState, s1: IState): Boolean
 
     def freshFrameSimple(frame: InterpreterFrame): InterpreterFrame_Str
 
-    def getState(frame: InterpreterFrame): State
-    def withState[A](state: State)(f: InterpreterFrame => A): A
+    def getState(frame: InterpreterFrame): IState
+    def withState[A](state: IState)(f: InterpreterFrame => A): A
 
-    def getState0: State
-    def setState0(s: State): Unit
+    def getState0: IState
+    def setState0(s: IState): Unit
 
 }
 
@@ -289,11 +291,11 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
     def genVarWrite(v: Rep[Any]): String
     def genVarRead(v: Rep[Any]): String
 
-    def emitAll(b: Block[Unit]) = b.stms foreach emit
+    def emitAll(b: Block[Unit]) = ???//b.stms foreach emit
 
     // TODO: proper subst transformer
 
-    def infix_replace[A,B](a: Block[A], key: String, b: Block[B]): Block[A] = {
+    def infix_replace[A,B](a: Block[A], key: String, b: Block[B]): Block[A] = ???/*{
       var found = 0
       val t = new StructuralTransformer {
         override def transformStm(s: Stm): List[Stm] = s match {
@@ -310,7 +312,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       val r = t.transformBlock(a)
       if (found == 0) System.out.println("not found: "+key)
       r
-    }
+    }*/
 
 
     // helpers
@@ -383,8 +385,8 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       if (debugMethods) emitString("// << " + method)
 
-      case class BlockInfo(inEdges: List[(Int,State)], inState: State)
-      case class BlockInfoOut(returns: List[State], gotos: List[State], code: Block[Unit])
+      case class BlockInfo(inEdges: List[(Int,IState)], inState: IState)
+      case class BlockInfoOut(returns: List[IState], gotos: List[IState], code: Block[Unit])
 
       val blockInfo: mutable.Map[Int, BlockInfo] = new mutable.HashMap
       val blockInfoOut: mutable.Map[Int, BlockInfoOut] = new mutable.HashMap
@@ -456,7 +458,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
           worklist = worklist.tail
           assert(blockInfo.contains(i))
           curBlock = i
-          blockInfoOut(i) = BlockInfoOut(Nil,Nil,Block(Nil,liftConst(()))) // reset gotos
+          blockInfoOut(i) = BlockInfoOut(Nil,Nil,Block(liftConst(()))) // reset gotos
           val BlockInfo(edges,s) = blockInfo(i)
           val src = reify {
             withState(s)(execFoReal)
@@ -488,7 +490,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
               val (key,keyid) = contextKeyId(getFrame(s1))
               val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
               val call = genBlockCall(keyid, fields)
-              reify { reflect[Unit](";", Block[Unit](head.stms:+Unstructured(call), head.res)) }
+              ???//reify { reflect[Unit](";", Block[Unit](head.stms:+Unstructured(call), head.res)) }
             }
             src = src.replace("GOTO_"+i+";", rhs)
           }
@@ -551,10 +553,10 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
         var block1 = block
         for ((k,go) <- (returns.map(_._1)) zip gos) {
-          val assign = Block(fields.map(genVarWrite).map(Unstructured(_)), liftConst(()))
-          val ret = reify {
+          val assign = ???//Block(fields.map(genVarWrite).map(Unstructured(_)), liftConst(()))
+          val ret = ???/*reify {
             reflect[Unit]("/*R"+k.substring(6)+"*/;", Block(go.stms++assign.stms,assign.res),";") // substr prevents further matches            
-          }
+          }*/
           block1 = block1.replace(k,ret)
         }
         emitAll(block1)

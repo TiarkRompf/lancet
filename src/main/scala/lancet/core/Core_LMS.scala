@@ -1,6 +1,7 @@
 package lancet.core
 
 import scala.virtualization.lms.common._
+import scala.reflect.SourceContext
 
 
 trait Core_LMS extends Base_LMS {
@@ -17,9 +18,6 @@ trait Core_LMS extends Base_LMS {
 
   def unit(x: Null): Rep[Object] = liftConst(null)
   def unit(x: Object): Rep[Object] = liftConst(x)
-
-
-  def reflect[T:TypeRep](d: Def[T]) = toAtom(d)
 
 
   case class PrimConvert[A:TypeRep,B:TypeRep](x:Rep[A]) extends Def[B]
@@ -48,10 +46,10 @@ trait Core_LMS extends Base_LMS {
   case class ObjectAsInstanceOf[T:TypeRep](x: Rep[Object]) extends Def[T]
   case class ObjectIsInstanceOf[T:TypeRep](x: Rep[Object]) extends Def[Boolean]
 
-  case class IfThenElse[T:TypeRep](x: Rep[Boolean], y: Block[T], z: Block[T]) extends Def[Boolean]
+  case class IfThenElse[T:TypeRep](x: Rep[Boolean], y: Block[T], z: Block[T]) extends Def[T]
 
 
-  override def mirrorDef[A:TypeRep](d: Def[A], f: Transformer): Def[A] = (d match {
+  override def mirrorDef[A:Manifest](d: Def[A], f: Transformer)(implicit pos: SourceContext): Def[A] = (d match {
     case PrimConvert(x)                   => PrimConvert(f(x))(typeRep[Any], typeRep[A]) /// FIXME!!!! ---> GADTS
 
     case PrimNegate(x)                    => PrimNegate(f(x))
@@ -82,6 +80,41 @@ trait Core_LMS extends Base_LMS {
 
     case _ => super.mirrorDef(d, f)    
   }).asInstanceOf[Def[A]]
+
+  /* need to match on type rep? */
+  /*override def mirror[A:Manifest](e: Def[A], f: Transformer)(implicit pos: SourceContext): Exp[A] = (e match {
+    case PrimConvert(x)                   => PrimConvert(f(x))(typeRep[Any], typeRep[A]) /// FIXME!!!! ---> GADTS
+
+    case PrimNegate(x)                    => PrimNegate(f(x))
+    case PrimPlus(x, y)                   => PrimPlus(f(x), f(y))
+    case PrimMinus(x, y)                  => PrimMinus(f(x), f(y))
+    case PrimTimes(x, y)                  => PrimTimes(f(x), f(y))
+    case PrimDiv(x, y)                    => PrimDiv(f(x), f(y))
+    case PrimMod(x, y)                    => PrimMod(f(x), f(y))
+    case PrimAnd(x, y)                    => PrimAnd(f(x), f(y))
+    case PrimOr(x, y)                     => PrimOr(f(x), f(y))
+    case PrimXor(x, y)                    => PrimXor(f(x), f(y))
+    case PrimShiftLeft(x, y)              => PrimShiftLeft(f(x), f(y))
+    case PrimShiftRight(x, y)             => PrimShiftRight(f(x), f(y))
+    case PrimShiftRightUnsigned(x, y)     => PrimShiftRightUnsigned(f(x), f(y))
+    case PrimLess(x, y)                   => PrimLess(f(x), f(y))
+    case PrimLessEqual(x, y)              => PrimLessEqual(f(x), f(y))
+    case PrimGreater(x, y)                => PrimGreater(f(x), f(y))
+    case PrimGreaterEqual(x, y)           => PrimGreaterEqual(f(x), f(y))
+    case PrimEqual(x, y)                  => PrimEqual(f(x), f(y))
+    case PrimNotEqual(x, y)               => PrimNotEqual(f(x), f(y))
+    
+    case ObjectEqual(x, y)                => ObjectEqual(f(x), f(y))
+    case ObjectNotEqual(x, y)             => ObjectNotEqual(f(x), f(y))
+    case ObjectAsInstanceOf(x)            => ObjectAsInstanceOf(f(x))(typeRep[A])
+    case ObjectIsInstanceOf(x)            => ObjectIsInstanceOf(f(x))(typeRep[A]) // <------- NOT A!!
+
+    case IfThenElse(x, y, z)              => IfThenElse(f(x), f(y), f(z))
+
+    case _ => super.mirrorDef(d, f)    
+  }).asInstanceOf[Def[A]]*/
+
+
 
   override def quickString[A:TypeRep](d: Def[A]): String = d match {
     case PrimConvert(x)                   => x+".to"+typeRep[A]
