@@ -18,9 +18,19 @@ trait IR_LMS extends IR_LMS_Base
 
 
 trait GEN_Scala_LMS_Base extends ScalaGenEffect {
+  val IR: Base_LMS
+  import IR._
+
+  def emitBlockFull(b: Block[Any]): Unit = {
+    stream.println("{")
+    emitBlock(b)
+    if (getBlockResult(b) != Const(())) stream.println(b.res)
+    stream.print("}")
+  }
+
 }
 
-trait GEN_Scala_LMS extends GEN_Scala_LMS_Base {
+trait GEN_Scala_LMS extends GEN_Scala_LMS_Base with ScalaGenCore {
 }
 
 
@@ -252,7 +262,6 @@ trait Base_LMS extends Base_LMS0 {
   }
 
   abstract class Def[+T]
-  */
 
   def fblocks(e: Any): List[Block[Any]] = e match {
     case b: Block[Any] => List(b)
@@ -265,8 +274,6 @@ trait Base_LMS extends Base_LMS0 {
     case _ => Nil
   }
 
-
-/*
   abstract class Stm {
     def deps: List[Dyn[Any]]
     def blocks: List[Block[Any]]

@@ -234,10 +234,10 @@ trait Core_LMS extends Base_LMS {
   def objectIsInstanceOf[T:TypeRep](x: Rep[Object]): Rep[Boolean] = reflect[Boolean](ObjectIsInstanceOf[T](x))
 
   def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] = {
-    val save = exprs
+    //val save = exprs
     // TODO: state lub; reset exprs for both branches!
     var r = reflect[T](IfThenElse(x,reify(y),reify(z)))
-    exprs = save
+    //exprs = save
     r
   }
 
@@ -250,38 +250,38 @@ trait ScalaGenCore extends GEN_Scala_LMS_Base {
   import IR._
  
   override def emitNode(sym: Sym[Any], rhs: Def[Any]) = rhs match {
-    case PrimConvert(x)                   => emtiValDef(sym, quote(x)+".to"+remap(sym.tp))
+    case PrimConvert(x)                   => emitValDef(sym, quote(x)+".to"+remap(sym.tp))
 
-    case PrimNegate(x)                    => emtiValDef(sym, "-"+x)
-    case PrimPlus(x, y)                   => emtiValDef(sym, x+" + "+y)
-    case PrimMinus(x, y)                  => emtiValDef(sym, x+" - "+y)
-    case PrimTimes(x, y)                  => emtiValDef(sym, x+" * "+y)
-    case PrimDiv(x, y)                    => emtiValDef(sym, x+" / "+y)
-    case PrimMod(x, y)                    => emtiValDef(sym, x+" % "+y)
-    case PrimAnd(x, y)                    => emtiValDef(sym, x+" & "+y)
-    case PrimOr(x, y)                     => emtiValDef(sym, x+" | "+y)
-    case PrimXor(x, y)                    => emtiValDef(sym, x+" ^ "+y)
-    case PrimShiftLeft(x, y)              => emtiValDef(sym, x+" << "+y)
-    case PrimShiftRight(x, y)             => emtiValDef(sym, x+" >> "+y)
-    case PrimShiftRightUnsigned(x, y)     => emtiValDef(sym, x+" >>> "+y)
-    case PrimLess(x, y)                   => emtiValDef(sym, x+" < "+y)
-    case PrimLessEqual(x, y)              => emtiValDef(sym, x+" <= "+y)
-    case PrimGreater(x, y)                => emtiValDef(sym, x+" > "+y)
-    case PrimGreaterEqual(x, y)           => emtiValDef(sym, x+" >= "+y)
-    case PrimEqual(x, y)                  => emtiValDef(sym, x+" == "+y)
-    case PrimNotEqual(x, y)               => emtiValDef(sym, x+" != "+y)
+    case PrimNegate(x)                    => emitValDef(sym, "-"+x)
+    case PrimPlus(x, y)                   => emitValDef(sym, x+" + "+y)
+    case PrimMinus(x, y)                  => emitValDef(sym, x+" - "+y)
+    case PrimTimes(x, y)                  => emitValDef(sym, x+" * "+y)
+    case PrimDiv(x, y)                    => emitValDef(sym, x+" / "+y)
+    case PrimMod(x, y)                    => emitValDef(sym, x+" % "+y)
+    case PrimAnd(x, y)                    => emitValDef(sym, x+" & "+y)
+    case PrimOr(x, y)                     => emitValDef(sym, x+" | "+y)
+    case PrimXor(x, y)                    => emitValDef(sym, x+" ^ "+y)
+    case PrimShiftLeft(x, y)              => emitValDef(sym, x+" << "+y)
+    case PrimShiftRight(x, y)             => emitValDef(sym, x+" >> "+y)
+    case PrimShiftRightUnsigned(x, y)     => emitValDef(sym, x+" >>> "+y)
+    case PrimLess(x, y)                   => emitValDef(sym, x+" < "+y)
+    case PrimLessEqual(x, y)              => emitValDef(sym, x+" <= "+y)
+    case PrimGreater(x, y)                => emitValDef(sym, x+" > "+y)
+    case PrimGreaterEqual(x, y)           => emitValDef(sym, x+" >= "+y)
+    case PrimEqual(x, y)                  => emitValDef(sym, x+" == "+y)
+    case PrimNotEqual(x, y)               => emitValDef(sym, x+" != "+y)
     
-    case ObjectEqual(x, y)                => emtiValDef(sym, x+" eq "+y)
-    case ObjectNotEqual(x, y)             => emtiValDef(sym, x+" ne "+y)
-    case ObjectAsInstanceOf(x)            => emtiValDef(sym, x+".asInstanceOf["+typeRep[A]+"]")
-    case ObjectIsInstanceOf(x)            => emtiValDef(sym, x+".isInstanceOf["+typeRep[A]+"]")
+    case ObjectEqual(x, y)                => emitValDef(sym, x+" eq "+y)
+    case ObjectNotEqual(x, y)             => emitValDef(sym, x+" ne "+y)
+    case ObjectAsInstanceOf(x)            => emitValDef(sym, x+".asInstanceOf["+remap(sym.tp)+"]")
+    case ObjectIsInstanceOf(x)            => emitValDef(sym, x+".isInstanceOf["+remap(sym.tp)+"]")
 
-    case IfThenElse(x, y, z)              => stream.print("if ("+x+") ")
-                                             emitScalaBlock(y,f)
+    case IfThenElse(x, y, z)              => stream.print("if ("+x+") ") // Unit result??
+                                             emitBlockFull(y)
                                              Console.print(" else ")
-                                             emitScalaBlock(z,f)
+                                             emitBlockFull(z)
 
-    case _ => super.emitScala(d, f)
+    case _ => super.emitNode(sym,rhs)
   }
 
 }
