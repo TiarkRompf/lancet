@@ -27,7 +27,7 @@ class TestInterpreter3 extends FileDiffSuite {
   // dynamically allocated object
 
   def testA1 = withOutFileChecked(prefix+"A1") {
-    val it = new BytecodeInterpreter_Opt
+    val it = new BytecodeInterpreter_LIR_Opt
     it.initialize()
     val f = it.compile { (x:Int) => 
         val b = new Bar
@@ -43,7 +43,7 @@ class TestInterpreter3 extends FileDiffSuite {
   }
 
   def testA2 = withOutFileChecked(prefix+"A2") {
-    val it = new BytecodeInterpreter_Opt
+    val it = new BytecodeInterpreter_LIR_Opt
     it.initialize()
     val f = it.compile { (x:Int) => 
         val b = new Bar
@@ -61,7 +61,7 @@ class TestInterpreter3 extends FileDiffSuite {
   }
 
   def testA3 = withOutFileChecked(prefix+"A3") {
-    val it = new BytecodeInterpreter_Opt
+    val it = new BytecodeInterpreter_LIR_Opt
     it.initialize()
     val f = it.compile { (x:Int) => 
         val b = new Bar
@@ -84,7 +84,7 @@ class TestInterpreter3 extends FileDiffSuite {
   // static object
 
   def testB1 = withOutFileChecked(prefix+"B1") {
-    val it = new BytecodeInterpreter_Opt
+    val it = new BytecodeInterpreter_LIR_Opt
     it.initialize()
     val b = new Bar
     b.intField = 7
@@ -100,7 +100,7 @@ class TestInterpreter3 extends FileDiffSuite {
   }
 
   def testB2 = withOutFileChecked(prefix+"B2") {
-    val it = new BytecodeInterpreter_Opt
+    val it = new BytecodeInterpreter_LIR_Opt
     it.initialize()
     val b = new Bar
     b.intField = 7
@@ -118,7 +118,7 @@ class TestInterpreter3 extends FileDiffSuite {
   }
 
   def testB3 = withOutFileChecked(prefix+"B3") {
-    val it = new BytecodeInterpreter_Opt
+    val it = new BytecodeInterpreter_LIR_Opt
     it.initialize()
     val b = new Bar
     b.intField = 7

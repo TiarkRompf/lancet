@@ -109,7 +109,7 @@ class TestInterpreter5 extends FileDiffSuite {
 
 
 
-  class Decompiler extends BytecodeInterpreter_Opt {
+  class Decompiler extends BytecodeInterpreter_LIR_Opt {
 
     // macro interface
     def dropdead(): Unit = () // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
