@@ -9,8 +9,17 @@ trait IR_LMS_Base extends EffectExp {
 
   def liftConst[T:TypeRep](x:T): Rep[T]
   type TypeRep[T]
+  implicit def typeRepToManifest[T:TypeRep]: Manifest[T]
   
   def quickString[A:TypeRep](d: Def[A]): String = d.toString
+
+  case class Unstructured[A](s: List[Any]) extends Def[A]
+
+  def reflect[A:TypeRep](s: Any*): Exp[A] = reflectEffect(Unstructured[A](s.toList))
+
+  def emitString(s: String)(implicit e:TypeRep[Unit]) = reflect[Unit](s)
+  def emitAll[A:TypeRep](s: Block[A]) = reflect[A](s)
+
 
 }
 
@@ -22,11 +31,38 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
   import IR._
 
   def emitBlockFull(b: Block[Any]): Unit = {
+    if (b.res == Const(())) stream.print("{ }") else {
     stream.println("{")
     emitBlock(b)
-    if (getBlockResult(b) != Const(())) stream.println(b.res)
+    if (getBlockResult(b) != Const(())) stream.println(quote(getBlockResult(b)))
     stream.print("}")
+  }}
+
+  override def emitValDef(sym: Sym[Any], rhs: String) = 
+    if (sym.tp == manifest[Unit]) stream.println(rhs)
+    else super.emitValDef(sym,rhs)
+
+  override def emitNode(sym: Sym[Any], rhs: Def[Any]) = rhs match {
+    case Unstructured(xs) =>
+        if (sym.tp != manifest[Unit])
+          stream.print("val "+quote(sym)+": "+remap(sym.tp)+" = ")
+        xs foreach {
+          case b: Block[a] => 
+            emitBlockFull(b)
+          case b: Exp[a] => 
+            stream.print(quote(b))
+          case e =>
+            stream.print(e)
+        }
+        stream.println
+    case _ => super.emitNode(sym,rhs)
   }
+
+  override def quote(e: Exp[Any]) = e match {
+    case DynExp(a) => a.toString
+    case _ => super.quote(e)
+  }
+
 
 }
 
@@ -43,8 +79,6 @@ trait Base_LMS1 extends Base with IR_LMS { self =>
 
   //type Rep[+T] = IR.Rep[T]
   type TypeRep[T]// = Manifest[T]
-
-  implicit def typeRepToManifest[T:TypeRep]: Manifest[T]
 
   def infix_typ[T](x: Rep[T]): TypeRep[T]
 
@@ -180,7 +214,7 @@ trait Base_LMS0 extends Base_LMS1 {
 trait Base_LMS extends Base_LMS0 {
 
 
-  def reflect[T:TypeRep](d: Def[T]): Rep[T] = toAtom(d)
+  def reflect[T:TypeRep](d: Def[T]): Rep[T] = reflectEffect(d)//toAtom(d)
   def reify[T:TypeRep](x: => Rep[T]): Block[T] = reifyEffects(x)
 
   def liftConst[T:TypeRep](x:T): Rep[T] = unit(x)
@@ -189,7 +223,7 @@ trait Base_LMS extends Base_LMS0 {
 
   def infix_typ[T](x: Rep[T]): TypeRep[T] = manifestToTypeRep(x.tp)
 
-  def manifestToTypeRep[T](x: Manifest[T]): TypeRep[T] = ???
+  def manifestToTypeRep[T](x: Manifest[T]): TypeRep[T] = TypeRep(manifestStr(x))(x)
 
 
   //def VConstToString(x:Any): String
@@ -414,8 +448,8 @@ trait Base_LMS extends Base_LMS0 {
   def println(s: Any) = assert(false)
 */
 
-  // TODO
-  def emitString(s: String) = { println("ignore: "+s) } //emit(Unstructured(s.toString))
+  //def emitString(s: String)
+  //def emitAll[A:TypeRep](s: Block[A])
 
 
 

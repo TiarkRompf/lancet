@@ -24,7 +24,7 @@ package lancet.core
 
 
 import java.lang.reflect.{Array=>jlrArray,_};
-import java.util._;
+import java.util.{List=>jList,_};
 import sun.misc._;
 
 import com.oracle.graal.api._;
@@ -35,7 +35,6 @@ import com.oracle.graal.bytecode._;
 
 trait RuntimeUniverse_LMS extends Core_LMS with RuntimeUniverse {
 
-def reflect[A:TypeRep](s: Any*): Exp[A] = ???
 
 def unsafe: Unsafe_LMS
 

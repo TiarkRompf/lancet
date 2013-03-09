@@ -190,7 +190,9 @@ class BytecodeInterpreter_LMS_Opt4 extends AbstractInterpreter_LMS with Bytecode
       }
     }
 
-    def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = "BLOCK_"+keyid+"("+fields.mkString(",")+")"
+    def genGotoDef(key: String, rhs: Block[Unit]) = reflect[Unit]("def "+key+": Unit = ", rhs)
+
+    def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = reflect[Unit]("BLOCK_"+keyid+"("+fields.mkString(",")+")")
 
     def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]): Block[Unit] = reify {
       if (debugBlockKeys) emitString("// "+key+"\n")
@@ -285,17 +287,19 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
     // abstract methods
 
-    def genBlockCall(keyid: Int, fields: List[Rep[Any]]): String
+    def genGotoDef(key: String, rhs: Block[Unit]): Rep[Unit]
+    def genBlockCall(keyid: Int, fields: List[Rep[Any]]): Rep[Unit]
     def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]): Block[Unit]
     def genVarDef(v: Rep[Any]): String
     def genVarWrite(v: Rep[Any]): String
     def genVarRead(v: Rep[Any]): String
 
-    def emitAll(b: Block[Unit]) = ???//b.stms foreach emit
-
     // TODO: proper subst transformer
 
-    def infix_replace[A,B](a: Block[A], key: String, b: Block[B]): Block[A] = ???/*{
+    def infix_replace[A,B](a: Block[A], key: String, b: Block[B]): Block[A] = {
+      println("replace: "+key+"->"+b)
+      a
+    }/*{
       var found = 0
       val t = new StructuralTransformer {
         override def transformStm(s: Stm): List[Stm] = s match {
@@ -489,10 +493,10 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
               val fields = getFields(s1)
               val (key,keyid) = contextKeyId(getFrame(s1))
               val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
-              val call = genBlockCall(keyid, fields)
-              ???//reify { reflect[Unit](";", Block[Unit](head.stms:+Unstructured(call), head.res)) }
+              reify { reflect[Unit](head); genBlockCall(keyid, fields) }
             }
-            src = src.replace("GOTO_"+i+";", rhs)
+            genGotoDef("GOTO_"+i, rhs)
+            //src = src.replace("GOTO_"+i+";", rhs)
           }
           blockInfoOut(i) = BlockInfoOut(returns, gotos, src) // update body src
         }

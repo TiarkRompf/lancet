@@ -25,7 +25,7 @@ package lancet.interpreter
 import lancet.core._
 
 import java.lang.reflect.{Array=>jlrArray,_}
-import java.util.{Vector=>_,_}
+import java.util.{Vector=>_,List=>_,_}
 import java.io.{PrintWriter,StringWriter}
 import sun.misc._
 
@@ -95,8 +95,10 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
     
       val stream = new StringWriter
       codegen.withStream(new PrintWriter(stream)) {
-        codegen.emitBlock(y)
+        codegen.emitSource(List(arg),y,"Generated",codegen.stream)
       }
+
+      globalDefs.foreach(println)
 
       val source = stream.toString 
       printIndented(source)(Console.println)
