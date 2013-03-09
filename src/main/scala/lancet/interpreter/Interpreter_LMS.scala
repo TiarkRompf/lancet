@@ -24,18 +24,22 @@ package lancet.interpreter
 
 import lancet.core._
 
-import java.lang.reflect.{Array=>jlrArray,_};
-import java.util.{Vector=>_,_};
-import sun.misc._;
+import java.lang.reflect.{Array=>jlrArray,_}
+import java.util.{Vector=>_,_}
+import java.io.{PrintWriter,StringWriter}
+import sun.misc._
 
-import com.oracle.graal.api._;
-import com.oracle.graal.api.meta._;
-import com.oracle.graal.hotspot.meta._;
-import com.oracle.graal.bytecode._;
+import com.oracle.graal.api._
+import com.oracle.graal.api.meta._
+import com.oracle.graal.hotspot.meta._
+import com.oracle.graal.bytecode._
+
+import scala.virtualization.lms.common._
+import scala.virtualization.lms.internal._
 
 
 //@SuppressWarnings("static-method")
-trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInterpreter_Common {
+trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInterpreter_Common { self =>
 
     import BytecodeInterpreter._
 
@@ -62,21 +66,41 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       "{ (ARG: " + manifest[A] + ") => " + src0 + "}"
     }*/
 
-    def printIndented(str: String): Unit = {
+    def printIndented(str: String)(emit: String => Unit): Unit = {
       val lines = str.split("\n")
       var indent = 1
-      for (l0 <- lines; val l = l0.trim; if l.length > 0) {
+      for (l0 <- lines) {
+        val l = l0.trim
+        if (l.length > 0) {
         var open = 0
         var close = 0
         l foreach { case '{' => open += 1 case '}' => close += 1 case _ => }
         val d = if (close == 0) 0 else l.takeWhile(_ == '}').length
-        Console.println("  "*(indent-d) + l)
+        emit("  "*(indent-d) + l)
         indent += (open - close)
+        }
       }
     }
 
 
     def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
+
+      val arg = fresh[Int]
+      val y = reify {
+        execute(f.getClass.getMethod("apply", manifest[A].erasure), Array[Rep[Object]](unit(f),arg.asInstanceOf[Rep[Object]])(repManifest[Object]))        
+      }
+
+      val codegen = new GEN_Scala_LMS { val IR: self.type = self
+      }
+    
+      val stream = new StringWriter
+      codegen.withStream(new PrintWriter(stream)) {
+        codegen.emitBlock(y)
+      }
+
+      val source = stream.toString 
+      printIndented(source)(Console.println)
+
 
       //def captureOutputResult[T](x:T) = ("", x)
 
@@ -116,14 +140,12 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
         Console.println("}; BODY.RES }")
         Console.println("}")
       }
-
-
-      System.out.println(source)
-
-      ScalaCompile.compile[A,B](source, "Generated", constantPool.map(x=>specCls(x)).toList)
 */
 
-      ???
+      //System.out.println(source)
+
+      //ScalaCompile.compile[A,B](source, "Generated", constantPool.map(x=>specCls(x)).toList)
+      ScalaCompile.compile[A,B](source, "Generated", Nil) //FIXME: constant pool
     }
 
     //@Override
