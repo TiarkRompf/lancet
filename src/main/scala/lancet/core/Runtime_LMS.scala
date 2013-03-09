@@ -176,9 +176,9 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
 
         if (!static) {
             if (args.length > 1)
-                reflect[Object](liftConst(m),".invoke("+args.map(_+".asInstanceOf[AnyRef]").mkString(",")+").asInstanceOf["+mtyp+"] // "+holder+"."+name)(mtyp)
+                reflect[Object](liftConst[Object](m),".invoke("+args.map(_+".asInstanceOf[AnyRef]").mkString(",")+").asInstanceOf["+mtyp+"] // "+holder+"."+name)(mtyp)
             else
-                reflect[Object](liftConst(m),".invoke("+args(0)+").asInstanceOf["+mtyp+"] // "+holder+"."+name)(mtyp)
+                reflect[Object](liftConst[Object](m),".invoke("+args(0)+").asInstanceOf["+mtyp+"] // "+holder+"."+name)(mtyp)
             //reflect[Object](args(0)+".asInstanceOf["+holder+"]."+name+"("+args.drop(1).mkString(",")+").asInstanceOf[Object]")
         } else {
             reflect[Object](holder+"."+name+"("+args.mkString(",")+").asInstanceOf["+mtyp+"]")(mtyp)

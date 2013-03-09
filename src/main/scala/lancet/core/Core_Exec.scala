@@ -5,6 +5,8 @@ trait Core_Exec extends Base_Exec with Core {
   type TypeRep[T] = Manifest[T]
   implicit def anyType[T:Manifest]: TypeRep[T] = manifest[T]
   implicit def booleanType = manifest[Boolean]
+  implicit def intType = manifest[Int]
+  implicit def unitType = manifest[Unit]
 
 
   implicit def unit(x: Boolean): Boolean = x

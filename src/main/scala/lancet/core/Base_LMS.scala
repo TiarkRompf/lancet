@@ -44,7 +44,7 @@ trait Base_LMS1 extends Base with IR_LMS { self =>
   //type Rep[+T] = IR.Rep[T]
   type TypeRep[T]// = Manifest[T]
 
-  implicit def typeRepToManifest[T]: Manifest[T] = ???
+  implicit def typeRepToManifest[T:TypeRep]: Manifest[T]
 
   def infix_typ[T](x: Rep[T]): TypeRep[T]
 
@@ -72,7 +72,7 @@ trait Base_LMS1 extends Base with IR_LMS { self =>
 
 trait Base_LMS0 extends Base_LMS1 {
   def reflect[T:TypeRep](d: Def[T]): Rep[T]
-  def reify[T](x: => Rep[T]): Block[T]
+  def reify[T:TypeRep](x: => Rep[T]): Block[T]
 
   def liftConst[T:TypeRep](x:T): Rep[T]
 
@@ -80,21 +80,39 @@ trait Base_LMS0 extends Base_LMS1 {
 
   type Block[+T]
 
-  case class TypeRep[T](s: String) { override def toString = s }
+  case class TypeRep[T:Manifest](s: String) { override def toString = s; def manif = manifest[T] }
 
-  implicit def anyType[T:Manifest] = new TypeRep[T](manifestStr(manifest[T]))
+  implicit def typeRepToManifest[T:TypeRep]: Manifest[T] = typeRep[T].manif
 
-  implicit object booleanType extends TypeRep[Boolean]("Boolean")
-  implicit object byteType extends TypeRep[Byte]("Byte")
-  implicit object charType extends TypeRep[Char]("Char")
-  implicit object shortType extends TypeRep[Short]("Short")
-  implicit object intType extends TypeRep[Int]("Int")
-  implicit object longType extends TypeRep[Long]("Long")
-  implicit object floatType extends TypeRep[Float]("Float")
-  implicit object doubleType extends TypeRep[Double]("Double")
-  implicit object objectType extends TypeRep[Object]("Object")
+  //implicit def anyType[T:Manifest] = new TypeRep[T](manifestStr(manifest[T]))
 
-  implicit object unitType extends TypeRep[Unit]("Unit")
+  val booleanManif = manifest[Boolean]
+  val byteManif    = manifest[Byte]
+  val charManif    = manifest[Char] 
+  val shortManif   = manifest[Short]   
+  val intManif     = manifest[Int] 
+  val longManif    = manifest[Long] 
+  val floatManif   = manifest[Float]   
+  val doubleManif  = manifest[Double]   
+  val objectManif  = manifest[Object]   
+
+  val classManif   = manifest[Class[Object]]
+  val unitManif    = manifest[Unit]
+  val stringManif  = manifest[String]
+
+  implicit object booleanType extends TypeRep[Boolean]("Boolean")(booleanManif)
+  implicit object byteType    extends TypeRep[Byte   ]("Byte"   )(byteManif)
+  implicit object charType    extends TypeRep[Char   ]("Char"   )(charManif)
+  implicit object shortType   extends TypeRep[Short  ]("Short"  )(shortManif)
+  implicit object intType     extends TypeRep[Int    ]("Int"    )(intManif)
+  implicit object longType    extends TypeRep[Long   ]("Long"   )(longManif)
+  implicit object floatType   extends TypeRep[Float  ]("Float"  )(floatManif)
+  implicit object doubleType  extends TypeRep[Double ]("Double" )(doubleManif)
+  implicit object objectType  extends TypeRep[Object ]("Object" )(objectManif)
+
+  implicit object classType   extends TypeRep[Class[Object]]("Class[Object]" )(classManif)
+  implicit object unitType    extends TypeRep[Unit   ]("Unit"   )(unitManif)
+  implicit object stringType  extends TypeRep[String ]("String" )(stringManif)
 
   def typeRep[T:TypeRep]: TypeRep[T] = implicitly[TypeRep[T]]
 
@@ -163,7 +181,7 @@ trait Base_LMS extends Base_LMS0 {
 
 
   def reflect[T:TypeRep](d: Def[T]): Rep[T] = toAtom(d)
-  def reify[T](x: => Rep[T]): Block[T] = reifyEffects(x)
+  def reify[T:TypeRep](x: => Rep[T]): Block[T] = reifyEffects(x)
 
   def liftConst[T:TypeRep](x:T): Rep[T] = unit(x)
 
@@ -396,7 +414,8 @@ trait Base_LMS extends Base_LMS0 {
   def println(s: Any) = assert(false)
 */
 
-  def emitString(s: String) = ???//emit(Unstructured(s.toString))
+  // TODO
+  def emitString(s: String) = { println("ignore: "+s) } //emit(Unstructured(s.toString))
 
 
 

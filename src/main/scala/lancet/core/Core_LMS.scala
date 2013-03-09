@@ -16,67 +16,68 @@ trait Core_LMS extends Base_LMS {
   implicit def unit(x: Double): Rep[Double] = liftConst(x)
 
 
-  def unit(x: Null): Rep[Object] = liftConst(null)
+  def unit(x: Null): Rep[Object] = liftConst[Object](null)
   def unit(x: Object): Rep[Object] = liftConst(x)
 
+  case class PrimConvert[A:TypeRep,B:TypeRep](x:Rep[A]) extends Def[B] { def tpA = typeRep[A]; def tpB = typeRep[B] }
 
-  case class PrimConvert[A:TypeRep,B:TypeRep](x:Rep[A]) extends Def[B]
-
-  case class PrimNegate[A:TypeRep](x: Rep[A]) extends Def[A]
-  case class PrimPlus[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
-  case class PrimMinus[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
-  case class PrimTimes[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
-  case class PrimDiv[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
-  case class PrimMod[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
-  case class PrimAnd[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
-  case class PrimOr[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
-  case class PrimXor[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
-  case class PrimShiftLeft[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
-  case class PrimShiftRight[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
-  case class PrimShiftRightUnsigned[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A]
-  case class PrimLess[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean]
-  case class PrimLessEqual[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean]
-  case class PrimGreater[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean]
-  case class PrimGreaterEqual[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean]
-  case class PrimEqual[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean]
-  case class PrimNotEqual[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean]
+  case class PrimNegate[A:TypeRep](x: Rep[A]) extends Def[A] { def tpA = typeRep[A] }
+  case class PrimPlus[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A] { def tpA = typeRep[A] }
+  case class PrimMinus[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A] { def tpA = typeRep[A] }
+  case class PrimTimes[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A] { def tpA = typeRep[A] }
+  case class PrimDiv[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A] { def tpA = typeRep[A] }
+  case class PrimMod[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A] { def tpA = typeRep[A] }
+  case class PrimAnd[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A] { def tpA = typeRep[A] }
+  case class PrimOr[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A] { def tpA = typeRep[A] }
+  case class PrimXor[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A] { def tpA = typeRep[A] }
+  case class PrimShiftLeft[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A] { def tpA = typeRep[A] }
+  case class PrimShiftRight[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A] { def tpA = typeRep[A] }
+  case class PrimShiftRightUnsigned[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[A] { def tpA = typeRep[A] }
+  case class PrimLess[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean] { def tpA = typeRep[A] }
+  case class PrimLessEqual[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean] { def tpA = typeRep[A] }
+  case class PrimGreater[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean] { def tpA = typeRep[A] }
+  case class PrimGreaterEqual[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean] { def tpA = typeRep[A] }
+  case class PrimEqual[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean] { def tpA = typeRep[A] }
+  case class PrimNotEqual[A:TypeRep](x: Rep[A], y: Rep[A]) extends Def[Boolean] { def tpA = typeRep[A] }
 
   case class ObjectEqual(x: Rep[Object], y: Rep[Object]) extends Def[Boolean]
   case class ObjectNotEqual(x: Rep[Object], y: Rep[Object]) extends Def[Boolean]
-  case class ObjectAsInstanceOf[T:TypeRep](x: Rep[Object]) extends Def[T]
-  case class ObjectIsInstanceOf[T:TypeRep](x: Rep[Object]) extends Def[Boolean]
+  case class ObjectAsInstanceOf[A:TypeRep](x: Rep[Object]) extends Def[A] { def tpA = typeRep[A] }
+  case class ObjectIsInstanceOf[A:TypeRep](x: Rep[Object]) extends Def[Boolean] { def tpA = typeRep[A] }
 
-  case class IfThenElse[T:TypeRep](x: Rep[Boolean], y: Block[T], z: Block[T]) extends Def[T]
+  case class IfThenElse[A:TypeRep](x: Rep[Boolean], y: Block[A], z: Block[A]) extends Def[A] { def tpA = typeRep[A] }
 
+  def mtr[A:Manifest]: TypeRep[A] = manifestToTypeRep(manifest[A])
+  def infix_relax[A,B](a:TypeRep[A]): TypeRep[B] = a.asInstanceOf[TypeRep[B]]
 
   override def mirrorDef[A:Manifest](d: Def[A], f: Transformer)(implicit pos: SourceContext): Def[A] = (d match {
-    case PrimConvert(x)                   => PrimConvert(f(x))(typeRep[Any], typeRep[A]) /// FIXME!!!! ---> GADTS
+    case d@PrimConvert(x)                 => PrimConvert(f(x))                      (d.tpA, d.tpB)
 
-    case PrimNegate(x)                    => PrimNegate(f(x))
-    case PrimPlus(x, y)                   => PrimPlus(f(x), f(y))
-    case PrimMinus(x, y)                  => PrimMinus(f(x), f(y))
-    case PrimTimes(x, y)                  => PrimTimes(f(x), f(y))
-    case PrimDiv(x, y)                    => PrimDiv(f(x), f(y))
-    case PrimMod(x, y)                    => PrimMod(f(x), f(y))
-    case PrimAnd(x, y)                    => PrimAnd(f(x), f(y))
-    case PrimOr(x, y)                     => PrimOr(f(x), f(y))
-    case PrimXor(x, y)                    => PrimXor(f(x), f(y))
-    case PrimShiftLeft(x, y)              => PrimShiftLeft(f(x), f(y))
-    case PrimShiftRight(x, y)             => PrimShiftRight(f(x), f(y))
-    case PrimShiftRightUnsigned(x, y)     => PrimShiftRightUnsigned(f(x), f(y))
-    case PrimLess(x, y)                   => PrimLess(f(x), f(y))
-    case PrimLessEqual(x, y)              => PrimLessEqual(f(x), f(y))
-    case PrimGreater(x, y)                => PrimGreater(f(x), f(y))
-    case PrimGreaterEqual(x, y)           => PrimGreaterEqual(f(x), f(y))
-    case PrimEqual(x, y)                  => PrimEqual(f(x), f(y))
-    case PrimNotEqual(x, y)               => PrimNotEqual(f(x), f(y))
+    case d@PrimNegate(x)                    => PrimNegate(f(x))                     (d.tpA.relax)
+    case d@PrimPlus(x, y)                   => PrimPlus(f(x), f(y))                 (d.tpA.relax)
+    case d@PrimMinus(x, y)                  => PrimMinus(f(x), f(y))                (d.tpA.relax)
+    case d@PrimTimes(x, y)                  => PrimTimes(f(x), f(y))                (d.tpA.relax)
+    case d@PrimDiv(x, y)                    => PrimDiv(f(x), f(y))                  (d.tpA.relax)
+    case d@PrimMod(x, y)                    => PrimMod(f(x), f(y))                  (d.tpA.relax)
+    case d@PrimAnd(x, y)                    => PrimAnd(f(x), f(y))                  (d.tpA.relax)
+    case d@PrimOr(x, y)                     => PrimOr(f(x), f(y))                   (d.tpA.relax)
+    case d@PrimXor(x, y)                    => PrimXor(f(x), f(y))                  (d.tpA.relax)
+    case d@PrimShiftLeft(x, y)              => PrimShiftLeft(f(x), f(y))            (d.tpA.relax)
+    case d@PrimShiftRight(x, y)             => PrimShiftRight(f(x), f(y))           (d.tpA.relax)
+    case d@PrimShiftRightUnsigned(x, y)     => PrimShiftRightUnsigned(f(x), f(y))   (d.tpA.relax)
+    case d@PrimLess(x, y)                   => PrimLess(f(x), f(y))                 (d.tpA.relax)
+    case d@PrimLessEqual(x, y)              => PrimLessEqual(f(x), f(y))            (d.tpA.relax)
+    case d@PrimGreater(x, y)                => PrimGreater(f(x), f(y))              (d.tpA.relax)
+    case d@PrimGreaterEqual(x, y)           => PrimGreaterEqual(f(x), f(y))         (d.tpA.relax)
+    case d@PrimEqual(x, y)                  => PrimEqual(f(x), f(y))                (d.tpA.relax)
+    case d@PrimNotEqual(x, y)               => PrimNotEqual(f(x), f(y))             (d.tpA.relax)
     
-    case ObjectEqual(x, y)                => ObjectEqual(f(x), f(y))
-    case ObjectNotEqual(x, y)             => ObjectNotEqual(f(x), f(y))
-    case ObjectAsInstanceOf(x)            => ObjectAsInstanceOf(f(x))(typeRep[A])
-    case ObjectIsInstanceOf(x)            => ObjectIsInstanceOf(f(x))(typeRep[A]) // <------- NOT A!!
+    case d@ObjectEqual(x, y)                => ObjectEqual(f(x), f(y))
+    case d@ObjectNotEqual(x, y)             => ObjectNotEqual(f(x), f(y))
+    case d@ObjectAsInstanceOf(x)            => ObjectAsInstanceOf(f(x))             (d.tpA)
+    case d@ObjectIsInstanceOf(x)            => ObjectIsInstanceOf(f(x))             (d.tpA)
 
-    case IfThenElse(x, y, z)              => IfThenElse(f(x), f(y), f(z))
+    case d@IfThenElse(x, y, z)              => IfThenElse(f(x), f(y), f(z))         (d.tpA.relax)
 
     case _ => super.mirrorDef(d, f)    
   }).asInstanceOf[Def[A]]

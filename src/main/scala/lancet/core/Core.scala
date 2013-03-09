@@ -4,8 +4,10 @@ trait Core extends Base {
 
 
   implicit def booleanType: TypeRep[Boolean]
+  implicit def intType: TypeRep[Int]
+  implicit def unitType: TypeRep[Unit]
 
-  implicit def anyType[T:Manifest]: TypeRep[T]
+  //implicit def anyType[T:Manifest]: TypeRep[T]
 
 
 
