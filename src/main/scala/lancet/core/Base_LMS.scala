@@ -38,8 +38,8 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
   }}
 
   override def emitValDef(sym: Sym[Any], rhs: String) = 
-    if (sym.tp == manifest[Unit]) stream.println(rhs)
-    else super.emitValDef(sym,rhs)
+    if (sym.tp == manifest[Unit]) stream.println(rhs+";")
+    else super.emitValDef(sym,rhs+";")
 
   override def emitNode(sym: Sym[Any], rhs: Def[Any]) = rhs match {
     case Unstructured(xs) =>
@@ -53,7 +53,7 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
           case e =>
             stream.print(e)
         }
-        stream.println
+        stream.println(";")
     case _ => super.emitNode(sym,rhs)
   }
 
@@ -66,6 +66,7 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
 }
 
 trait GEN_Scala_LMS extends GEN_Scala_LMS_Base with ScalaGenCore {
+
 }
 
 

@@ -92,7 +92,7 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
     type IState = (InterpreterFrame, StoreLattice.Elem, ExprLattice.Elem)
 
     def allLubs(states: List[IState]): (IState,List[Block[Unit]]) = {
-      if (states.length == 1) return (states.head, Nil) // fast path
+      if (states.length == 1) return (states.head, List(reify[Unit](liftConst(())))) // fast path
       // backpatch info: foreach state, commands needed to initialize lub vars
       val gos = states map { case (frameX,storeX,exprX) =>
         val frameY = freshFrameSimple(frameX)
@@ -190,7 +190,27 @@ class BytecodeInterpreter_LMS_Opt4 extends AbstractInterpreter_LMS with Bytecode
       }
     }
 
-    def genGotoDef(key: String, rhs: Block[Unit]) = reflect[Unit]("def "+key+": Unit = ", rhs)
+
+/*    case class Goto(id: String, targetId: String) extends Def[Unit] {
+      var state: IState = IState = _
+    }*/
+
+    def genGoto(key: String) = {
+      reflect[Unit](key)
+    }
+    def genGotoDef(key: String, rhs: Block[Unit]) = {
+      // FIXME: should do constant-time replace
+      val search = key
+      var hit = false
+      globalDefs = globalDefs.map {
+        case d@TP(s,Reflect(Unstructured(List(`search`)), u, es)) => 
+          println("FOUND "+d); 
+          hit = true
+          TP(s, Reflect(Unstructured(List(rhs)), u, es))
+        case d => d
+      }
+      if (!hit) println("NOT FOUND "+search)
+    }
 
     def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = reflect[Unit]("BLOCK_"+keyid+"("+fields.map(quote).mkString(",")+")")
 
@@ -237,7 +257,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
     var debugBlocks = false
     var debugBlockKeys = true
-    var debugMethods = false
+    var debugMethods = true
     var debugReturns = false
     var debugLoops = false
     var debugPaths = false
@@ -287,6 +307,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
     // abstract methods
 
+    def genGoto(key: String): Rep[Unit]
     def genGotoDef(key: String, rhs: Block[Unit]): Rep[Unit]
     def genBlockCall(keyid: Int, fields: List[Rep[Any]]): Rep[Unit]
     def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]): Exp[Unit]
@@ -297,8 +318,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
     // TODO: proper subst transformer
 
     def infix_replace[A,B](a: Block[A], key: String, b: Block[B]): Block[A] = {
-      println("replace: "+key+"->"+b)
-      a
+      ???
     }/*{
       var found = 0
       val t = new StructuralTransformer {
@@ -352,7 +372,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       if (frame.getParentFrame == null) { // TODO: cleanup?
         val p = popAsObject(frame, frame.getMethod.getSignature.getReturnKind())
-        return reflect[Unit]("(RES = "+p+") // return to root")
+        return reflect[Unit]("(RES = "+quote(p)+") // return to root")
       }
 
       val method = frame.getMethod()
@@ -389,6 +409,8 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       if (debugMethods) emitString("// << " + method)
 
+      val (mkey,mkeyid) = contextKeyId(mframe)
+
       case class BlockInfo(inEdges: List[(Int,IState)], inState: IState)
       case class BlockInfoOut(returns: List[IState], gotos: List[IState], code: Block[Unit])
 
@@ -407,7 +429,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
         else if (d < saveDepth) { 
           val s = getState(blockFrame)
           val out = blockInfoOut(curBlock)
-          emitString("RETURN_"+curBlock+"_"+(out.returns.length)+";")
+          genGoto("RETURN_"+mkeyid+"_"+curBlock+"_"+(out.returns.length))
           blockInfoOut(curBlock) = out.copy(returns = out.returns :+ s)
           //returns = returns :+ (freshFrameSimple(blockFrame), store)
           //println("RETURN_"+(returns.length-1)+";")
@@ -442,7 +464,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
         }
 
         val out = blockInfoOut(curBlock)
-        emitString("GOTO_"+(out.gotos.length)+";")
+        genGoto("GOTO_"+mkeyid+"_"+curBlock+"_"+(out.gotos.length))
         blockInfoOut(curBlock) = out.copy(gotos = out.gotos :+ s)
         liftConst(())
       }
@@ -495,7 +517,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
               val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
               reify { reflect[Unit](head); genBlockCall(keyid, fields) }
             }
-            genGotoDef("GOTO_"+i, rhs)
+            genGotoDef("GOTO_"+mkeyid+"_"+b.blockID+"_"+i, rhs)
             //src = src.replace("GOTO_"+i+";", rhs)
           }
           blockInfoOut(i) = BlockInfoOut(returns, gotos, src) // update body src
@@ -531,14 +553,13 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       if (debugMethods) emitString("// >> " + method)
 
       val returns = blockInfoOut.toList flatMap { case (i, out) =>
-        out.returns.zipWithIndex.map { case (st, j) => ("RETURN_"+i+"_"+j+";",st) }
+        out.returns.zipWithIndex.map { case (st, j) => ("RETURN_"+mkeyid+"_"+i+"_"+j,st) }
       }
-
 
       if (returns.length == 0) {
         emitAll(block)
         emitString("// (no return?)")
-      } else if (returns.length == 1) { 
+      } else if (false && returns.length == 1) {  // TODO
         val (k,s) = returns(0)
         val ret = reify {
           if (debugReturns) emitString("// ret single "+method)
@@ -557,8 +578,9 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
         var block1 = block
         for ((k,go) <- (returns.map(_._1)) zip gos) {
-          val assign = reify[Unit]{ fields.map(genVarWrite); liftConst(()) }
-          reflect[Unit]("def "+k.substring(6)+": Unit = {", go, assign,"};") // substr prevents further matches                      
+          val block = reify[Unit]{ reflect[Unit](go); fields.map(genVarWrite); liftConst(()) }
+          genGotoDef(k, block)
+          //reflect[Unit]("def "+k.substring(6)+": Unit = {", go, assign,"};") // substr prevents further matches
         }
         emitAll(block1)
         
@@ -566,7 +588,8 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
         if (debugReturns) emitString("// ret multi "+method)
         for (v <- fields) genVarRead(v)
         withState(ss)(exec)
-        emitString("}}")
+        emitString("}")
+        emitString("}")
       }
       liftConst(())
     }

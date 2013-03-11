@@ -85,8 +85,20 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
     def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
 
+      val (maStr, mbStr) = (manifestStr(manifest[A]), manifestStr(manifest[B]))
+
       val arg = fresh[Int]
       val y = reify {
+
+        emitString("import sun.misc.Unsafe")
+        emitString("val unsafe = { val fld = classOf[Unsafe].getDeclaredField(\"theUnsafe\"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }")
+        emitString("type char = Char")
+        emitString("def WARN = assert(false, \"WARN\")")
+        emitString("def ERROR = assert(false, \"ERROR\")")
+
+        emitString("  var RES = null.asInstanceOf["+mbStr+"]")
+
+
         execute(f.getClass.getMethod("apply", manifest[A].erasure), Array[Rep[Object]](unit(f),arg.asInstanceOf[Rep[Object]])(repManifest[Object]))        
       }
 
