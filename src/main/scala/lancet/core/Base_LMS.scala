@@ -20,6 +20,7 @@ trait IR_LMS_Base extends EffectExp {
   def emitString(s: String)(implicit e:TypeRep[Unit]) = reflect[Unit](s)
   def emitAll[A:TypeRep](s: Block[A]) = reflect[A](s)
 
+  case class Patch(key: String, var block: Block[Unit]) extends Def[Unit]
 }
 
 trait IR_LMS extends IR_LMS_Base
@@ -54,6 +55,8 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
             stream.print(e)
         }
         stream.println(";")
+    case Patch(key, block) =>
+      emitBlock(block)
     case _ => super.emitNode(sym,rhs)
   }
 
@@ -66,6 +69,7 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
 }
 
 trait GEN_Scala_LMS extends GEN_Scala_LMS_Base with ScalaGenCore {
+
 
 }
 
@@ -232,268 +236,6 @@ trait Base_LMS extends Base_LMS0 {
 
   def manifestToTypeRep[T](x: Manifest[T]): TypeRep[T] = TypeRep(manifestStr(x))(x)
 
-
-  //def VConstToString(x:Any): String
-/*
-  def mirrorDef[A:TypeRep](d: Def[A], f: Transformer): Def[A] = d
-  def mirror[A:TypeRep](d: Def[A], f: Transformer): Rep[A] = ???
-
-  trait Traverser {
-
-    def traverseBlock(b: Block[Any]): Unit = b match {
-      case Block(stms,res) =>
-        stms foreach traverseStm
-    }
-
-    def traverseStm(s: Stm): Unit = {
-      s.blocks foreach traverseBlock
-    }
-
-  }
-
-
-  trait Transformer {
-    def apply[A](x: Rep[A]): Rep[A] = x
-    def apply[A](b: Block[A]): Block[A] = transformBlock(b)
-    def transformBlock[A](b: Block[A]): Block[A] = b
-  }
-
-
-  trait StructuralTransformer extends Transformer {
-
-    override def transformBlock[A](b: Block[A]): Block[A] = b match {
-      case Block(stms,res) =>
-        Block(stms flatMap transformStm,res)
-    }
-
-    def transformStm(s: Stm): List[Stm] = s match {
-      case ValDef(x,typ,rhs) => 
-        List(ValDef(x,typ,rhs map {
-          case b: Block[_] => transformBlock(b)
-          case d: Def[a] => mirrorDef(d,this)(typ.asInstanceOf[TypeRep[a]])
-          case e => e
-        }))
-      case Unstructured(s) => List(Unstructured(s))
-    }
-  }
-
-
-  trait CodeGen extends Traverser {
-
-    override def traverseBlock(b: Block[Any]): Unit = b match {
-      case Block(List(ValDef("_",_,List(";",b:Block[_]))),_) => traverseBlock(b) // flatten block ...
-      case _ => super.traverseBlock(b)
-    }
-
-    override def traverseStm(s: Stm): Unit = s match {
-      case ValDef(x,typ,rhs) => 
-        if (x != "_") Console.print("val "+x+" = ")
-        rhs foreach {
-          case b: Block[a] => 
-            emitScalaBlock(b, this)(typ.asInstanceOf[TypeRep[a]])
-          case d: Def[a] => 
-            emitScala(d, this)(typ.asInstanceOf[TypeRep[a]])
-          case e =>
-            Console.print(e.toString)
-        }
-        Console.println()
-      case Unstructured(s) => 
-        Console.println(s)
-    }
-
-  }
-
-
-  def quickString[A:TypeRep](d: Def[A]): String = d.toString
-
-
-  def emitScala[A:TypeRep](d: Def[A], f: CodeGen): Unit = ???
-  def emitScalaBlock[A:TypeRep](b: Block[A], f: CodeGen): Unit = {
-    Console.println("{")
-    f.traverseBlock(b)
-    if (b.res != liftConst(())) Console.println(b.res)
-    Console.print("}")
-  }*/
-
-
-
-
-  /*abstract class Rep[+T:TypeRep] { def typ: TypeRep[_] = implicitly[TypeRep[T]] }
-
-  case class Static[+T:TypeRep](x: T) extends Rep[T] { // IR.VConst
-    // adding a type cast everywhere: TestC was having issues with literal 8 passed to Object param?
-    override def toString = if (x == null) "null" else VConstToString(x) + ".asInstanceOf[" + typ + "]" // skip null's type
-  }
-
-  case class Dyn[+T:TypeRep](s: String) extends Rep[T] { // extends IR.Exp
-    override def toString = s 
-  }
-
-  case class Block[+T](stms: List[Stm], res: Rep[T]) { // IR.Block
-    //override def toString = "{\n"+stms.mkString("\n")+"\n" + res + "\n}"
-  }
-
-  abstract class Def[+T]
-
-  def fblocks(e: Any): List[Block[Any]] = e match {
-    case b: Block[Any] => List(b)
-    case p: Product => p.productIterator.toList.flatMap(fblocks(_))
-    case _ => Nil
-  }
-  def fdeps(e: Any): List[Dyn[Any]] = e match {
-    case s: Dyn[Any] => List(s)
-    case p: Product => p.productIterator.toList.flatMap(fdeps(_))
-    case _ => Nil
-  }
-
-  abstract class Stm {
-    def deps: List[Dyn[Any]]
-    def blocks: List[Block[Any]]
-  }
-
-  case class ValDef[T](x: String, typ: TypeRep[T], rhs: List[Any]) /*rhs: Either[String,Rep[Any]]*/ extends Stm { // IR.TP with IR.Def
-    // we shouldn't recurse in toString because things will get big
-    // unfortunately cse still depends on it (need to move to node ids)
-    override def toString = if (x == "_") rhs.mkString("") else "val "+x+/*":"+typ+*/" = "+rhs.mkString("") 
-    def deps: List[Dyn[Any]] = fdeps(rhs)
-    def blocks: List[Block[Any]] = fblocks(rhs)
-  }
-
-  case class Unstructured(s: String) extends Stm {
-    override def toString = s
-    def deps: List[Dyn[Any]] = Nil
-    def blocks: List[Block[Any]] = Nil
-  }
-
-
-  def repManifest[T:Manifest]: Manifest[Rep[T]] = manifest[Rep[T]]
-
-  var nSyms = 0
-  def fresh = { nSyms += 1; "x" + (nSyms - 1) }
-
-  def reflect[T:TypeRep](s: Any*): Rep[T] = { 
-    val rhs = s.toString // FIXME: don't want to do this! (--> big?)
-
-    (exprs.get(rhs) match { // cse?
-      case Some(y) =>
-        emitString("/* cse: "+rhs+" = "+ y + "*/")
-        y
-      case None =>
-      if (typeRep[T] == typeRep[Unit]) {
-        emit(ValDef("_", typeRep[T], s.toList)); liftConst(()).asInstanceOf[Rep[T]]
-      } else {
-        val x = fresh; 
-        emit(ValDef(x,typeRep[T],s.toList)); 
-        val y = Dyn[T](x)
-        //FIXME: can't cse if stm has effects
-        //FIXME: not everything is SSA (VConst_LUB) -- need to kill! (TODO: in emit if lhs not a fresh var)
-        def isPure = !(rhs.contains("throw") || rhs.contains("new") || rhs.contains(".alloc") || rhs.contains(".put")) //HACK
-        if (isPure)
-          rewrite(rhs, y)
-        y
-      }
-    }).asInstanceOf[Rep[T]]
-  }
-/*
-  def reflect[T:TypeRep](s: Any*)(s: Summary): Rep[T] = {
-    val rhs = s.mkString("")
-
-    ({//exprs.getOrElse(rhs, {
-      if (typeRep[T] == typeRep[Unit]) {
-        emit(ValDef("_", s.toList)); liftConst(()).asInstanceOf[Rep[T]]
-      } else {
-        rewrite(rhs)
-        val x = fresh; emit(ValDef(x,s.toList)); Dyn[T](x)
-      }
-    }).asInstanceOf[Rep[T]]
-  }
-*/
-
-
-  var exprs: Map[String, Rep[Any]] = Map.empty // maps
-  //var envdef: Map[String, ValDef[T]] = Map.empty
-
-  def rewrite(s: String, x: Rep[Any]): Unit = {
-    // not used yet
-    //assert(false, "REWRITE not used yet")
-    exprs += (s -> x)
-  }
-
-  //FIXME: need lub!
-
-
-
-
-  //var d = 0
-  var stms: List[Stm] = null
-
-  def emit(s: Stm) = {
-    //System.out.println("  "*d + s)
-    stms = s::stms
-  }
-
-
-  def reify[T](x: => Rep[T]): Block[T] = {
-    val save = stms
-    stms = Nil
-    try {
-      //System.out.println("  "*d + "<<")
-      //d += 1
-      val res = x
-      //d -= 1
-      //System.out.println("  "*d + ">>")
-      Block(stms.reverse,res)
-    } finally {
-      stms = save
-    }
-  }
-
-
-
-  def emitBlock(s: Block[Any]) = assert(false) // TODO
-
-  def println(s: Any) = assert(false)
-*/
-
-  //def emitString(s: String)
-  //def emitAll[A:TypeRep](s: Block[A])
-
-
-
-/*
-  def captureOutput[A](func: => Rep[A]): String = {
-    val (s,r) = captureOutputResult(func)
-    s + "\n" + r
-  }
-  def captureOutputResult[A](func: => Rep[A]): (String,Rep[A]) = {
-    val Block(stms,res) = reify(func)
-    (stms.mkString("\n"),res)
-  }
-*/
-
-  import java.io._
-  def captureConsoleOutputResult[A](func: => A): (String,A) = {
-    val bstream = new ByteArrayOutputStream
-    val r = withConsoleOutput(new PrintStream(bstream))(func) //func
-    (bstream.toString, r)
-  }
-  def withConsoleOutput[A](out: PrintStream)(func: => A): A = {
-    //val oldStdOut = System.out
-    //val oldStdErr = System.err
-    try {
-      //System.setOut(out)
-      //System.setErr(out)
-      scala.Console.withOut(out)(scala.Console.withErr(out)(func))
-    } finally {
-      out.flush()
-      out.close()
-      //System.setOut(oldStdOut)
-      //System.setErr(oldStdErr)
-    }
-  }
-
-
-
 }
 
 
@@ -510,7 +252,7 @@ trait Base_LMS_Abs extends Base {
 
 }
 
-trait Base_Opt extends Base_LMS_Opt
+//trait Base_Opt extends Base_LMS_Opt
 
 trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
 

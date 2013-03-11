@@ -191,25 +191,18 @@ class BytecodeInterpreter_LMS_Opt4 extends AbstractInterpreter_LMS with Bytecode
     }
 
 
-/*    case class Goto(id: String, targetId: String) extends Def[Unit] {
-      var state: IState = IState = _
-    }*/
-
     def genGoto(key: String) = {
-      reflect[Unit](key)
+      reflect[Unit](Patch(key, Block(Const(()))))
     }
     def genGotoDef(key: String, rhs: Block[Unit]) = {
-      // FIXME: should do constant-time replace
-      val search = key
       var hit = false
-      globalDefs = globalDefs.map {
-        case d@TP(s,Reflect(Unstructured(List(`search`)), u, es)) => 
-          println("FOUND "+d); 
-          hit = true
-          TP(s, Reflect(Unstructured(List(rhs)), u, es))
+      globalDefs.foreach {
+        case d@TP(s,Reflect(g @ Patch(`key`, _), u, es)) => 
+          //println("FOUND "+d);Patch          hit = true
+          g.block = rhs
         case d => d
       }
-      if (!hit) println("NOT FOUND "+search)
+      if (!hit) println("NOT FOUND "+key)
     }
 
     def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = reflect[Unit]("BLOCK_"+keyid+"("+fields.map(quote).mkString(",")+")")

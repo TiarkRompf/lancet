@@ -1,7 +1,5 @@
 package lancet.core
 
-trait Core_Opt extends Base_Opt with Core_LMS_Opt
-
 
 trait Core_LMS_Opt extends Base_LMS_Opt with Core_LMS {
 
