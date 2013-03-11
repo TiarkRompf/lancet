@@ -11,7 +11,7 @@
  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * version 2 for more details (a copy is included in the LICENSE file that
  * accompanied this code).
- *
+ *  
  * You should have received a copy of the GNU General Public License version
  * 2 along with this work; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -41,104 +41,104 @@ def unsafe: Unsafe_LMS
 trait Unsafe_LMS {
 
   def monitorEnter(value: Rep[Object]): Rep[Unit] = 
-    reflect[Unit]("unsafe.monitorEnter("+value+")")
+    reflect[Unit]("unsafe.monitorEnter(",value,")")
   def monitorExit(value: Rep[Object]): Rep[Unit] = 
-    reflect[Unit]("unsafe.monitorExit("+value+")")
+    reflect[Unit]("unsafe.monitorExit(",value,")")
 
   def getObject(base: Rep[Object], offset: Rep[Long]): Rep[Object] = 
-    reflect[Object]("unsafe.getObject("+base+","+offset+")")
+    reflect[Object]("unsafe.getObject(",base,",",offset,")")
   def getObjectVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Object] = 
-    reflect[Object]("unsafe.getObjectVolatile("+base+","+offset+")")
+    reflect[Object]("unsafe.getObjectVolatile(",base,",",offset,")")
 
   def getBoolean(base: Rep[Object], offset: Rep[Long]): Rep[Boolean] = 
-    reflect[Boolean]("unsafe.getBoolean("+base+","+offset+")")
+    reflect[Boolean]("unsafe.getBoolean(",base,",",offset,")")
   def getBooleanVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Boolean] = 
-    reflect[Boolean]("unsafe.getBooleanVolatile("+base+","+offset+")")
+    reflect[Boolean]("unsafe.getBooleanVolatile(",base,",",offset,")")
 
   def getByte(base: Rep[Object], offset: Rep[Long]): Rep[Byte] = 
-    reflect[Byte]("unsafe.getByte("+base+","+offset+")")
+    reflect[Byte]("unsafe.getByte(",base,",",offset,")")
   def getByteVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Byte] = 
-    reflect[Byte]("unsafe.getByteVolatile("+base+","+offset+")")
+    reflect[Byte]("unsafe.getByteVolatile(",base,",",offset,")")
 
   def getChar(base: Rep[Object], offset: Rep[Long]): Rep[Char] = 
-    reflect[Char]("unsafe.getChar("+base+","+offset+")")
+    reflect[Char]("unsafe.getChar(",base,",",offset,")")
   def getCharVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Char] = 
-    reflect[Char]("unsafe.getCharVolatile("+base+","+offset+")")
+    reflect[Char]("unsafe.getCharVolatile(",base,",",offset,")")
 
   def getShort(base: Rep[Object], offset: Rep[Long]): Rep[Short] = 
-    reflect[Short]("unsafe.getShort("+base+","+offset+")")
+    reflect[Short]("unsafe.getShort(",base,",",offset,")")
   def getShortVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Short] = 
-    reflect[Short]("unsafe.getShortVolatile("+base+","+offset+")")
+    reflect[Short]("unsafe.getShortVolatile(",base,",",offset,")")
 
   def getInt(base: Rep[Object], offset: Rep[Long]): Rep[Int] = 
-    reflect[Int]("unsafe.getInt("+base+","+offset+")")
+    reflect[Int]("unsafe.getInt(",base,",",offset,")")
   def getIntVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Int] = 
-    reflect[Int]("unsafe.getIntVolatile("+base+","+offset+")")
+    reflect[Int]("unsafe.getIntVolatile(",base,",",offset,")")
 
   def getLong(base: Rep[Object], offset: Rep[Long]): Rep[Long] = 
-    reflect[Long]("unsafe.getLong("+base+","+offset+")")
+    reflect[Long]("unsafe.getLong(",base,",",offset,")")
   def getLongVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Long] = 
-    reflect[Long]("unsafe.getLongVolatile("+base+","+offset+")")
+    reflect[Long]("unsafe.getLongVolatile(",base,",",offset,")")
 
   def getFloat(base: Rep[Object], offset: Rep[Long]): Rep[Float] = 
-    reflect[Float]("unsafe.getFloat("+base+","+offset+")")
+    reflect[Float]("unsafe.getFloat(",base,",",offset,")")
   def getFloatVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Float] = 
-    reflect[Float]("unsafe.getFloatVolatile("+base+","+offset+")")
+    reflect[Float]("unsafe.getFloatVolatile(",base,",",offset,")")
 
   def getDouble(base: Rep[Object], offset: Rep[Long]): Rep[Double] = 
-    reflect[Double]("unsafe.getDouble("+base+","+offset+")")
+    reflect[Double]("unsafe.getDouble(",base,",",offset,")")
   def getDoubleVolatile(base: Rep[Object], offset: Rep[Long]): Rep[Double] = 
-    reflect[Double]("unsafe.getDoubleVolatile("+base+","+offset+")")
+    reflect[Double]("unsafe.getDoubleVolatile(",base,",",offset,")")
 
 
   def putObject(base: Rep[Object], offset: Rep[Long], value: Rep[Object]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putObject("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putObject(",base,",",offset,", ",value,")")
   def putObjectVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Object]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putObjectVolatile("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putObjectVolatile(",base,",",offset,", ",value,")")
 
   def putBoolean(base: Rep[Object], offset: Rep[Long], value: Rep[Boolean]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putBoolean("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putBoolean(",base,",",offset,", ",value,")")
   def putBooleanVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Boolean]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putBooleanVolatile("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putBooleanVolatile(",base,",",offset,", ",value,")")
 
   def putByte(base: Rep[Object], offset: Rep[Long], value: Rep[Byte]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putByte("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putByte(",base,",",offset,", ",value,")")
   def putByteVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Byte]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putByteVolatile("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putByteVolatile(",base,",",offset,", ",value,")")
 
   def putChar(base: Rep[Object], offset: Rep[Long], value: Rep[Char]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putChar("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putChar(",base,",",offset,", ",value,")")
   def putCharVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Char]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putCharVolatile("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putCharVolatile(",base,",",offset,", ",value,")")
 
   def putShort(base: Rep[Object], offset: Rep[Long], value: Rep[Short]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putShort("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putShort(",base,",",offset,", ",value,")")
   def putShortVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Short]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putShortVolatile("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putShortVolatile(",base,",",offset,", ",value,")")
 
   def putInt(base: Rep[Object], offset: Rep[Long], value: Rep[Int]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putInt("+base+","+offset+", "+value+")")
+    reflect[Unit]("{println(\"putInt\"+"+quote(base)+")};if ("+quote(base)+" ne null) unsafe.putInt(",base,",",offset,", ",value,")")
   def putIntVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Int]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putIntVolatile("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putIntVolatile(",base,",",offset,", ",value,")")
 
   def putLong(base: Rep[Object], offset: Rep[Long], value: Rep[Long]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putLong("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putLong(",base,",",offset,", ",value,")")
   def putLongVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Long]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putLongVolatile("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putLongVolatile(",base,",",offset,", ",value,")")
 
   def putFloat(base: Rep[Object], offset: Rep[Long], value: Rep[Float]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putFloat("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putFloat(",base,",",offset,", ",value,")")
   def putFloatVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Float]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putFloatVolatile("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putFloatVolatile(",base,",",offset,", ",value,")")
 
   def putDouble(base: Rep[Object], offset: Rep[Long], value: Rep[Double]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putDouble("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putDouble(",base,",",offset,", ",value,")")
   def putDoubleVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Double]): Rep[Unit] = 
-    reflect[Unit]("unsafe.putDoubleVolatile("+base+","+offset+", "+value+")")
+    reflect[Unit]("unsafe.putDoubleVolatile(",base,",",offset,", ",value,")")
 
 
   def allocateInstance(clazz: Class[_]): Rep[Object] = 
-    reflect[Object]("unsafe.allocateInstance(Class.forName(\""+clazz.getName+"\"))")
+    reflect[Object]("unsafe.allocateInstance(Class.forName(\"",clazz.getName,"\"))")
 
 }
 
@@ -174,24 +174,24 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
         })
 
         if (!static) {
-            if (args.length > 1)
-                reflect[Object](liftConst[Object](m),".invoke("+args.map(_+".asInstanceOf[AnyRef]").mkString(",")+").asInstanceOf["+mtyp+"] // "+holder+"."+name)(mtyp)
+            if (args.length > 1)                                            // FIXME: don't quote -- need deps!!!!
+                reflect[Object](liftConst[Object](m),".invoke(",args.map(a=>quote(a)+".asInstanceOf[AnyRef]").mkString(","),").asInstanceOf[",mtyp,"] // ",holder,".",name)(mtyp)
             else
-                reflect[Object](liftConst[Object](m),".invoke("+args(0)+").asInstanceOf["+mtyp+"] // "+holder+"."+name)(mtyp)
-            //reflect[Object](args(0)+".asInstanceOf["+holder+"]."+name+"("+args.drop(1).mkString(",")+").asInstanceOf[Object]")
+                reflect[Object](liftConst[Object](m),".invoke(",args(0),").asInstanceOf[",mtyp,"] // ",holder,".",name)(mtyp)
+            //reflect[Object](args(0),".asInstanceOf[",holder,"].",name,"(",args.drop(1).mkString(","),").asInstanceOf[Object]")
         } else {
-            reflect[Object](holder+"."+name+"("+args.mkString(",")+").asInstanceOf["+mtyp+"]")(mtyp)
+            reflect[Object](holder,".",name,"(",args.mkString(","),").asInstanceOf[",mtyp,"]")(mtyp)
         }
 
 
         // TODO: actual class as result type info?
 
-        //reflect(""+method+".invoke("+args.mkString(",")+")")
+        //reflect("",method,".invoke(",args.mkString(","),")")
 
     }
 
     def typeIsInstance(typ: ResolvedJavaType, value: Rep[Object]): Rep[Boolean] = {
-        reflect[Boolean](""+value+".isInstanceOf["+typ.toJava().getName+"]")
+        reflect[Boolean]("",value,".isInstanceOf[",typ.toJava().getName,"]")
     }
 
     def monitorEnter(value: Rep[Object]): Unit = {
@@ -209,15 +209,15 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
     }
 
     def newArray(typ: ResolvedJavaType, size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
-        reflect[Object]("new Array["+typ.toJava().getName+"]("+size+")");
+        reflect[Object]("new Array[",typ.toJava().getName,"](",size,")");
     }
 
     def newArray(typ: Class[_], size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
-        reflect[Object]("new Array["+typ.getName+"]("+size+")");
+        reflect[Object]("new Array[",typ.getName,"](",size,")");
     }
 
     def newMultiArray(typ: ResolvedJavaType, dimensions: Array[Rep[Int]]): Rep[Object] = { // throws InstantiationException {
-        reflect[Object]("new Array["+typ.toJava().getName+"]("+dimensions.mkString(",")+")");
+        reflect[Object]("new Array[",typ.toJava().getName,"](",dimensions.mkString(","),")");
     }
 
     def getFieldObject(base: Rep[Object], field: ResolvedJavaField): Rep[AnyRef] = {
@@ -458,13 +458,13 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
 
     def checkArrayType(array: Rep[Object], arrayType: Class[_]): Unit = {
         val cond = objectGetClass(array).getComponentType().isAssignableFrom(liftConst(arrayType.asInstanceOf[Class[Object]]))
-        //val cond = reflect[Boolean]("!"+array+".getClass().getComponentType().isAssignableFrom(classOf["+arrayType.getName+"])")
-        if_(!cond) (reflect[Unit]("throw new ArrayStoreException(\""+arrayType.getName()+"\")")) (liftConst())
+        //val cond = reflect[Boolean]("!",array,".getClass().getComponentType().isAssignableFrom(classOf[",arrayType.getName,"])")
+        if_(!cond) (reflect[Unit]("throw new ArrayStoreException(\"",arrayType.getName(),"\")")) (liftConst())
     }
 
     def checkArrayType(array: Rep[Object], arrayType: Rep[Class[Object]]): Unit = { //TODO: shouldn't duplicate
         val cond = objectGetClass(array).getComponentType().isAssignableFrom(arrayType)
-        if_(!cond) (reflect[Unit]("throw new ArrayStoreException(\""+arrayType.getName()+"\")")) (liftConst())
+        if_(!cond) (reflect[Unit]("throw new ArrayStoreException(\"",arrayType.getName(),"\")")) (liftConst())
     }
 
 
@@ -472,15 +472,15 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
         nullCheck(array)
         val typ = objectGetClass(array)
         val cond = typ.isArray()
-        if_(!cond) (reflect[Unit]("throw new ArrayStoreException("+typ.getName()+")")) (liftConst());
+        if_(!cond) (reflect[Unit]("throw new ArrayStoreException(",typ.getName(),")")) (liftConst());
         if_(index < 0 || index >= arrayLength(array)) {
-            reflect[Unit]("throw new ArrayIndexOutOfBoundsException("+index.toInt+")");
+            reflect[Unit]("throw new ArrayIndexOutOfBoundsException(",index.toInt,")");
         } (liftConst())
     }
 
     def arrayLength(array: Rep[Object]): Rep[Int] = {
         assert(array != null);
-        return reflect[Int]("java.lang.reflect.Array.getLength("+array+")");
+        return reflect[Int]("java.lang.reflect.Array.getLength(",array,")");
     }
 
     def isVolatile(field: ResolvedJavaField): Boolean = {
@@ -496,11 +496,11 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
 
 
 
-    def objectGetClass(base: Rep[Object]): Rep[Class[Object]] = reflect[Class[Object]](base+".getClass.asInstanceOf[Class[Object]]")
-    def classGetName(base: Rep[Class[Object]]): Rep[String] = reflect[String](base+".getName")
-    def classIsArray(base: Rep[Class[Object]]): Rep[Boolean] = reflect[Boolean](base+".isArray")
-    def classGetComponentType(base: Rep[Class[Object]]): Rep[Class[Object]] = reflect[Class[Object]](base+".getComponentType.asInstanceOf[Class[Object]]")
-    def classIsAssignableFrom(base: Rep[Class[Object]], other: Rep[Class[Object]]): Rep[Boolean] = reflect[Boolean](base+".isAssignableFrom("+other+")")
+    def objectGetClass(base: Rep[Object]): Rep[Class[Object]] = reflect[Class[Object]](base,".getClass.asInstanceOf[Class[Object]]")
+    def classGetName(base: Rep[Class[Object]]): Rep[String] = reflect[String](base,".getName")
+    def classIsArray(base: Rep[Class[Object]]): Rep[Boolean] = reflect[Boolean](base,".isArray")
+    def classGetComponentType(base: Rep[Class[Object]]): Rep[Class[Object]] = reflect[Class[Object]](base,".getComponentType.asInstanceOf[Class[Object]]")
+    def classIsAssignableFrom(base: Rep[Class[Object]], other: Rep[Class[Object]]): Rep[Boolean] = reflect[Boolean](base,".isAssignableFrom(",other,")")
 
 }
 
