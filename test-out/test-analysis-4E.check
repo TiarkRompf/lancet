@@ -1,0 +1,11 @@
+prog: {
+  Assign(x,New(X))
+  Put(Ref(x),a,New(A))
+  Put(Get(Ref(x),a),baz,Const(3))
+  While(Direct(input),{
+    Put(Ref(x),a,New(B))
+    Put(Get(Ref(x),a),foo,Const(5))
+  })
+  Put(Get(Ref(x),a),bar,Const(7))
+  Assign(xbar,Get(Get(Ref(x),a),bar))
+}

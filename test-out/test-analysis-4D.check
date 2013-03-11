@@ -1,0 +1,61 @@
+prog: {
+  Assign(x,New(A))
+  If(Direct(input),{
+    Put(Ref(x),a,New(B))
+    Put(Get(Ref(x),a),foo,Const(5))
+  },{
+    Put(Ref(x),a,New(C))
+    Put(Get(Ref(x),a),bar,Const(5))
+  })
+  Assign(foo,Get(Get(Ref(x),a),foo))
+  Assign(bar,Get(Get(Ref(x),a),bar))
+}
+default case for mayZero input
+--> phi input allocB allocC
+--> phi input 0 0
+--> phi input 5 undef
+--> phi input undef 5
+res: undef
+env: 
+allocB -> OIf(input,ONew(B)+{foo -> 5},OUndef())
+&x -> OStatic(&x)+{val -> allocA}
+allocC -> OIf(input,OUndef(),ONew(C)+{bar -> 5})
+&bar -> OStatic(&bar)+{val -> phi(input:undef,5)}
+&foo -> OStatic(&foo)+{val -> phi(input:5,undef)}
+allocA -> ONew(A)+{a -> phi(input:allocB,allocC)}
+rec: 
+
+true: Set()
+false: Set()
+----
+prog: {
+  Assign(x,New(A))
+  Put(Ref(x),a,New(A2))
+  Put(Get(Ref(x),a),baz,Const(3))
+  If(Direct(input),{
+    Put(Ref(x),a,New(B))
+    Put(Get(Ref(x),a),foo,Const(5))
+  },{
+    Put(Ref(x),a,New(C))
+    Put(Get(Ref(x),a),bar,Const(5))
+  })
+  Put(Get(Ref(x),a),bar,Const(7))
+  Assign(xbar,Get(Get(Ref(x),a),bar))
+}
+default case for mayZero input
+--> phi input allocB allocC
+--> phi input 0 0
+--> phi input 7 7
+res: undef
+env: 
+allocB -> OIf(input,ONew(B)+{foo -> 5,bar -> 7},OUndef())
+&x -> OStatic(&x)+{val -> allocA}
+allocC -> OIf(input,OUndef(),ONew(C)+{foo -> undef,bar -> 7})
+&xbar -> OStatic(&xbar)+{val -> 7}
+allocA2 -> ONew(A2)+{baz -> 3}
+allocA -> ONew(A)+{a -> phi(input:allocB,allocC)}
+rec: 
+
+true: Set()
+false: Set()
+----
