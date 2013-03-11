@@ -15,12 +15,20 @@ trait IR_LMS_Base extends EffectExp {
 
   case class Unstructured[A](s: List[Any]) extends Def[A]
 
+  case class Patch(key: String, var block: Block[Unit]) extends Def[Unit]
+
+  override def boundSyms(e: Any): List[Sym[Any]] = e match {
+    case Unstructured(xs) => blocks(xs) flatMap effectSyms
+    case Patch(key,block) => effectSyms(block)
+    case _ => super.boundSyms(e)
+  }
+
+
+
   def reflect[A:TypeRep](s: Any*): Exp[A] = reflectEffect(Unstructured[A](s.toList))
 
   def emitString(s: String)(implicit e:TypeRep[Unit]) = reflect[Unit](s)
   def emitAll[A:TypeRep](s: Block[A]) = reflect[A](s)
-
-  case class Patch(key: String, var block: Block[Unit]) extends Def[Unit]
 }
 
 trait IR_LMS extends IR_LMS_Base
@@ -353,7 +361,7 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
             case (Some(Static(a)),Some(bb@Static(b))) => 
               val str = "LUB_"+p+"_"+k
               if (quote(b) != str)
-                emitString("val "+str+" = " + quote(b) + " // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
+                emitString("val "+str+" = " + quote(b) + "; // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
               val tp = bb.typ.asInstanceOf[TypeRep[Any]]
               Dyn[Any](str)(tp)
             case (Some(a),None) if p.startsWith("VConst") && k == "clazz" => a // class is VConstant
@@ -365,7 +373,7 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
                 //  emitString("// PROBLEMO "+b.get+" not in "+y0)
                 //}
                 if (quote(b.get) != str)
-                  emitString("val "+str+" = " + quote(b.get) + " // Alias(" + a + "," + b + ")") // FIXME: kill in expr!
+                  emitString("val "+str+" = " + quote(b.get) + "; // Alias(" + a + "," + b + ")") // FIXME: kill in expr!
                 b.get.typ.asInstanceOf[TypeRep[Any]]
               } else {                
                 val tp = a.get.typ.asInstanceOf[TypeRep[Any]]
@@ -378,9 +386,9 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
                   //println("// lookup "+obj+"."+k+"="+fld)
                   // may fld and a.get be equal? unlikely ...
                   if (quote(fld) != str)
-                    emitString("val "+str+" = " + quote(fld) + " // XXX LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
+                    emitString("val "+str+" = " + quote(fld) + "; // XXX LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
                 } else 
-                  emitString("val "+str+" = " + quote(a.get) + " // AAA Alias(" + a + "," + b + ")") // FIXME: kill in expr!
+                  emitString("val "+str+" = " + quote(a.get) + "; // AAA Alias(" + a + "," + b + ")") // FIXME: kill in expr!
                 tp
               }
               Dyn[Any](str)(tp)
