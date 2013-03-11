@@ -466,76 +466,71 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       // *** compute fixpoint ***
 
-      val block = reify {
-        //gotoBlock(mframe) // alternative; just do it ourselves ...
-        val s = getState(mframe)
-        val b = getGraalBlock(mframe)
-        blockInfo(b.blockID) = BlockInfo(List((-1,s)),s)
-        worklist = List(b.blockID)
+      //gotoBlock(mframe) // alternative; just do it ourselves ...
+      val s = getState(mframe)
+      val b = getGraalBlock(mframe)
+      blockInfo(b.blockID) = BlockInfo(List((-1,s)),s)
+      worklist = List(b.blockID)
 
-        while (worklist.nonEmpty) {
-          val i = worklist.head
-          worklist = worklist.tail
-          assert(blockInfo.contains(i))
-          curBlock = i
-          blockInfoOut(i) = BlockInfoOut(Nil,Nil,Block(liftConst(()))) // reset gotos
-          val BlockInfo(edges,s) = blockInfo(i)
-          val src = reify {
-            withState(s)(execFoReal)
-          }
-          blockInfoOut(i) = blockInfoOut(i).copy(code=src)
+      while (worklist.nonEmpty) {
+        val i = worklist.head
+        worklist = worklist.tail
+        assert(blockInfo.contains(i))
+        curBlock = i
+        blockInfoOut(i) = BlockInfoOut(Nil,Nil,Block(liftConst(()))) // reset gotos
+        val BlockInfo(edges,s) = blockInfo(i)
+        val src = reify {
+          withState(s)(execFoReal)
         }
+        blockInfoOut(i) = blockInfoOut(i).copy(code=src)
+      }
 
-        // reached fixpoint, now use acquired info to emit code
+      // reached fixpoint, now use acquired info to emit code
 
-        def getPreds(i: Int) = blockInfo(i).inEdges.map(_._1)
-        def shouldInline(i: Int) = getPreds(i).length < 2
-        assert(getPreds(b.blockID) == List(-1))
+      def getPreds(i: Int) = blockInfo(i).inEdges.map(_._1)
+      def shouldInline(i: Int) = getPreds(i).length < 2
+      assert(getPreds(b.blockID) == List(-1))
 
-        // fix jumps inside blocks: either call or inline
-        for (b <- graalBlocks.blocks.reverse if blockInfo.contains(b.blockID)) {
-          val i = b.blockID
+      // fix jumps inside blocks: either call or inline
+      for (b <- graalBlocks.blocks.reverse if blockInfo.contains(b.blockID)) {
+        val i = b.blockID
+        val BlockInfo(edges, stateBeforeBlock) = blockInfo(i)
+        val BlockInfoOut(returns, gotos, code) = blockInfoOut(i)
+
+        for ((s0,i) <- gotos.zipWithIndex) {
+          val bid = getGraalBlock(getFrame(s0)).blockID
+          val s1 = blockInfo(bid).inState
+          val rhs = if (shouldInline(bid)) {
+            assert(!statesDiffer(s0,s1))
+            blockInfoOut(bid).code
+          } else { // emit call
+            val fields = getFields(s1)
+            val (key,keyid) = contextKeyId(getFrame(s1))
+            val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
+            reify { reflect[Unit](Patch("",head)); genBlockCall(keyid, fields) }
+          }
+          genGotoDef("GOTO_"+mkeyid+"_"+b.blockID+"_"+i, rhs)
+          //src = src.replace("GOTO_"+i+";", rhs)
+        }
+        //blockInfoOut(i) = BlockInfoOut(returns, gotos, code) // update body src
+      }
+
+      // initial block -- do we ever need to lub here?
+      assert(getPreds(b.blockID) == List(-1))
+      reflect(Patch("",blockInfoOut(b.blockID).code))
+
+      // emit all non-inlined blocks
+      for (b <- graalBlocks.blocks if blockInfo.contains(b.blockID)) {
+        val i = b.blockID
+        if (!shouldInline(i)) {
           val BlockInfo(edges, stateBeforeBlock) = blockInfo(i)
           val BlockInfoOut(returns, gotos, code) = blockInfoOut(i)
 
-          var src = code
-          for ((s0,i) <- gotos.zipWithIndex) {
-            val bid = getGraalBlock(getFrame(s0)).blockID
-            val s1 = blockInfo(bid).inState
-            val rhs = if (shouldInline(bid)) {
-              assert(!statesDiffer(s0,s1))
-              blockInfoOut(bid).code
-            } else { // emit call
-              val fields = getFields(s1)
-              val (key,keyid) = contextKeyId(getFrame(s1))
-              val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
-              reify { reflect[Unit](Patch("",head)); genBlockCall(keyid, fields) }
-            }
-            genGotoDef("GOTO_"+mkeyid+"_"+b.blockID+"_"+i, rhs)
-            //src = src.replace("GOTO_"+i+";", rhs)
-          }
-          blockInfoOut(i) = BlockInfoOut(returns, gotos, src) // update body src
+          val fields = getFields(stateBeforeBlock)
+          val (key,keyid) = contextKeyId(getFrame(stateBeforeBlock))
+
+          genBlockDef(key, keyid, fields, code)
         }
-
-        // initial block -- do we ever need to lub here?
-        assert(getPreds(b.blockID) == List(-1))
-        emitAll(blockInfoOut(b.blockID).code)
-
-        // emit all non-inlined blocks
-        for (b <- graalBlocks.blocks if blockInfo.contains(b.blockID)) {
-          val i = b.blockID
-          if (!shouldInline(i)) {
-            val BlockInfo(edges, stateBeforeBlock) = blockInfo(i)
-            val BlockInfoOut(returns, gotos, code) = blockInfoOut(i)
-
-            val fields = getFields(stateBeforeBlock)
-            val (key,keyid) = contextKeyId(getFrame(stateBeforeBlock))
-
-            genBlockDef(key, keyid, fields, code)
-          }
-        }
-
-        liftConst(())
       }
 
       // *** reset state
@@ -544,6 +539,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       // *** backpatch returns and continue ***
 
+
       if (debugMethods) emitString("// >> " + method)
 
       val returns = blockInfoOut.toList flatMap { case (i, out) =>
@@ -551,17 +547,16 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       }
 
       if (returns.length == 0) {
-        reflect(Patch("", block))
         emitString("// (no return?)")
-      } else if (false && returns.length == 1) {  // TODO
+      } else if (returns.length == 1) {  // TODO
         val (k,s) = returns(0)
         val ret = reify {
-          emitString("// ret single "+method)
+          //emitString("// ret single "+method)
           withState(s)(exec)
         }
         genGotoDef(k, ret)
       } else {
-        emitString("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
+        //emitString("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
 
         val (ss, gos) = allLubs(returns.map(_._2))
         val fields = getFields(ss)
@@ -570,16 +565,15 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
         for (v <- fields) genVarDef(v)
 
-        var block1 = block
         for ((k,go) <- (returns.map(_._1)) zip gos) {
           val block = reify[Unit]{ reflect[Unit](Patch("",go)); fields.map(genVarWrite); liftConst(()) }
           genGotoDef(k, block)
           //reflect[Unit]("def "+k.substring(6)+": Unit = {", go, assign,"};") // substr prevents further matches
         }
-        emitAll(block1)
         
         emitString(";{")
         if (debugReturns) emitString("// ret multi "+method)
+
         for (v <- fields) genVarRead(v)
         withState(ss)(exec)
         emitString("}")

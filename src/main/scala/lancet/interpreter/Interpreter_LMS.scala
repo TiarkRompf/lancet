@@ -49,6 +49,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
 
     var emitUniqueOpt = false
+    var debugGlobalDefs = false
 
 
     // ---------- high level execution loop ----------
@@ -85,6 +86,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
     def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
 
+      implicit val tp = manifestToTypeRep(manifest[B])
       val (maStr, mbStr) = (manifestStr(manifest[A]), manifestStr(manifest[B]))
 
       val arg = fresh[Int]
@@ -100,6 +102,8 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
 
         execute(f.getClass.getMethod("apply", manifest[A].erasure), Array[Rep[Object]](unit(f),arg.asInstanceOf[Rep[Object]])(repManifest[Object]))        
+
+        DynExp[B]("RES")
       }
 
       val codegen = new GEN_Scala_LMS { val IR: self.type = self
@@ -160,7 +164,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       //ScalaCompile.compile[A,B](source, "Generated", constantPool.map(x=>specCls(x)).toList)
       val f2 = ScalaCompile.compile[A,B](source, "Generated", Nil) //FIXME: constant pool
 
-      globalDefs.foreach(println)
+      if (debugGlobalDefs) globalDefs.foreach(println)
 
       f2
     }
