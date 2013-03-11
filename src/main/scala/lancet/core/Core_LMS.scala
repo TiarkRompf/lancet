@@ -47,6 +47,12 @@ trait Core_LMS extends Base_LMS {
 
   case class IfThenElse[A:TypeRep](x: Rep[Boolean], y: Block[A], z: Block[A]) extends Def[A] { def tpA = typeRep[A] }
 
+  override def boundSyms(e: Any): List[Sym[Any]] = e match {
+    case IfThenElse(c,a,b) => effectSyms(a) ++ effectSyms(b)
+    case _ => super.boundSyms(e)
+  }
+
+
   def mtr[A:Manifest]: TypeRep[A] = manifestToTypeRep(manifest[A])
   def infix_relax[A,B](a:TypeRep[A]): TypeRep[B] = a.asInstanceOf[TypeRep[B]]
 
