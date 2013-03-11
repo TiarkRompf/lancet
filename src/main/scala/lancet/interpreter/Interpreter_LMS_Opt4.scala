@@ -75,8 +75,8 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
             val str = "PHI_"+x.depth+"_"+i
             if (b == null)
               emitString("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
-            else if (b.toString != str)
-              emitString("val "+str+" = " + b + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
+            else if (quote(b) != str)
+              emitString("val "+str+" = " + quote(b) + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
             val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
             val phi = Dyn[AnyRef](str)(tp)
             y.locals(i) = phi
@@ -192,17 +192,17 @@ class BytecodeInterpreter_LMS_Opt4 extends AbstractInterpreter_LMS with Bytecode
 
     def genGotoDef(key: String, rhs: Block[Unit]) = reflect[Unit]("def "+key+": Unit = ", rhs)
 
-    def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = reflect[Unit]("BLOCK_"+keyid+"("+fields.mkString(",")+")")
+    def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = reflect[Unit]("BLOCK_"+keyid+"("+fields.map(quote).mkString(",")+")")
 
-    def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]): Block[Unit] = reify {
+    def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]): Exp[Unit] = {
       if (debugBlockKeys) emitString("// "+key+"\n")
-      reflect[Unit]("def BLOCK_"+keyid+"("+fields.map(v=>v+":"+v.typ).mkString(",")+"): Unit = ", code)
+      reflect[Unit]("def BLOCK_"+keyid+"("+fields.map(v=>quote(v)+":"+v.typ).mkString(",")+"): Unit = ", code)
     }
 
 
-    def genVarDef(v: Rep[Any]): String = "var v"+v+" = null.asInstanceOf["+v.typ+"]"
-    def genVarWrite(v: Rep[Any]): String = "v"+v+" = "+v
-    def genVarRead(v: Rep[Any]): String = "val "+v+" = v"+v
+    def genVarDef(v: Rep[Any]): Rep[Unit] = reflect[Unit]("var v"+quote(v)+" = null.asInstanceOf["+v.typ+"]")
+    def genVarWrite(v: Rep[Any]): Rep[Unit] = reflect[Unit]("v"+quote(v)+" = "+quote(v))
+    def genVarRead(v: Rep[Any]): Rep[Unit] = reflect[Unit]("val "+quote(v)+" = v"+quote(v))
 
 
     // not used -- we manage local worklists in execMethod
@@ -289,10 +289,10 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
     def genGotoDef(key: String, rhs: Block[Unit]): Rep[Unit]
     def genBlockCall(keyid: Int, fields: List[Rep[Any]]): Rep[Unit]
-    def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]): Block[Unit]
-    def genVarDef(v: Rep[Any]): String
-    def genVarWrite(v: Rep[Any]): String
-    def genVarRead(v: Rep[Any]): String
+    def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]): Exp[Unit]
+    def genVarDef(v: Rep[Any]): Rep[Unit]
+    def genVarWrite(v: Rep[Any]): Rep[Unit]
+    def genVarRead(v: Rep[Any]): Rep[Unit]
 
     // TODO: proper subst transformer
 
@@ -515,7 +515,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
             val fields = getFields(stateBeforeBlock)
             val (key,keyid) = contextKeyId(getFrame(stateBeforeBlock))
 
-            emitAll(genBlockDef(key, keyid, fields, code))
+            genBlockDef(key, keyid, fields, code)
           }
         }
 
@@ -553,21 +553,18 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
         emitString(";{")
 
-        for (v <- fields) emitString(genVarDef(v))
+        for (v <- fields) genVarDef(v)
 
         var block1 = block
         for ((k,go) <- (returns.map(_._1)) zip gos) {
-          val assign = ???//Block(fields.map(genVarWrite).map(Unstructured(_)), liftConst(()))
-          val ret = ???/*reify {
-            reflect[Unit]("/*R"+k.substring(6)+"*/;", Block(go.stms++assign.stms,assign.res),";") // substr prevents further matches            
-          }*/
-          block1 = block1.replace(k,ret)
+          val assign = reify[Unit]{ fields.map(genVarWrite); liftConst(()) }
+          reflect[Unit]("def "+k.substring(6)+": Unit = {", go, assign,"};") // substr prevents further matches                      
         }
         emitAll(block1)
         
         emitString(";{")
         if (debugReturns) emitString("// ret multi "+method)
-        for (v <- fields) emitString(genVarRead(v))
+        for (v <- fields) genVarRead(v)
         withState(ss)(exec)
         emitString("}}")
       }

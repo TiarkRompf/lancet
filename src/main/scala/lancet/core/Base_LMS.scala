@@ -152,7 +152,7 @@ trait Base_LMS0 extends Base_LMS1 {
 
   def quote(x:Any): String = x match {
     case Const(c) => VConstToString(c)
-    case s: Sym[_] => "x"+s.id // why no case class match?
+    case Dyn(s) => s // x99
     case DynExp(x) => x
     case _ => x.toString
   }
@@ -609,8 +609,8 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
             case (Some(a),Some(b)) if a == b => a
             case (Some(Static(a)),Some(bb@Static(b))) => 
               val str = "LUB_"+p+"_"+k
-              if (""+b != str)
-                emitString("val "+str+" = " + b + " // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
+              if (quote(b) != str)
+                emitString("val "+str+" = " + quote(b) + " // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
               val tp = bb.typ.asInstanceOf[TypeRep[Any]]
               Dyn[Any](str)(tp)
             case (Some(a),None) if p.startsWith("VConst") && k == "clazz" => a // class is VConstant

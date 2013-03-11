@@ -451,7 +451,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
       //val Static(off) = offset
       val k = field.getName // off.toString
 
-      val s = base match { case Static(x) => VConstToString(x) case x => x.toString }
+      val s = base match { case Static(x) => VConstToString(x) case x => quote(x) }
       val Partial(fs) = eval(base) match {
         case s@Partial(_) => s
         case s@VConst(c) => Partial(Map("alloc" -> Static(c), "clazz" -> Static(c.getClass)))

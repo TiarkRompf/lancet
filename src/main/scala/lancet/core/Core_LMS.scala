@@ -312,8 +312,9 @@ trait ScalaGenCore extends GEN_Scala_LMS_Base {
 
     case IfThenElse(x, y, z)              => stream.print("if ("+quote(x)+") ") // Unit result??
                                              emitBlockFull(y)
-                                             Console.print(" else ")
+                                             stream.print(" else ")
                                              emitBlockFull(z)
+                                             stream.println
 
     case _ => super.emitNode(sym,rhs)
   }
