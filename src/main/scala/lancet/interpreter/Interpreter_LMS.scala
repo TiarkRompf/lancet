@@ -110,7 +110,6 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
         codegen.emitSource(List(arg),y,"Generated",codegen.stream)
       }
 
-      globalDefs.foreach(println)
 
       val source = stream.toString 
       printIndented(source)(Console.println)
@@ -159,7 +158,11 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       //System.out.println(source)
 
       //ScalaCompile.compile[A,B](source, "Generated", constantPool.map(x=>specCls(x)).toList)
-      ScalaCompile.compile[A,B](source, "Generated", Nil) //FIXME: constant pool
+      val f2 = ScalaCompile.compile[A,B](source, "Generated", Nil) //FIXME: constant pool
+
+      globalDefs.foreach(println)
+
+      f2
     }
 
     //@Override

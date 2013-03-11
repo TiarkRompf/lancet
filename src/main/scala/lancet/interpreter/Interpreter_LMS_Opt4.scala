@@ -198,11 +198,12 @@ class BytecodeInterpreter_LMS_Opt4 extends AbstractInterpreter_LMS with Bytecode
       var hit = false
       globalDefs.foreach {
         case d@TP(s,Reflect(g @ Patch(`key`, _), u, es)) => 
-          //println("FOUND "+d);Patch          hit = true
+          //println("FOUND "+d);Patch          
+          hit = true
           g.block = rhs
         case d => d
       }
-      if (!hit) println("NOT FOUND "+key)
+      assert(hit)
     }
 
     def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = reflect[Unit]("BLOCK_"+keyid+"("+fields.map(quote).mkString(",")+")")
@@ -508,7 +509,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
               val fields = getFields(s1)
               val (key,keyid) = contextKeyId(getFrame(s1))
               val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
-              reify { reflect[Unit](head); genBlockCall(keyid, fields) }
+              reify { reflect[Unit](Patch("",head)); genBlockCall(keyid, fields) }
             }
             genGotoDef("GOTO_"+mkeyid+"_"+b.blockID+"_"+i, rhs)
             //src = src.replace("GOTO_"+i+";", rhs)
@@ -550,15 +551,15 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       }
 
       if (returns.length == 0) {
-        emitAll(block)
+        reflect(Patch("", block))
         emitString("// (no return?)")
       } else if (false && returns.length == 1) {  // TODO
         val (k,s) = returns(0)
         val ret = reify {
-          if (debugReturns) emitString("// ret single "+method)
+          emitString("// ret single "+method)
           withState(s)(exec)
         }
-        emitAll(block.replace(k, ret))
+        genGotoDef(k, ret)
       } else {
         emitString("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
 
@@ -571,7 +572,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
         var block1 = block
         for ((k,go) <- (returns.map(_._1)) zip gos) {
-          val block = reify[Unit]{ reflect[Unit](go); fields.map(genVarWrite); liftConst(()) }
+          val block = reify[Unit]{ reflect[Unit](Patch("",go)); fields.map(genVarWrite); liftConst(()) }
           genGotoDef(k, block)
           //reflect[Unit]("def "+k.substring(6)+": Unit = {", go, assign,"};") // substr prevents further matches
         }

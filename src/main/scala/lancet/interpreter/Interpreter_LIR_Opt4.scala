@@ -91,7 +91,7 @@ trait AbstractInterpreter_LIR extends AbstractInterpreterIntf_LIR with BytecodeI
     type State = (InterpreterFrame, StoreLattice.Elem, ExprLattice.Elem)
 
     def allLubs(states: List[State]): (State,List[Block[Unit]]) = {
-      if (states.length == 1) return (states.head, Nil) // fast path
+      if (states.length == 1) return (states.head, List(Block(Nil,liftConst(())))) // fast path
       // backpatch info: foreach state, commands needed to initialize lub vars
       val gos = states map { case (frameX,storeX,exprX) =>
         val frameY = freshFrameSimple(frameX)
@@ -532,7 +532,7 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
       if (returns.length == 0) {
         emitAll(block)
         emitString("// (no return?)")
-      } else if (returns.length == 1) { 
+      } else if (returns.length == 1) { // crash test3 if disabled?
         val (k,s) = returns(0)
         val ret = reify {
           if (debugReturns) emitString("// ret single "+method)
