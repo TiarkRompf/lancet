@@ -20,7 +20,6 @@ trait IR_LMS_Base extends EffectExp {
   def emitString(s: String)(implicit e:TypeRep[Unit]) = reflect[Unit](s)
   def emitAll[A:TypeRep](s: Block[A]) = reflect[A](s)
 
-
 }
 
 trait IR_LMS extends IR_LMS_Base
@@ -150,6 +149,13 @@ trait Base_LMS0 extends Base_LMS1 {
 
   def typeRep[T:TypeRep]: TypeRep[T] = implicitly[TypeRep[T]]
 
+
+  def quote(x:Any): String = x match {
+    case Const(c) => VConstToString(c)
+    case s: Sym[_] => "x"+s.id // why no case class match?
+    case DynExp(x) => x
+    case _ => x.toString
+  }
 
   var VConstantPool: Vector[AnyRef] = Vector.empty
 
@@ -615,8 +621,8 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
                 //if (b.get.toString != str && !y0.contains(b.get.toString)) {
                 //  emitString("// PROBLEMO "+b.get+" not in "+y0)
                 //}
-                if (b.get.toString != str)
-                  emitString("val "+str+" = " + b.get + " // Alias(" + a + "," + b + ")") // FIXME: kill in expr!
+                if (quote(b.get) != str)
+                  emitString("val "+str+" = " + quote(b.get) + " // Alias(" + a + "," + b + ")") // FIXME: kill in expr!
                 b.get.typ.asInstanceOf[TypeRep[Any]]
               } else {                
                 val tp = a.get.typ.asInstanceOf[TypeRep[Any]]
@@ -628,10 +634,10 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
                   val fld = getFieldForLub(obj,cls,k)(tp)
                   //println("// lookup "+obj+"."+k+"="+fld)
                   // may fld and a.get be equal? unlikely ...
-                  if (fld.toString != str)
-                    emitString("val "+str+" = " + fld + " // XXX LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
+                  if (quote(fld) != str)
+                    emitString("val "+str+" = " + quote(fld) + " // XXX LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
                 } else 
-                  emitString("val "+str+" = " + a.get + " // AAA Alias(" + a + "," + b + ")") // FIXME: kill in expr!
+                  emitString("val "+str+" = " + quote(a.get) + " // AAA Alias(" + a + "," + b + ")") // FIXME: kill in expr!
                 tp
               }
               Dyn[Any](str)(tp)
