@@ -14,29 +14,20 @@ trait IR_LMS_Base extends EffectExp {
   def quickString[A:TypeRep](d: Def[A]): String = d.toString
 
   case class Unstructured[A](s: List[Any]) extends Def[A]
-
   case class Patch(key: String, var block: Block[Unit]) extends Def[Unit]
+  case class BlockDef(key: String, keyid: Int, params: List[Rep[Any]], body: Block[Unit]) extends Def[Unit]
 
   override def boundSyms(e: Any): List[Sym[Any]] = e match {
     case Unstructured(xs) => blocks(xs) flatMap effectSyms
     case Patch(key,block) => effectSyms(block)
+    case BlockDef(key,keyid,xs,body) => effectSyms(body)
     case _ => super.boundSyms(e)
   }
 
-
-  // DO WE NEED THIS OR CAN WE USE BOUNDSYMS ???
   override def tunnelSyms(e: Any): List[Sym[Any]] = e match {
-    case Unstructured(xs) => 
-      if (xs.toString contains "def BLOCK_10") {
-        println("--tunnel--")
-        // GRRR, CAN'T JUST RETURN Sym(10) !
-        val x10 = globalDefs collect { case TP(s@Sym(10),_) => s } head;
-        val x7 = globalDefs collect { case TP(s@Sym(10),_) => s } head;
-        List(x10,x7) }
-      else Nil
+    case BlockDef(key,keyid,xs,body) => xs collect { case s@Sym(n) => s }
     case _ => super.tunnelSyms(e)
   }
-
 
   def reflect[A:TypeRep](s: Any*): Exp[A] = reflectEffect(Unstructured[A](s.toList))
 
@@ -60,7 +51,7 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
     println("block res "+manifest[Unit])
     println("block res "+(manifest[Unit] eq manifest[Unit]))
     println("block res "+(getBlockResult(b).typ == manifest[Unit]))*/
-    if (getBlockResult(b).typ.toString != "Unit")
+    if (getBlockResult(b).tp != manifest[Unit])
       stream.println(quote(getBlockResult(b)))
     stream.print("}")
   }}
@@ -86,6 +77,14 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
     //stream.println("// patch "+sym+" {")
       emitBlock(block)
     //stream.println("// patch "+sym+" }")
+    case BlockDef(key, keyid, params, body) =>
+      //if (debugBlockKeys) 
+        stream.println("// "+key+"\n")
+      stream.print("def BLOCK_"+keyid+"(")
+      stream.print(params.map(v=>quote(v)+":"+remap(v.tp)).mkString(","))
+      stream.print("): Unit = ")
+      emitBlockFull(body)
+      stream.println
     case _ => super.emitNode(sym,rhs)
   }
 

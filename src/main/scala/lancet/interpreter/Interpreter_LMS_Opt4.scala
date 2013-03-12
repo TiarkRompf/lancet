@@ -206,12 +206,11 @@ class BytecodeInterpreter_LMS_Opt4 extends AbstractInterpreter_LMS with Bytecode
       assert(hit)
     }
 
-    def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = reflect[Unit]("BLOCK_"+keyid+"("+fields.map(quote).mkString(",")+")")
+    def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = 
+      reflect[Unit]("BLOCK_"+keyid+"("+fields.map(quote).mkString(",")+")")
 
-    def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]): Exp[Unit] = {
-      if (debugBlockKeys) emitString("// "+key+"\n")
-      reflect[Unit]("def BLOCK_"+keyid+"("+fields.map(v=>quote(v)+":"+v.typ).mkString(",")+"): Unit = ", code)
-    }
+    def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]) =
+      reflect(BlockDef(key,keyid,fields,code))
 
 
     def genVarDef(v: Rep[Any]): Rep[Unit] = reflect[Unit]("var v"+quote(v)+" = null.asInstanceOf["+v.typ+"]")
@@ -251,7 +250,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
     var debugBlocks = false
     var debugBlockKeys = true
-    var debugMethods = true
+    var debugMethods = false
     var debugReturns = false
     var debugLoops = false
     var debugPaths = false
@@ -534,8 +533,6 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
           val fields = getFields(stateBeforeBlock)
           val (key,keyid) = contextKeyId(getFrame(stateBeforeBlock))
 
-          println("genBlock "+keyid)
-          println(context)
           genBlockDef(key, keyid, fields, code)
         }
       }
