@@ -165,10 +165,9 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
       if (debugGlobalDefs) globalDefs.foreach(println)
 
-      println("dump to: "+this.getClass.getName+" "+debugDepGraph)
       if (debugDepGraph) {
         val exp = new ExportGraph { val IR: self.type = self }
-        println("dump to: "+this.getClass.getName)
+        println("dumping graph to: "+this.getClass.getName)
         exp.exportGraph(this.getClass.getName)(y.res)
       }
 
