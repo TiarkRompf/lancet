@@ -117,7 +117,7 @@ trait Unsafe_LMS {
     reflect[Unit]("unsafe.putShortVolatile(",base,",",offset,", ",value,")")
 
   def putInt(base: Rep[Object], offset: Rep[Long], value: Rep[Int]): Rep[Unit] = 
-    reflect[Unit]("if ("+quote(base)+" ne null) unsafe.putInt(",base,",",offset,", ",value,") else println(\"BUG: putInt\"+"+quote(base)+");")
+    reflect[Unit]("if (",base," ne null) unsafe.putInt(",base,",",offset,", ",value,") else println(\"BUG: putInt\"+",base,");")
   def putIntVolatile(base: Rep[Object], offset: Rep[Long], value: Rep[Int]): Rep[Unit] = 
     reflect[Unit]("unsafe.putIntVolatile(",base,",",offset,", ",value,")")
 

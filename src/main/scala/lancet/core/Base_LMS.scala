@@ -90,8 +90,15 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
 
   override def quote(e: Exp[Any]) = e match {
     case DynExp(a) => a.toString
+    case Const(a) => VConstToString(a)(e.typ)
+    case Sym(n) if n <= -1000 => "Const_"+(-n -1000) // hacky way to encode const syms!
     case _ => super.quote(e)
   }
+
+  override def getFreeDataBlock[A](start: Block[A]): List[(Sym[Any],Any)] = {
+    VConstantPool.toList
+  }
+
 
 
 }
@@ -184,15 +191,15 @@ trait Base_LMS0 extends Base_LMS1 {
 
 
   def quote(x:Any): String = x match {
-    case Const(c) => VConstToString(c)
+    case Const(c:AnyRef) => VConstToString(c)(typeRep[AnyRef]) //hack?
     case Dyn(s) => s // x99
     case DynExp(x) => x
     case _ => x.toString
   }
 
-  var VConstantPool: Vector[AnyRef] = Vector.empty
+  var VConstantPool: Vector[(Sym[Any],AnyRef)] = Vector.empty
 
-  def VConstToString[T](x:T): String = x match {
+  def VConstToString[T:TypeRep](x:T): String = x match {
     case x: Boolean => ""+x
     case x: Int => ""+x
     case x: Long => ""+x
@@ -210,13 +217,13 @@ trait Base_LMS0 extends Base_LMS1 {
     //case o: Array[Object] => ("(null:Array[Object])") // TODO
     //case o: Object => ("(null:"+o.getClass.getName+")")
     case _ => 
-      var idx = VConstantPool.indexOf(x) // FIXME: use eq
+      var idx = VConstantPool.indexWhere(_._2 == x) // FIXME: use eq
       if (idx < 0) {
-        VConstantPool = VConstantPool :+ x.asInstanceOf[AnyRef]
-        idx = VConstantPool.size - 1
+        idx = VConstantPool.size
+        VConstantPool = VConstantPool :+ ((Sym(-1000-idx)(manifest[T]),x.asInstanceOf[AnyRef]))
       }
 
-      "VConst_" + idx
+      "pConst_" + idx
   }
 
   def classStr(x: Class[_]): String = if (x.isArray()) "Array["+classStr(x.getComponentType)+"]" else x.getName match {
@@ -244,19 +251,35 @@ trait Base_LMS0 extends Base_LMS1 {
   def specCls(x: AnyRef): (AnyRef,Class[_]) = {
     val cls = x.getClass
     if (Modifier.isPublic(cls.getModifiers)) (x,cls) else (x,classOf[Object])
+    // for now, just fix to Object
+    (x,classOf[Object])
   }
 
+  def isPrimitive[T:TypeRep](x: T) = x match {
+    case x: Boolean => true
+    case x: Int => true
+    case x: Char => true
+    case x: Short => true
+    case x: Long => true
+    case x: Float => true
+    case x: Double => true
+    case x: Unit => true
+    case _ => false
+  }
 
 
 }
 
 trait Base_LMS extends Base_LMS0 {
 
-
   def reflect[T:TypeRep](d: Def[T]): Rep[T] = reflectEffect(d)//toAtom(d)
   def reify[T:TypeRep](x: => Rep[T]): Block[T] = reifyEffects(x)
 
-  def liftConst[T:TypeRep](x:T): Rep[T] = unit(x)
+  def liftConst[T:TypeRep](x:T): Rep[T] = {
+    //if (!isPrimitive(x))
+      //VConstToString(x) // add to constant pool
+    unit(x)
+  }
 
   def repManifest[T:Manifest]: Manifest[Rep[T]] = manifest[Rep[T]]
 
@@ -316,9 +339,9 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
 
   def eval[T](x: Rep[T]): Val[T] = x match {
     //case Static(x) => VConst(x)
-    case Static(x) => store.get(VConstToString(x)).asInstanceOf[Option[Val[T]]] match {
-      case Some(x) => x
-      case None => VConst(x)
+    case Static(y) => store.get(VConstToString(y)(x.typ)).asInstanceOf[Option[Val[T]]] match {
+      case Some(y) => y
+      case None => VConst(y)
     }
     case Dyn(s) => store.getOrElse(s, Top).asInstanceOf[Val[T]] match {
       case x => x

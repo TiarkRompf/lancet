@@ -108,11 +108,26 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
       val codegen = new GEN_Scala_LMS { val IR: self.type = self
       }
+
+
+      VConstantPool = Vector.empty
+
+      // dry run to hash out constant pool
+      codegen.withStream(new PrintWriter(new StringWriter)) {
+        codegen.emitSource(List(arg),y,"Generated",codegen.stream)
+      }
+
+      val cst = VConstantPool
+
     
       val stream = new StringWriter
       codegen.withStream(new PrintWriter(stream)) {
         codegen.emitSource(List(arg),y,"Generated",codegen.stream)
       }
+
+      println("constant pool")
+      println("expect: " + cst)
+      println("actual: " + VConstantPool)
 
 
       val source = stream.toString 
@@ -173,7 +188,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
 
       //ScalaCompile.compile[A,B](source, "Generated", constantPool.map(x=>specCls(x)).toList)
-      val f2 = ScalaCompile.compile[A,B](source, "Generated", Nil) //FIXME: constant pool
+      val f2 = ScalaCompile.compile[A,B](source, "Generated", cst.map(x=>specCls(x._2)).toList)
 
 
 
