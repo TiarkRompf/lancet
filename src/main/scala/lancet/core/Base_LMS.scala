@@ -391,8 +391,8 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
                 emitString("val "+str+" = " + quote(b) + "; // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
               val tp = bb.typ.asInstanceOf[TypeRep[Any]]
               Dyn[Any](str)(tp)
-            case (Some(a),None) if p.startsWith("VConst") && k == "clazz" => a // class is VConstant
-            case (None,Some(b)) if p.startsWith("VConst") && k == "clazz" => b // class is VConstant
+            case (Some(a),None) if p.startsWith("pConst") && k == "clazz" => a // class is VConstant
+            case (None,Some(b)) if p.startsWith("pConst") && k == "clazz" => b // class is VConstant
             case (a,b) => 
               val str = "LUB_"+p+"_"+k
               val tp = if (b.nonEmpty) {
@@ -406,7 +406,7 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
                 val tp = a.get.typ.asInstanceOf[TypeRep[Any]]
                 // we don't have the b value in the store
                 // check if this refers to a VConst field; if so get the field value
-                if (p.startsWith("VConst")) {
+                if (p.startsWith("pConst")) {
                   val obj = y("alloc").asInstanceOf[Rep[Object]]
                   val cls:Class[_] = obj match { case Static(o) => o.getClass }
                   val fld = getFieldForLub(obj,cls,k)(tp)
@@ -430,8 +430,8 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
           case (Some(a),Some(b)) if a == b => a
           case (Some(Partial(as)),Some(Partial(bs))) => Partial(lubPartial(k)(as,bs)) // two definitions ...
           // VConst: lift on the other side if missing; todo: replace string check with as("alloc") check
-          case (Some(Partial(as)),None) if k.startsWith("VConst") => Partial(lubPartial(k)(as,Map("alloc"->as("alloc"),"clazz"->as("clazz")))) // final fields ...
-          case (None,Some(Partial(bs))) if k.startsWith("VConst") => Partial(lubPartial(k)(Map("alloc"->bs("alloc"),"clazz"->bs("clazz")),bs))
+          case (Some(Partial(as)),None) if k.startsWith("pConst") => Partial(lubPartial(k)(as,Map("alloc"->as("alloc"),"clazz"->as("clazz")))) // final fields ...
+          case (None,Some(Partial(bs))) if k.startsWith("pConst") => Partial(lubPartial(k)(Map("alloc"->bs("alloc"),"clazz"->bs("clazz")),bs))
           // allocs: may be null in alternative
           //case (Some(Partial(as)),None) => Partial(lubPartial(k)(as,Map("alloc"->liftConst(null))))
           //case (None,Some(Partial(bs))) => Partial(lubPartial(k)(Map("alloc"->liftConst(null)),bs))
