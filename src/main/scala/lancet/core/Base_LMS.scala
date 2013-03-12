@@ -29,6 +29,7 @@ trait IR_LMS_Base extends EffectExp {
     case Unstructured(xs) => 
       if (xs.toString contains "def BLOCK_10") {
         println("--tunnel--")
+        // GRRR, CAN'T JUST RETURN Sym(10) !
         val x10 = globalDefs collect { case TP(s@Sym(10),_) => s } head;
         val x7 = globalDefs collect { case TP(s@Sym(10),_) => s } head;
         List(x10,x7) }
@@ -54,7 +55,13 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
     if (b.res == Const(())) stream.print("{ }") else {
     stream.println("{")
     emitBlock(b)
-    if (getBlockResult(b) != Const(())) stream.println(quote(getBlockResult(b)))
+    // GRRR, CAN'T JUST COMPARE res.typ == manifest[Unit]  WHY??
+    /*println("block res "+getBlockResult(b)+" "+getBlockResult(b).typ)
+    println("block res "+manifest[Unit])
+    println("block res "+(manifest[Unit] eq manifest[Unit]))
+    println("block res "+(getBlockResult(b).typ == manifest[Unit]))*/
+    if (getBlockResult(b).typ.toString != "Unit")
+      stream.println(quote(getBlockResult(b)))
     stream.print("}")
   }}
 
