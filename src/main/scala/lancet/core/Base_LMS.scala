@@ -18,16 +18,21 @@ trait IR_LMS_Base extends EffectExp {
   case class Patch(key: String, var block: Block[Unit]) extends Def[Unit]
 
   override def boundSyms(e: Any): List[Sym[Any]] = e match {
-    case Unstructured(xs) => val es = blocks(xs) flatMap effectSyms
-      if (xs.toString contains "def BLOCK_10") es //{ println("YUCK" + e); es ++ List(Sym(10),Sym(7)) }
-      else es
+    case Unstructured(xs) => blocks(xs) flatMap effectSyms
     case Patch(key,block) => effectSyms(block)
     case _ => super.boundSyms(e)
   }
 
+
+  // DO WE NEED THIS OR CAN WE USE BOUNDSYMS ???
   override def tunnelSyms(e: Any): List[Sym[Any]] = e match {
     case Unstructured(xs) => 
-      if (xs.toString contains "def BLOCK_10") List(Sym(10),Sym(7)) else Nil
+      if (xs.toString contains "def BLOCK_10") {
+        println("--tunnel--")
+        val x10 = globalDefs collect { case TP(s@Sym(10),_) => s } head;
+        val x7 = globalDefs collect { case TP(s@Sym(10),_) => s } head;
+        List(x10,x7) }
+      else Nil
     case _ => super.tunnelSyms(e)
   }
 
@@ -54,12 +59,12 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
   }}
 
   override def emitValDef(sym: Sym[Any], rhs: String) = 
-    if (false && sym.tp == manifest[Unit]) stream.println(rhs+";")
+    if (sym.tp == manifest[Unit]) stream.println(rhs+";")
     else super.emitValDef(sym,rhs+";")
 
   override def emitNode(sym: Sym[Any], rhs: Def[Any]) = rhs match {
     case Unstructured(xs) =>
-        //if (sym.tp != manifest[Unit])
+        if (sym.tp != manifest[Unit])
           stream.print("val "+quote(sym)+": "+remap(sym.tp)+" = ")
         xs foreach {
           case b: Block[a] => 
@@ -71,9 +76,9 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
         }
         stream.println(";")
     case Patch(key, block) =>
-    stream.println("// patch "+sym+" {")
+    //stream.println("// patch "+sym+" {")
       emitBlock(block)
-    stream.println("// patch "+sym+" }")
+    //stream.println("// patch "+sym+" }")
     case _ => super.emitNode(sym,rhs)
   }
 

@@ -507,7 +507,12 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
             val fields = getFields(s1)
             val (key,keyid) = contextKeyId(getFrame(s1))
             val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
-            reify { reflect[Unit](Patch("",head)); genBlockCall(keyid, fields) }
+            reify { 
+              emitString(";{")
+              reflect[Unit](Patch("",head))
+              genBlockCall(keyid, fields) 
+              emitString("}")
+            }
           }
           genGotoDef("GOTO_"+mkeyid+"_"+b.blockID+"_"+i, rhs)
           //src = src.replace("GOTO_"+i+";", rhs)
