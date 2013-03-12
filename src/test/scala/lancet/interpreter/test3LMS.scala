@@ -43,8 +43,10 @@ class TestInterpreter3LMS extends FileDiffSuite {
   }
 
   def testA2 = withOutFileChecked(prefix+"A2") {
+    System.setProperty("lms.verbosity","1")
     val it = new BytecodeInterpreter_LMS_Opt
     it.initialize()
+    it.debugDepGraph = true
     val f = it.compile { (x:Int) => 
         val b = new Bar
         b.intField = 7

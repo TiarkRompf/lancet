@@ -529,6 +529,8 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
           val fields = getFields(stateBeforeBlock)
           val (key,keyid) = contextKeyId(getFrame(stateBeforeBlock))
 
+          println("genBlock "+keyid)
+          println(context)
           genBlockDef(key, keyid, fields, code)
         }
       }

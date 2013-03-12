@@ -18,11 +18,18 @@ trait IR_LMS_Base extends EffectExp {
   case class Patch(key: String, var block: Block[Unit]) extends Def[Unit]
 
   override def boundSyms(e: Any): List[Sym[Any]] = e match {
-    case Unstructured(xs) => blocks(xs) flatMap effectSyms
+    case Unstructured(xs) => val es = blocks(xs) flatMap effectSyms
+      if (xs.toString contains "def BLOCK_10") es //{ println("YUCK" + e); es ++ List(Sym(10),Sym(7)) }
+      else es
     case Patch(key,block) => effectSyms(block)
     case _ => super.boundSyms(e)
   }
 
+  override def tunnelSyms(e: Any): List[Sym[Any]] = e match {
+    case Unstructured(xs) => 
+      if (xs.toString contains "def BLOCK_10") List(Sym(10),Sym(7)) else Nil
+    case _ => super.tunnelSyms(e)
+  }
 
 
   def reflect[A:TypeRep](s: Any*): Exp[A] = reflectEffect(Unstructured[A](s.toList))
@@ -47,12 +54,12 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
   }}
 
   override def emitValDef(sym: Sym[Any], rhs: String) = 
-    if (sym.tp == manifest[Unit]) stream.println(rhs+";")
+    if (false && sym.tp == manifest[Unit]) stream.println(rhs+";")
     else super.emitValDef(sym,rhs+";")
 
   override def emitNode(sym: Sym[Any], rhs: Def[Any]) = rhs match {
     case Unstructured(xs) =>
-        if (sym.tp != manifest[Unit])
+        //if (sym.tp != manifest[Unit])
           stream.print("val "+quote(sym)+": "+remap(sym.tp)+" = ")
         xs foreach {
           case b: Block[a] => 
@@ -64,7 +71,9 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
         }
         stream.println(";")
     case Patch(key, block) =>
+    stream.println("// patch "+sym+" {")
       emitBlock(block)
+    stream.println("// patch "+sym+" }")
     case _ => super.emitNode(sym,rhs)
   }
 

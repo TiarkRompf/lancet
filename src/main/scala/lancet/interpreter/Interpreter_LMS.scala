@@ -50,7 +50,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
     var emitUniqueOpt = false
     var debugGlobalDefs = false
-
+    var debugDepGraph = false
 
     // ---------- high level execution loop ----------
 
@@ -161,10 +161,22 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
       //System.out.println(source)
 
+
+
+      if (debugGlobalDefs) globalDefs.foreach(println)
+
+      println("dump to: "+this.getClass.getName+" "+debugDepGraph)
+      if (debugDepGraph) {
+        val exp = new ExportGraph { val IR: self.type = self }
+        println("dump to: "+this.getClass.getName)
+        exp.exportGraph(this.getClass.getName)(y.res)
+      }
+
+
       //ScalaCompile.compile[A,B](source, "Generated", constantPool.map(x=>specCls(x)).toList)
       val f2 = ScalaCompile.compile[A,B](source, "Generated", Nil) //FIXME: constant pool
 
-      if (debugGlobalDefs) globalDefs.foreach(println)
+
 
       f2
     }
