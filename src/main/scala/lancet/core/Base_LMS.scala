@@ -46,11 +46,6 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
     if (b.res == Const(())) stream.print("{ }") else {
     stream.println("{")
     emitBlock(b)
-    // GRRR, CAN'T JUST COMPARE res.typ == manifest[Unit]  WHY??
-    /*println("block res "+getBlockResult(b)+" "+getBlockResult(b).typ)
-    println("block res "+manifest[Unit])
-    println("block res "+(manifest[Unit] eq manifest[Unit]))
-    println("block res "+(getBlockResult(b).typ == manifest[Unit]))*/
     if (getBlockResult(b).tp != manifest[Unit])
       stream.println(quote(getBlockResult(b)))
     stream.print("}")
@@ -91,24 +86,18 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
   override def quote(e: Exp[Any]) = e match {
     case DynExp(a) => a.toString
     case Const(a) => VConstToString(a)(e.typ)
-    case Sym(n) if n <= -1000 => "Const_"+(-n -1000) // hacky way to encode const syms!
+    case Sym(n) if n <= -1000 => 
+      // HACK: lms wants syms for consts subject to CSP
+      "Const_"+(-n -1000)
     case _ => super.quote(e)
   }
 
   override def getFreeDataBlock[A](start: Block[A]): List[(Sym[Any],Any)] = {
     VConstantPool.toList
   }
-
-
-
 }
 
-trait GEN_Scala_LMS extends GEN_Scala_LMS_Base with ScalaGenCore {
-
-
-}
-
-
+trait GEN_Scala_LMS extends GEN_Scala_LMS_Base with ScalaGenCore
 
 
 
@@ -137,9 +126,6 @@ trait Base_LMS1 extends Base with IR_LMS { self =>
       case _ => None
     }
   }
-
-
-
 }
 
 
@@ -217,7 +203,7 @@ trait Base_LMS0 extends Base_LMS1 {
     //case o: Array[Object] => ("(null:Array[Object])") // TODO
     //case o: Object => ("(null:"+o.getClass.getName+")")
     case _ => 
-      var idx = VConstantPool.indexWhere(_._2 == x) // FIXME: use eq
+      var idx = VConstantPool.indexWhere(_._2 == x) // should use eq ??
       if (idx < 0) {
         idx = VConstantPool.size
         VConstantPool = VConstantPool :+ ((Sym(-1000-idx)(manifest[T]),x.asInstanceOf[AnyRef]))
@@ -251,7 +237,7 @@ trait Base_LMS0 extends Base_LMS1 {
   def specCls(x: AnyRef): (AnyRef,Class[_]) = {
     val cls = x.getClass
     if (Modifier.isPublic(cls.getModifiers)) (x,cls) else (x,classOf[Object])
-    // for now, just fix to Object
+    // for now, just fix to Object (hack?)
     (x,classOf[Object])
   }
 
@@ -266,8 +252,6 @@ trait Base_LMS0 extends Base_LMS1 {
     case x: Unit => true
     case _ => false
   }
-
-
 }
 
 trait Base_LMS extends Base_LMS0 {
