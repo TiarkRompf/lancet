@@ -1,0 +1,60 @@
+  /*****************************************
+  Emitting Generated Code
+  *******************************************/
+  class Generated(pConst_0:Object) extends ((Int)=>(Int)) {
+    def apply(x0:Int): Int = {
+      import sun.misc.Unsafe;
+      val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
+      type char = Char;
+      def WARN = assert(false, "WARN");
+      def ERROR = assert(false, "ERROR");
+      var RES = null.asInstanceOf[Int];
+      val x7 = x0.asInstanceOf[Int];
+      val x8 = 0 >= x7;
+      if (x8) {
+        ;{;
+          val x122: Int = unsafe.getInt(pConst_0,16);
+          val LUB_pConst_1_intField = x122; // XXX LUBC(Some(DynExp(LUB_pConst_1_intField)),None);
+          BLOCK_4(LUB_pConst_1_intField,x7);
+        };
+      } else {
+        if (pConst_0 ne null) unsafe.putInt(pConst_0,16, 9) else println("BUG: putInt"+pConst_0);;
+        ;{;
+          val LUB_pConst_1_intField = 9; // Alias(Some(DynExp(LUB_pConst_1_intField)),Some(Const(9)));
+          BLOCK_4(LUB_pConst_1_intField,x7);
+        };
+      }
+      // 14:<TestInterpreter3LMS$$anonfun$testB3$1$$anonfun$6.apply$mcII$sp>HotSpotSignature<(I)I> // 5:<TestInterpreter3LMS$$anonfun$testB3$1$$anonfun$6.apply>HotSpotSignature<(I)I> // 0:<BytecodeInterpreter_Exec.execute>HotSpotSignature<(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+      def BLOCK_4(LUB_pConst_1_intField:Int,x7:Int): Unit = {
+        ;{;
+          val PHI_3_5 = 0 // LUBC(DynExp(PHI_3_5):Int,Const(0):Int);
+          BLOCK_5(LUB_pConst_1_intField,PHI_3_5,x7);
+        };
+      }
+      // 16:<TestInterpreter3LMS$$anonfun$testB3$1$$anonfun$6.apply$mcII$sp>HotSpotSignature<(I)I> // 5:<TestInterpreter3LMS$$anonfun$testB3$1$$anonfun$6.apply>HotSpotSignature<(I)I> // 0:<BytecodeInterpreter_Exec.execute>HotSpotSignature<(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+      def BLOCK_5(LUB_pConst_1_intField:Int,PHI_3_5:Int,x7:Int): Unit = {
+        val x69 = 0 >= LUB_pConst_1_intField;
+        if (x69) {
+          (RES = PHI_3_5) // return to root;
+        } else {
+          val x82 = -1 + LUB_pConst_1_intField;
+          if (pConst_0 ne null) unsafe.putInt(pConst_0,16, x82) else println("BUG: putInt"+pConst_0);;
+          val x90 = 1 + PHI_3_5;
+          ;{;
+            val PHI_3_5 = x90 // LUBC(DynExp(PHI_3_5):Int,Sym(90):Int);
+            val LUB_pConst_1_intField = x82; // Alias(Some(DynExp(LUB_pConst_1_intField)),Some(Sym(82)));
+            BLOCK_5(LUB_pConst_1_intField,PHI_3_5,x7);
+          };
+        }
+      }
+      // (no return?);
+      RES
+    }
+  }
+  /*****************************************
+  End of Generated Code
+  *******************************************/
+warning: there were 3 deprecation warnings; re-run with -deprecation for details
+one warning found
+compilation: ok
+9

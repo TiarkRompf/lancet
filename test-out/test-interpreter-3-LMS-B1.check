@@ -1,0 +1,41 @@
+  /*****************************************
+  Emitting Generated Code
+  *******************************************/
+  class Generated(pConst_0:Object) extends ((Int)=>(Int)) {
+    def apply(x0:Int): Int = {
+      import sun.misc.Unsafe;
+      val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
+      type char = Char;
+      def WARN = assert(false, "WARN");
+      def ERROR = assert(false, "ERROR");
+      var RES = null.asInstanceOf[Int];
+      val x7 = x0.asInstanceOf[Int];
+      val x8 = 0 >= x7;
+      if (x8) {
+        ;{;
+          val x42: Int = unsafe.getInt(pConst_0,16);
+          val LUB_pConst_1_intField = x42; // XXX LUBC(Some(DynExp(LUB_pConst_1_intField)),None);
+          BLOCK_4(LUB_pConst_1_intField,x7);
+        };
+      } else {
+        if (pConst_0 ne null) unsafe.putInt(pConst_0,16, 9) else println("BUG: putInt"+pConst_0);;
+        ;{;
+          val LUB_pConst_1_intField = 9; // Alias(Some(DynExp(LUB_pConst_1_intField)),Some(Const(9)));
+          BLOCK_4(LUB_pConst_1_intField,x7);
+        };
+      }
+      // 14:<TestInterpreter3LMS$$anonfun$testB1$1$$anonfun$4.apply$mcII$sp>HotSpotSignature<(I)I> // 5:<TestInterpreter3LMS$$anonfun$testB1$1$$anonfun$4.apply>HotSpotSignature<(I)I> // 0:<BytecodeInterpreter_Exec.execute>HotSpotSignature<(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+      def BLOCK_4(LUB_pConst_1_intField:Int,x7:Int): Unit = {
+        (RES = LUB_pConst_1_intField) // return to root;
+      }
+      // (no return?);
+      RES
+    }
+  }
+  /*****************************************
+  End of Generated Code
+  *******************************************/
+warning: there were 2 deprecation warnings; re-run with -deprecation for details
+one warning found
+compilation: ok
+9
