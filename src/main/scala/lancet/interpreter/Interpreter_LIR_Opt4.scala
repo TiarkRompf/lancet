@@ -531,6 +531,10 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
         out.returns.zipWithIndex.map { case (st, j) => ("RETURN_"+i+"_"+j+";",st) }
       }
 
+      // need to split between different return targets!!!
+      // do we need to consider more cases than just discarding stuff?
+
+      val retframes = returns.groupBy(r => contextKey(getFrame(r._2)))
 
       if (returns.length == 0) {
         emitAll(block)
@@ -545,15 +549,7 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
       } else {
         emitString("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
 
-        // need to split between different return targets!!!
-        // do we need to consider more cases than just discarding stuff?
-
-        val retframes = returns.groupBy(r => getFrame(r._2))
-        
-        for ((target, returns) <- retframes) {
-          Console.println("ret to "+target)
-          Console.println("ret to "+target)
-
+        if (retframes.size == 1) { // just 1 target
           val (ss, gos) = allLubs(returns.map(_._2))
           val fields = getFields(ss)
 
@@ -574,8 +570,22 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
           emitString(";{")
           if (debugReturns) emitString("// ret multi "+method)
           for (v <- fields) emitString(genVarRead(v))
+
           withState(ss)(exec)
           emitString("}}")
+        } else {
+          // multiple targets!
+          var block1 = block
+          for ((target, returns) <- retframes) {
+            assert(returns.length == 1) // not handling multiple calls to multiple targets...
+            val (k,s) = returns(0)
+            val ret = reify {
+              if (debugReturns) emitString("// ret single "+method)
+              withState(s)(exec)
+            }
+            block1 = block1.replace(k, ret)
+          }
+          emitAll(block1)
         }
       }
       liftConst(())
