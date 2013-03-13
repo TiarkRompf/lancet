@@ -136,9 +136,11 @@ class Frame_Str0(val numLocals: Int, parent: Frame) extends Frame {
 
 // local array contains staged values
 
-class Frame_Str(val numLocals: Int, val parent: Frame) extends Frame {
+class Frame_Str(val numLocals: Int, val parent0: Frame_Str) extends Frame { 
     import Frame._
     assert(numLocals >= MIN_FRAME_SIZE);
+
+    var parent: Frame_Str = parent0
 
     val locals: Array[Rep[Object]] = {
         implicit val m = repManifest[Object]
@@ -198,6 +200,15 @@ class Frame_Str(val numLocals: Int, val parent: Frame) extends Frame {
         }
     }
 
+    def setParentFrame(level: Int, frame: Frame): Unit = {
+        assert(level >= 0);
+        if (level == 1) {
+            parent = frame.asInstanceOf[Frame_Str];
+        } else {
+            return parent.setParentFrame(level - 1, frame);
+        }
+    }
+
     def getTopFrame(): Frame = {
         val parentFrame = parent
         if (parentFrame == null) {
@@ -231,8 +242,8 @@ object InterpreterFrame {
 }
 
 
-class InterpreterFrame_Str(var method: ResolvedJavaMethod, parent: InterpreterFrame, additionalStackSpace: Int) 
-extends Frame_Str(method.getMaxLocals() + method.getMaxStackSize() + InterpreterFrame.BASE_LENGTH + additionalStackSpace, parent) 
+class InterpreterFrame_Str(var method: ResolvedJavaMethod, parent0: InterpreterFrame_Str, additionalStackSpace: Int) 
+extends Frame_Str(method.getMaxLocals() + method.getMaxStackSize() + InterpreterFrame.BASE_LENGTH + additionalStackSpace, parent0)
 with InterpreterFrame {
 
     import Frame._
@@ -274,7 +285,7 @@ with InterpreterFrame {
 
     def copy() = {
       //assert(parent != null, "don't copy root frame!")
-      val frame = new InterpreterFrame_Str(method, parent, additionalStackSpace);
+      val frame = new InterpreterFrame_Str(method, parent.asInstanceOf[InterpreterFrame_Str], additionalStackSpace);
       System.arraycopy(locals, 0, frame.locals, 0, locals.length)
       //frame.locals = locals
       //frame.primitiveLocals = primitiveLocals
@@ -612,9 +623,11 @@ with InterpreterFrame {
     }*/
 
     def getParentFrame(): InterpreterFrame = {
-        //return getObject(PARENT_FRAME_SLOT).asInstanceOf[InterpreterFrame];
-        //throw new Exception("not supported")
         parent.asInstanceOf[InterpreterFrame]
+    }
+
+    def setParentFrame(frame: InterpreterFrame): Unit = {
+        parent = frame.asInstanceOf[InterpreterFrame_Str]
     }
 
     def dispose(): Unit = {

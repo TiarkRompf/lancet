@@ -34,7 +34,7 @@ import com.oracle.graal.hotspot.meta._;
 import com.oracle.graal.bytecode._;
 
 
-trait InterpreterUniverse extends RuntimeUniverse {
+trait InterpreterUniverse extends RuntimeUniverse { univ =>
 
 trait Frame {
   def getObject(index: Int): Rep[Object]
@@ -47,7 +47,8 @@ trait Frame {
   def setInt(index: Int, value: Rep[Int]): Unit
   def getDouble(index: Int): Rep[Double]
   def setDouble(index: Int, value: Rep[Double]): Unit
-  def getParentFrame(level: Int): Frame // will not work! (dynamic)
+  def getParentFrame(level: Int): Frame // requires static link
+  def setParentFrame(level: Int, frame: Frame): Unit
   def getTopFrame(): Frame
   def getArguments(argOffset: Int): Rep[Array[Object]]
   def size: Int
@@ -101,7 +102,8 @@ trait InterpreterFrame extends Frame {
   def getMethod(): ResolvedJavaMethod
   def setBCI(bci: Int): Unit
   def getBCI(): Int
-  def getParentFrame(): InterpreterFrame // will not work! (dynamic)
+  def getParentFrame(): InterpreterFrame
+  def setParentFrame(f: InterpreterFrame): Unit
   def dispose(): Unit
   def popStack(): Unit
 }

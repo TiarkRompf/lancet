@@ -37,7 +37,7 @@ import com.oracle.graal.bytecode._;
 
 
 
-trait InterpreterUniverse_Exec extends RuntimeUniverse_Exec with InterpreterUniverse {
+trait InterpreterUniverse_Exec extends RuntimeUniverse_Exec with InterpreterUniverse { univ =>
 
 
 
@@ -50,6 +50,7 @@ object Frame extends HasUnsafe {
 
 
 class Frame_Exec1(numLocals: Int, parent: Frame) extends Frame { // avoid boxing for primitives
+
     import Frame._
     assert(numLocals >= MIN_FRAME_SIZE);
 
@@ -106,6 +107,15 @@ class Frame_Exec1(numLocals: Int, parent: Frame) extends Frame { // avoid boxing
             return this;
         } else {
             return getObject(PARENT_FRAME_SLOT).asInstanceOf[Frame].getParentFrame(level - 1);
+        }
+    }
+
+    def setParentFrame(level: Int, frame: Frame): Unit = {
+        assert(level >= 0);
+        if (level == 1) {
+            setObject(PARENT_FRAME_SLOT, frame);
+        } else {
+            getObject(PARENT_FRAME_SLOT).asInstanceOf[Frame].setParentFrame(level - 1, frame);
         }
     }
 
@@ -186,6 +196,15 @@ class Frame_Exec(numLocals: Int, parent: Frame) extends Frame {
             return this;
         } else {
             return getObject(PARENT_FRAME_SLOT).asInstanceOf[Frame].getParentFrame(level - 1);
+        }
+    }
+
+    def setParentFrame(level: Int, frame: Frame): Unit = {
+        assert(level >= 0);
+        if (level == 1) {
+            setObject(PARENT_FRAME_SLOT, frame);
+        } else {
+            getObject(PARENT_FRAME_SLOT).asInstanceOf[Frame].setParentFrame(level - 1, frame);
         }
     }
 
@@ -572,6 +591,10 @@ with InterpreterFrame {
 
     def getParentFrame(): InterpreterFrame = {
         return getObject(PARENT_FRAME_SLOT).asInstanceOf[InterpreterFrame];
+    }
+
+    def setParentFrame(frame: InterpreterFrame): Unit = {
+        setObject(PARENT_FRAME_SLOT, frame);
     }
 
     def dispose(): Unit = {
@@ -993,6 +1016,10 @@ with InterpreterFrame {
 
     def getParentFrame(): InterpreterFrame = {
         return getObject(PARENT_FRAME_SLOT).asInstanceOf[InterpreterFrame];
+    }
+
+    def setParentFrame(frame: InterpreterFrame): Unit = {
+        setObject(PARENT_FRAME_SLOT, frame)
     }
 
     def dispose(): Unit = {
