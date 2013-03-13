@@ -179,7 +179,7 @@ class TestInterpreter5 extends FileDiffSuite {
       res.asInstanceOf[B]
     }
 
-    /*def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],Block[Object]) = {
+    def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],Block[Object]) = {
       val arg = Dyn[Object](fresh)
       val body = reify {
         val Partial(fs) = eval(f)
@@ -214,12 +214,20 @@ class TestInterpreter5 extends FileDiffSuite {
       fullName match {
         case "lancet.interpreter.TestInterpreter5$Decompiler.shift" => handle {
           case r::f::Nil => 
-            reflect[Object]("shift ",f)
+            emitString("//begin shift")
+            val block = decompileInternal[Object,Object](f)
+            reflect[Unit]("shift ",block)
+            emitString("//end shift")
+            liftConst(())
         }
 
         case "lancet.interpreter.TestInterpreter5$Decompiler.reset" => handle {
           case r::f::Nil => 
-            reflect[Object]("reset ",f)
+            emitString("//begin reset")
+            val block = decompileInternal[Object,Object](f)
+            reflect[Unit]("reflect ",block)
+            emitString("//end reset")
+            liftConst(())
         }
       
 
