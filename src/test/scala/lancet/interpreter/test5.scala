@@ -17,7 +17,7 @@ class TestInterpreter5 extends FileDiffSuite {
 
     def compute(i: Int) = if (i == 50) it.dropdead
 
-    val f = it.interpret { (x:Int) => 
+    val f = it.interpret { (x:Int) => // fully interpreted
       var i = 0
       while (i < x) {
         compute(i)
@@ -88,6 +88,8 @@ class TestInterpreter5 extends FileDiffSuite {
       case Block(xs) => xs.foreach(exec(_)) // unroll
     }
 
+    // GOAL 1: switch plus/minus nodes
+    // GOAL 2: switch environment if new keys added
 
     val p = Block(List(
       //Assign("max", IntVal(100)),
