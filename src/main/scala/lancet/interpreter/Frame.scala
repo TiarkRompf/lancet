@@ -102,6 +102,8 @@ trait InterpreterFrame extends Frame {
   def getMethod(): ResolvedJavaMethod
   def setBCI(bci: Int): Unit
   def getBCI(): Int
+  def setNextBCI(bci: Int): Unit
+  def getNextBCI(): Int
   def getParentFrame(): InterpreterFrame
   def setParentFrame(f: InterpreterFrame): Unit
   def dispose(): Unit

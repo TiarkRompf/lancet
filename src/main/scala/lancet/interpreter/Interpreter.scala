@@ -160,9 +160,8 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
     }
   }
 
-
-
   def call(callFrame: InterpreterFrame) = local { (frame, bs) =>
+    assert(frame.getNextBCI == bs.nextBCI)
     frame.setBCI(bs.nextBCI()); // continue after call
 
     if (callFrame != null) {
@@ -282,12 +281,15 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
     bs.setBCI(bci)
     var ctrl: Control = null
     do {
+      frame.setBCI(bs.currentBCI())
+      frame.setNextBCI(bs.nextBCI())
       ctrl = executeInstruction(frame, bs)
       //println("--- ctrl " + ctrl)
       if (ctrl == null)
         bs.next()
     } while (ctrl == null)
     frame.setBCI(bs.currentBCI())
+    frame.setNextBCI(bs.nextBCI())
     ctrl(frame, bs)
     //val r = ctrl(frame, bs).asInstanceOf[Rep[Unit]]
     //println("--- res " + r.getClass)

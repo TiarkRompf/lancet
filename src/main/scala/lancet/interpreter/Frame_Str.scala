@@ -250,6 +250,7 @@ with InterpreterFrame {
     import InterpreterFrame._
 
     var bci: Int = _
+    var nextBci: Int = _
 
     var returnValue: Rep[Object] = _
 
@@ -257,6 +258,7 @@ with InterpreterFrame {
 
     setMethod(method);
     setBCI(0);
+    setNextBCI(-1);
         
 
     /** Pointer to the top-most stack frame element. */
@@ -291,6 +293,7 @@ with InterpreterFrame {
       //frame.primitiveLocals = primitiveLocals
       frame.returnValue = returnValue
       frame.bci = bci
+      frame.nextBci = nextBci
       frame.tos = tos
       frame
     }
@@ -303,6 +306,7 @@ with InterpreterFrame {
       //frame.primitiveLocals = primitiveLocals
       frame.returnValue = returnValue
       frame.bci = bci
+      frame.nextBci = nextBci
       frame.tos = tos
       frame
     }
@@ -611,6 +615,14 @@ with InterpreterFrame {
 
     def getBCI(): Int = {
         return bci
+    }
+
+    def setNextBCI(bci: Int): Unit = {
+        this.nextBci = bci
+    }
+
+    def getNextBCI(): Int = {
+        return nextBci
     }
 
     /*def pushTo(childFrame: InterpreterFrame, argumentSlots: Int): Unit = {

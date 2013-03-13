@@ -241,25 +241,22 @@ class TestInterpreter5 extends FileDiffSuite {
               val frame1 = frame.asInstanceOf[InterpreterFrame_Str]
               reflect[Object](self,".mkInterpreterFrame(Array[Object]("+
                 frame1.locals.map(x=>x+".asInstanceOf[AnyRef]").mkString(",")+"), "+ // cast is not nice
-                frame1.bci+", "+
+                frame1.nextBci+", "+ // need to take *next* bci (cur points to call!)
                 frame1.getStackTop()+", "+
                 liftConst(frame1.getMethod)+", "+p+")")
             }
             val frame = rec(parent)
-            // create interpreter object (or reuse?)
-            //val interp = new BytecodeInterpreter_Exec
-            // initialize interpreter with corresponding chain of frames
-            // exec interpreter to resume at caller frame
+
             // discard compiler state
             val callers = getContext(parent)
-            continuation = callers.reverse.tail.head.copy // second from top! create copy!
-            //continuation = parent.getTopFrame.asInstanceOf[InterpreterFrame]
+            continuation = callers.reverse.tail.head // second from top! copy or not?
 
-            val tp = continuation.getMethod.getSignature.getReturnKind
-            emitString("//return type: " + tp.toString)
-            val res = reflect[Object](self,".execInterpreter("+frame+") // drop into interpreter")
             /* NOTE: correctly unwinding the stack would also mean unlocking monitors and
             calling .dispose on frames)*/
+
+            // exec interpreter to resume at caller frame
+            val res = reflect[Object](self,".execInterpreter("+frame+") // drop into interpreter")
+
             emitString("// old parent: " + contextKey(parent))
             emitString("// new parent: " + contextKey(continuation))
 
@@ -293,6 +290,7 @@ class TestInterpreter5 extends FileDiffSuite {
     emitUniqueOpt = true
     debugBlockKeys = false
     debugReadWrite = false
+    debugMethods = false
 
   }
 

@@ -247,12 +247,14 @@ with InterpreterFrame {
     import InterpreterFrame._
 
     var bci: Int = _
+    var nextBci: Int = _
     var returnValue: Object = _ // TODO: map to stack
 
     assert(additionalStackSpace >= 0);
 
     setMethod(method);
     setBCI(0);
+    setNextBCI(-1);
     
 
     /** Pointer to the top-most stack frame element. */
@@ -580,6 +582,14 @@ with InterpreterFrame {
         return bci
     }
 
+    def setNextBCI(bci: Int): Unit = {
+        this.nextBci = bci
+    }
+
+    def getNextBCI(): Int = {
+        return nextBci
+    }
+
     /*def pushTo(childFrame: InterpreterFrame, argumentSlots: Int): Unit = {
         System.arraycopy(locals, tos - argumentSlots, childFrame.locals,
                         Frame.MIN_FRAME_SIZE, argumentSlots);
@@ -651,12 +661,14 @@ with InterpreterFrame {
     import InterpreterFrame._
 
     var bci: Int = _
+    var nextBci: Int = _
     var returnValue: Object = _ // TODO: map to stack
 
     assert(additionalStackSpace >= 0);
 
     setMethod(method);
     setBCI(0);
+    setNextBCI(-1);
         
 
     /** Pointer to the top-most stack frame element. */
@@ -1005,6 +1017,13 @@ with InterpreterFrame {
         return bci
     }
 
+    def setNextBCI(bci: Int): Unit = {
+        this.nextBci = bci
+    }
+
+    def getNextBCI(): Int = {
+        return nextBci
+    }
     /*def pushTo(childFrame: InterpreterFrame, argumentSlots: Int): Unit = {
         System.arraycopy(locals, tos - argumentSlots, childFrame.locals,
                         Frame.MIN_FRAME_SIZE, argumentSlots);
