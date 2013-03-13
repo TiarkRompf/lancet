@@ -44,6 +44,20 @@ class TestInterpreter5 extends FileDiffSuite {
     println(f(100))
   }
 
+
+  def test20 = withOutFileChecked(prefix+"cps1") {
+    val it = new Decompiler
+
+    def compute(i: Int) = it.shift[Int,Int](k => k(7) + k(9))
+
+    val f = it.compile { (x:Int) => 
+      it.reset[Int](compute(x) + 100)
+    }
+    println(f(100))
+  }
+
+
+
   def test10 = withOutFileChecked(prefix+"language10") {
     assert(false)
     val it = new Decompiler
