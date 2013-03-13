@@ -173,7 +173,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
       //println("set return bci "+bs.nextBCI())
       //executeBlock(callFrame, bs1, callFrame.getBCI());
       exec(callFrame)
-    } else {      
+    } else {
       exec(frame)
       //executeBlock(frame, bs, bs.nextBCI())
       // trampoline executeBlock instead of falling through?

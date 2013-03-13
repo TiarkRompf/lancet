@@ -194,15 +194,18 @@ class TestInterpreter5 extends FileDiffSuite {
         }
       }
       (arg,body)
-    }*/
+    }
 
-    def handleMethodCall(parent: InterpreterFrame, m: ResolvedJavaMethod): Boolean = {
+    var resetStack: List[Frame] = Nil
+
+    def handleMethodCall(parent: InterpreterFrame, m: ResolvedJavaMethod): Option[InterpreterFrame] = {
       val className = m.getDeclaringClass.toJava.getName
       val fullName = className + "." + m.getName
-      def handle(f: List[Rep[Object]] => Rep[Object]): Boolean = {
+      var continuation: InterpreterFrame = parent
+      def handle(f: List[Rep[Object]] => Rep[Object]): Option[InterpreterFrame] = {
         val returnValue = f(popArgumentsAsObject(parent, m, !java.lang.reflect.Modifier.isStatic(m.getModifiers)).toList)
-        pushAsObject(parent, m.getSignature().getReturnKind(), returnValue)
-        true
+        pushAsObject(continuation, m.getSignature().getReturnKind(), returnValue)
+        Some(if (continuation == parent) null else continuation)
       }
 
       Console.println("// "+fullName)
@@ -241,11 +244,21 @@ class TestInterpreter5 extends FileDiffSuite {
             // exec interpreter to resume at caller frame
             // discard compiler state
             val res = reflect[Object](self,".execInterpreter("+frame+") // drop into interpreter")
-            throw new InterpreterException(reflect[Throwable]("new Exception(\"\"+"+res+")"))
+            /* NOTE: correctly unwinding the stack would also mean unlocking monitors and
+            calling .dispose on frames)*/
+            emitString("// old parent: " + parent)
+
+            continuation = parent.getTopFrame.asInstanceOf[InterpreterFrame]
+
+            emitString("// new parent: " + continuation)
+
+            emitString("//about to return ... ")
+            res
+            //throw new InterpreterException(reflect[Throwable]("new Exception(\"\"+"+res+")"))
         }
         case _ => 
           //println(fullName)
-          false
+          None
       }
     }
 
@@ -261,9 +274,10 @@ class TestInterpreter5 extends FileDiffSuite {
 
 
     override def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame =
-      if (handleMethodCall(parent,m)) null else super.resolveAndInvoke(parent, m)
+      handleMethodCall(parent,m).getOrElse(super.resolveAndInvoke(parent, m))
+
     override def invokeDirect(parent: InterpreterFrame, m: ResolvedJavaMethod, hasReceiver: Boolean): InterpreterFrame =
-      if (handleMethodCall(parent,m)) null else super.invokeDirect(parent, m, hasReceiver)
+      handleMethodCall(parent,m).getOrElse(super.invokeDirect(parent, m, hasReceiver))
 
 
     initialize()
