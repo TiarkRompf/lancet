@@ -397,8 +397,11 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
       handler = { blockFrame =>
         val d = getContext(blockFrame).length
 
+        emitString("// ctrl transfer "+d+" "+blockFrame+"/"+blockFrame.getMethod)
+
         if (d > saveDepth) execMethod(blockFrame)
         else if (d < saveDepth) { 
+          emitString("// return to "+blockFrame+"/"+blockFrame.getMethod)
           val s = getState(blockFrame)
           val out = blockInfoOut(curBlock)
           emitString("RETURN_"+curBlock+"_"+(out.returns.length)+";")
@@ -542,28 +545,38 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
       } else {
         emitString("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
 
-        val (ss, gos) = allLubs(returns.map(_._2))
-        val fields = getFields(ss)
+        // need to split between different return targets!!!
+        // do we need to consider more cases than just discarding stuff?
 
-        emitString(";{")
-
-        for (v <- fields) emitString(genVarDef(v))
-
-        var block1 = block
-        for ((k,go) <- (returns.map(_._1)) zip gos) {
-          val assign = Block(fields.map(genVarWrite).map(Unstructured(_)), liftConst(()))
-          val ret = reify {
-            reflect[Unit]("/*R"+k.substring(6)+"*/;", Block(go.stms++assign.stms,assign.res),";") // substr prevents further matches            
-          }
-          block1 = block1.replace(k,ret)
-        }
-        emitAll(block1)
+        val retframes = returns.groupBy(r => getFrame(r._2))
         
-        emitString(";{")
-        if (debugReturns) emitString("// ret multi "+method)
-        for (v <- fields) emitString(genVarRead(v))
-        withState(ss)(exec)
-        emitString("}}")
+        for ((target, returns) <- retframes) {
+          Console.println("ret to "+target)
+          Console.println("ret to "+target)
+
+          val (ss, gos) = allLubs(returns.map(_._2))
+          val fields = getFields(ss)
+
+          emitString(";{")
+
+          for (v <- fields) emitString(genVarDef(v))
+
+          var block1 = block
+          for ((k,go) <- (returns.map(_._1)) zip gos) {
+            val assign = Block(fields.map(genVarWrite).map(Unstructured(_)), liftConst(()))
+            val ret = reify {
+              reflect[Unit]("/*R"+k.substring(6)+"*/;", Block(go.stms++assign.stms,assign.res),";") // substr prevents further matches            
+            }
+            block1 = block1.replace(k,ret)
+          }
+          emitAll(block1)
+          
+          emitString(";{")
+          if (debugReturns) emitString("// ret multi "+method)
+          for (v <- fields) emitString(genVarRead(v))
+          withState(ss)(exec)
+          emitString("}}")
+        }
       }
       liftConst(())
     }

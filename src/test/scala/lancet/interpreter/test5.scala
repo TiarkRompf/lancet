@@ -204,7 +204,7 @@ class TestInterpreter5 extends FileDiffSuite {
       var continuation: InterpreterFrame = parent
       def handle(f: List[Rep[Object]] => Rep[Object]): Option[InterpreterFrame] = {
         val returnValue = f(popArgumentsAsObject(parent, m, !java.lang.reflect.Modifier.isStatic(m.getModifiers)).toList)
-        pushAsObject(continuation, m.getSignature().getReturnKind(), returnValue)
+        pushAsObject(continuation, continuation.getMethod.getSignature().getReturnKind(), returnValue)
         Some(if (continuation == parent) null else continuation)
       }
 
@@ -251,18 +251,19 @@ class TestInterpreter5 extends FileDiffSuite {
             // initialize interpreter with corresponding chain of frames
             // exec interpreter to resume at caller frame
             // discard compiler state
+            val callers = getContext(parent)
+            continuation = callers.reverse.tail.head.copy // second from top! create copy!
+            //continuation = parent.getTopFrame.asInstanceOf[InterpreterFrame]
+
+            val tp = continuation.getMethod.getSignature.getReturnKind
+            emitString("//return type: " + tp.toString)
             val res = reflect[Object](self,".execInterpreter("+frame+") // drop into interpreter")
             /* NOTE: correctly unwinding the stack would also mean unlocking monitors and
             calling .dispose on frames)*/
             emitString("// old parent: " + parent)
-
-            continuation = parent.getTopFrame.asInstanceOf[InterpreterFrame]
-
             emitString("// new parent: " + continuation)
 
-            emitString("//about to return ... ")
             res
-            //throw new InterpreterException(reflect[Throwable]("new Exception(\"\"+"+res+")"))
         }
         case _ => 
           //println(fullName)
