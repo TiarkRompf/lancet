@@ -44,7 +44,7 @@ class TestInterpreter5 extends FileDiffSuite {
     println(f(100))
   }
 
-  def test2 = withOutFileChecked(prefix+"slowpath2") {
+  def test10 = withOutFileChecked(prefix+"language10") {
     assert(false)
     val it = new Decompiler
 
