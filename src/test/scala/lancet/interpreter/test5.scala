@@ -111,10 +111,16 @@ class TestInterpreter5 extends FileDiffSuite {
 
   class Decompiler extends BytecodeInterpreter_LIR_Opt {
 
-    // macro interface
+    // *** macro interface
+
+    def reset[A](f: => A): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
+
+    def shift[A,B](f: (A=>B) => B): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
+
     def dropdead(): Unit = () // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
-    // macro implementations
+
+    // *** macro implementations
     type SlowpathFrame = AnyRef
 
     val it = Lancet.newInterpreter
@@ -203,6 +209,17 @@ class TestInterpreter5 extends FileDiffSuite {
 
       // check for known methods
       fullName match {
+        case "lancet.interpreter.TestInterpreter5$Decompiler.shift" => handle {
+          case r::f::Nil => 
+            reflect[Object]("shift ",f)
+        }
+
+        case "lancet.interpreter.TestInterpreter5$Decompiler.reset" => handle {
+          case r::f::Nil => 
+            reflect[Object]("reset ",f)
+        }
+      
+
         case "lancet.interpreter.TestInterpreter5$Decompiler.dropdead" => handle {
           case r::Nil => 
             val self = liftConst(Decompiler.this)
