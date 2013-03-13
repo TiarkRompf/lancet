@@ -260,8 +260,8 @@ class TestInterpreter5 extends FileDiffSuite {
             val res = reflect[Object](self,".execInterpreter("+frame+") // drop into interpreter")
             /* NOTE: correctly unwinding the stack would also mean unlocking monitors and
             calling .dispose on frames)*/
-            emitString("// old parent: " + parent)
-            emitString("// new parent: " + continuation)
+            emitString("// old parent: " + contextKey(parent))
+            emitString("// new parent: " + contextKey(continuation))
 
             res
         }

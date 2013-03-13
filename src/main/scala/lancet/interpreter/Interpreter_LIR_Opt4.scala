@@ -378,11 +378,13 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
       emitString("*/")
 */
 
+      val (mkey,mkeyid) = contextKeyId(mframe)
+
       val saveHandler = handler
       val saveDepth = getContext(mframe).length
 
       if (debugMethods) emitString("// << " + method)
-
+      
       case class BlockInfo(inEdges: List[(Int,State)], inState: State)
       case class BlockInfoOut(returns: List[State], gotos: List[State], code: Block[Unit])
 
@@ -397,14 +399,14 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
       handler = { blockFrame =>
         val d = getContext(blockFrame).length
 
-        emitString("// ctrl transfer "+d+" "+blockFrame+"/"+blockFrame.getMethod)
+        //emitString("// ctrl transfer "+d+" "+contextKey(blockFrame))
 
         if (d > saveDepth) execMethod(blockFrame)
         else if (d < saveDepth) { 
-          emitString("// return to "+blockFrame+"/"+blockFrame.getMethod)
           val s = getState(blockFrame)
           val out = blockInfoOut(curBlock)
-          emitString("RETURN_"+curBlock+"_"+(out.returns.length)+";")
+          emitString("// return "+curBlock+"_"+(out.returns.length)+" to "+contextKey(blockFrame))
+          emitString("RETURN_"+mkeyid+"_"+curBlock+"_"+(out.returns.length)+";")
           blockInfoOut(curBlock) = out.copy(returns = out.returns :+ s)
           //returns = returns :+ (freshFrameSimple(blockFrame), store)
           //println("RETURN_"+(returns.length-1)+";")
@@ -525,10 +527,8 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
 
       // *** backpatch returns and continue ***
 
-      if (debugMethods) emitString("// >> " + method)
-
       val returns = blockInfoOut.toList flatMap { case (i, out) =>
-        out.returns.zipWithIndex.map { case (st, j) => ("RETURN_"+i+"_"+j+";",st) }
+        out.returns.zipWithIndex.map { case (st, j) => ("RETURN_"+mkeyid+"_"+i+"_"+j+";",st) }
       }
 
       // need to split between different return targets!!!
@@ -543,6 +543,7 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
         val (k,s) = returns(0)
         val ret = reify {
           if (debugReturns) emitString("// ret single "+method)
+          if (debugMethods) emitString("// >> " + method)
           withState(s)(exec)
         }
         emitAll(block.replace(k, ret))
@@ -571,6 +572,7 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
           if (debugReturns) emitString("// ret multi "+method)
           for (v <- fields) emitString(genVarRead(v))
 
+          if (debugMethods) emitString("// >> " + method)
           withState(ss)(exec)
           emitString("}}")
         } else {
@@ -580,7 +582,7 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
             assert(returns.length == 1) // not handling multiple calls to multiple targets...
             val (k,s) = returns(0)
             val ret = reify {
-              if (debugReturns) emitString("// ret single "+method)
+              if (debugMethods) emitString("// >> " + method)
               withState(s)(exec)
             }
             block1 = block1.replace(k, ret)
