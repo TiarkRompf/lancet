@@ -216,7 +216,7 @@ trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInter
 
     def contextKey(frame: InterpreterFrame) = getContext(frame).map(frameKey).mkString(" // ")
 
-    def frameKey(frame: InterpreterFrame) = ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().getSignature().toString()).replace("HotSpotMethod","")
+    def frameKey(frame: InterpreterFrame) = ("" + frame.getBCI + ":" + frame.getMethod() + frame.getMethod().getSignature().toString()).replace("HotSpotMethod","").replace("HotSpotSignature","")
 
 
     override def retn() = local { (frame, bs) =>
