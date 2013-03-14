@@ -1,0 +1,87 @@
+val c = lancet.api.Lancet.newInstance(global)
+import c._
+
+val f = lms { x: Rep[Int] => (quote(3 * unquote(x))) }
+
+
+
+
+def foo(x:Int) = 3 * x + 4
+
+foo(7)
+
+val f = fun(foo _)
+
+f(7)
+
+f.printcode
+
+
+
+def foo(x:Int, y: Int) = 3 * x + y
+
+val foo6 = fun { y: Int => foo(6,y) }
+
+foo6.printcode
+
+
+
+def fooX(x: Int) = fun { y: Int => foo(x,y) }
+
+val foo6 = fooX(6)
+
+foo6.printcode
+
+
+
+
+// staging
+
+val f = lms { x: Rep[Int] => x * 4 }
+
+f(8)
+
+
+val f = lms { x: Rep[Int] => quote(3 * 4) }
+
+f(8)
+
+
+val f = lms { x: Rep[Int] => quote(3 * unquote(x)) }
+
+
+
+
+
+
+
+// continuations
+
+
+def foo(x: Int) = shift((k: Int=>Int) => k(x) + k(x))
+
+foo(7) 
+
+
+exec { foo(7) + 3 }
+
+
+
+
+
+
+// slowpath
+
+
+def speculate(x: Int, y: Int) = shift((k:Int=>Int)=> if (x == y) k(y) else { slowpath; k(x) })
+
+
+var x = 10
+
+val f = fun { speculate(x, 10) + 100 }
+
+f()
+
+x = 100
+
+f()
