@@ -405,7 +405,7 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
         else if (d < saveDepth) { 
           val s = getState(blockFrame)
           val out = blockInfoOut(curBlock)
-          emitString("// return "+curBlock+"_"+(out.returns.length)+" to "+contextKey(blockFrame))
+          //emitString("// return "+curBlock+"_"+(out.returns.length)+" to "+contextKey(blockFrame))
           emitString("RETURN_"+mkeyid+"_"+curBlock+"_"+(out.returns.length)+";")
           blockInfoOut(curBlock) = out.copy(returns = out.returns :+ s)
           //returns = returns :+ (freshFrameSimple(blockFrame), store)

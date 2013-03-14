@@ -51,7 +51,7 @@ class TestInterpreter5 extends FileDiffSuite {
     def compute(i: Int) = it.shift[Int,Int](k => k(7) + k(9))
 
     val f = it.compile { (x:Int) => 
-      it.reset[Int](compute(x) + 100)
+      it.reset[Int](compute(x) * 100)
     }
     println(f(100))
   }
@@ -188,12 +188,14 @@ class TestInterpreter5 extends FileDiffSuite {
     }
 
 
-    // global interpreter interface
+    // *** global interpreter interface
     def interpret[A:Manifest,B:Manifest](f: A=>B): A=>B = { arg =>
       val meth = f.getClass.getMethod("apply", manifest[A].erasure)
       val res = it.execute(meth, Array[Object](f,arg.asInstanceOf[Object]))
       res.asInstanceOf[B]
     }
+
+
 
     def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],Block[Object]) = {
       val arg = Dyn[Object](fresh)
@@ -202,7 +204,7 @@ class TestInterpreter5 extends FileDiffSuite {
         val Static(cls: Class[_]) = fs("clazz")
         withScope {
           //println("{ object BODY {")
-          emitString("  var RES = null.asInstanceOf[Object]")
+          emitString("  var RES = null.asInstanceOf["+typeRep[B]+"]")
           execute(cls.getMethod("apply", classOf[Object]), Array[Rep[Object]](f,arg)(repManifest[Object]))
           //println("}")
           //"BODY.RES.asInstanceOf["+typeRep[B]+"]}"
@@ -212,7 +214,58 @@ class TestInterpreter5 extends FileDiffSuite {
       (arg,body)
     }
 
-    var resetStack: List[Frame] = Nil
+    def decompileInternal0[B:TypeRep](f: Rep[Object]): Block[Object] = {
+      val arg = Dyn[Object](fresh)
+      val body = reify {
+        val Partial(fs) = eval(f)
+        val Static(cls: Class[_]) = fs("clazz")
+        withScope {
+          //println("{ object BODY {")
+          emitString("  var RES = null.asInstanceOf["+typeRep[B]+"]")
+          execute(cls.getMethod("apply"), Array[Rep[Object]](f)(repManifest[Object]))
+          //println("}")
+          //"BODY.RES.asInstanceOf["+typeRep[B]+"]}"
+          Dyn[Object]("RES.asInstanceOf["+typeRep[B]+"]")
+        }
+      }
+      body
+    }
+
+
+    def decompileDelimited[A:TypeRep,B:TypeRep](parent: InterpreterFrame, delim: InterpreterFrame): (Rep[Object],Block[Object]) = {
+      val arg = Dyn[Object](fresh)
+      val body = reify {
+        withScope {
+          emitString("  var RES = null.asInstanceOf["+typeRep[B]+"]")
+          Console.println("delim: "+contextKey(parent) + "\n" + contextKey(delim))
+          /*def rec(frame: InterpreterFrame): InterpreterFrame = {
+            Console.println("rec: "+frame)
+            Console.println("rec: "+contextKey(frame))
+            if (contextKey(frame) == contextKey(delim)) frame.getTopFrame.asInstanceOf[InterpreterFrame]
+            else { 
+              frame.setParentFrame(rec(frame.getParentFrame)); frame 
+            }
+          }
+          val frame = rec(parent.copy)*/
+          val frame = parent.copy
+          val top = frame.getTopFrame.asInstanceOf[InterpreterFrame]
+          frame.setBCI(frame.getNextBCI)
+          //pushAsObject(arg,)
+          Console.println(">>> exec")          
+          pushAsObject(frame, frame.getMethod.getSignature().getReturnKind(), arg)
+          executeRoot(top,frame)
+          Console.println("<<< exec")
+          //popAsObject(frame, delim.getMethod.getSignature.getReturnKind())
+          Dyn[Object]("RES.asInstanceOf["+typeRep[B]+"]")
+        }
+      }
+      (arg,body)
+    }
+
+
+
+
+    var resetStack: List[InterpreterFrame] = Nil
 
     def handleMethodCall(parent: InterpreterFrame, m: ResolvedJavaMethod): Option[InterpreterFrame] = {
       val className = m.getDeclaringClass.toJava.getName
@@ -230,20 +283,36 @@ class TestInterpreter5 extends FileDiffSuite {
       fullName match {
         case "lancet.interpreter.TestInterpreter5$Decompiler.shift" => handle {
           case r::f::Nil => 
+            val reset::outer = resetStack
+            //continuation = reset
+            continuation = getContext(parent).reverse.tail.head // we're inside reset's scope, abort full
             emitString("//begin shift")
-            val block = decompileInternal[Object,Object](f)
-            reflect[Unit]("shift ",block)
+            emitString("// looking for delimiter "+contextKey(reset))
+            
+            val (argk,blockk) = decompileDelimited[Int,Int](parent,reset)
+            val (args,blocks) = decompileInternal[Object,Object](f)
+
+            reflect[Unit]("val ",args," = { (",argk,":","Int",") => ", blockk, "}")
+
+            val res = reflect[Int](blocks)
+
             emitString("//end shift")
-            liftConst(())
+            res.asInstanceOf[Rep[Object]]
         }
 
         case "lancet.interpreter.TestInterpreter5$Decompiler.reset" => handle {
           case r::f::Nil => 
             emitString("//begin reset")
-            val block = decompileInternal[Object,Object](f)
-            reflect[Unit]("reflect ",block)
+            val save = resetStack
+            //emitString("// bci" + continuation.getBCI + "/" + continuation.getNextBCI)
+            continuation.setBCI(continuation.getNextBCI) // XXX
+            emitString("// install delimiter "+contextKey(continuation))
+            resetStack = continuation::resetStack
+            val block = decompileInternal0[Int](f)
+            val res = reflect[Int](block)
             emitString("//end reset")
-            liftConst(())
+            resetStack = save
+            res.asInstanceOf[Rep[Object]]
         }
       
 
@@ -251,7 +320,7 @@ class TestInterpreter5 extends FileDiffSuite {
           case r::Nil => 
             val self = liftConst(Decompiler.this)
             // get caller frame from compiler ('parent')
-            // emit code to construct interpreter state            
+            // emit code to construct interpreter state
             def rec(frame: InterpreterFrame): Rep[Object] = if (frame == null) liftConst(null) else {
               val p = rec(frame.getParentFrame)
               val frame1 = frame.asInstanceOf[InterpreterFrame_Str]
@@ -277,6 +346,12 @@ class TestInterpreter5 extends FileDiffSuite {
             emitString("// new parent: " + contextKey(continuation))
 
             res
+        }
+        case "scala.runtime.BoxesRunTime.boxToInteger" => handle {
+          case r::Nil => reflect[Integer](r,".asInstanceOf[Integer]")
+        }
+        case "scala.runtime.BoxesRunTime.unboxToInt" => handle {
+          case r::Nil => reflect[Integer](r,".asInstanceOf[Int]")
         }
         case _ => 
           //println(fullName)
