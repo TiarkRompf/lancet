@@ -433,6 +433,8 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
       val base = resolveBase(base0,field)
       val volatile = isVolatile(field) // TODO!
 
+      //println("log: " + base0 + "." + field.getName + " offset " + offset + " value " + value)
+
       /*
         base.field = value
 

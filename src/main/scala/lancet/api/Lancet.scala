@@ -60,6 +60,10 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
 
     // *** macro interface
 
+    def quote[A:TypeRep](f: => A): Rep[A] = quote0(f) // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
+
+    def unquote[A](f: => Rep[A]): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
+
     def reset[A](f: => A): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
     def shift[A,B](f: (A=>B) => B): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
@@ -130,6 +134,28 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
     }
 
     def exec[B:Manifest](f: => B): B = compile[Int,B](x => f).apply(0)
+
+    def toFunction[A](x: => A) = ((x:()=>A)=>x).asInstanceOf[{def apply(x: => A):()=>A}](x)
+
+    def quote0[B:TypeRep](x: => B): Rep[B] = {
+      //assert(manifest[A] == manifest[Int]) // for now ...
+      
+      val f = toFunction(x)
+      val cls = f.getClass
+
+      val body = reify {
+        //withScope {
+          //println("{ object BODY {")
+          emitString("  var RES = null.asInstanceOf["+typeRep[B]+"]")
+          execute(cls.getMethod("apply"), Array[Rep[Object]](liftConst[Object](f))(repManifest[Object]))
+          //println("}")
+          //"BODY.RES.asInstanceOf["+typeRep[B]+"]}"
+          Dyn[B]("RES.asInstanceOf["+typeRep[B]+"]")
+        //}
+      }
+      reflect[B](body)
+    }
+
 
 
     def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],Block[Object]) = {
@@ -296,6 +322,79 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
 
             res.asInstanceOf[Rep[Object]]
         }
+        
+        case "lancet.api.DefaultMacros.unquote" => handle {
+          case r::f::Nil => 
+            //println("unquote")
+            val Partial(fs) = eval(f)
+            val Static(cls: Class[_]) = fs("clazz")
+
+            //val cls = fun.instanceClass.toJava.asInstanceOf[Class[()=>Code[Any]]]
+
+            //println(fs)
+
+            //cls.getMethods.foreach(println)
+
+            val typ = metaAccessProvider.lookupJavaType(cls)
+
+            val obj = it.runtimeInterface.newObject(typ)
+
+            val Static(value) = fs("$outer")
+
+            val offset = 16 // HACK !!!
+
+            it.Runtime.unsafe.putObject(obj, offset, value)
+
+            val m = cls.getMethod("apply")
+
+            //println("meth: " + m)
+
+            val block = m.invoke(obj).asInstanceOf[Rep[Object]]
+            block
+/*
+      // need to find constructor invocation...
+      println("self: " + self)
+      println("fun: " + fun + "/" + cls + "/" + fun.next())
+      val init = fun.next().asInstanceOf[InvokeNode]
+      val initCallTarget = init.callTarget()
+      val initTarget = initCallTarget.targetMethod()
+      assert(initTarget.name == "<init>")
+      val initArgs = initCallTarget.arguments()
+      println("init: " + init + " " + initArgs + " " + initArgs.map(_.kind()))
+      val initOuter = initArgs(1).asInstanceOf[ConstantNode].value.boxedValue()
+      
+      // TODO: need to be more robust
+      
+      println(initTarget)
+      println(initTarget.signature())
+      println("--")
+      
+      cls.getConstructors.foreach(println)
+      
+      // all constructor arguments (free variables) need to be Code types!
+      // (TODO: add check + error messages)
+      // other types should be fine, too, if the args are constants.
+      
+      val a = Array.fill[Class[_]](initArgs.length-1)(classOf[Code[_]])
+      a(0) = initOuter.getClass
+      
+      val ctor = cls.getConstructor(a:_*)
+      
+      def nodeToCode(n: ValueNode): Code[_] = { // does this work always?
+        val graph = new StructuredGraph()
+        val n2 = n.clone(graph).asInstanceOf[ValueNode]
+        val ret = graph.add(new ReturnNode(n2))
+        graph.start().setNext(ret)
+        Code(graph, null)
+      }
+      
+      val ctorArgs = initOuter +: initArgs.drop(2).map(nodeToCode)
+      
+      val Code(intrinsicGraph,meth) = ctor.newInstance(ctorArgs:_*).apply()
+      intrinsicGraph
+*/
+        }
+
         case "scala.runtime.BoxesRunTime.boxToInteger" => handle {
           case r::Nil => reflect[Integer](r,".asInstanceOf[Integer]")
         }
