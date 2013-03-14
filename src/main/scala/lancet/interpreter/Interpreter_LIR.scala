@@ -92,6 +92,26 @@ trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInter
     def fun[B:Manifest](f: =>B): Fun[Unit,B] = fun[Object,B]{ x => f }.asInstanceOf[Fun[Unit,B]]
 
     def fun[A:Manifest,B:Manifest](f: A=>B): Fun[A,B] = {
+      lms0[A,B] { arg =>
+
+        execute(
+          f.getClass.getMethod("apply", manifest[A].erasure), 
+          Array[Rep[Object]](unit(f),arg.asInstanceOf[Rep[Object]])(repManifest[Object])
+        ).asInstanceOf[Rep[B]]
+
+
+      }
+    }
+
+
+    def lms[A:Manifest,B:Manifest](f: Rep[A]=>Rep[B]): Fun[A,B] = {
+      lms0[A,B] { arg =>
+        val res = f(arg)
+        reflect[B]("RES = ",res)
+      }
+    }
+
+    def lms0[A:Manifest,B:Manifest](f: Rep[A]=>Rep[B]): Fun[A,B] = {
 
       //def captureOutputResult[T](x:T) = ("", x)
       constantPool = Vector.empty
@@ -100,7 +120,7 @@ trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInter
 
         val arg = reflect[A]("ARG")
 
-        execute(f.getClass.getMethod("apply", manifest[A].erasure), Array[Rep[Object]](unit(f),arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
+        f(arg)
 
       }}
 
