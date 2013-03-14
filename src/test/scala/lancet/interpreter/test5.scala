@@ -292,7 +292,8 @@ class TestInterpreter5 extends FileDiffSuite {
             val (argk,blockk) = decompileDelimited[Int,Int](parent,reset)
             val (args,blocks) = decompileInternal[Object,Object](f)
 
-            reflect[Unit]("val ",args," = { (",argk,":","Int",") => ", blockk, "}")
+            reflect[Unit]("def k",args,"(",argk,":","Int",") = ", blockk)
+            emitString("val "+args+" = k"+args+" _")
 
             val res = reflect[Int](blocks)
 
