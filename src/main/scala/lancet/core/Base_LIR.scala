@@ -105,6 +105,7 @@ trait Base_LIR0 extends Base {
     case "lancet.interpreter.TestInterpreter5$Decompiler" => "lancet.interpreter.TestInterpreter5#Decompiler" // scalac crash
     //TODO/FIXME
     case s if !Modifier.isPublic(x.getModifiers) => "Object /*" + s + "*/" //s <-- class may be private...
+    case s if s.contains("$read$$") => "Object"
     case s => s
       //if (s.contains("$")) println("careful: "+s)
       val params = x.getTypeParameters
@@ -116,7 +117,9 @@ trait Base_LIR0 extends Base {
 
   def specCls(x: AnyRef): (AnyRef,Class[_]) = {
     val cls = x.getClass
-    if (Modifier.isPublic(cls.getModifiers)) (x,cls) else (x,classOf[Object])
+    if (!Modifier.isPublic(cls.getModifiers)) return (x,classOf[Object])
+    if (cls.getName.contains("$read$$")) return (x,classOf[Object])
+    (x,cls)
   }
 
 
@@ -347,7 +350,7 @@ trait Base_LIR extends Base_LIR0 {
 
   def emitBlock(s: Block[Any]) = assert(false) // TODO
 
-  def println(s: Any) = assert(false)
+  //def println(s: Any) = assert(false)
 
   def captureOutput[A](func: => Rep[A]): String = {
     val (s,r) = captureOutputResult(func)
