@@ -48,6 +48,8 @@ trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInter
     var emitUniqueOpt = false
 
 
+    def withScope[A](body: =>A): A
+
     // ---------- high level execution loop ----------
 
     /* see test4
@@ -77,17 +79,30 @@ trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInter
     }
 
 
-    def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
+    abstract class Fun[A,B] extends (A=>B) {
+      def code: String
+      def compiled: Fun[A,B]
+      def interpreted: Fun[A,B]
+      def inline: Fun[A,B]
+      def printcode = println(code)
+    }
+
+    var lastcode: String = "(empty)"
+
+    def fun[B:Manifest](f: =>B): Fun[Unit,B] = fun[Object,B]{ x => f }.asInstanceOf[Fun[Unit,B]]
+
+    def fun[A:Manifest,B:Manifest](f: A=>B): Fun[A,B] = {
 
       //def captureOutputResult[T](x:T) = ("", x)
+      constantPool = Vector.empty
 
-      val b@Block(stms, res) = reify {
+      val b@Block(stms, res) = withScope { reify {
 
         val arg = reflect[A]("ARG")
 
         execute(f.getClass.getMethod("apply", manifest[A].erasure), Array[Rep[Object]](unit(f),arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
 
-      }
+      }}
 
       val (source, _) = captureConsoleOutputResult {
       
@@ -96,7 +111,7 @@ trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInter
         val cst = constantPool.zipWithIndex.map(p=>"CONST_"+p._2+": "+classStr(p._1.getClass)).mkString(",") // only available after source reify
 
         Console.println("// constants: " + constantPool.toArray.deep.mkString(",").replace("\n","\\n"))
-        Console.println("class Generated("+ cst +") extends ("+maStr+"=>"+mbStr+"){")
+        Console.println("class Generated"+ScalaCompile.compileCount+"("+ cst +") extends ("+maStr+"=>"+mbStr+"){")
         Console.println("import sun.misc.Unsafe")
         Console.println("val unsafe = { val fld = classOf[Unsafe].getDeclaredField(\"theUnsafe\"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }")
         Console.println("type char = Char")
@@ -117,9 +132,23 @@ trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInter
         Console.println("}")
       }
 
-      System.out.println(source)
+      lastcode = source
 
-      ScalaCompile.compile[A,B](source, "Generated", constantPool.map(x=>specCls(x)).toList)
+      val comp = ScalaCompile.compile[A,B](source, "Generated"+ScalaCompile.compileCount, constantPool.map(x=>specCls(x)).toList)
+
+      val fun: Fun[A,B] = new Fun[A,B] {
+        def code = source
+        def compiled = this
+        def interpreted = ???
+        def inline = ???
+        def apply(x:A): B = comp(x)
+      }
+      fun
+    }
+
+
+    def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
+      fun(f).compiled
     }
 
     //@Override
