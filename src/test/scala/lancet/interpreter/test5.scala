@@ -287,7 +287,7 @@ class TestInterpreter5 extends FileDiffSuite {
             //continuation = reset
             continuation = getContext(parent).reverse.tail.head // we're inside reset's scope, abort full
             emitString("//begin shift")
-            emitString("// looking for delimiter "+contextKey(reset))
+            //emitString("// looking for delimiter "+contextKey(reset))
             
             val (argk,blockk) = decompileDelimited[Int,Int](parent,reset)
             val (args,blocks) = decompileInternal[Object,Object](f)
@@ -304,9 +304,8 @@ class TestInterpreter5 extends FileDiffSuite {
           case r::f::Nil => 
             emitString("//begin reset")
             val save = resetStack
-            //emitString("// bci" + continuation.getBCI + "/" + continuation.getNextBCI)
             continuation.setBCI(continuation.getNextBCI) // XXX
-            emitString("// install delimiter "+contextKey(continuation))
+            //emitString("// install delimiter "+contextKey(continuation))
             resetStack = continuation::resetStack
             val block = decompileInternal0[Int](f)
             val res = reflect[Int](block)
