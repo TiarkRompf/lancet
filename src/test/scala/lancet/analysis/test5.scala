@@ -63,7 +63,7 @@ class TestAnalysis5 extends FileDiffSuite {
     type Loc = Int
     type Env = Map[String,Loc]
 
-    case class Obj(env: Env, ls: Map[String,Loc], ms: Map[String,(String,Exp)])
+    case class Obj(env: Env, tp: Typ, ls: Map[String,Loc], ms: Map[String,(String,Exp)])
 
     var store: Map[Loc,Obj] = Map.empty
 
@@ -77,10 +77,10 @@ class TestAnalysis5 extends FileDiffSuite {
       case Let(x,New(tp,ls,ms),z) => 
         val loc = store.size
         // init fields. object name is accessible, fields are undefined
-        store = store + (loc -> Obj(env, Map.empty, ms))
+        store = store + (loc -> Obj(env, tp, Map.empty, ms))
         val ls1 = ls.map(p=>p._1 -> eval(p._2, env + (x->loc)))
         // now store complete object
-        store = store + (loc -> Obj(env + (x->loc), ls1, ms))
+        store = store + (loc -> Obj(env + (x->loc), tp, ls1, ms))
         eval(z, env + (x->loc))
     }
 
@@ -93,23 +93,30 @@ class TestAnalysis5 extends FileDiffSuite {
     def xstore(x: Val) = new {
       def ls(l: String, p: Exp, e: XEnv) = Val(store(x.loc).ls(l), texpand(x.typ, p, e.mapValues(_.typ)).ls(l))
       def ms(l: String, p: Exp, e: XEnv) = Meth(store(x.loc).ms(l), texpand(x.typ, p, e.mapValues(_.typ)).ms(l))
+      def lsOrig(l: String, p: Exp, e: XEnv) = Val(store(x.loc).ls(l), texpand(store(x.loc).tp, p, e.mapValues(_.typ)).ls(l))
+      def msOrig(l: String, p: Exp, e: XEnv) = Meth(store(x.loc).ms(l), texpand(store(x.loc).tp, p, e.mapValues(_.typ)).ms(l))
     }
 
     def xeval(e: Exp, env: XEnv): Val = e match {
       case Var(s)        => env(s)
       case Sel(x,l)      => xstore(xeval(x,env)).ls(l,x,env)
       case App(x,l,y)    => 
-        val Meth((v,z),(p,a,b)) = xstore(xeval(x,env)).ms(l,x,env)
-        val c = tsubst(b,List(p),y) // dep method type
-        xeval(z,env+(v->xeval(y,env).widen(a))).widen(c)
+        val receiver = xeval(x,env)
+        val Meth(_,    (_,ca,cb)) = xstore(receiver).ms(l,x,env) //type declared at call site
+        val Meth((v,z),(p,oa,ob)) = xstore(receiver).msOrig(l,x,env)
+        val c = tsubst(ob,List(p),y) // dep method type
+        xeval(z,env+(v->xeval(y,env).widen(ca).widen(oa))).widen(ob).widen(cb)
+        // NOTE: we need to widen twice, once for the declared type at the call site,
+        // and once more for the declared type at object creation (which is the type we
+        // should use inside the method body)
       case Let(x,New(tp,ls,ms),z) => 
         val loc = store.size
         val vv = Val(loc,tp)
         // init fields. object name is accessible, fields are undefined
-        store = store + (loc -> Obj(env.mapValues(_.loc), Map.empty, ms))
+        store = store + (loc -> Obj(env.mapValues(_.loc), tp, Map.empty, ms))
         val ls1 = ls.map(p=>p._1 -> xeval(p._2, env + (x->vv)).loc)
         // now store complete object
-        store = store + (loc -> Obj((env + (x->vv)).mapValues(_.loc), ls1, ms))
+        store = store + (loc -> Obj((env + (x->vv)).mapValues(_.loc), tp, ls1, ms))
         xeval(z, env + (x->vv))
     }
 
