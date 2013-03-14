@@ -44,6 +44,7 @@ trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInter
     override def trace(level: Int, message: String)  = super.trace(level, "// " + message)
 
 
+    var emitCheckCast = false
     var emitUniqueOpt = false
 
 
@@ -297,6 +298,7 @@ trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInter
 
 
     def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = {
+      if (!emitCheckCast) return value
 
       val cls = typ.toJava
       val params = cls.getTypeParameters

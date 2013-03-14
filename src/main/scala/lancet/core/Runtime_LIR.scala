@@ -35,6 +35,10 @@ import com.oracle.graal.bytecode._;
 
 trait RuntimeUniverse_LIR extends Core_LIR with RuntimeUniverse {
 
+var emitNullChecks = false
+var emitArrayChecks = false
+
+
 def unsafe: Unsafe_LIR
 
 trait Unsafe_LIR {
@@ -451,23 +455,27 @@ class Runtime_LIR(metaProvider: MetaAccessProvider) extends Runtime {
     }
 
     def nullCheck(value: Rep[Object]): Rep[Object] = {
+      if (!emitNullChecks) return value
       if_(value === unit(null)) (reflect[Object]("throw new NullPointerException()")) (value)
       value // TBD: what's the result?
     }
 
     def checkArrayType(array: Rep[Object], arrayType: Class[_]): Unit = {
+        if (!emitArrayChecks) return
         val cond = objectGetClass(array).getComponentType().isAssignableFrom(liftConst(arrayType.asInstanceOf[Class[Object]]))
         //val cond = reflect[Boolean]("!"+array+".getClass().getComponentType().isAssignableFrom(classOf["+arrayType.getName+"])")
         if_(!cond) (reflect[Unit]("throw new ArrayStoreException(\""+arrayType.getName()+"\")")) (liftConst())
     }
 
     def checkArrayType(array: Rep[Object], arrayType: Rep[Class[Object]]): Unit = { //TODO: shouldn't duplicate
+        if (!emitArrayChecks) return
         val cond = objectGetClass(array).getComponentType().isAssignableFrom(arrayType)
         if_(!cond) (reflect[Unit]("throw new ArrayStoreException(\""+arrayType.getName()+"\")")) (liftConst())
     }
 
 
     def checkArray(array: Rep[Object], index: Rep[Long]): Unit = {
+        if (!emitArrayChecks) return
         nullCheck(array)
         val typ = objectGetClass(array)
         val cond = typ.isArray()
