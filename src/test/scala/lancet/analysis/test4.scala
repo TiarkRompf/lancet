@@ -62,6 +62,7 @@ class TestAnalysis4 extends FileDiffSuite {
       override def toString: String = mirrorDef(this, DString)
     }
 
+    case class DMap(m: Map[GVal,GVal]) extends Def
     case class DUpdate(x: GVal, f: GVal, y: GVal) extends Def
     case class DSelect(x: GVal, f: GVal) extends Def
     case class DPlus(x: GVal, y: GVal) extends Def
@@ -74,6 +75,7 @@ class TestAnalysis4 extends FileDiffSuite {
     case class DOther(s: String) extends Def
 
     def mirrorDef(d: Def, dst: DIntf { type From >: GVal }): dst.To = d match {
+      case DMap(m)                            => dst.map(m.asInstanceOf[Map[dst.From, dst.From]])
       case DUpdate(x: GVal, f: GVal, y: GVal) => dst.update(x,f,y)
       case DSelect(x: GVal, f: GVal)          => dst.select(x,f)
       case DPlus(x: GVal, y: GVal)            => dst.plus(x,y)
@@ -89,6 +91,7 @@ class TestAnalysis4 extends FileDiffSuite {
     trait DIntf {
       type From
       type To
+      def map(m: Map[From,From]): To
       def update(x: From, f: From, y: From): To
       def select(x: From, f: From): To
       def plus(x: From, y: From): To
@@ -104,6 +107,7 @@ class TestAnalysis4 extends FileDiffSuite {
     object DString extends DIntf {
       type From = Any
       type To = String
+      def map(m: Map[From,From])            = s"$m"
       def update(x: From, f: From, y: From) = s"$x + ($f -> $y)"
       def select(x: From, f: From)          = s"$x($f)"
       def plus(x: From, y: From)            = s"$x + $y"
@@ -119,6 +123,7 @@ class TestAnalysis4 extends FileDiffSuite {
     object DDef extends DIntf {
       type From = GVal
       type To = Def
+      def map(m: Map[From,From])            = DMap(m)
       def update(x: From, f: From, y: From) = DUpdate(x,f,y)
       def select(x: From, f: From)          = DSelect(x,f)
       def plus(x: From, y: From)            = DPlus(x,y)
@@ -137,6 +142,7 @@ class TestAnalysis4 extends FileDiffSuite {
       val next: DIntf
       def pre(x: From): next.From
       def post(x: next.To): To
+      def map(m: Map[From,From])            = post(next.map(m.map(kv=>pre(kv._1)->pre(kv._2))))
       def update(x: From, f: From, y: From) = post(next.update(pre(x),pre(f),pre(y)))
       def select(x: From, f: From)          = post(next.select(pre(x),pre(f)))
       def plus(x: From, y: From)            = post(next.plus(pre(x),pre(y)))
@@ -167,6 +173,128 @@ class TestAnalysis4 extends FileDiffSuite {
       def pre(x: GVal) = x
       def post(x: Def): GVal = dreflect(x)
       override def fun(f: String, x: String, y: From) = dreflect(f,next.fun(f,x,pre(y)))
+
+      object Def {
+        def unapply(x:GVal): Option[Def] = findDefinition(x.toString)
+      }
+
+      var pending: List[GVal] = Nil
+      var hit: List[GVal] = Nil
+
+      object GMap {
+        def unapply(x: GVal): Option[Map[GVal,GVal]] = { 
+          println(s"GMAP $x = ${Def.unapply(x)}?")
+          if (pending contains x) {
+            hit ::= x
+            Some(Map()) 
+          } else {
+            pending ::= x
+            val r = x match {
+          case Def(DUpdate(GMap(m), f, y)) => Some(m + (f -> y))
+          case Def(DIf(c,GMap(m1),GMap(m2))) => Some((m1.keys++m2.keys) map { k => k -> iff(c,m1.getOrElse(k,const("nil")),m2.getOrElse(k,const("nil")))} toMap)
+          case Def(DCall(f1@Def(DFun(f,x,z)), y)) => 
+
+            def eval(ss: String, xx: GVal, ff: Def => Option[GVal]) = {
+              var env = Map[GVal,GVal](GRef(x) -> xx)
+
+              object XXO extends DXForm {
+                type From = GVal
+                type To = GVal
+                val next = IRD
+                def pre(x: GVal) = {/*println(s"pre $x / $env");*/ env.getOrElse(x,x) }
+                def post(x: GVal) = x
+              }
+
+              for ((e,d) <- globalDefs.takeWhile(_._1 != f1.toString)) {
+                val e2 = ff(d).getOrElse(mirrorDef(d,XXO))
+                //println(s"$e -> $e2 = $d")
+                if (e2 != GRef(e))
+                  env = env + (GRef(e) -> e2)
+              }
+
+              println("env: "+env)
+              println(ss+":")
+              val zero = env.getOrElse(z,z)
+              println(zero)
+              zero
+            }
+
+            val zero = eval("zero",GConst(0),d=>None) // this is after the first iteration!
+
+            val mz = GMap.unapply(zero)
+            
+            eval("last",GRef(x), { 
+              case DCall(`f1`, Def(DPlus(GRef(`x`), GConst(-1)))) => 
+                println("hit recursive call")
+                println("subst "+mz)
+                
+                //for ((k,v) <- mz) {
+                  //println(k)
+                //}
+                //update(GConst(Map()), )
+                None
+              case _ => None
+            })
+
+            None
+
+          case GConst(m:Map[_,_]) => Some(m.asInstanceOf[Map[GVal,GVal]])
+          case _ => None
+          }
+          pending = pending.tail
+          r
+        }}
+      }
+
+      object GPrim {
+        def unapply(x: GVal): Option[GVal] = x match {
+          //case Def()
+          case _ => None
+        }
+      }
+
+
+      override def update(x: From, f: From, y: From) = x match {
+        case GConst(m:Map[_,_]) if m.isEmpty => map(Map(f -> y))
+        case Def(DMap(m)) => map(m + (f -> y)) // only if const!
+        case _ => super.update(x,f,y)
+      }
+      override def select(x: From, f: From)          = x match {
+        //case GConst(m:Map[From,From]) => GConst(m.getOrElse(f,GConst("nil"))) // f must be const!
+        case Def(DMap(m)) => m.getOrElse(f, super.select(x,f))
+        case Def(DUpdate(x2,f2,y2)) => if (f2 == f) y2 else select(x2,f)
+        case _ => super.select(x,f)
+      }
+      override def plus(x: From, y: From)            = (x,y) match {
+        case (GConst(x:Int),GConst(y:Int)) => GConst(x+y)
+        case (GConst(0),_) => y
+        case (_,GConst(0)) => x
+        case _ => super.plus(x,y)
+      }
+      override def less(x: From, y: From)            = (x,y) match {
+        case (GConst(x:Int),GConst(y:Int)) => GConst(if (x<y) 1 else 0)
+        // case (GConst(0),Def(DPlus())) => y
+        case _ => super.less(x,y)
+      }
+      override def pair(x: From, y: From)            = super.pair(x,y)
+      override def iff(c: From, x: From, y: From)    = c match {
+        case GConst(0) => y
+        case GConst(_) => x
+        case _ if x == y => x
+        case _ => 
+          (x,y) match {
+            case (Def(DMap(m1)), Def(DMap(m2))) => 
+              map((m1.keys++m2.keys) map { k => k -> iff(c,m1.getOrElse(k,const("nil")),m2.getOrElse(k,const("nil")))} toMap)
+            case _ =>
+              super.iff(c,x,y)
+          }
+      }
+      override def fixindex(c: From)                 = super.fixindex(c)
+      override def call(f: From, x: From)            = super.call(f,x)
+      //def fun(f: String, x: String, y: From)= super.fun(f,x,pre(y)))
+
+
+
     }
 
 
@@ -175,16 +303,20 @@ class TestAnalysis4 extends FileDiffSuite {
     val varCount0 = 0
     var varCount = varCount0
 
-    def freshVar = { varCount += 1; (varCount - 1).toString }
+    var globalDefs = List[(String,Def)]()
 
-    def reflect(x: String, s: String): String = { println(s"val x$x = $s"); x }
+    def freshVar = { varCount += 1; "x"+(varCount - 1) }
 
-    def reflect(s: String): String = { val x = freshVar; println(s"val x$x = $s"); x }
+    def reflect(x: String, s: String): String = { println(s"val $x = $s"); x }
+
+    def reflect(s: String): String = { val x = freshVar; println(s"val $x = $s"); x }
     def reify(x: => String): String = captureOutputResult(x)._1
 
+    def findDefinition(s: String): Option[Def] = globalDefs.collectFirst { case (`s`,d) => d }
 
-    def dreflect(x: String, s: Def): GVal = { println(s"val x$x = $s"); GRef(x) }
-    def dreflect(s: Def): GVal = { val x = freshVar; println(s"val x$x = $s"); GRef(x) }
+    def dreflect(x0: => String, s: Def): GVal = globalDefs.collect { case (k,`s`) => GRef(k) }.headOption getOrElse { 
+      val x = x0; globalDefs = globalDefs :+ (x->s); println(s"val $x = $s"); GRef(x) }
+    def dreflect(s: Def): GVal = dreflect(freshVar,s)
 
 
     // *** input language Exp
@@ -280,7 +412,7 @@ class TestAnalysis4 extends FileDiffSuite {
           val savevc = varCount
           val savest = store
           val saveit = itvec
-          val prev = IR.iff(IR.less(IR.const(0),n0), savest, IR.call(loop,IR.plus(n0,IR.const(-1))))
+          val prev = IR.iff(IR.less(IR.const(0),n0), IR.call(loop,IR.plus(n0,IR.const(-1))), savest)
           store = prev
           itvec = IR.pair(itvec,n0)
           val c0x = eval(c)
@@ -291,7 +423,7 @@ class TestAnalysis4 extends FileDiffSuite {
           itvec = saveit
 
         val xx = IR.fun(loop.toString, n0.toString, r)
-        assert(xx == loop)
+        assert(xx === loop)
 
         val n = IR.fixindex(loop)
         store = IR.call(loop,n)
@@ -313,7 +445,14 @@ class TestAnalysis4 extends FileDiffSuite {
       // /loopDepth = loopDepth0
       val res = eval(testProg)
       println("res: " + res)
-      println(store)
+      println("store: " + store)
+      println("map: ")
+      store match {
+        case IR.GMap(m) =>
+          m.foreach(println)
+        case _ => 
+          println("(n.a.)")
+      }
       //store.printBounds
       println("----")
     }
