@@ -27,8 +27,6 @@ class TestAnalysis4 extends FileDiffSuite {
     type Field = String
 
 
-    type Val = String
-
     //val store0: Store = Store(Map.empty, Map.empty, Set.empty, Set.empty)
     //var store: Store = _
 
@@ -72,26 +70,115 @@ class TestAnalysis4 extends FileDiffSuite {
       }
     }
 
-    abstract class Val
+    abstract class GVal {
+      override def toString: String = this match {
+        case GRef(s)   => s
+        case GConst(x: String) => "\""+x+"\""
+        case GConst(x) => s"$x"
+      }
+    }
 
-    case class Ref(s: String) extends Val
-    case class Const(s: String) extends Val
+    case class GRef(s: String) extends GVal
+    case class GConst(x: Any) extends GVal
 
-    abstract class Def
+    abstract class Def {
+      override def toString: String = mirrorDef(this, DString)
+    }
 
-    case class DUpdate(x: Val, f: String, y: Val) extends Def
-    case class DSelect(x: Val, f: String) extends Def
+    case class DUpdate(x: GVal, f: String, y: GVal) extends Def
+    case class DSelect(x: GVal, f: String) extends Def
+    case class DPlus(x: GVal, y: GVal) extends Def
+    case class DLess(x: GVal, y: GVal) extends Def
+    case class DIf(c: GVal, x: GVal, y: GVal) extends Def
+    case class DFixIndex(c: GVal) extends Def
+    case class DCall(f: GVal, x: GVal) extends Def
+    case class DOther(s: String) extends Def
 
-    case class DPlus(x: Val, y: Val) extends Def
-    case class DLess(x: Val, y: Val) extends Def
+    def mirrorDef(d: Def, dst: DIntf { type From >: GVal }): dst.To = d match {
+      case DUpdate(x: GVal, f: String, y: GVal) => dst.update(x,f,y)
+      case DSelect(x: GVal, f: String)          => dst.select(x,f)
+      case DPlus(x: GVal, y: GVal)              => dst.plus(x,y)
+      case DLess(x: GVal, y: GVal)              => dst.less(x,y)
+      case DIf(c: GVal, x: GVal, y: GVal)       => dst.iff(c,x,y)
+      case DFixIndex(c: GVal)                   => dst.fixindex(c)
+      case DCall(f: GVal, x: GVal)              => dst.call(f,x)
+      case DOther(s: String)                    => dst.other(s)
+    }
 
-    case class DIf(c: Val, x: Val, y: Val) extends Def
+    trait DIntf {
+      type From
+      type To
+      def update(x: From, f: String, y: From): To
+      def select(x: From, f: String): To
+      def plus(x: From, y: From): To
+      def less(x: From, y: From): To
+      def iff(c: From, x: From, y: From): To
+      def fixindex(c: From): To
+      def call(f: From, x: From): To
+      def other(s: String): To
+    }
 
-    case class DFixIndex(c: Val) extends Def
-    case class DCall(f: Val, x: Val) extends Def
+    object DString extends DIntf {
+      type From = Any
+      type To = String
+      def update(x: From, f: String, y: From) = s"$x + ($f -> $y)"
+      def select(x: From, f: String)          = s"$x($f)"
+      def plus(x: From, y: From)              = s"$x + $y"
+      def less(x: From, y: From)              = s"$x < $y"
+      def iff(c: From, x: From, y: From)      = s"if ($c) $x else $y"
+      def fixindex(c: From)                   = s"fixindex($c)"
+      def call(f: From, x: From)              = s"$f($x)"
+      def other(s: String)                    = s
+    }
+
+    object DDef extends DIntf {
+      type From = GVal
+      type To = Def
+      def update(x: From, f: String, y: From) = DUpdate(x,f,y)
+      def select(x: From, f: String)          = DSelect(x,f)
+      def plus(x: From, y: From)              = DPlus(x,y)
+      def less(x: From, y: From)              = DLess(x,y)
+      def iff(c: From, x: From, y: From)      = DIf(c,x,y)
+      def fixindex(c: From)                   = DFixIndex(c)
+      def call(f: From, x: From)              = DCall(f,x)
+      def other(s: String)                    = DOther(s)
+    }
+
+    trait DXForm extends DIntf {
+      type From
+      type To
+      val next: DIntf
+      def pre(x: From): next.From
+      def post(x: next.To): To
+      def update(x: From, f: String, y: From) = post(next.update(pre(x),f,pre(y)))
+      def select(x: From, f: String)          = post(next.select(pre(x),f))
+      def plus(x: From, y: From)              = post(next.plus(pre(x),pre(y)))
+      def less(x: From, y: From)              = post(next.less(pre(x),pre(y)))
+      def iff(c: From, x: From, y: From)      = post(next.iff(pre(c),pre(x),pre(y)))
+      def fixindex(c: From)                   = post(next.fixindex(pre(c)))
+      def call(f: From, x: From)              = post(next.call(pre(f),pre(x)))
+      def other(s: String)                    = post(next.other(s))
+    }
+
+    object IRS extends DXForm {
+      type From = Val
+      type To = Val
+      val next = DString
+      def const(x: Any) = s"$x"
+      def pre(x: Val) = x
+      def post(x: String): Val = reflect(x)
+    }
+
+    object IRD extends DXForm {
+      type From = GVal
+      type To = GVal
+      val next = DDef
+      def pre(x: GVal) = x
+      def post(x: Def): GVal = ???//reflect(x)
+    }
 
 
-
+    type Val = String
 
     def vref(x: String): Val = x
 
