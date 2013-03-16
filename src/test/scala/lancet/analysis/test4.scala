@@ -21,33 +21,7 @@ class TestAnalysis4 extends FileDiffSuite {
 
   object Test1 {
 
-    type Var = String
-    type Addr = String
-    type Alloc = String
-    type Field = String
-
-
-    //val store0: Store = Store(Map.empty, Map.empty, Set.empty, Set.empty)
-    //var store: Store = _
-
-    //val itvec0 = List(1)
-    //var loopDepth = loopDepth0
-
-    abstract class Exp
-    case class Const(x: Int) extends Exp
-    case class Direct(x: Val) extends Exp
-    case class Ref(x: Var) extends Exp
-    case class Assign(x: Var, y: Exp) extends Exp
-    case class Plus(x: Exp, y: Exp) extends Exp
-    case class Less(x: Exp, y: Exp) extends Exp
-    case class New(x: Alloc) extends Exp
-    case class Get(x: Exp, f: Field) extends Exp
-    case class Put(x: Exp, f: Field, y: Exp) extends Exp
-    case class If(c: Exp, a: Exp, b: Exp) extends Exp
-    case class While(c: Exp, b: Exp) extends Exp
-    case class Block(xs: List[Exp]) extends Exp {
-      override def toString = "{\n  " + xs.map(_.toString).mkString("\n").replace("\n","\n  ") + "\n}"
-    }
+    // *** util
 
     def captureOutputResult[A](func: => A): (String,A) = {
       import java.io._
@@ -70,6 +44,9 @@ class TestAnalysis4 extends FileDiffSuite {
       }
     }
 
+
+    // *** intermediate language / IR interfaces
+
     abstract class GVal {
       override def toString: String = this match {
         case GRef(s)   => s
@@ -89,9 +66,11 @@ class TestAnalysis4 extends FileDiffSuite {
     case class DSelect(x: GVal, f: GVal) extends Def
     case class DPlus(x: GVal, y: GVal) extends Def
     case class DLess(x: GVal, y: GVal) extends Def
+    case class DPair(x: GVal, y: GVal) extends Def
     case class DIf(c: GVal, x: GVal, y: GVal) extends Def
     case class DFixIndex(c: GVal) extends Def
     case class DCall(f: GVal, x: GVal) extends Def
+    case class DFun(f: String, x: String, y: GVal) extends Def
     case class DOther(s: String) extends Def
 
     def mirrorDef(d: Def, dst: DIntf { type From >: GVal }): dst.To = d match {
@@ -99,9 +78,11 @@ class TestAnalysis4 extends FileDiffSuite {
       case DSelect(x: GVal, f: GVal)          => dst.select(x,f)
       case DPlus(x: GVal, y: GVal)            => dst.plus(x,y)
       case DLess(x: GVal, y: GVal)            => dst.less(x,y)
+      case DPair(x: GVal, y: GVal)            => dst.pair(x,y)
       case DIf(c: GVal, x: GVal, y: GVal)     => dst.iff(c,x,y)
       case DFixIndex(c: GVal)                 => dst.fixindex(c)
       case DCall(f: GVal, x: GVal)            => dst.call(f,x)
+      case DFun(f: String, x: String, y: GVal)=> dst.fun(f,x,y)
       case DOther(s: String)                  => dst.other(s)
     }
 
@@ -112,9 +93,11 @@ class TestAnalysis4 extends FileDiffSuite {
       def select(x: From, f: From): To
       def plus(x: From, y: From): To
       def less(x: From, y: From): To
+      def pair(x: From, y: From): To
       def iff(c: From, x: From, y: From): To
       def fixindex(c: From): To
       def call(f: From, x: From): To
+      def fun(f: String, x: String, y: From): To
       def other(s: String): To
     }
 
@@ -125,9 +108,11 @@ class TestAnalysis4 extends FileDiffSuite {
       def select(x: From, f: From)          = s"$x($f)"
       def plus(x: From, y: From)            = s"$x + $y"
       def less(x: From, y: From)            = s"$x < $y"
+      def pair(x: From, y: From)            = s"($x,$y)"
       def iff(c: From, x: From, y: From)    = s"if ($c) $x else $y"
       def fixindex(c: From)                 = s"fixindex($c)"
       def call(f: From, x: From)            = s"$f($x)"
+      def fun(f: String, x: String, y: From)= s"{ $x => $y }"
       def other(s: String)                  = s
     }
 
@@ -138,9 +123,11 @@ class TestAnalysis4 extends FileDiffSuite {
       def select(x: From, f: From)          = DSelect(x,f)
       def plus(x: From, y: From)            = DPlus(x,y)
       def less(x: From, y: From)            = DLess(x,y)
+      def pair(x: From, y: From)            = DPair(x,y)
       def iff(c: From, x: From, y: From)    = DIf(c,x,y)
       def fixindex(c: From)                 = DFixIndex(c)
       def call(f: From, x: From)            = DCall(f,x)
+      def fun(f: String, x: String, y: From)= DFun(f,x,y)
       def other(s: String)                  = DOther(s)
     }
 
@@ -154,9 +141,11 @@ class TestAnalysis4 extends FileDiffSuite {
       def select(x: From, f: From)          = post(next.select(pre(x),pre(f)))
       def plus(x: From, y: From)            = post(next.plus(pre(x),pre(y)))
       def less(x: From, y: From)            = post(next.less(pre(x),pre(y)))
+      def pair(x: From, y: From)            = post(next.pair(pre(x),pre(y)))
       def iff(c: From, x: From, y: From)    = post(next.iff(pre(c),pre(x),pre(y)))
       def fixindex(c: From)                 = post(next.fixindex(pre(c)))
       def call(f: From, x: From)            = post(next.call(pre(f),pre(x)))
+      def fun(f: String, x: String, y: From)= post(next.fun(f,x,pre(y)))
       def other(s: String)                  = post(next.other(s))
     }
 
@@ -167,6 +156,8 @@ class TestAnalysis4 extends FileDiffSuite {
       def const(x: Any) = s"$x"
       def pre(x: Val) = x
       def post(x: String): Val = reflect(x)
+
+      override def fun(f: String, x: String, y: From)= reflect(f,next.fun(f,x,pre(y)))
     }
 
     object IRD extends DXForm {
@@ -178,20 +169,51 @@ class TestAnalysis4 extends FileDiffSuite {
     }
 
 
-    type Val = String
-
-    def vref(x: String): Val = x
+    // reflect/reify
 
     val varCount0 = 0
     var varCount = varCount0
 
-    def reflect(s: String): String = { println(s"val x$varCount = $s"); varCount += 1; s"x${varCount-1}" }
+    def freshVar = { varCount += 1; (varCount - 1).toString }
+
+    def reflect(x: String, s: String): String = { println(s"val x$x = $s"); x }
+
+    def reflect(s: String): String = { val x = freshVar; println(s"val x$x = $s"); x }
     def reify(x: => String): String = captureOutputResult(x)._1
+
+
+    // *** input language Exp
+
+    type Val = String
+    type Var = String
+    type Addr = String
+    type Alloc = String
+    type Field = String
+
+    def vref(x: String): Val = x
+
+    abstract class Exp
+    case class Const(x: Int) extends Exp
+    case class Direct(x: Val) extends Exp
+    case class Ref(x: Var) extends Exp
+    case class Assign(x: Var, y: Exp) extends Exp
+    case class Plus(x: Exp, y: Exp) extends Exp
+    case class Less(x: Exp, y: Exp) extends Exp
+    case class New(x: Alloc) extends Exp
+    case class Get(x: Exp, f: Field) extends Exp
+    case class Put(x: Exp, f: Field, y: Exp) extends Exp
+    case class If(c: Exp, a: Exp, b: Exp) extends Exp
+    case class While(c: Exp, b: Exp) extends Exp
+    case class Block(xs: List[Exp]) extends Exp {
+      override def toString = "{\n  " + xs.map(_.toString).mkString("\n").replace("\n","\n  ") + "\n}"
+    }
+
+    // *** evaluator: Exp -> IR
 
     val IR = IRS
 
     val store0 = IR.const(Map())
-    val itvec0 = IR.const(List(1))
+    val itvec0 = IR.const(1)
 
     var store = store0
     var itvec = itvec0
@@ -206,7 +228,7 @@ class TestAnalysis4 extends FileDiffSuite {
       case Plus(x,y)   => IR.plus(eval(x),eval(y))
       case Less(x,y)   => IR.less(eval(x),eval(y))
       case New(x) => 
-        val a = s"${x}_$itvec"
+        val a = IR.pair(x,itvec)
         store = IR.update(store, a, "Map()")
         a
       case Get(x, f) => 
@@ -245,23 +267,27 @@ class TestAnalysis4 extends FileDiffSuite {
         itvec = saveit
         val n = reflect(s"loop($store,0)._2 // count")}*/
 
+        val loop = freshVar
+        val n0 = freshVar
 
-        {println(s"def loop(n0: Int): (Int,Store) = {")
-        val savevc = varCount
-        val savest = store
-        val saveit = itvec
-        val prev = reflect(s"if (n0 <= 0) (0,$savest) else loop(n0-1)")
-        store = s"$prev._2"
-        itvec = IR.plus(itvec,"n0")
-        val c0x = eval(c)
-        val afterC = store
-        eval(b)
-        println(s"if ($c0x) ($prev._1+1,$store) else ($prev._1,$afterC)")
-        println("}")
-        store = savest
-        itvec = saveit
-        val n = reflect(s"fixindex(loop)")
-        store = reflect(s"loop($n)._2")}
+          val savevc = varCount
+          val savest = store
+          val saveit = itvec
+          val prev = IR.iff(IR.less(IR.const(0),n0), savest, IR.call(loop,IR.plus(n0,IR.const(-1))))
+          store = prev
+          itvec = IR.pair(itvec,n0)
+          val c0x = eval(c)
+          val afterC = store
+          eval(b)
+          val r = IR.iff(c0x, store, afterC)
+          store = savest
+          itvec = saveit
+
+        val xx = IR.fun(loop, n0, r)
+        assert(xx == loop)
+
+        val n = IR.fixindex(loop)
+        store = IR.call(loop,n)
 
         // TODO: fixpoint
 
@@ -272,7 +298,7 @@ class TestAnalysis4 extends FileDiffSuite {
     }
 
 
-
+    // *** run and test
 
     def run(testProg: Exp) = {
       println("prog: " + testProg)
