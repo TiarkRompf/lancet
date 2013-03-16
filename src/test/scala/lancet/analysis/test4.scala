@@ -85,8 +85,8 @@ class TestAnalysis4 extends FileDiffSuite {
       override def toString: String = mirrorDef(this, DString)
     }
 
-    case class DUpdate(x: GVal, f: String, y: GVal) extends Def
-    case class DSelect(x: GVal, f: String) extends Def
+    case class DUpdate(x: GVal, f: GVal, y: GVal) extends Def
+    case class DSelect(x: GVal, f: GVal) extends Def
     case class DPlus(x: GVal, y: GVal) extends Def
     case class DLess(x: GVal, y: GVal) extends Def
     case class DIf(c: GVal, x: GVal, y: GVal) extends Def
@@ -95,21 +95,21 @@ class TestAnalysis4 extends FileDiffSuite {
     case class DOther(s: String) extends Def
 
     def mirrorDef(d: Def, dst: DIntf { type From >: GVal }): dst.To = d match {
-      case DUpdate(x: GVal, f: String, y: GVal) => dst.update(x,f,y)
-      case DSelect(x: GVal, f: String)          => dst.select(x,f)
-      case DPlus(x: GVal, y: GVal)              => dst.plus(x,y)
-      case DLess(x: GVal, y: GVal)              => dst.less(x,y)
-      case DIf(c: GVal, x: GVal, y: GVal)       => dst.iff(c,x,y)
-      case DFixIndex(c: GVal)                   => dst.fixindex(c)
-      case DCall(f: GVal, x: GVal)              => dst.call(f,x)
-      case DOther(s: String)                    => dst.other(s)
+      case DUpdate(x: GVal, f: GVal, y: GVal) => dst.update(x,f,y)
+      case DSelect(x: GVal, f: GVal)          => dst.select(x,f)
+      case DPlus(x: GVal, y: GVal)            => dst.plus(x,y)
+      case DLess(x: GVal, y: GVal)            => dst.less(x,y)
+      case DIf(c: GVal, x: GVal, y: GVal)     => dst.iff(c,x,y)
+      case DFixIndex(c: GVal)                 => dst.fixindex(c)
+      case DCall(f: GVal, x: GVal)            => dst.call(f,x)
+      case DOther(s: String)                  => dst.other(s)
     }
 
     trait DIntf {
       type From
       type To
-      def update(x: From, f: String, y: From): To
-      def select(x: From, f: String): To
+      def update(x: From, f: From, y: From): To
+      def select(x: From, f: From): To
       def plus(x: From, y: From): To
       def less(x: From, y: From): To
       def iff(c: From, x: From, y: From): To
@@ -121,27 +121,27 @@ class TestAnalysis4 extends FileDiffSuite {
     object DString extends DIntf {
       type From = Any
       type To = String
-      def update(x: From, f: String, y: From) = s"$x + ($f -> $y)"
-      def select(x: From, f: String)          = s"$x($f)"
-      def plus(x: From, y: From)              = s"$x + $y"
-      def less(x: From, y: From)              = s"$x < $y"
-      def iff(c: From, x: From, y: From)      = s"if ($c) $x else $y"
-      def fixindex(c: From)                   = s"fixindex($c)"
-      def call(f: From, x: From)              = s"$f($x)"
-      def other(s: String)                    = s
+      def update(x: From, f: From, y: From) = s"$x + ($f -> $y)"
+      def select(x: From, f: From)          = s"$x($f)"
+      def plus(x: From, y: From)            = s"$x + $y"
+      def less(x: From, y: From)            = s"$x < $y"
+      def iff(c: From, x: From, y: From)    = s"if ($c) $x else $y"
+      def fixindex(c: From)                 = s"fixindex($c)"
+      def call(f: From, x: From)            = s"$f($x)"
+      def other(s: String)                  = s
     }
 
     object DDef extends DIntf {
       type From = GVal
       type To = Def
-      def update(x: From, f: String, y: From) = DUpdate(x,f,y)
-      def select(x: From, f: String)          = DSelect(x,f)
-      def plus(x: From, y: From)              = DPlus(x,y)
-      def less(x: From, y: From)              = DLess(x,y)
-      def iff(c: From, x: From, y: From)      = DIf(c,x,y)
-      def fixindex(c: From)                   = DFixIndex(c)
-      def call(f: From, x: From)              = DCall(f,x)
-      def other(s: String)                    = DOther(s)
+      def update(x: From, f: From, y: From) = DUpdate(x,f,y)
+      def select(x: From, f: From)          = DSelect(x,f)
+      def plus(x: From, y: From)            = DPlus(x,y)
+      def less(x: From, y: From)            = DLess(x,y)
+      def iff(c: From, x: From, y: From)    = DIf(c,x,y)
+      def fixindex(c: From)                 = DFixIndex(c)
+      def call(f: From, x: From)            = DCall(f,x)
+      def other(s: String)                  = DOther(s)
     }
 
     trait DXForm extends DIntf {
@@ -150,14 +150,14 @@ class TestAnalysis4 extends FileDiffSuite {
       val next: DIntf
       def pre(x: From): next.From
       def post(x: next.To): To
-      def update(x: From, f: String, y: From) = post(next.update(pre(x),f,pre(y)))
-      def select(x: From, f: String)          = post(next.select(pre(x),f))
-      def plus(x: From, y: From)              = post(next.plus(pre(x),pre(y)))
-      def less(x: From, y: From)              = post(next.less(pre(x),pre(y)))
-      def iff(c: From, x: From, y: From)      = post(next.iff(pre(c),pre(x),pre(y)))
-      def fixindex(c: From)                   = post(next.fixindex(pre(c)))
-      def call(f: From, x: From)              = post(next.call(pre(f),pre(x)))
-      def other(s: String)                    = post(next.other(s))
+      def update(x: From, f: From, y: From) = post(next.update(pre(x),pre(f),pre(y)))
+      def select(x: From, f: From)          = post(next.select(pre(x),pre(f)))
+      def plus(x: From, y: From)            = post(next.plus(pre(x),pre(y)))
+      def less(x: From, y: From)            = post(next.less(pre(x),pre(y)))
+      def iff(c: From, x: From, y: From)    = post(next.iff(pre(c),pre(x),pre(y)))
+      def fixindex(c: From)                 = post(next.fixindex(pre(c)))
+      def call(f: From, x: From)            = post(next.call(pre(f),pre(x)))
+      def other(s: String)                  = post(next.other(s))
     }
 
     object IRS extends DXForm {
@@ -188,29 +188,33 @@ class TestAnalysis4 extends FileDiffSuite {
     def reflect(s: String): String = { println(s"val x$varCount = $s"); varCount += 1; s"x${varCount-1}" }
     def reify(x: => String): String = captureOutputResult(x)._1
 
-    val store0 = s"Map()"
-    val itvec0 = s"1"
+    val IR = IRS
+
+    val store0 = IR.const(Map())
+    val itvec0 = IR.const(List(1))
 
     var store = store0
     var itvec = itvec0
 
     def eval(e: Exp): String = e match {
-      case Const(x)    => s"$x"
-      case Direct(x)   => s"$x"
-      case Ref(x)      => reflect(s"$store(&$x).val")
+      case Const(x)    => IR.const(x)
+      case Direct(x)   => IR.const(x)
+      case Ref(x)      => IR.select(IR.select(store,"&"+x), "val")
       case Assign(x,y) => 
-        store = reflect(s"$store + (&$x -> Map(val -> ${eval(y)}))")
+        store = IR.update(store, "&"+x, IR.update("Map()", "val", eval(y)))
         "()"
-      case Plus(x,y)   => reflect(s"${eval(x)} + ${eval(y)}")
-      case Less(x,y)   => reflect(s"${eval(x)} < ${eval(y)}")
+      case Plus(x,y)   => IR.plus(eval(x),eval(y))
+      case Less(x,y)   => IR.less(eval(x),eval(y))
       case New(x) => 
         val a = s"${x}_$itvec"
-        store = reflect(s"$store + ($a -> Map())")
+        store = IR.update(store, a, "Map()")
         a
       case Get(x, f) => 
-        reflect(s"$store(${eval(x)}).$f")
+        IR.select(IR.select(store, eval(x)), "f")
       case Put(x, f, y) => 
-        store = reflect(s"$store + ($store(${eval(x)}) + ($f -> ${eval(y)}))")
+        val a = eval(x)
+        val old = IR.select(store, a)
+        store = IR.update(store, a, IR.update(old, "f", eval(y)))
         "()"
       case If(c,a,b) => 
         val c1 = eval(c)
@@ -223,8 +227,8 @@ class TestAnalysis4 extends FileDiffSuite {
           //assertNot(c1)
           val e2 = eval(b)
           val s2 = store
-          store = reflect(s"if ($c1) $s1 else $s2")
-          reflect(s"if ($c1) $e1 else $e2")
+          store = IR.iff(c1,s1,s2)
+          IR.iff(c1,e1,e2)
         //}
       case While(c,b) =>  
 
@@ -248,7 +252,7 @@ class TestAnalysis4 extends FileDiffSuite {
         val saveit = itvec
         val prev = reflect(s"if (n0 <= 0) (0,$savest) else loop(n0-1)")
         store = s"$prev._2"
-        itvec = itvec+"::n0"
+        itvec = IR.plus(itvec,"n0")
         val c0x = eval(c)
         val afterC = store
         eval(b)
