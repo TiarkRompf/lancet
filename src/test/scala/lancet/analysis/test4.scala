@@ -150,22 +150,23 @@ class TestAnalysis4 extends FileDiffSuite {
     }
 
     object IRS extends DXForm {
-      type From = Val
-      type To = Val
+      type From = String
+      type To = String
       val next = DString
       def const(x: Any) = s"$x"
-      def pre(x: Val) = x
-      def post(x: String): Val = reflect(x)
-
-      override def fun(f: String, x: String, y: From)= reflect(f,next.fun(f,x,pre(y)))
+      def pre(x: String) = x
+      def post(x: String): String = reflect(x)
+      override def fun(f: String, x: String, y: From) = reflect(f,next.fun(f,x,pre(y)))
     }
 
     object IRD extends DXForm {
       type From = GVal
       type To = GVal
       val next = DDef
+      def const(x: Any) = GConst(x)
       def pre(x: GVal) = x
-      def post(x: Def): GVal = ???//reflect(x)
+      def post(x: Def): GVal = dreflect(x)
+      override def fun(f: String, x: String, y: From) = dreflect(f,next.fun(f,x,pre(y)))
     }
 
 
@@ -182,15 +183,21 @@ class TestAnalysis4 extends FileDiffSuite {
     def reify(x: => String): String = captureOutputResult(x)._1
 
 
+    def dreflect(x: String, s: Def): GVal = { println(s"val x$x = $s"); GRef(x) }
+    def dreflect(s: Def): GVal = { val x = freshVar; println(s"val x$x = $s"); GRef(x) }
+
+
     // *** input language Exp
 
-    type Val = String
+    val IR = IRD
+
+    type Val = IR.From
     type Var = String
     type Addr = String
     type Alloc = String
     type Field = String
 
-    def vref(x: String): Val = x
+    def vref(x: String): Val = IR.const(x)
 
     abstract class Exp
     case class Const(x: Int) extends Exp
@@ -210,34 +217,34 @@ class TestAnalysis4 extends FileDiffSuite {
 
     // *** evaluator: Exp -> IR
 
-    val IR = IRS
-
     val store0 = IR.const(Map())
     val itvec0 = IR.const(1)
 
-    var store = store0
-    var itvec = itvec0
+    var store: Val = store0
+    var itvec: Val = itvec0
 
-    def eval(e: Exp): String = e match {
+
+
+    def eval(e: Exp): Val = e match {
       case Const(x)    => IR.const(x)
       case Direct(x)   => IR.const(x)
-      case Ref(x)      => IR.select(IR.select(store,"&"+x), "val")
+      case Ref(x)      => IR.select(IR.select(store,IR.const("&"+x)), IR.const("val"))
       case Assign(x,y) => 
-        store = IR.update(store, "&"+x, IR.update("Map()", "val", eval(y)))
-        "()"
+        store = IR.update(store, IR.const("&"+x), IR.update(IR.const(Map()), IR.const("val"), eval(y)))
+        IR.const(())
       case Plus(x,y)   => IR.plus(eval(x),eval(y))
       case Less(x,y)   => IR.less(eval(x),eval(y))
       case New(x) => 
-        val a = IR.pair(x,itvec)
-        store = IR.update(store, a, "Map()")
+        val a = IR.pair(IR.const(x),itvec)
+        store = IR.update(store, a, IR.const(Map()))
         a
       case Get(x, f) => 
-        IR.select(IR.select(store, eval(x)), "f")
+        IR.select(IR.select(store, eval(x)), IR.const(f))
       case Put(x, f, y) => 
         val a = eval(x)
         val old = IR.select(store, a)
-        store = IR.update(store, a, IR.update(old, "f", eval(y)))
-        "()"
+        store = IR.update(store, a, IR.update(old, IR.const(f), eval(y)))
+        IR.const(())
       case If(c,a,b) => 
         val c1 = eval(c)
         //if (!mayZero(c1)) eval(a) else if (mustZero(c1)) eval(b) else {
@@ -267,8 +274,8 @@ class TestAnalysis4 extends FileDiffSuite {
         itvec = saveit
         val n = reflect(s"loop($store,0)._2 // count")}*/
 
-        val loop = freshVar
-        val n0 = freshVar
+        val loop = GRef(freshVar)
+        val n0 = GRef(freshVar)
 
           val savevc = varCount
           val savest = store
@@ -283,7 +290,7 @@ class TestAnalysis4 extends FileDiffSuite {
           store = savest
           itvec = saveit
 
-        val xx = IR.fun(loop, n0, r)
+        val xx = IR.fun(loop.toString, n0.toString, r)
         assert(xx == loop)
 
         val n = IR.fixindex(loop)
@@ -291,9 +298,9 @@ class TestAnalysis4 extends FileDiffSuite {
 
         // TODO: fixpoint
 
-        "()"
+        IR.const(())
 
-      case Block(Nil) => "()"
+      case Block(Nil) => IR.const(())
       case Block(xs) => xs map eval reduceLeft ((a,b) => b)
     }
 
