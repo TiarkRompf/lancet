@@ -26,268 +26,14 @@ class TestAnalysis4 extends FileDiffSuite {
     type Alloc = String
     type Field = String
 
-    abstract class Val
-    case class VInt(x: Int) extends Val {
-      override def toString = x.toString
-    }
-    case class VAddr(x: Addr) extends Val {
-      override def toString = x.toString
-    }
-    case class VUndef() extends Val {
-      override def toString = "undef"
-    }
-    case class VNew(x: Alloc) extends Val {
-      override def toString = "new"+x.toString
-    }
 
-    case class VRef(x: Var) extends Val {
-      override def toString = x
-    }
-    case class VLess(a: Val, b: Val) extends Val {
-      override def toString = a+"<"+b
-    }
-    case class VPlus(a: Val, b: Val) extends Val {
-      override def toString = a+"+"+b
-    }
-    case class VUpdate(a: Val, f: Field, b: Val) extends Val {
-      override def toString = "a["+f+"->"+b+"]"
-    }
+    type Val = String
 
+    //val store0: Store = Store(Map.empty, Map.empty, Set.empty, Set.empty)
+    //var store: Store = _
 
-    case class VIf(c: Val, a: Val, b: Val) extends Val {
-      override def toString = "phi("+c+":"+a+","+b+")"
-    }
-    case class VWhile(c: Val, a: Val, b: Val) extends Val {
-      override def toString = "lphi("+c+":"+a+","+b+")"
-    }
-
-
-    def vint(x: Int) = VInt(x)
-    def vaddr(x: Addr) = VAddr(x)
-    def vundef = VUndef()
-    def vnew(x: Alloc) = VNew(x)
-
-    def vref(x: Var) = VRef(x)
-    def vless(a: Val, b: Val) = (a,b) match {
-      case (VInt(a),VInt(b)) => VInt(if (a < b) 1 else 0)
-      case _ => VLess(a,b)
-    }
-    def vplus(a: Val, b: Val) = (a,b) match {
-      case (VInt(a),VInt(b)) => VInt(a+b)
-      case _ => VPlus(a,b)
-    }
-    def vupdate(a: Val, f: Field, b: Val) = VUpdate(a,f,b)
-
-    def vif(c: Val, a: Val, b: Val) =
-      if (c == VInt(1)) a else if (c == VInt(0)) b 
-      else {
-        // resolved nested conditionals by substitution (inefficient, but hey ...)
-        // TODO: implication would be nice, too (e.g. for inequalities)
-        val u = vsubst(a,c,vint(1))
-        val v = vsubst(b,c,vint(0))
-        println("--> phi "+c+" "+u+" "+v)
-        if (u == v) u
-        else VIf(c,u,v)
-      }
-    def vwhile(c: Val, a: Val, b: Val) = {
-      val v = vsubst(b,c,vint(1))
-      if (a == v) a else VWhile(c,a,v)
-    }
-
-
-    def vsubst(term: Val, a: Val, b: Val): Val = term match { // a->b in term
-      case VLess(x,y) => vless(vsubst(x,a,b),vsubst(y,a,b))
-      case VPlus(x,y) => vplus(vsubst(x,a,b),vsubst(y,a,b))
-      case VIf(z,x,y) => vif(vsubst(z,a,b),vsubst(x,a,b),vsubst(y,a,b))
-      case VWhile(z,x,y) => vwhile(vsubst(z,a,b),vsubst(x,a,b),vsubst(y,a,b))
-      case `a` => b
-      case _ => term
-    }
-
-
-    abstract class Obj {
-      def apply(f: Field): Val = vundef
-      def +(x:(Field,Val)): Obj = OUpdate(this,Map(x._1->x._2))
-      def ++(xs:(Field,Val)*): Obj = xs.foldLeft(this)(_+_)
-    }
-    case class OUndef() extends Obj
-    case class OStatic(x:Addr) extends Obj {
-      //override def apply(f: Field) = vref(x+"."+f)
-    }
-    case class ORef(x:String) extends Obj {
-      override def apply(f: Field) = vref(x+"."+f)
-    }
-    case class ONew(x:Alloc) extends Obj
-    case class OIf(c: Val, a: Obj, b: Obj) extends Obj {
-      override def apply(f: Field) = vif(c,a(f),b(f))
-    }
-    case class OWhile(c: Val, a: Obj, b: Obj) extends Obj
-    case class OUpdate(a: Obj, m: Map[Field,Val]) extends Obj {
-      override def apply(f: Field) = m.getOrElse(f,a(f))
-      override def +(x:(Field,Val)) = OUpdate(a,m+x)
-      override def toString = a+"+{" + m.mkString(",") + "}"
-    }
-
-    def osubst(term: Obj, a: Val, b: Val): Obj = term match { // a->b in term
-      case OUpdate(x,m) => osubst(x,a,b) ++ (m.map {case(k,v)=>(k,vsubst(v,a,b))}.toSeq:_*)
-      case OIf(z,x,y) => oif(vsubst(z,a,b),osubst(x,a,b),osubst(y,a,b))
-      case OWhile(z,x,y) => owhile(vsubst(z,a,b),osubst(x,a,b),osubst(y,a,b))
-      case _ => term
-    }
-
-    def oif(c: Val, a: Obj, b: Obj): Obj = (a,b) match {
-      case (OUpdate(za,ma),OUpdate(zb,mb)) =>
-        val m = (ma.keys ++ mb.keys).map { k => (k, (ma.get(k),mb.get(k)) match {
-          case (Some(a),Some(b)) if a == b => a
-          case (Some(a),Some(b)) => vif(c, a, b)
-          case (Some(a),_) => vif(c, a, vundef)
-          case (_,Some(b)) => vif(c, vundef, b)
-        })}.toMap
-        oif(c,za,zb) ++ (m.toSeq:_*)
-      case (a,b) => 
-        if (c == vint(1)) a else if (c == vint(0)) b else {
-          val (u,v) = (osubst(a,c,vint(1)), osubst(b,c,vint(0)))
-          if (u == v) u else OIf(c,u,v)
-        }
-    }
-
-    def owhile(c: Val, a: Obj, b: Obj): Obj = (a,b) match {
-      case (OUpdate(za,ma),OUpdate(zb,mb)) =>
-        val m = (ma.keys ++ mb.keys).map { k => (k, (ma.get(k),mb.get(k)) match {
-          case (Some(a),Some(b)) if a == b => a
-          case (Some(a),Some(b)) => vwhile(c, a, b)
-          case (None,Some(b)) => vwhile(c, vundef, b)
-          //case (Some(a),_) => a
-          //case (_,Some(b)) => b
-        })}.toMap
-        owhile(c,za,zb) ++ (m.toSeq:_*)
-      case (a,b) => if (a == b) a else OWhile(c,a,b)
-    }
-
-
-    case class Store(m: Map[Var,Obj], rec: Map[Var,Obj], factsTrue: Set[Val], factsFalse: Set[Val]) {
-      def apply(x:Var): Obj = m.getOrElse(x,OUndef())
-      def updated(x:(Var,Obj)): Store = Store(m+x, rec, factsTrue, factsFalse)
-
-      def apply(x:Val): Obj = x match {
-        case VAddr(x) => this(x)
-        case VIf(c,a,b) => oif(c,this(a),this(b))
-      }
-
-      def +(x:(Val,Obj)): Store = x match {
-        case (VAddr(x), o) => this updated (x->o)
-        case (VIf(c,a,b), o) => this + (a -> oif(c,o,this(a))) + (b -> oif(c,this(b),o))
-      }
-
-      override def toString = "env: \n" + m.mkString("\n") + 
-        "\nrec: \n" + rec.mkString("\n") +
-        "\ntrue: " + factsTrue + "\nfalse: " + factsFalse
-    
-    }
-
-
-    def infix_join(a: Store, c: Val, b: Store): Store = {
-      val m = (a.m.keys ++ b.m.keys).map { k => (k, (a(k),b(k)) match {
-        case (a,b) if a == b => a
-        case (a,b) => oif(c, a, b)
-        //case (Some(a),_) => a
-        //case (_,Some(b)) => b
-      })}.toMap
-      Store(m, a.rec ++ b.rec, a.factsTrue intersect b.factsTrue, a.factsFalse intersect b.factsFalse)
-    }
-
-
-    def infix_joinFix(a: Store, c: Val, b: Store): Store = { // a previous, b next
-      //println("++++ join")
-      //println(a)
-      //println(b)
-      var r = a.rec ++ b.rec // ??
-      val m = (a.m.keys ++ b.m.keys).map { k => (k, (a(k),b(k)) match {
-        case (a,b) if a == b => a
-        case (a,b) => 
-          val k0 = k+"0"
-          val fix = owhile(c,a,b)
-          r = r + (k0->fix); 
-          ORef(k0)
-      })}.toMap
-      Store(m, r, a.factsTrue intersect b.factsTrue, a.factsFalse intersect b.factsFalse)
-    }
-
-    def infix_join(a: Val, c: Val, b: Val): Val  = vif(c,a,b)
-
-
-    def mayZero(a: Val): Boolean = a match {
-      //case VLess(VRef(k),VInt(c)) =>
-        //println("mayZero "+a)
-        //println(store)
-        /*store.rec(k) match {
-          case VInt(k0) => !(k0 < c) // ok?
-          case _ => true
-        }*/
-      case VInt(c) if c != 0 => 
-        false
-      case _ => 
-        println("default case for mayZero "+a)
-        true 
-    }
-    def mustZero(a: Val): Boolean = false
-
-    def assert(a: Val): Unit = store = Store(store.m, store.rec, store.factsTrue + a, store.factsFalse)
-    //def assertNot(a: Val): Unit = store = Store(store.m, store.rec, store.factsTrue, store.factsFalse + a)
-
-    def assertNot(a: Val): Unit = {
-      // simplify store mappings after loop has terminated
-      val m = store.m.map {
-        case (k,OIf(`a`,u,v)) => (k,v)
-        case (k,ORef(k0)) => (k, store.rec(k0) match {
-          case OUpdate(OStatic(`k`),m) =>
-            OUpdate(OStatic(`k`),m map { case (k,v) => 
-              val kf = k0+"."+k
-              (k, v match {
-                // x = high; while (low < x-1) x = x-1    -->    if (low < high-1) low else high
-                case VWhile(a1 @ VLess(low,VPlus(VRef(`kf`),VInt(-1))),high,VPlus(VRef(`kf`),VInt(-1))) if a == a1 => 
-                  vif(vless(low, vplus(high, vint(-1))), low, high)
-                // x = low; while (x+1 < high) x = x+1    -->    if (low+1 < high) high else low
-                case VWhile(a1 @ VLess(VPlus(VRef(`kf`),VInt(1)),high),low,VPlus(VRef(`kf`),VInt(1))) if a == a1 => 
-                  vif(vless(vplus(low, vint(1)), high), high, low)
-                // how to handle 3rd case of testA (nested if)?
-                case _ => vref(kf)
-              })})
-          case o => ORef(k0)
-        })
-        case (k,v) => (k,v)
-      }
-
-      store = Store(m, store.rec, store.factsTrue, store.factsFalse + a)
-    }
-
-/*
-    def assertNot(a: Val): Unit = {
-      // simplify store mappings after loop has terminated
-      val m = store.m.map {
-        case (k,VIf(`a`,u,v)) => (k,v)
-        case (k,VRef(k0)) => (k, store.rec(k0) match {
-          // x = high; while (low < x-1) x = x-1    -->    if (low < high-1) low else high
-          case VWhile(a1 @ VLess(low,VPlus(VRef(`k0`),VConst(-1))),high,VPlus(VRef(`k0`),VConst(-1))) if a == a1 => 
-            vif(vless(low, vplus(high, vconst(-1))), low, high)
-          // x = low; while (x+1 < high) x = x+1    -->    if (low+1 < high) high else low
-          case VWhile(a1 @ VLess(VPlus(VRef(`k0`),VConst(1)),high),low,VPlus(VRef(`k0`),VConst(1))) if a == a1 => 
-            vif(vless(vplus(low, vconst(1)), high), high, low)
-          // how to handle 3rd case with nested if?
-          case _ => vref(k0)            
-        })
-        case (k,v) => (k,v)
-      }
-
-      store = Store(m, store.rec, store.factsTrue, store.factsFalse + a)
-    }
-*/
-
-    val store0: Store = Store(Map.empty, Map.empty, Set.empty, Set.empty)
-    var store: Store = _
-
-    val loopDepth0 = 1
-    var loopDepth = loopDepth0
+    //val itvec0 = List(1)
+    //var loopDepth = loopDepth0
 
     abstract class Exp
     case class Const(x: Int) extends Exp
@@ -305,77 +51,112 @@ class TestAnalysis4 extends FileDiffSuite {
       override def toString = "{\n  " + xs.map(_.toString).mkString("\n").replace("\n","\n  ") + "\n}"
     }
 
-    def freshAddr(x:Alloc) = VAddr("alloc"+x)
+    def captureOutputResult[A](func: => A): (String,A) = {
+      import java.io._
+      val bstream = new ByteArrayOutputStream
+      val r = withOutput(new PrintStream(bstream))(func) //func
+      (bstream.toString, r)
+    }
+    def withOutput[A](out: java.io.PrintStream)(func: => A): A = {
+      //val oldStdOut = System.out
+      //val oldStdErr = System.err
+      try {
+        //System.setOut(out)
+        //System.setErr(out)
+        scala.Console.withOut(out)(scala.Console.withErr(out)(func))
+      } finally {
+        out.flush()
+        out.close()
+        //System.setOut(oldStdOut)
+        //System.setErr(oldStdErr)
+      }
+    }
 
-    def eval(e: Exp): Val = e match {
-      case Const(x) => vint(x)
-      case Direct(x) => x
-      case Ref(x) => store("&"+x)("val")
+
+    def vref(x: String): Val = x
+
+    val varCount0 = 0
+    var varCount = varCount0
+
+    def reflect(s: String): String = { println(s"val x$varCount = $s"); varCount += 1; s"x${varCount-1}" }
+    def reify(x: => String): String = captureOutputResult(x)._1
+
+    val store0 = s"Map()"
+    val itvec0 = s"1"
+
+    var store = store0
+    var itvec = itvec0
+
+    def eval(e: Exp): String = e match {
+      case Const(x)    => s"$x"
+      case Direct(x)   => s"$x"
+      case Ref(x)      => reflect(s"$store(&$x).val")
       case Assign(x,y) => 
-        val y1 = eval(y)
-        store = store + (VAddr("&"+x) -> (OStatic("&"+x) + ("val" -> y1))); vundef
-      case Plus(x,y) => vplus(eval(x),eval(y))
-      case Less(x,y) => vless(eval(x),eval(y))
+        store = reflect(s"$store + (&$x -> Map(val -> ${eval(y)}))")
+        "()"
+      case Plus(x,y)   => reflect(s"${eval(x)} + ${eval(y)}")
+      case Less(x,y)   => reflect(s"${eval(x)} < ${eval(y)}")
       case New(x) => 
-        val a = freshAddr(x)
-        //store = store + (a -> OFlat(Map.empty))
-        val key = if (store(a) == OUndef()) x else x+"_loop"
-        store = store + (a -> ONew(key))
-        //println("about to "+e+"/"+a)
-        //println(store)
+        val a = s"${x}_$itvec"
+        store = reflect(s"$store + ($a -> Map())")
         a
       case Get(x, f) => 
-        val a = eval(x)
-        store(a)(f)
+        reflect(s"$store(${eval(x)}).$f")
       case Put(x, f, y) => 
-        val a = eval(x)
-        val y1 = eval(y)
-        //println("about to "+e+"/"+a+","+y1)
-        //println(store)
-        val x1 = store(a) //.getOrElse(a, UndefinedObj())  assert it's defined?
-        store = store + (a -> (x1 + (f -> y1)))
-        vint(0)
+        store = reflect(s"$store + ($store(${eval(x)}) + ($f -> ${eval(y)}))")
+        "()"
       case If(c,a,b) => 
         val c1 = eval(c)
-        if (!mayZero(c1)) eval(a) else if (mustZero(c1)) eval(b) else {
+        //if (!mayZero(c1)) eval(a) else if (mustZero(c1)) eval(b) else {
           val save = store
-          assert(c1)
+          //assert(c1)
           val e1 = eval(a)
           val s1 = store
           store = save
-          assertNot(c1)
+          //assertNot(c1)
           val e2 = eval(b)
           val s2 = store
-          store = s1 join (c1,s2)
-          e1 join (c1,e2)
-        }
-      case While(c,b) => 
-        loopDepth += 1
-        val c0 = eval(c)
-        val sBefore0 = store
-        assert(c0)
+          store = reflect(s"if ($c1) $s1 else $s2")
+          reflect(s"if ($c1) $e1 else $e2")
+        //}
+      case While(c,b) =>  
+
+        /*{println(s"def loop(store0, n0) = {")
+        val savest = store
+        store = "store0"
+        val saveit = itvec
+        itvec = itvec+"::n0"
+        val c0x = eval(c)
         eval(b)
-        val c1 = eval(c)
-        val sAfter0 = store
-        val sBefore1 = sBefore0 joinFix (c1,sAfter0)
-        store = sBefore1
-        assert(c1)
+        println(s"if ($c0x) loop($store,n0+1) else (store0,n0)")
+        println("}")
+        store = savest
+        itvec = saveit
+        val n = reflect(s"loop($store,0)._2 // count")}*/
+
+
+        {println(s"def loop(n0: Int): (Int,Store) = {")
+        val savevc = varCount
+        val savest = store
+        val saveit = itvec
+        val prev = reflect(s"if (n0 <= 0) (0,$savest) else loop(n0-1)")
+        store = s"$prev._2"
+        itvec = itvec+"::n0"
+        val c0x = eval(c)
+        val afterC = store
         eval(b)
-        val c2 = eval(c)
-        val sAfter1 = store
-        val sBefore2 = sBefore0 joinFix (c2,sAfter1)
-        store = sBefore2
-        assert(c2)
-        eval(b)
-        val c3 = eval(c)
-        val sAfter2 = store
-        val sBefore3 = sBefore0 joinFix (c3,sAfter2)
-        store = sBefore3
-        assertNot(c3)
-        loopDepth -= 1
-        vundef
-        // TODO: fixpoint!
-      case Block(Nil) => vundef
+        println(s"if ($c0x) ($prev._1+1,$store) else ($prev._1,$afterC)")
+        println("}")
+        store = savest
+        itvec = saveit
+        val n = reflect(s"fixindex(loop)")
+        store = reflect(s"loop($n)._2")}
+
+        // TODO: fixpoint
+
+        "()"
+
+      case Block(Nil) => "()"
       case Block(xs) => xs map eval reduceLeft ((a,b) => b)
     }
 
@@ -385,7 +166,7 @@ class TestAnalysis4 extends FileDiffSuite {
     def run(testProg: Exp) = {
       println("prog: " + testProg)
       store = store0
-      loopDepth = loopDepth0
+      // /loopDepth = loopDepth0
       val res = eval(testProg)
       println("res: " + res)
       println(store)
