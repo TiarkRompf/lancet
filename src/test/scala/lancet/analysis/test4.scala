@@ -72,6 +72,26 @@ class TestAnalysis4 extends FileDiffSuite {
       }
     }
 
+    abstract class Val
+
+    case class Ref(s: String) extends Val
+    case class Const(s: String) extends Val
+
+    abstract class Def
+
+    case class DUpdate(x: Val, f: String, y: Val) extends Def
+    case class DSelect(x: Val, f: String) extends Def
+
+    case class DPlus(x: Val, y: Val) extends Def
+    case class DLess(x: Val, y: Val) extends Def
+
+    case class DIf(c: Val, x: Val, y: Val) extends Def
+
+    case class DFixIndex(c: Val) extends Def
+    case class DCall(f: Val, x: Val) extends Def
+
+
+
 
     def vref(x: String): Val = x
 
