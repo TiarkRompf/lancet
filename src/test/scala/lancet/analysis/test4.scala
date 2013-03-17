@@ -353,6 +353,7 @@ class TestAnalysis4 extends FileDiffSuite {
       }
       override def less(x: From, y: From)            = (x,y) match {
         case (GConst(x:Int),GConst(y:Int)) => GConst(if (x < y) 1 else 0)
+        case (Def(DPlus(a,GConst(b:Int))),c) =>  less(a,plus(c,const(-b)))// random rewrite ...
         case (Def(DIf(c,x,z)),_) => iff(c,less(x,y),less(z,y))
         // case (GConst(0),Def(DPlus())) => y
         case _ => super.less(x,y)
@@ -390,8 +391,6 @@ class TestAnalysis4 extends FileDiffSuite {
 
           println(s"fun $f = $zeroRes -> while($loopc) $x -> $incRes")
 
-          // TODO: should handle non-constant but loop invariant strides, too
-
           incRes match {
             case Def(DPlus(`prevRes`, d)) if !dependsOn(d,GRef(x)) => 
               println(s"invariant stride $d")
@@ -400,7 +399,7 @@ class TestAnalysis4 extends FileDiffSuite {
               val cond1 = subst(loopc, prevRes,prev1)
               println(s"loopc1 $cond1")
               val max = cond1 match {
-                case Def(DLess(GRef(`x`), y)) => y
+                case Def(DLess(GRef(`x`), y)) => plus(y,const(-1))
                 case _ => GRef("max_"+x)
               }
               println(s"subst $prevRes -> $prev1")
@@ -436,31 +435,6 @@ class TestAnalysis4 extends FileDiffSuite {
         case _ =>
           dreflect(f,next.fun(f,x,pre(y))) // reuse fun sym (don't call super)
       }
-
-      def schedule(x: GVal) = {
-        def syms(d: Def): List[String] = {
-          var sl: List[String] = Nil
-          object collector extends DXForm {
-            type From = GVal
-            type To = String // ignore
-            val next = DString
-            def pre(x: GVal) = x match { case GRef(s) => sl ::= s; s case _ => "" }
-            def post(x: String) = x
-            //override def fun(f: String,x: String,y: GVal) = ""
-          }
-          mirrorDef(d,collector)
-          sl
-        }
-        def deps(st: List[String]): List[(String,Def)] =
-          globalDefs.filter(p=>st contains p._1)
-
-        //val GMap(m) = x
-        val start = x match { case GRef(s) => List(s) case _ => Nil }
-        val xx = scala.virtualization.lms.util.GraphUtil.stronglyConnectedComponents[(String,Def)](deps(start), t => deps(syms(t._2)))
-        xx.flatten.reverse
-      }
-
-      def printStm(p: (String,Def)) = println(s"val ${p._1} = ${p._2}")
 
     }
 
@@ -575,16 +549,29 @@ class TestAnalysis4 extends FileDiffSuite {
         val loop = GRef(freshVar)
         val n0 = GRef(freshVar)
 
+
+
           val savevc = varCount
           val savest = store
           val saveit = itvec
-          val prev = IR.iff(IR.less(IR.const(0),n0), IR.call(loop,IR.plus(n0,IR.const(-1))), savest)
-          store = prev
+
+          // case i == 0
+          store = savest
+          itvec = IR.pair(itvec,IR.const(0))
+          //val c0 = eval(c) to eval or not to eval?
+          val afterC0 = store
+
+          // case i > 0
+          store = IR.call(loop,IR.plus(n0,IR.const(-1)))
           itvec = IR.pair(itvec,n0)
-          val c0x = eval(c)
-          val afterC = store
+
+          val cX = eval(c)
+          val afterCX = store
           eval(b)
-          val r = IR.iff(c0x, store, afterC)
+          val afterBX = store
+          val r0 = IR.iff(cX, afterBX, afterCX)
+          val r = IR.iff(IR.less(IR.const(0),n0), r0, afterC0)
+
           store = savest
           itvec = saveit
 
@@ -593,6 +580,8 @@ class TestAnalysis4 extends FileDiffSuite {
 
         val n = IR.fixindex(loop)
         store = IR.call(loop,n)
+
+        eval(c) // once more (this one will fail)
 
         // TODO: fixpoint
 
