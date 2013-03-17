@@ -378,7 +378,8 @@ class TestAnalysis4 extends FileDiffSuite {
     val varCount0 = 0
     var varCount = varCount0
 
-    var globalDefs = List[(String,Def)]()
+    val globalDefs0 = Nil 
+    var globalDefs: List[(String,Def)] = globalDefs0
 
     def freshVar = { varCount += 1; "x"+(varCount - 1) }
 
@@ -517,7 +518,9 @@ class TestAnalysis4 extends FileDiffSuite {
     def run(testProg: Exp) = {
       println("prog: " + testProg)
       store = store0
-      // /loopDepth = loopDepth0
+      itvec = itvec0
+      varCount = varCount0
+      globalDefs = globalDefs0
       val res = eval(testProg)
       println("res: " + res)
       println("store: " + store)
