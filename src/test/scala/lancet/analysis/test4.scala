@@ -190,8 +190,9 @@ class TestAnalysis4 extends FileDiffSuite {
           } else {
             pending ::= x
             val r = x match {
-          case Def(DUpdate(GMap(m), f, y)) => Some(m + (f -> y))
-          case Def(DIf(c,GMap(m1),GMap(m2))) => Some((m1.keys++m2.keys) map { k => k -> iff(c,m1.getOrElse(k,const("nil")),m2.getOrElse(k,const("nil")))} toMap)
+          case Def(DMap(m)) => Some(m)
+          //case Def(DUpdate(GMap(m), f, y)) => Some(m + (f -> y))
+          //case Def(DIf(c,GMap(m1),GMap(m2))) => Some((m1.keys++m2.keys) map { k => k -> iff(c,m1.getOrElse(k,const("nil")),m2.getOrElse(k,const("nil")))} toMap)
           case Def(DCall(f1@Def(DFun(f,x,z)), y)) => 
 
             def eval(ss: String, xx: GVal, ff: Def => Option[GVal]) = {
@@ -221,24 +222,42 @@ class TestAnalysis4 extends FileDiffSuite {
 
             val zero = eval("zero",GConst(0),d=>None) // this is after the first iteration!
 
-            val mz = GMap.unapply(zero)
+            val Some(mz) = GMap.unapply(zero)
             
-            eval("last",GRef(x), { 
+            def mkey(x: GVal) = x match {
+              case GConst(s) => f1+"_"+s
+              case GRef(s) => f1+"_"+s
+            }
+
+            val last = eval("last",GRef(x), { 
               case DCall(`f1`, Def(DPlus(GRef(`x`), GConst(-1)))) => 
-                println("hit recursive call")
+                println("hit recursive call "+f1)
                 println("subst "+mz)
                 
+                Some(map(mz map { 
+                  case (k,v) => k -> call(GRef(mkey(k)), GConst(-1))
+                }))
+
                 //for ((k,v) <- mz) {
                   //println(k)
                 //}
                 //update(GConst(Map()), )
-                None
+                
               case _ => None
             })
 
-            None
 
-          case GConst(m:Map[_,_]) => Some(m.asInstanceOf[Map[GVal,GVal]])
+            val Some(mz1) = GMap.unapply(last)
+            assert(mz1.keys === mz.keys)
+
+            mz1 foreach { 
+              case (k,v) => fun(mkey(k),x,v)
+            }
+
+            Some(mz1 map { 
+              case (k,v) => k -> call(GRef(mkey(k)),fixindex(GRef(mkey(k)))) // are we sure this is the fixindex call?
+            })
+
           case _ => None
           }
           pending = pending.tail
@@ -254,6 +273,14 @@ class TestAnalysis4 extends FileDiffSuite {
       }
 
 
+      def subst(x: GVal, a: GVal, b: GVal): GVal = x match {
+        case `a` => b
+        case Def(DMap(m)) => map(m.map(kv => kv._1 -> subst(kv._2,a,b)))
+        case Def(DIf(c,x,y)) => iff(subst(c,a,b),subst(x,a,b),subst(y,a,b))
+        case _ => x // TOOD
+      }
+
+
       override def update(x: From, f: From, y: From) = x match {
         case GConst(m:Map[_,_]) if m.isEmpty => map(Map(f -> y))
         case Def(DMap(m)) => map(m + (f -> y)) // only if const!
@@ -263,16 +290,19 @@ class TestAnalysis4 extends FileDiffSuite {
         //case GConst(m:Map[From,From]) => GConst(m.getOrElse(f,GConst("nil"))) // f must be const!
         case Def(DMap(m)) => m.getOrElse(f, super.select(x,f))
         case Def(DUpdate(x2,f2,y2)) => if (f2 == f) y2 else select(x2,f)
+        case Def(DIf(c,x,y)) => iff(c,select(x,f),select(y,f))
         case _ => super.select(x,f)
       }
       override def plus(x: From, y: From)            = (x,y) match {
         case (GConst(x:Int),GConst(y:Int)) => GConst(x+y)
         case (GConst(0),_) => y
         case (_,GConst(0)) => x
+        case (Def(DIf(c,x,z)),_) => iff(c,plus(x,y),plus(z,y))
         case _ => super.plus(x,y)
       }
       override def less(x: From, y: From)            = (x,y) match {
-        case (GConst(x:Int),GConst(y:Int)) => GConst(if (x<y) 1 else 0)
+        case (GConst(x:Int),GConst(y:Int)) => GConst(if (x < y) 1 else 0)
+        case (Def(DIf(c,x,z)),_) => iff(c,less(x,y),less(z,y))
         // case (GConst(0),Def(DPlus())) => y
         case _ => super.less(x,y)
       }
@@ -280,19 +310,45 @@ class TestAnalysis4 extends FileDiffSuite {
       override def iff(c: From, x: From, y: From)    = c match {
         case GConst(0) => y
         case GConst(_) => x
+        case Def(DIf(c1,x1,y1)) => iff(c1,iff(x1,x,y),iff(y1,x,y))
         case _ if x == y => x
         case _ => 
           (x,y) match {
             case (Def(DMap(m1)), Def(DMap(m2))) => 
               map((m1.keys++m2.keys) map { k => k -> iff(c,m1.getOrElse(k,const("nil")),m2.getOrElse(k,const("nil")))} toMap)
             case _ =>
-              super.iff(c,x,y)
+              super.iff(c,subst(x,c,GConst(1)),subst(y,c,GConst(0)))
           }
       }
       override def fixindex(c: From)                 = super.fixindex(c)
       override def call(f: From, x: From)            = super.call(f,x)
       //def fun(f: String, x: String, y: From)= super.fun(f,x,pre(y)))
 
+
+      def finalize(x: GVal) = {
+        def syms(d: Def): List[String] = {
+          var sl: List[String] = Nil
+          object collector extends DXForm {
+            type From = GVal
+            type To = String // ignore
+            val next = DString
+            def pre(x: GVal) = x match { case GRef(s) => sl ::= s; s case _ => "" }
+            def post(x: String) = x
+            //override def fun(f: String,x: String,y: GVal) = ""
+          }
+          mirrorDef(d,collector)
+          sl
+        }
+        def deps(st: List[String]): List[(String,Def)] =
+          globalDefs.filter(p=>st contains p._1)
+
+        val GMap(m) = x
+        val rsyms = m.toList.collect { case (k,GRef(v)) => v }
+        val xx = scala.virtualization.lms.util.GraphUtil.stronglyConnectedComponents[(String,Def)](deps(rsyms), t => deps(syms(t._2)))
+        val zz = xx.flatten.reverse
+
+        zz.map(p => s"val ${p._1} = ${p._2}")
+      }
 
 
     }
@@ -453,6 +509,10 @@ class TestAnalysis4 extends FileDiffSuite {
         case _ => 
           println("(n.a.)")
       }
+      val sched = IR.finalize(store)
+      println("sched:")
+      sched.foreach(println)
+
       //store.printBounds
       println("----")
     }
