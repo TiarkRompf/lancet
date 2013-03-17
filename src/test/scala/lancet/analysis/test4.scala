@@ -262,7 +262,7 @@ class TestAnalysis4 extends FileDiffSuite {
 
         val zeros = funs map {
           case (a,DFun(f,x,z)) =>
-            a -> zeroSubst(z)
+            a -> zeroSubst.getOrElse(z,z) // alt: this.subst(z,GRef(x),GConst(0))
         }
 
         println("zeros: "+zeros.toMap)
@@ -300,6 +300,12 @@ class TestAnalysis4 extends FileDiffSuite {
                 def body(k: GVal) = select(xformSubst(z),k)
                 m foreach (kv => kv._1 -> fun(func(kv._1).toString,x,body(kv._1)))
               case _ =>
+                if (xformSubst.contains(z)) {
+                  // HACK -- unsafe???
+                  globalDefs = globalDefs.filterNot(_._1 == f)
+                  fun(f,x,xformSubst(z))
+                  println(s"### fun has been xformed: $a = _=> $z")
+                }
             }
         }
 
