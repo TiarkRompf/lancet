@@ -66,6 +66,7 @@ class TestAnalysis4 extends FileDiffSuite {
     case class DUpdate(x: GVal, f: GVal, y: GVal) extends Def
     case class DSelect(x: GVal, f: GVal) extends Def
     case class DPlus(x: GVal, y: GVal) extends Def
+    case class DTimes(x: GVal, y: GVal) extends Def
     case class DLess(x: GVal, y: GVal) extends Def
     case class DPair(x: GVal, y: GVal) extends Def
     case class DIf(c: GVal, x: GVal, y: GVal) extends Def
@@ -79,6 +80,7 @@ class TestAnalysis4 extends FileDiffSuite {
       case DUpdate(x: GVal, f: GVal, y: GVal) => dst.update(x,f,y)
       case DSelect(x: GVal, f: GVal)          => dst.select(x,f)
       case DPlus(x: GVal, y: GVal)            => dst.plus(x,y)
+      case DTimes(x: GVal, y: GVal)           => dst.times(x,y)
       case DLess(x: GVal, y: GVal)            => dst.less(x,y)
       case DPair(x: GVal, y: GVal)            => dst.pair(x,y)
       case DIf(c: GVal, x: GVal, y: GVal)     => dst.iff(c,x,y)
@@ -95,6 +97,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def update(x: From, f: From, y: From): To
       def select(x: From, f: From): To
       def plus(x: From, y: From): To
+      def times(x: From, y: From): To
       def less(x: From, y: From): To
       def pair(x: From, y: From): To
       def iff(c: From, x: From, y: From): To
@@ -111,6 +114,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def update(x: From, f: From, y: From) = s"$x + ($f -> $y)"
       def select(x: From, f: From)          = s"$x($f)"
       def plus(x: From, y: From)            = s"$x + $y"
+      def times(x: From, y: From)           = s"$x * $y"
       def less(x: From, y: From)            = s"$x < $y"
       def pair(x: From, y: From)            = s"($x,$y)"
       def iff(c: From, x: From, y: From)    = s"if ($c) $x else $y"
@@ -127,6 +131,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def update(x: From, f: From, y: From) = DUpdate(x,f,y)
       def select(x: From, f: From)          = DSelect(x,f)
       def plus(x: From, y: From)            = DPlus(x,y)
+      def times(x: From, y: From)           = DTimes(x,y)
       def less(x: From, y: From)            = DLess(x,y)
       def pair(x: From, y: From)            = DPair(x,y)
       def iff(c: From, x: From, y: From)    = DIf(c,x,y)
@@ -146,6 +151,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def update(x: From, f: From, y: From) = post(next.update(pre(x),pre(f),pre(y)))
       def select(x: From, f: From)          = post(next.select(pre(x),pre(f)))
       def plus(x: From, y: From)            = post(next.plus(pre(x),pre(y)))
+      def times(x: From, y: From)           = post(next.times(pre(x),pre(y)))
       def less(x: From, y: From)            = post(next.less(pre(x),pre(y)))
       def pair(x: From, y: From)            = post(next.pair(pre(x),pre(y)))
       def iff(c: From, x: From, y: From)    = post(next.iff(pre(c),pre(x),pre(y)))
@@ -172,7 +178,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def const(x: Any) = GConst(x)
       def pre(x: GVal) = x
       def post(x: Def): GVal = dreflect(x)
-      override def fun(f: String, x: String, y: From) = dreflect(f,next.fun(f,x,pre(y)))
+      //override def fun(f: String, x: String, y: From) = dreflect(f,next.fun(f,x,pre(y)))
 
       object Def {
         def unapply(x:GVal): Option[Def] = findDefinition(x.toString)
@@ -224,7 +230,6 @@ class TestAnalysis4 extends FileDiffSuite {
         }
 
         println("subst: "+subst.toMap)
-
         val zeroSubst = substTrans(subst.toMap)
 
         val zeros = funs map {
@@ -256,7 +261,6 @@ class TestAnalysis4 extends FileDiffSuite {
         }
 
         println("xform: "+xform.toMap)
-
         val xformSubst = substTrans(xform.toMap)
 
         // generate new fundefs
@@ -271,33 +275,22 @@ class TestAnalysis4 extends FileDiffSuite {
             }
         }
 
-
         val res1 = xformSubst.getOrElse(res,res)
-
         println("*** done iterate: "+res1)
-
         if (res1 != res) iterateAll(res1) else res1
-
-        /*sched foreach {
-          case (a, DCall(f1@Def(DFun(f,x,z)), y)) =>
-            println(s"found call $a = ($f1 = $f($x)=$z) $y")
-          case _ =>
-        }*/
-
-
-        /*res match {
-          case GMap(m) => map(m)
-          case _ => res
-        }*/
       }
 
 
 
       def subst(x: GVal, a: GVal, b: GVal): GVal = x match {
         case `a` => b
-        case Def(DMap(m)) => map(m.map(kv => kv._1 -> subst(kv._2,a,b)))
-        case Def(DIf(c,x,y)) => iff(subst(c,a,b),subst(x,a,b),subst(y,a,b))
-        case _ => x // TOOD
+        case Def(DMap(m))     => map(m.map(kv => kv._1 -> subst(kv._2,a,b)))
+        case Def(DIf(c,x,y))  => iff(subst(c,a,b),subst(x,a,b),subst(y,a,b))
+        case Def(DPlus(x,y))  => plus(subst(x,a,b),subst(y,a,b))
+        case Def(DTimes(x,y)) => times(subst(x,a,b),subst(y,a,b))
+        case Def(DLess(x,y))  => less(subst(x,a,b),subst(y,a,b))
+        case GRef(_) | GConst(_) => x
+        case _ => println("no subst: "+x); x // TOOD
       }
 
 
@@ -317,8 +310,18 @@ class TestAnalysis4 extends FileDiffSuite {
         case (GConst(x:Int),GConst(y:Int)) => GConst(x+y)
         case (GConst(0),_) => y
         case (_,GConst(0)) => x
+        case (Def(DPlus(a,b)),_) => plus(a,plus(b,y))
         case (Def(DIf(c,x,z)),_) => iff(c,plus(x,y),plus(z,y))
         case _ => super.plus(x,y)
+      }
+      override def times(x: From, y: From)            = (x,y) match {
+        case (GConst(x:Int),GConst(y:Int)) => GConst(x*y)
+        case (GConst(0),_) => GConst(0)
+        case (_,GConst(0)) => GConst(0)
+        case (GConst(1),_) => y
+        case (_,GConst(1)) => x
+        case (Def(DIf(c,x,z)),_) => iff(c,times(x,y),times(z,y))
+        case _ => super.times(x,y)
       }
       override def less(x: From, y: From)            = (x,y) match {
         case (GConst(x:Int),GConst(y:Int)) => GConst(if (x < y) 1 else 0)
@@ -335,15 +338,74 @@ class TestAnalysis4 extends FileDiffSuite {
         case _ => 
           (x,y) match {
             case (Def(DMap(m1)), Def(DMap(m2))) => 
+              // push inside maps
               map((m1.keys++m2.keys) map { k => k -> iff(c,m1.getOrElse(k,const("nil")),m2.getOrElse(k,const("nil")))} toMap)
             case _ =>
+              // generate node, but remove nested tests on same condition
               super.iff(c,subst(x,c,GConst(1)),subst(y,c,GConst(0)))
           }
       }
       override def fixindex(c: From)                 = super.fixindex(c)
       override def call(f: From, x: From)            = super.call(f,x)
-      //def fun(f: String, x: String, y: From)= super.fun(f,x,pre(y)))
 
+      override def fun(f: String, x: String, y: From) = y match {
+        // try to remove loop carried deps! TODO: make more principled ...
+        // if (0 < x) { if (loopc) f(x-1) + d else f(x-1) } else zeroRes --> 
+        // if (0 < x) { if (loopc) d else f(x-1) } else zeroRes
+        case Def(DIf(zc @ Def(DLess(GConst(0),GRef(`x`))),
+          Def(DIf(loopc, 
+            incRes, 
+            prevRes @ Def(DCall(GRef(`f`),prevx @ Def(DPlus(GRef(`x`),GConst(-1))))))),
+          zeroRes)) =>
+
+          println(s"fun $f = $zeroRes -> while($loopc) $x -> $incRes")
+
+          // TODO: should handle non-constant but loop invariant strides, too
+
+          incRes match {
+            case Def(DPlus(`prevRes`, d@GConst(_))) => 
+              println(s"const stride $d")
+              println(s"result = $zeroRes + $x * $d")
+              val prev1 = plus(times(prevx,d), zeroRes)
+              val cond1 = subst(loopc, prevRes,prev1)
+              println(s"loopc1 $cond1")
+              val max = cond1 match {
+                case Def(DLess(GRef(`x`), y)) => y
+                case _ => GRef("max_"+x)
+              }
+              println(s"subst $prevRes -> $prev1")
+              val y1 = subst(y,prevRes,iff(zc,iff(cond1,prev1,max),zeroRes))
+              println("sym " +y1)
+              fun(f,x,y1)
+            case GConst(n) => 
+              println(s"const res $n")
+              println(s"result = $n")
+              dreflect(f,next.fun(f,x,pre(y)))            
+            case _ =>
+              dreflect(f,next.fun(f,x,pre(y)))            
+          }
+
+
+        // if (loopc) { if (0 < x) incRes else zeroRes } else if (0 < x) f(x-1)
+        case Def(DIf(loopc,
+          incRes  ,//@ Def(DIf(Def(DLess(GConst(0),`x`)), zeroRes)),
+          prevRes @ Def(DIf(Def(zc @ DLess(GConst(0),GRef(`x`))), 
+            prevCall @ Def(DCall(GRef(`f`),Def(DPlus(GRef(`x`),GConst(-1))))), 
+            zeroRes)))) =>
+
+          println(s"fun $f = $zeroRes -> while($loopc) $x -> $incRes")
+
+          val d = incRes match {
+            case Def(DIf(_,Def(DPlus(`prevCall`, d)), _)) => 
+              println(s"stride $d")
+            case _ =>
+          }
+
+
+          dreflect(f,next.fun(f,x,pre(y)))            
+        case _ =>
+          dreflect(f,next.fun(f,x,pre(y))) // reuse fun sym (don't call super)
+      }
 
       def schedule(x: GVal) = {
         def syms(d: Def): List[String] = {
