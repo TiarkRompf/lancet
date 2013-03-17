@@ -317,14 +317,20 @@ class TestAnalysis4 extends FileDiffSuite {
 
 
       def subst(x: GVal, a: GVal, b: GVal): GVal = x match {
-        case `a` => b
-        case Def(DMap(m))     => map(m.map(kv => kv._1 -> subst(kv._2,a,b)))
-        case Def(DIf(c,x,y))  => iff(subst(c,a,b),subst(x,a,b),subst(y,a,b))
-        case Def(DPlus(x,y))  => plus(subst(x,a,b),subst(y,a,b))
-        case Def(DTimes(x,y)) => times(subst(x,a,b),subst(y,a,b))
-        case Def(DLess(x,y))  => less(subst(x,a,b),subst(y,a,b))
-        case GRef(_) | GConst(_) => x
-        case _ => println("no subst: "+x); x // TOOD
+        case `a`                 => b
+        case GConst(_)           => x
+        case Def(DUpdate(x,f,y)) => update(subst(x,a,b),subst(f,a,b),subst(y,a,b))
+        case Def(DSelect(x,f))   => select(subst(x,a,b),subst(f,a,b))
+        case Def(DMap(m))        => map(m.map(kv => subst(kv._1,a,b) -> subst(kv._2,a,b)))
+        case Def(DMap(m))        => map(m.map(kv => subst(kv._1,a,b) -> subst(kv._2,a,b)))
+        case Def(DIf(c,x,y))     => iff(subst(c,a,b),subst(x,a,b),subst(y,a,b))
+        case Def(DPlus(x,y))     => plus(subst(x,a,b),subst(y,a,b))
+        case Def(DTimes(x,y))    => times(subst(x,a,b),subst(y,a,b))
+        case Def(DLess(x,y))     => less(subst(x,a,b),subst(y,a,b))
+        case Def(DCall(f,y))     => call(subst(f,a,b),subst(y,a,b))
+        case Def(DFun(f,x1,y))   => x//subst(y,a,b); x // binding??
+        case Def(_)              => println("no subst: "+x); x
+        case _                   => x // TOOD
       }
 
 
