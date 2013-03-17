@@ -386,19 +386,49 @@ class TestAnalysis4 extends FileDiffSuite {
               super.iff(c,subst(x,c,GConst(1)),subst(y,c,GConst(0)))
           }
       }
-      override def fixindex(c: From)                 = super.fixindex(c)
+
+      // LowBound(lowVal,lowBound,highBound,highVal)
+      object LowBound {
+        def unapply(x: GVal): Option[(GVal,GVal,GVal,GVal)] = {
+          x match {
+            case Def(DIf(Def(DLess(lb,hb)), lv, hv)) => Some(lv,lb,hb,hv)
+            case _ => None
+          }
+        }
+      }
+
+      override def fixindex(c: From)                 = c match {
+        case Def(DFun(f1,x1,y1)) if !dependsOn(y1,c) =>
+          // TODO / WIP !!!  right now we just pick a "large enough" number ...
+          val par = GRef(x1)
+          y1 match {
+            case LowBound(LowBound(lv,`par`,hb,hv),GConst(0),`par`,hv1) =>
+              println(s"*** will exec fixindex $c $f1($x1) = $y1 -> $hb")
+              // NOTE that hb is 'a' higher bound but not the tightest one
+              // still f(hb) will return the correct max value
+              hb
+            case _ => 
+              GConst(99999) //super.fixindex(c) //subst(y1,GRef(x1),x)
+          }
+        case _ =>
+          GConst(99999) //super.fixindex(c)
+      }
+
       override def call(f: From, x: From)            = f match {
-        case Def(DFun(f1,x1,y1)) if !dependsOn(y1,f) && !dependsOn(y1,x) =>
-          println(s"*** will inline call $f($x1) = $y1 / $x1 -> $x")
+        // inline calls to non-recursive functions
+        case Def(DFun(f1,x1,y1)) if !dependsOn(y1,f) =>
+          //println(s"*** will inline call $f($x1) = $y1 / $x1 -> $x")
           subst(y1,GRef(x1),x)
         case _ =>
           super.call(f,x)
       }
 
       override def fun(f: String, x: String, y: From) = y match {
-        // try to remove loop carried deps! TODO: make more principled ...
-        // if (0 < x) { if (loopc) f(x-1) + d else f(x-1) } else zeroRes --> 
-        // if (0 < x) { if (loopc) d else f(x-1) } else zeroRes
+        // try to remove loop carried deps. TODO: make more principled ...
+        // if (0 < x) { if (f(x-1) < n) f(x-1) + d else f(x-1) } else zeroRes
+        // --->  if (0 < x) { if (x < n) zeroRes + x * d else zeroRes + n * d } else zeroRes
+        // if (0 < x) { if (loopc) d else f(x-1) } else zeroRes  
+        // --->  if (0 < x) d  else zeroRes
         case Def(DIf(zc @ Def(DLess(GConst(0),GRef(`x`))),
           Def(DIf(loopc, 
             incRes, 
@@ -407,25 +437,30 @@ class TestAnalysis4 extends FileDiffSuite {
 
           println(s"fun $f = $zeroRes -> while($loopc) $x -> $incRes")
 
+          // alt: calc y - subst(y,x,x-1) and see if it depends on x ...
+
           incRes match {
             case Def(DPlus(`prevRes`, d)) if !dependsOn(d,GRef(x)) => 
               println(s"invariant stride $d")
               println(s"result = $zeroRes + $x * $d")
-              val prev1 = plus(times(prevx,d), zeroRes)
-              val cond1 = subst(loopc, prevRes,prev1)
-              println(s"loopc1 $cond1")
-              val max = cond1 match {
-                case Def(DLess(GRef(`x`), y)) => plus(y,const(-1))
-                case _ => GRef("max_"+x)
+              val prev1 = iff(less(const(0),prevx),plus(times(prevx,d), zeroRes),zeroRes)
+              // TODO: figure out more interesting cases ...
+              val prev2 = loopc match {
+                case Def(DLess(`prevRes`, max)) => iff(less(prev1,max), prev1, max)
+                case Def(DLess(min, `prevRes`)) => iff(less(min,prev1), min, prev1)
+                //case Def(DIf(Def(DLess()),x,y)) =>
+                case Def(dd) => prevRes
               }
-              println(s"subst $prevRes -> $prev1")
-              val y1 = subst(y,prevRes,iff(zc,iff(cond1,prev1,max),zeroRes))
+              println(s"subst $prevRes -> $prev1 -> $prev2")
+              val y1 = subst(y,prevRes,prev2)
               println("sym " +y1)
               fun(f,x,y1)
-            case GConst(n) => 
-              println(s"const res $n")
-              println(s"result = $n")
-              dreflect(f,next.fun(f,x,pre(y)))            
+            case d @ GConst(_) if !dependsOn(d,GRef(x)) =>  // error in iterateAll if not a const ??
+              println(s"invariant res $d")
+              println(s"result = $d")
+              val prev1 = iff(less(const(0),prevx),d,zeroRes)
+              val y1 = subst(y,prevRes,prev1)
+              fun(f,x,y1)
             case _ =>
               dreflect(f,next.fun(f,x,pre(y)))            
           }
