@@ -178,6 +178,30 @@ class TestAnalysis4 extends FileDiffSuite {
         def unapply(x:GVal): Option[Def] = findDefinition(x.toString)
       }
 
+      // evaluate with substitution
+      def substTrans(env0: Map[GVal,GVal]): Map[GVal,GVal] = {
+        var env = env0
+        object XXO extends DXForm {
+          type From = GVal
+          type To = GVal
+          val next = IRD
+          def pre(x: GVal) = {/*println(s"pre $x / $env");*/ env.getOrElse(x,x) }
+          def post(x: GVal) = x
+          override def fun(f: String, x: String, y: From) = {
+            //println(s"not changing fundef $f $x $y -> ${pre(y)}")
+            GRef(f) // don't transform fundef
+          }
+        }
+        for ((e,d) <- globalDefs) {
+          val e2 = mirrorDef(d,XXO)
+          //println(s"$e -> $e2 = $d")
+          if (e2 != GRef(e))
+            env = env + (GRef(e) -> e2)
+        }
+        // need to iterate because of sched order
+        if (env == env0) env else substTrans(env)
+      }
+
       def iterateAll(res: GVal): GVal = {
         println("*** begin iterate: "+res)
 
@@ -192,30 +216,6 @@ class TestAnalysis4 extends FileDiffSuite {
         println("calls:")
         calls foreach printStm
 
-        // evaluate with substitution
-        def eval(env0: Map[GVal,GVal], ff: Def => Option[GVal]): Map[GVal,GVal] = {
-          var env = env0
-          object XXO extends DXForm {
-            type From = GVal
-            type To = GVal
-            val next = IRD
-            def pre(x: GVal) = {/*println(s"pre $x / $env");*/ env.getOrElse(x,x) }
-            def post(x: GVal) = x
-            override def fun(f: String, x: String, y: From) = {
-              //println(s"not changing fundef $f $x $y -> ${pre(y)}")
-              GRef(f) // don't transform fundef
-            }
-          }
-          for ((e,d) <- globalDefs) {
-            val e2 = ff(d).getOrElse(mirrorDef(d,XXO))
-            //println(s"$e -> $e2 = $d")
-            if (e2 != GRef(e))
-              env = env + (GRef(e) -> e2)
-          }
-          // need to iterate because of sched order
-          if (env == env0) env else eval(env, ff)
-        }
-
         // base case: eval function bodies for i = 0
 
         val subst = funs map {
@@ -225,7 +225,7 @@ class TestAnalysis4 extends FileDiffSuite {
 
         println("subst: "+subst.toMap)
 
-        val zeroSubst = eval(subst.toMap, x => None)
+        val zeroSubst = substTrans(subst.toMap)
 
         val zeros = funs map {
           case (a,DFun(f,x,z)) =>
@@ -257,7 +257,7 @@ class TestAnalysis4 extends FileDiffSuite {
 
         println("xform: "+xform.toMap)
 
-        val xformSubst = eval(xform.toMap, x => None)
+        val xformSubst = substTrans(xform.toMap)
 
         // generate new fundefs
         funs foreach {
@@ -430,8 +430,6 @@ class TestAnalysis4 extends FileDiffSuite {
 
     var store: Val = store0
     var itvec: Val = itvec0
-
-
 
     def eval(e: Exp): Val = e match {
       case Const(x)    => IR.const(x)
