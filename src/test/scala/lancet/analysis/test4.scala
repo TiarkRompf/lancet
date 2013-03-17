@@ -249,16 +249,20 @@ class TestAnalysis4 extends FileDiffSuite {
                     case (k,v) => fun(mkey(k),x,v)
                   }
 
-                  def convert(x: GVal) = x match { // go recursive!
-                    case GMap(m) => map(m)
-                    case _ => x
-                  }
-
                   val mz2 = mz1 map { 
                     case (k,v) => k -> call(GRef(mkey(k)),fixindex(GRef(mkey(k)))) // are we sure this is the fixindex call?
                   }
 
+                  // now go ahead and replace at all uses, including fundefs?
+
+                  fun(f1.toString, x, map(mz2)) // just replace fundef for others to pick up... (CAVE: side effect!)
+
                   println("*** break down further")
+
+                  def convert(x: GVal) = x match { // go recursive!
+                    case GMap(m) => map(m)
+                    case _ => x
+                  }
 
                   Some(mz2 map { 
                     case (k,v) => 
@@ -282,6 +286,121 @@ class TestAnalysis4 extends FileDiffSuite {
           case _ => None
         }
       }
+
+
+      def iterateAll(res: GVal): GVal = {
+        println("*** begin iterate: "+res)
+
+        val sched = schedule(res)
+
+        val funs = sched collect { case p@(a,DFun(f,x,z)) => p }
+        val calls = sched collect { case p@(a,DCall(f,y)) => p }
+
+        println("funs:")
+        funs foreach printStm
+
+        println("calls:")
+        calls foreach printStm
+
+        // evaluate with substitution
+        def eval(env0: Map[GVal,GVal], ff: Def => Option[GVal]): Map[GVal,GVal] = {
+          var env = env0
+          object XXO extends DXForm {
+            type From = GVal
+            type To = GVal
+            val next = IRD
+            def pre(x: GVal) = {/*println(s"pre $x / $env");*/ env.getOrElse(x,x) }
+            def post(x: GVal) = x
+            override def fun(f: String, x: String, y: From) = {
+              //println(s"not changing fundef $f $x $y -> ${pre(y)}")
+              GRef(f) // don't transform fundef
+            }
+          }
+          for ((e,d) <- globalDefs) {
+            val e2 = ff(d).getOrElse(mirrorDef(d,XXO))
+            //println(s"$e -> $e2 = $d")
+            if (e2 != GRef(e))
+              env = env + (GRef(e) -> e2)
+          }
+          // need to iterate because of sched order
+          if (env == env0) env else eval(env, ff)
+        }
+
+        // base case: eval function bodies for i = 0
+
+        val subst = funs map {
+          case (a,DFun(f,x,z)) =>
+            GRef(x) -> GConst(0)
+        }
+
+        println("subst: "+subst.toMap)
+
+        val zeroSubst = eval(subst.toMap, x => None)
+
+        val zeros = funs map {
+          case (a,DFun(f,x,z)) =>
+            a -> zeroSubst(z)
+        }
+
+        println("zeros: "+zeros.toMap)
+
+        // induction case: if zero iteration evaluates to a map, split function
+        def mkey(f: String, x: GVal) = x match {
+          case GConst(s) => f+"_"+s
+          case GRef(s) => f+"_"+s
+        }
+
+        // replace all calls. TODO: handle isolated fixindex nodes?
+        val xform = calls flatMap {
+          case (a,DCall(f,z)) =>
+            zeros.toMap.apply(f.toString) match {
+              case Def(DMap(m)) =>
+                def func(k: GVal) = GRef(mkey(f.toString,k))
+                def arg(k: GVal) = z match {
+                  case Def(DFixIndex(`f`)) => fixindex(func(k))
+                  case _ => z
+                }
+                List(GRef(a) -> map(m map (kv => kv._1 -> call(func(kv._1), arg(kv._1)))))
+              case _ => Nil
+            }
+        }
+
+        println("xform: "+xform.toMap)
+
+        val xformSubst = eval(xform.toMap, x => None)
+
+        // generate new fundefs
+        funs foreach {
+          case (a,DFun(f,x,z)) => 
+            zeros.toMap.apply(f.toString) match {
+              case Def(DMap(m)) =>
+                def func(k: GVal) = GRef(mkey(f.toString,k))
+                def body(k: GVal) = select(xformSubst(z),k)
+                m foreach (kv => kv._1 -> fun(func(kv._1).toString,x,body(kv._1)))
+              case _ =>
+            }
+        }
+
+
+        val res1 = xformSubst.getOrElse(res,res)
+
+        println("*** done iterate: "+res1)
+
+        if (res1 != res) iterateAll(res1) else res1
+
+        /*sched foreach {
+          case (a, DCall(f1@Def(DFun(f,x,z)), y)) =>
+            println(s"found call $a = ($f1 = $f($x)=$z) $y")
+          case _ =>
+        }*/
+
+
+        /*res match {
+          case GMap(m) => map(m)
+          case _ => res
+        }*/
+      }
+
 
 
       def subst(x: GVal, a: GVal, b: GVal): GVal = x match {
@@ -336,7 +455,7 @@ class TestAnalysis4 extends FileDiffSuite {
       //def fun(f: String, x: String, y: From)= super.fun(f,x,pre(y)))
 
 
-      def finalize(x: GVal) = {
+      def schedule(x: GVal) = {
         def syms(d: Def): List[String] = {
           var sl: List[String] = Nil
           object collector extends DXForm {
@@ -353,14 +472,13 @@ class TestAnalysis4 extends FileDiffSuite {
         def deps(st: List[String]): List[(String,Def)] =
           globalDefs.filter(p=>st contains p._1)
 
-        val GMap(m) = x
-        val rsyms = m.toList.collect { case (k,GRef(v)) => v }
-        val xx = scala.virtualization.lms.util.GraphUtil.stronglyConnectedComponents[(String,Def)](deps(rsyms), t => deps(syms(t._2)))
-        val zz = xx.flatten.reverse
-
-        zz.map(p => s"val ${p._1} = ${p._2}")
+        //val GMap(m) = x
+        val start = x match { case GRef(s) => List(s) case _ => Nil }
+        val xx = scala.virtualization.lms.util.GraphUtil.stronglyConnectedComponents[(String,Def)](deps(start), t => deps(syms(t._2)))
+        xx.flatten.reverse
       }
 
+      def printStm(p: (String,Def)) = println(s"val ${p._1} = ${p._2}")
 
     }
 
@@ -379,7 +497,7 @@ class TestAnalysis4 extends FileDiffSuite {
     def reflect(s: String): String = { val x = freshVar; println(s"val $x = $s"); x }
     def reify(x: => String): String = captureOutputResult(x)._1
 
-    def findDefinition(s: String): Option[Def] = globalDefs.collectFirst { case (`s`,d) => d }
+    def findDefinition(s: String): Option[Def] = globalDefs.reverse.collectFirst { case (`s`,d) => d }
 
     def dreflect(x0: => String, s: Def): GVal = globalDefs.collect { case (k,`s`) => GRef(k) }.headOption getOrElse { 
       val x = x0; globalDefs = globalDefs :+ (x->s); println(s"val $x = $s"); GRef(x) }
@@ -513,16 +631,11 @@ class TestAnalysis4 extends FileDiffSuite {
       val res = eval(testProg)
       println("res: " + res)
       println("store: " + store)
-      println("map: ")
-      store match {
-        case IR.GMap(m) =>
-          m.foreach(println)
-        case _ => 
-          println("(n.a.)")
-      }
-      val sched = IR.finalize(store)
+      val store2 = IR.iterateAll(store)
+      println("transformed: " + store2)
+      val sched = IR.schedule(store2)
       println("sched:")
-      sched.foreach(println)
+      sched.foreach(IR.printStm)
 
       //store.printBounds
       println("----")
