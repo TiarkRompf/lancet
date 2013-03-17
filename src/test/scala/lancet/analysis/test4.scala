@@ -192,72 +192,83 @@ class TestAnalysis4 extends FileDiffSuite {
             val r = x match {
           case Def(DMap(m)) => Some(m)
           //case Def(DUpdate(GMap(m), f, y)) => Some(m + (f -> y))
-          //case Def(DIf(c,GMap(m1),GMap(m2))) => Some((m1.keys++m2.keys) map { k => k -> iff(c,m1.getOrElse(k,const("nil")),m2.getOrElse(k,const("nil")))} toMap)
+          // should not need this ...
+          case Def(DIf(c,GMap(m1),GMap(m2))) => Some((m1.keys++m2.keys) map { k => k -> iff(c,m1.getOrElse(k,const("nil")),m2.getOrElse(k,const("nil")))} toMap)
           case Def(DCall(f1@Def(DFun(f,x,z)), y)) => 
 
+            // evaluate
             def eval(ss: String, xx: GVal, ff: Def => Option[GVal]) = {
               var env = Map[GVal,GVal](GRef(x) -> xx)
-
               object XXO extends DXForm {
                 type From = GVal
                 type To = GVal
                 val next = IRD
                 def pre(x: GVal) = {/*println(s"pre $x / $env");*/ env.getOrElse(x,x) }
                 def post(x: GVal) = x
+                override def fun(f: String, x: String, y: From) = {
+                  println(s"not changing fundef $f $x $y -> ${pre(y)}")
+                  GRef(f) // don't transform fundef
+                }
               }
-
-              for ((e,d) <- globalDefs.takeWhile(_._1 != f1.toString)) {
+              for ((e,d) <- globalDefs.filterNot(_._1 == f1.toString)) { // don't change fundef
                 val e2 = ff(d).getOrElse(mirrorDef(d,XXO))
                 //println(s"$e -> $e2 = $d")
                 if (e2 != GRef(e))
                   env = env + (GRef(e) -> e2)
               }
-
               println("env: "+env)
               println(ss+":")
-              val zero = env.getOrElse(z,z)
-              println(zero)
-              zero
+              val res = env.getOrElse(z,z)
+              println(res)
+              res
             }
 
             val zero = eval("zero",GConst(0),d=>None) // this is after the first iteration!
 
-            val Some(mz) = GMap.unapply(zero)
-            
-            def mkey(x: GVal) = x match {
-              case GConst(s) => f1+"_"+s
-              case GRef(s) => f1+"_"+s
-            }
+            zero match {
+              case GMap(mz) => // may be scalar already
+                  def mkey(x: GVal) = x match {
+                    case GConst(s) => f1+"_"+s
+                    case GRef(s) => f1+"_"+s
+                  }
+                  println("find recursive call "+f1)
+                  val last = eval("last",GRef(x), { 
+                    case DCall(`f1`, Def(DPlus(GRef(`x`), GConst(-1)))) => 
+                      println("hit recursive call "+f1)
+                      println("subst "+mz)
+                      Some(map(mz map { 
+                        case (k,v) => k -> call(GRef(mkey(k)), plus(GRef(x), GConst(-1)))
+                      }))
+                    case _ => None
+                  })
 
-            val last = eval("last",GRef(x), { 
-              case DCall(`f1`, Def(DPlus(GRef(`x`), GConst(-1)))) => 
-                println("hit recursive call "+f1)
-                println("subst "+mz)
-                
-                Some(map(mz map { 
-                  case (k,v) => k -> call(GRef(mkey(k)), GConst(-1))
-                }))
+                  val Some(mz1) = GMap.unapply(last)
+                  assert(mz1.keys === mz.keys)
 
-                //for ((k,v) <- mz) {
-                  //println(k)
-                //}
-                //update(GConst(Map()), )
-                
+                  mz1 foreach { 
+                    case (k,v) => fun(mkey(k),x,v)
+                  }
+
+                  def convert(x: GVal) = x match { // go recursive!
+                    case GMap(m) => map(m)
+                    case _ => x
+                  }
+
+                  val mz2 = mz1 map { 
+                    case (k,v) => k -> call(GRef(mkey(k)),fixindex(GRef(mkey(k)))) // are we sure this is the fixindex call?
+                  }
+
+                  println("*** break down further")
+
+                  Some(mz2 map { 
+                    case (k,v) => 
+                      println(s"start with $v")
+                      val v1 = convert(v)
+                      println(s"done with $v to $v1")
+                      k -> v1
+                  })
               case _ => None
-            })
-
-
-            val Some(mz1) = GMap.unapply(last)
-            assert(mz1.keys === mz.keys)
-
-            mz1 foreach { 
-              case (k,v) => fun(mkey(k),x,v)
             }
-
-            Some(mz1 map { 
-              case (k,v) => k -> call(GRef(mkey(k)),fixindex(GRef(mkey(k)))) // are we sure this is the fixindex call?
-            })
-
           case _ => None
           }
           pending = pending.tail
