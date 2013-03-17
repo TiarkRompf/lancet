@@ -184,7 +184,34 @@ class TestAnalysis4 extends FileDiffSuite {
         def unapply(x:GVal): Option[Def] = findDefinition(x.toString)
       }
 
-      // evaluate with substitution
+      // dependencies / schedule
+      def syms(d: Def): List[String] = {
+        var sl: List[String] = Nil
+        object collector extends DXForm {
+          type From = GVal
+          type To = String // ignore
+          val next = DString
+          def pre(x: GVal) = x match { case GRef(s) => sl ::= s; s case _ => "" }
+          def post(x: String) = x
+          //override def fun(f: String,x: String,y: GVal) = ""
+        }
+        mirrorDef(d,collector)
+        sl
+      }
+      def boundSyms(d: Def): List[String] = d match { case DFun(f,x,y) => List(f,x) case _ => Nil }
+      def deps(st: List[String]): List[(String,Def)] =
+        globalDefs.filter(p=>st contains p._1)
+      def schedule(x: GVal) = {
+        val start = x match { case GRef(s) => List(s) case _ => Nil }
+        val xx = scala.virtualization.lms.util.GraphUtil.stronglyConnectedComponents[(String,Def)](deps(start), t => deps(syms(t._2)))
+        xx.flatten.reverse
+      }
+
+      def printStm(p: (String,Def)) = println(s"val ${p._1} = ${p._2}")
+
+      def dependsOn(a: GVal, b: GVal) = schedule(a).exists(p => GRef(p._1) == b || syms(p._2).contains(b.toString))
+
+      // evaluate with substitution, i.e. compute trans closure of subst
       def substTrans(env0: Map[GVal,GVal]): Map[GVal,GVal] = {
         var env = env0
         object XXO extends DXForm {
@@ -208,6 +235,7 @@ class TestAnalysis4 extends FileDiffSuite {
         if (env == env0) env else substTrans(env)
       }
 
+      // perform iterative optimizations
       def iterateAll(res: GVal): GVal = {
         println("*** begin iterate: "+res)
 
