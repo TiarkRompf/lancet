@@ -375,9 +375,13 @@ class TestAnalysis4 extends FileDiffSuite {
           }
       }
       override def fixindex(c: From)                 = super.fixindex(c)
-      override def call(f: From, x: From)            = super.call(f,x)
-
-      def dependsOn(a: GVal, b: GVal) = schedule(a).exists(p => GRef(p._1) == b)
+      override def call(f: From, x: From)            = f match {
+        case Def(DFun(f1,x1,y1)) if !dependsOn(y1,f) && !dependsOn(y1,x) =>
+          println(s"*** will inline call $f($x1) = $y1 / $x1 -> $x")
+          subst(y1,GRef(x1),x)
+        case _ =>
+          super.call(f,x)
+      }
 
       override def fun(f: String, x: String, y: From) = y match {
         // try to remove loop carried deps! TODO: make more principled ...
