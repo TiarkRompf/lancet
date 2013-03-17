@@ -348,6 +348,8 @@ class TestAnalysis4 extends FileDiffSuite {
       override def fixindex(c: From)                 = super.fixindex(c)
       override def call(f: From, x: From)            = super.call(f,x)
 
+      def dependsOn(a: GVal, b: GVal) = schedule(a).exists(p => GRef(p._1) == b)
+
       override def fun(f: String, x: String, y: From) = y match {
         // try to remove loop carried deps! TODO: make more principled ...
         // if (0 < x) { if (loopc) f(x-1) + d else f(x-1) } else zeroRes --> 
@@ -363,8 +365,8 @@ class TestAnalysis4 extends FileDiffSuite {
           // TODO: should handle non-constant but loop invariant strides, too
 
           incRes match {
-            case Def(DPlus(`prevRes`, d@GConst(_))) => 
-              println(s"const stride $d")
+            case Def(DPlus(`prevRes`, d)) if !dependsOn(d,GRef(x)) => 
+              println(s"invariant stride $d")
               println(s"result = $zeroRes + $x * $d")
               val prev1 = plus(times(prevx,d), zeroRes)
               val cond1 = subst(loopc, prevRes,prev1)
