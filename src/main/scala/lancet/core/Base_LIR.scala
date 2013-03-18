@@ -65,11 +65,12 @@ trait Base_LIR0 extends Base {
 
   var constantPool: Vector[AnyRef] = Vector.empty
 
-  def constToString[T](x:T): String = x match {
+  def constToString[T:TypeRep](x:T): String = x match {
     case x: Boolean => ""+x
     case x: Int => ""+x
-    case x: Long => ""+x
-    case x: Double => ""+x
+    case x: Long => ""+x+"L"
+    case x: Double => ""+x+"d"
+    case x: Float => ""+x+"f"
     case x: Unit => "()"
     case null => "null"
     // TODO: primitives, arrays
@@ -217,7 +218,7 @@ trait Base_LIR extends Base_LIR0 {
 
   case class Static[+T:TypeRep](x: T) extends Rep[T] { // IR.Const
     // adding a type cast everywhere: TestC was having issues with literal 8 passed to Object param?
-    override def toString = if (x == null) "null" else constToString(x) + ".asInstanceOf[" + typ + "]" // skip null's type
+    override def toString = constToString(x) //if (x == null) "null" else constToString(x) + ".asInstanceOf[" + typ + "]" // skip null's type
   }
 
   case class Dyn[+T:TypeRep](s: String) extends Rep[T] { // extends IR.Exp
@@ -435,9 +436,9 @@ trait Base_LIR_Opt extends Base_LIR_Abs with Base_LIR {
   //   taking the lub needs to account for this.
   //   (lub should not be Top!)
 
-  def eval[T](x: Rep[T]): Val[T] = x match {
+  def eval[T](e: Rep[T]): Val[T] = e match {
     //case Static(x) => Const(x)
-    case Static(x) => store.get(constToString(x)).asInstanceOf[Option[Val[T]]] match {
+    case Static(x) => store.get(constToString(x)(e.typ.asInstanceOf[TypeRep[T]])).asInstanceOf[Option[Val[T]]] match {
       case Some(x) => x
       case None => Const(x)
     }
@@ -445,7 +446,7 @@ trait Base_LIR_Opt extends Base_LIR_Abs with Base_LIR {
       case x => x
     }
     case _ => 
-      emitString("ERROR // can't eval: " + x)
+      emitString("ERROR // can't eval: " + e)
       Top
   }
 
