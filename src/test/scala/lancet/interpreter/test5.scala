@@ -3,14 +3,9 @@ package interpreter
 
 import lancet.api._
 
-import com.oracle.graal.api.meta._      // ResolvedJavaMethod
-import com.oracle.graal.hotspot._
-import com.oracle.graal.hotspot.meta._  // HotSpotRuntime
-
 class TestInterpreter5 extends FileDiffSuite {
 
   val prefix = "test-out/test-interpreter-5"
-
 
   def test1a = withOutFileChecked(prefix+"slowpath1a") {
     val it = new Decompiler
@@ -25,7 +20,7 @@ class TestInterpreter5 extends FileDiffSuite {
       }
       i
     }
-    println(f(100))
+    printcheck(f(100), 100)
   }
 
   def test1 = withOutFileChecked(prefix+"slowpath1") {
@@ -41,7 +36,7 @@ class TestInterpreter5 extends FileDiffSuite {
       }
       i
     }
-    println(f(100))
+    printcheck(f(100), 100)
   }
 
 
@@ -53,7 +48,7 @@ class TestInterpreter5 extends FileDiffSuite {
     val f = it.compile { (x:Int) => 
       it.reset[Int](compute(x) * 100)
     }
-    println(f(100))
+    printcheck(f(100), 1600)
   }
 
 

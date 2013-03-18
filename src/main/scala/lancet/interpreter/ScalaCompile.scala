@@ -39,6 +39,7 @@ object ScalaCompile {
     settings.encoding.value = "UTF-8"
     settings.outdir.value = "."
     settings.extdirs.value = ""
+    settings.deprecation.value = true
     //settings.verbose.value = true
     // -usejavacp needed on windows?
 

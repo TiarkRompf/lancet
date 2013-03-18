@@ -40,11 +40,12 @@ trait FileDiffSuite extends Suite {
   }
   def assertFileEqualsCheck(name: String): Unit = {
     def sanitize(s: String) = s.replaceAll("@[0-9a-f]+","@") // disregard object ids
-    assert(sanitize(readFile(name)) == sanitize(readFile(name+".check")), name) // TODO: diff output
+    assert(sanitize(readFile(name)) == sanitize(readFile(name+".check")), "File differs: "+name) // TODO: diff output
     new File(name) delete ()
   }
   def withOutFileChecked(name: String)(func: => Unit): Unit = {
     withOutFile(name)(func)
     assertFileEqualsCheck(name)
   }
+  def printcheck(x:Any,y:Any) = assert({ println(x); x } === y)  
 }
