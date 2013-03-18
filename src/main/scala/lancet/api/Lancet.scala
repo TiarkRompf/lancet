@@ -68,7 +68,7 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
 
     def shift[A,B](f: (A=>B) => B): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
-    def slowpath(): Unit = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
+    def slowpath(): Unit = () //??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
     def speculate(x: Boolean): Boolean = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 

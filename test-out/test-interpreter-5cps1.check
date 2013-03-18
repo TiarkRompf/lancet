@@ -1,32 +1,3 @@
-// lancet.interpreter.TestInterpreter5$$anonfun$test20$1$$anonfun$3.apply$mcII$sp
-// lancet.interpreter.TestInterpreter5$$anonfun$test20$1$$anonfun$3.apply$mcII$sp
-// lancet.interpreter.TestInterpreter5$$anonfun$test20$1$$anonfun$3$$anonfun$apply$mcII$sp$1.<init>
-// scala.runtime.AbstractFunction0$mcI$sp.<init>
-// scala.runtime.AbstractFunction0.<init>
-// java.lang.Object.<init>
-// scala.Function0$class.$init$
-// scala.Function0$mcI$sp$class.$init$
-// lancet.interpreter.TestInterpreter5$Decompiler.reset
-// lancet.interpreter.TestInterpreter5$$anonfun$test20$1$$anonfun$3$$anonfun$apply$mcII$sp$1.apply$mcI$sp
-// lancet.interpreter.TestInterpreter5$$anonfun$test20$1$$anonfun$3$$anonfun$apply$mcII$sp$1.apply$mcI$sp
-// lancet.interpreter.TestInterpreter5$$anonfun$test20$1$$anonfun$3.lancet$interpreter$TestInterpreter5$$anonfun$$anonfun$$$outer
-// lancet.interpreter.TestInterpreter5$$anonfun$test20$1$$anonfun$3.lancet$interpreter$TestInterpreter5$$anonfun$$anonfun$$$outer
-// lancet.interpreter.TestInterpreter5$$anonfun$test20$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3
-// lancet.interpreter.TestInterpreter5$$anonfun$test20$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$3$1.<init>
-// scala.runtime.AbstractFunction1.<init>
-// java.lang.Object.<init>
-// scala.Function1$class.$init$
-// lancet.interpreter.TestInterpreter5$Decompiler.shift
-delim: 9:<TestInterpreter5$$anonfun$test20$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3><(ILlancet/interpreter/TestInterpreter5$Decompiler;)I> // 21:<TestInterpreter5$$anonfun$test20$1$$anonfun$3$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$test20$1$$anonfun$3$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
-16:<TestInterpreter5$$anonfun$test20$1$$anonfun$3.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$test20$1$$anonfun$3.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
->>> exec
-// scala.runtime.BoxesRunTime.unboxToInt
-<<< exec
-// lancet.interpreter.TestInterpreter5$$anonfun$test20$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$3$1.apply
-// scala.Function1.apply$mcII$sp
-// scala.Function1.apply$mcII$sp
-// scala.runtime.BoxesRunTime.boxToInteger
-// scala.runtime.BoxesRunTime.unboxToInt
 // constants: <function1>,public abstract int scala.Function1.apply$mcII$sp(int)
 class Generated1(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$test20$1$$anonfun$3,CONST_1: java.lang.reflect.Method) extends (Int=>Int){
 import sun.misc.Unsafe
@@ -68,7 +39,7 @@ def apply(ARG: Int): Int = { object BODY {
     // return 1_0 to 9:<TestInterpreter5$$anonfun$test20$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3><(ILlancet/interpreter/TestInterpreter5$Decompiler;)I> // 21:<TestInterpreter5$$anonfun$test20$1$$anonfun$3$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$test20$1$$anonfun$3$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
     // ret single HotSpotMethod<TestInterpreter5$$anonfun$test20$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$3$1.<init>>
     //begin shift
-    def kx10(x5:Int) = {
+    def kx10(x5:Int): Int = {
       var RES = null.asInstanceOf[Int]
       val x6 = x5.asInstanceOf[Int]
       val x7 = x6.asInstanceOf[Int]
@@ -84,7 +55,7 @@ def apply(ARG: Int): Int = { object BODY {
     }
     val x10 = kx10 _
     val x17 = {
-      var RES = null.asInstanceOf[Object]
+      var RES = null.asInstanceOf[Int]
       val x11 = CONST_1.asInstanceOf[java.lang.reflect.Method].invoke(x10.asInstanceOf[AnyRef],7.asInstanceOf[Int].asInstanceOf[AnyRef]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp
       val x12 = x11.asInstanceOf[Int]
       val x13 = CONST_1.asInstanceOf[java.lang.reflect.Method].invoke(x10.asInstanceOf[AnyRef],9.asInstanceOf[Int].asInstanceOf[AnyRef]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp
@@ -95,7 +66,7 @@ def apply(ARG: Int): Int = { object BODY {
       val x16 = x15.asInstanceOf[Integer]
       (RES = x16) // return to root
       // (no return?)
-      RES.asInstanceOf[Object]
+      RES.asInstanceOf[Int]
     }
     //end shift
     val x18 = x17.asInstanceOf[Int]

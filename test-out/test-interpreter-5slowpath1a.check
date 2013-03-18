@@ -19,7 +19,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -41,7 +41,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -63,7 +63,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -85,7 +85,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -107,7 +107,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -129,7 +129,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -151,7 +151,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -173,7 +173,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -195,7 +195,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -217,7 +217,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -239,7 +239,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -261,7 +261,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -283,7 +283,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -305,7 +305,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -327,7 +327,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -349,7 +349,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -371,7 +371,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -393,7 +393,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -415,7 +415,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -437,7 +437,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -459,7 +459,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -481,7 +481,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -503,7 +503,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -525,7 +525,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -547,7 +547,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -569,7 +569,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -591,7 +591,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -613,7 +613,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -635,7 +635,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -657,7 +657,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -679,7 +679,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -701,7 +701,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -723,7 +723,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -745,7 +745,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -767,7 +767,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -789,7 +789,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -811,7 +811,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -833,7 +833,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -855,7 +855,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -877,7 +877,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -899,7 +899,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -921,7 +921,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -943,7 +943,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -965,7 +965,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -987,7 +987,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1009,7 +1009,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1031,7 +1031,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1053,7 +1053,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1075,7 +1075,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1097,7 +1097,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1120,11 +1120,16 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         1: bipush
         3: if_icmpne
         6: aload_2
-        7: invokevirtual
-          Call HotSpotMethod<TestInterpreter5$Decompiler.dropdead> - HotSpotSignature<()V>
-          0: return
-          Ret HotSpotMethod<TestInterpreter5$Decompiler.dropdead> - HotSpotSignature<()V>
-        10: return
+        7: invokeinterface
+          Call HotSpotMethod<TestInterpreter5$Decompiler.slowpath> - HotSpotSignature<()V>
+          0: aload_0
+          1: invokestatic
+            Call HotSpotMethod<DefaultMacros$class.slowpath> - HotSpotSignature<(Llancet/api/DefaultMacros;)V>
+            0: return
+            Ret HotSpotMethod<DefaultMacros$class.slowpath> - HotSpotSignature<(Llancet/api/DefaultMacros;)V>
+          4: return
+          Ret HotSpotMethod<TestInterpreter5$Decompiler.slowpath> - HotSpotSignature<()V>
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1146,7 +1151,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1168,7 +1173,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1190,7 +1195,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1212,7 +1217,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1234,7 +1239,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1256,7 +1261,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1278,7 +1283,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1300,7 +1305,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1322,7 +1327,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1344,7 +1349,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1366,7 +1371,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1388,7 +1393,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1410,7 +1415,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1432,7 +1437,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1454,7 +1459,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1476,7 +1481,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1498,7 +1503,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1520,7 +1525,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1542,7 +1547,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1564,7 +1569,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1586,7 +1591,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1608,7 +1613,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1630,7 +1635,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1652,7 +1657,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1674,7 +1679,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1696,7 +1701,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1718,7 +1723,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1740,7 +1745,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1762,7 +1767,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1784,7 +1789,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1806,7 +1811,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1828,7 +1833,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1850,7 +1855,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1872,7 +1877,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1894,7 +1899,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1916,7 +1921,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1938,7 +1943,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1960,7 +1965,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -1982,7 +1987,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -2004,7 +2009,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -2026,7 +2031,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -2048,7 +2053,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -2070,7 +2075,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -2092,7 +2097,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -2114,7 +2119,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -2136,7 +2141,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -2158,7 +2163,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -2180,7 +2185,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
@@ -2202,7 +2207,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
         0: iload_1
         1: bipush
         3: if_icmpne
-        10: return
+        12: return
         Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
