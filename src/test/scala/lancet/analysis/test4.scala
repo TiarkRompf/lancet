@@ -14,9 +14,9 @@ class TestAnalysis4 extends FileDiffSuite {
 */
 
 /*
-
-
-
+TODO: 
+- switch to optimistic
+- make sense of inequalities
 */
 
   object Test1 {
@@ -340,6 +340,48 @@ class TestAnalysis4 extends FileDiffSuite {
         case Def(DSelect(x,f))   => select(subst(x,a,b),subst(f,a,b))
         case Def(DMap(m))        => map(m.map(kv => subst(kv._1,a,b) -> subst(kv._2,a,b)))
         case Def(DMap(m))        => map(m.map(kv => subst(kv._1,a,b) -> subst(kv._2,a,b)))
+        case Def(dd@DIf(c@Def(o@DLess(u,v)),x,y)) => 
+          // in general, if a implies c we can take branch x; if a refutes c, y.
+          // if a & c implies that something is a constant, propagate that
+          a match { 
+            case Def(p@DLess(`u`,s)) =>
+              // evaluate u < v  given that u < s or ¬(u < s)
+              println(s"another < flying by: $o, $p -> $b")
+              // look for: a < x && !(a < x-1) ---> x == 1
+              if (s == plus(v,const(-1))) { // other constants?
+                if (b == const(1)) {
+                  println(s"hit: $u<$v-1 implies $u<$v in $dd")
+                  return subst(x,a,b)
+                }
+                if (b == const(0)) {
+                  println(s"¬$u<$v-1 and $u<$v implies $u=$v-1 in $dd")
+                  if (u.isInstanceOf[GConst])
+                    return iff(subst(c,a,b),subst(x,s,plus(u,const(1))),subst(y,a,b))
+                  else
+                    return iff(subst(c,a,b),subst(x,u,s),subst(y,a,b))
+                }
+              }
+              if (v == plus(s,const(-1))) { // other constants?
+                if (b == const(0)) {
+                  println(s"hit2: ¬$u<$s refutes $u<$s-1 in $dd")
+                  return subst(y,a,b)
+                }
+                if (b == const(1)) {
+                  println(s"hit2: $u<$s and ¬$u<$s-1 implies $u=$s-1 in $dd")
+                  if (u.isInstanceOf[GConst])
+                    return iff(subst(c,a,b),subst(x,a,b),subst(y,s,plus(u,const(1))))
+                  else
+                    return iff(subst(c,a,b),subst(x,a,b),subst(y,u,s))
+                }
+              }
+
+            // look for: 0 < x6 && !(0 < x6 + -1) ---> x6 == 1
+                // if (0 < x6) if (0 < x6 + -1) if (0 < x6 + -2) if (x6 < 102) if (x6 < 101) x100 + 1 
+                // else x100 else x100 else x100 + 1 else x100 + 1 else 0
+
+            case _ => 
+          }
+          iff(subst(c,a,b),subst(x,a,b),subst(y,a,b))
         case Def(DIf(c,x,y))     => iff(subst(c,a,b),subst(x,a,b),subst(y,a,b))
         case Def(DPlus(x,y))     => plus(subst(x,a,b),subst(y,a,b))
         case Def(DTimes(x,y))    => times(subst(x,a,b),subst(y,a,b))
@@ -384,11 +426,12 @@ class TestAnalysis4 extends FileDiffSuite {
         case (GConst(x:Int),GConst(y:Int)) => GConst(if (x < y) 1 else 0)
         case (Def(DPlus(a,GConst(b:Int))),c) =>  less(a,plus(c,const(-b)))// random rewrite ...
         case (Def(DIf(c,x,z)),_) => iff(c,less(x,y),less(z,y))
+        case _ if x == y => const(0)
         // case (GConst(0),Def(DPlus())) => y
         case _ => super.less(x,y)
       }
       override def pair(x: From, y: From)            = super.pair(x,y)
-      override def iff(c: From, x: From, y: From)    = c match {
+      override def iff(c: From, x: From, y: From):GVal    = c match {
         case GConst(0) => y
         case GConst(_) => x
         case Def(DIf(c1,x1,y1)) => iff(c1,iff(x1,x,y),iff(y1,x,y))
@@ -400,7 +443,19 @@ class TestAnalysis4 extends FileDiffSuite {
               map((m1.keys++m2.keys) map { k => k -> iff(c,m1.getOrElse(k,const("nil")),m2.getOrElse(k,const("nil")))} toMap)
             case _ =>
               // generate node, but remove nested tests on same condition
-              super.iff(c,subst(x,c,GConst(1)),subst(y,c,GConst(0)))
+              val thenp = subst(x,c,GConst(1))
+              val elsep = subst(y,c,GConst(0))
+
+              // maybe we don't need conditional: 
+              /*val thenpTry = subst(x,c,GConst(0))
+              val elsepTry = subst(y,c,GConst(1))
+              
+              if (thenp == elsepTry && elsep == thenpTry) {
+                println(s"### strange if $c $x $y")
+                return x
+              }*/
+
+              super.iff(c,thenp,elsep)
           }
       }
 
@@ -468,9 +523,16 @@ class TestAnalysis4 extends FileDiffSuite {
                 //case Def(DIf(Def(DLess()),x,y)) =>
                 case Def(dd) => prevRes
                 // TODO: for y_val, this is i_val(prevx) < 100 !!! (test a)
+                //       (but it gets transformed to something more complex by inlining i_val)
+                //
+                // if (0 < x6) if (0 < x6 + -1) if (0 < x6 + -2) if (x6 < 102) if (x6 < 101) x100 + 1 
+                // else x100 else x100 else x100 + 1 else x100 + 1 else 0
+                //
+                // where x6 is the loop var and x100 the recursive call
               }
               println(s"subst $prevRes -> $prev1 -> $prev2")
-              val y1 = subst(y,prevRes,prev2)
+              val zrescall = call(GRef(`f`),GConst(0))
+              val y1 = subst(subst(y,zrescall,zeroRes),prevRes,prev2)
               println("sym " +y1)
               fun(f,x,y1)
             case d @ GConst(_) if !dependsOn(d,GRef(x)) =>  // error in iterateAll if not a const ??
