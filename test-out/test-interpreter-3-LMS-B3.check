@@ -2,51 +2,55 @@
   Emitting Generated Code
   *******************************************/
   class Generated(pConst_0:Object) extends ((Int)=>(Int)) {
-    def apply(x0:Int): Int = {
-      import sun.misc.Unsafe;
-      val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
-      type char = Char;
-      def WARN = assert(false, "WARN");
-      def ERROR = assert(false, "ERROR");
-      var RES = null.asInstanceOf[Int];
-      val x7 = x0.asInstanceOf[Int];
-      val x8 = 0 >= x7;
-      if (x8) {
-        ;{;
-          val x122: Int = unsafe.getInt(pConst_0,16L);
-          val LUB_pConst_1_intField = x122; // XXX LUBC(Some(DynExp(LUB_pConst_1_intField)),None);
-          BLOCK_4(LUB_pConst_1_intField,x7);
-        };
-      } else {
-        if (pConst_0 ne null) unsafe.putInt(pConst_0,16L, 9) else println("BUG: putInt"+pConst_0);;
-        ;{;
-          val LUB_pConst_1_intField = 9; // Alias(Some(DynExp(LUB_pConst_1_intField)),Some(Const(9)));
-          BLOCK_4(LUB_pConst_1_intField,x7);
-        };
-      }
-      def BLOCK_4(LUB_pConst_1_intField:Int,x7:Int): Unit = {
-        ;{;
-          val PHI_3_5 = 0 // LUBC(DynExp(PHI_3_5):Int,Const(0):Int);
-          BLOCK_5(LUB_pConst_1_intField,PHI_3_5,x7);
-        };
-      }
-      def BLOCK_5(LUB_pConst_1_intField:Int,PHI_3_5:Int,x7:Int): Unit = {
-        val x69 = 0 >= LUB_pConst_1_intField;
-        if (x69) {
-          (RES = PHI_3_5) // return to root;
-        } else {
-          val x82 = -1 + LUB_pConst_1_intField;
-          if (pConst_0 ne null) unsafe.putInt(pConst_0,16L, x82) else println("BUG: putInt"+pConst_0);;
-          val x90 = 1 + PHI_3_5;
+    def apply(x145:Int): Int = {
+      val x0 = x145;
+      val x147: Int = {
+        import sun.misc.Unsafe;
+        val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
+        type char = Char;
+        def WARN = assert(false, "WARN");
+        def ERROR = assert(false, "ERROR");
+        var RES = null.asInstanceOf[Int];
+        val x7 = x0.asInstanceOf[Int];
+        val x8 = 0 >= x7;
+        if (x8) {
           ;{;
-            val PHI_3_5 = x90 // LUBC(DynExp(PHI_3_5):Int,Sym(90):Int);
-            val LUB_pConst_1_intField = x82; // Alias(Some(DynExp(LUB_pConst_1_intField)),Some(Sym(82)));
+            val x122: Int = unsafe.getInt(pConst_0,16L);
+            val LUB_pConst_1_intField = x122; // XXX LUBC(Some(DynExp(LUB_pConst_1_intField)),None);
+            BLOCK_4(LUB_pConst_1_intField,x7);
+          };
+        } else {
+          if (pConst_0 ne null) unsafe.putInt(pConst_0,16L, 9) else println("BUG: putInt"+pConst_0);;
+          ;{;
+            val LUB_pConst_1_intField = 9; // Alias(Some(DynExp(LUB_pConst_1_intField)),Some(Const(9)));
+            BLOCK_4(LUB_pConst_1_intField,x7);
+          };
+        }
+        def BLOCK_4(LUB_pConst_1_intField:Int,x7:Int): Unit = {
+          ;{;
+            val PHI_3_5 = 0 // LUBC(DynExp(PHI_3_5):Int,Const(0):Int);
             BLOCK_5(LUB_pConst_1_intField,PHI_3_5,x7);
           };
         }
-      }
-      // (no return?);
-      RES
+        def BLOCK_5(LUB_pConst_1_intField:Int,PHI_3_5:Int,x7:Int): Unit = {
+          val x69 = 0 >= LUB_pConst_1_intField;
+          if (x69) {
+            (RES = PHI_3_5) // return to root;
+          } else {
+            val x82 = -1 + LUB_pConst_1_intField;
+            if (pConst_0 ne null) unsafe.putInt(pConst_0,16L, x82) else println("BUG: putInt"+pConst_0);;
+            val x90 = 1 + PHI_3_5;
+            ;{;
+              val PHI_3_5 = x90 // LUBC(DynExp(PHI_3_5):Int,Sym(90):Int);
+              val LUB_pConst_1_intField = x82; // Alias(Some(DynExp(LUB_pConst_1_intField)),Some(Sym(82)));
+              BLOCK_5(LUB_pConst_1_intField,PHI_3_5,x7);
+            };
+          }
+        }
+        // (no return?);
+        RES
+      };
+      x147
     }
   }
   /*****************************************
