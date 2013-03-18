@@ -185,7 +185,8 @@ trait Base_LMS0 extends Base_LMS1 {
 
   def quote(x:Any): String = x match {
     case Const(c:AnyRef) => VConstToString(c)(typeRep[AnyRef]) //hack?
-    case Dyn(s) => s // x99
+    //case Dyn(s: String) => s // x99   XX OLD SCALA
+    case Sym(n) => "x"+n
     case DynExp(x) => x
     case _ => x.toString
   }

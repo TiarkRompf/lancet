@@ -2,24 +2,30 @@ name := "lancet"
 
 version := "0.2"
 
-scalaVersion := "2.10.0"
+scalaVersion := "2.10.0-M1-virtualized"
 
-scalaBinaryVersion := "2.10.0"
+//scalaBinaryVersion := "2.10.0"
 
-scalaOrganization := "org.scala-lang.virtualized"
+scalaOrganization := "org.scala-lang"
+
+scalacOptions += "-Yvirtualize"
 
 // tests are not thread safe
 parallelExecution in Test := false
 
-libraryDependencies += "org.scala-lang" % "scala-compiler" % "2.10.0"
+resolvers += "Dropbox" at "http://dl.dropbox.com/u/1186811/scala-virtualized"
 
-libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.10.0"
+libraryDependencies += "org.scala-lang" % "scala-compiler" % "2.10.0-M1-virtualized"
+
+//libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.10.0-M1-virtualized"
 
 //libraryDependencies += "org.scalatest" % "scalatest_2.9.0" % "1.6.1" % "test"
 
-libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "test"
+//libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "test"
 
-libraryDependencies += "EPFL" %% "lms" % "0.3-SNAPSHOT"
+libraryDependencies += "org.scalatest" % "scalatest_2.10.0-virtualized-SNAPSHOT" % "1.6.1-SNAPSHOT" % "test"
+
+libraryDependencies += "EPFL" % "lms_2.10.0-M1-virtualized" % "0.2"
 
 libraryDependencies += "junit" % "junit" % "4.8.1" % "test"
 

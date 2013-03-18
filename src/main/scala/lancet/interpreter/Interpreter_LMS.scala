@@ -112,14 +112,18 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
       // dry run to hash out constant pool ... HACK
       codegen.withStream(new PrintWriter(new StringWriter)) {
-        codegen.emitSource(List(arg),y,"Generated",codegen.stream)
+//        codegen.emitSource({ x:Rep[A] => reflect[Unit]("val "+arg+" = "+x); reflect[B](y) },"Generated",codegen.stream)
+// XX OLD LMS
+        codegen.emitSource({ x:Rep[A] => reflect[Unit]("val "+quote(arg)+" = ",x); reflect[B](y) },"Generated",codegen.stream)
       }
 
       val cst = VConstantPool
     
       val stream = new StringWriter
       codegen.withStream(new PrintWriter(stream)) {
-        codegen.emitSource(List(arg),y,"Generated",codegen.stream)
+//        codegen.emitSource(List(arg),y,"Generated",codegen.stream)
+// XX OLD LMS
+        codegen.emitSource({ x:Rep[A] => reflect[Unit]("val "+quote(arg)+" = ",x); reflect[B](y) },"Generated",codegen.stream)
       }
 
 
