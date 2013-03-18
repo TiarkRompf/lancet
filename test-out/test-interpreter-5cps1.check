@@ -10,8 +10,8 @@ def apply(ARG: Int): Int = { object BODY {
   val x0 = ARG
   val x1 = x0.asInstanceOf[Int]
   val x2 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test20$1$$anonfun$3$$anonfun$apply$mcII$sp$1"))
-  unsafe.putObject(x2,24.asInstanceOf[Long], CONST_0.asInstanceOf[Object])
-  unsafe.putInt(x2,16.asInstanceOf[Long], x1)
+  unsafe.putObject(x2,24L, CONST_0)
+  unsafe.putInt(x2,16L, x1)
   // return 0_0 to 4:<AbstractFunction0.<init>><()V> // 4:<AbstractFunction0$mcI$sp.<init>><()V> // 26:<TestInterpreter5$$anonfun$test20$1$$anonfun$3$$anonfun$apply$mcII$sp$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$test20$1$$anonfun$3;I)V> // 13:<TestInterpreter5$$anonfun$test20$1$$anonfun$3.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$test20$1$$anonfun$3.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
   // ret single HotSpotMethod<Object.<init>>
   // return 0_0 to 8:<AbstractFunction0.<init>><()V> // 4:<AbstractFunction0$mcI$sp.<init>><()V> // 26:<TestInterpreter5$$anonfun$test20$1$$anonfun$3$$anonfun$apply$mcII$sp$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$test20$1$$anonfun$3;I)V> // 13:<TestInterpreter5$$anonfun$test20$1$$anonfun$3.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$test20$1$$anonfun$3.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
@@ -46,7 +46,7 @@ def apply(ARG: Int): Int = { object BODY {
       val x8 = x7.asInstanceOf[Int]
       // return 3_0 to 21:<TestInterpreter5$$anonfun$test20$1$$anonfun$3$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$test20$1$$anonfun$3$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
       // ret single HotSpotMethod<TestInterpreter5$$anonfun$test20$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
-      val x9 = 100.asInstanceOf[Int] * x8
+      val x9 = 100 * x8
       // return 2_0 to 4:<TestInterpreter5$$anonfun$test20$1$$anonfun$3$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
       // ret single HotSpotMethod<TestInterpreter5$$anonfun$test20$1$$anonfun$3$$anonfun$apply$mcII$sp$1.apply$mcI$sp>
       (RES = x9) // return to root
@@ -56,9 +56,9 @@ def apply(ARG: Int): Int = { object BODY {
     val x10 = kx10 _
     val x17 = {
       var RES = null.asInstanceOf[Int]
-      val x11 = CONST_1.asInstanceOf[java.lang.reflect.Method].invoke(x10.asInstanceOf[AnyRef],7.asInstanceOf[Int].asInstanceOf[AnyRef]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp
+      val x11 = CONST_1.invoke(x10.asInstanceOf[AnyRef],7.asInstanceOf[AnyRef]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp
       val x12 = x11.asInstanceOf[Int]
-      val x13 = CONST_1.asInstanceOf[java.lang.reflect.Method].invoke(x10.asInstanceOf[AnyRef],9.asInstanceOf[Int].asInstanceOf[AnyRef]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp
+      val x13 = CONST_1.invoke(x10.asInstanceOf[AnyRef],9.asInstanceOf[AnyRef]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp
       val x14 = x13.asInstanceOf[Int]
       val x15 = x14 + x12
       // return 2_0 to 8:<TestInterpreter5$$anonfun$test20$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$3$1.apply><(Ljava/lang/Object;)Ljava/lang/Object;> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
