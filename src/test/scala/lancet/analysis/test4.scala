@@ -16,7 +16,7 @@ class TestAnalysis4 extends FileDiffSuite {
 /*
 TODO: 
 - switch to optimistic
-- make sense of inequalities
+- make sense of inequalities/recurrences
 */
 
   object Test1 {

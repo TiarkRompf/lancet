@@ -58,7 +58,7 @@ class TestInterpreter5 extends FileDiffSuite {
 
 
 
-  def test10 = withOutFileChecked(prefix+"language10") {
+  def xxtest10 = withOutFileChecked(prefix+"language10") {
     assert(false)
     val it = new Decompiler
 
@@ -382,6 +382,7 @@ class TestInterpreter5 extends FileDiffSuite {
     debugBlockKeys = false
     debugReadWrite = false
     debugMethods = false
+    debugReturns = true
 
   }
 

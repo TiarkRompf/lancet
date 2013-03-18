@@ -154,6 +154,8 @@ trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInter
 
       lastcode = source
 
+      if (!ScalaCompile.external) Console.println(source)
+
       val comp = ScalaCompile.compile[A,B](source, "Generated"+ScalaCompile.compileCount, constantPool.map(x=>specCls(x)).toList)
 
       val fun: Fun[A,B] = new Fun[A,B] {

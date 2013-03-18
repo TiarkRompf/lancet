@@ -1,5 +1,5 @@
 // constants: <function1>,<function0>
-class Generated(CONST_0: lancet.interpreter.TestInterpreter3$$anonfun$testA3$1$$anonfun$3,CONST_1: lancet.interpreter.TestInterpreter3$$anonfun$testA3$1) extends (Int=>Int){
+class Generated2(CONST_0: lancet.interpreter.TestInterpreter3$$anonfun$testA3$1$$anonfun$3,CONST_1: lancet.interpreter.TestInterpreter3$$anonfun$testA3$1) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -22,12 +22,12 @@ def apply(ARG: Int): Int = { object BODY {
       BLOCK_12(LUB_x2_intField,x0,x1,x2,x3)
     }
   }
-  // 32:<TestInterpreter3$$anonfun$testA3$1$$anonfun$3.apply$mcII$sp>HotSpotSignature<(I)I> // 5:<TestInterpreter3$$anonfun$testA3$1$$anonfun$3.apply>HotSpotSignature<(I)I> // 0:<BytecodeInterpreter_Exec.execute>HotSpotSignature<(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+  // 32:<TestInterpreter3$$anonfun$testA3$1$$anonfun$3.apply$mcII$sp><(I)I> // 5:<TestInterpreter3$$anonfun$testA3$1$$anonfun$3.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
   def BLOCK_12(LUB_x2_intField:Int,x0:Int,x1:Int,x2:Object,x3:Boolean): Unit = {
     val PHI_3_6 = 0.asInstanceOf[Int] // LUBC(PHI_3_6:Int,0.asInstanceOf[Int]:Int)
     BLOCK_13(LUB_x2_intField,PHI_3_6,x0,x1,x2,x3)
   }
-  // 34:<TestInterpreter3$$anonfun$testA3$1$$anonfun$3.apply$mcII$sp>HotSpotSignature<(I)I> // 5:<TestInterpreter3$$anonfun$testA3$1$$anonfun$3.apply>HotSpotSignature<(I)I> // 0:<BytecodeInterpreter_Exec.execute>HotSpotSignature<(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+  // 34:<TestInterpreter3$$anonfun$testA3$1$$anonfun$3.apply$mcII$sp><(I)I> // 5:<TestInterpreter3$$anonfun$testA3$1$$anonfun$3.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
   def BLOCK_13(LUB_x2_intField:Int,PHI_3_6:Int,x0:Int,x1:Int,x2:Object,x3:Boolean): Unit = {
     val x6 = 0.asInstanceOf[Int] >= LUB_x2_intField
     if (x6) {
