@@ -450,6 +450,7 @@ class TestAnalysis4 extends FileDiffSuite {
                 case Def(DLess(min, `prevRes`)) => iff(less(min,prev1), min, prev1)
                 //case Def(DIf(Def(DLess()),x,y)) =>
                 case Def(dd) => prevRes
+                // TODO: for y_val, this is i_val(prevx) < 100 !!! (test a)
               }
               println(s"subst $prevRes -> $prev1 -> $prev2")
               val y1 = subst(y,prevRes,prev2)
