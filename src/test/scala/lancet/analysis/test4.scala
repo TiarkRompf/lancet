@@ -304,10 +304,27 @@ class TestAnalysis4 extends FileDiffSuite {
                   // HACK -- unsafe???
                   globalDefs = globalDefs.filterNot(_._1 == f)
                   fun(f,x,xformSubst(z))
-                  println(s"### fun has been xformed: $a = _=> $z")
+                  println(s"### fun has been xformed: $a = $x => $z / ${xformSubst(z)}")
                 }
             }
         }
+
+        /*
+        should we always go and update all function defs?
+        val env = substTrans(Map())
+        if (env.nonEmpty) {
+          println("NOT CONVERGED: "+env)
+          val res1 = xformSubst.getOrElse(res,res)
+          val sched = schedule(res1)
+          sched foreach {
+            case (a,DFun(f,x,z)) => 
+              // HACK -- unsafe???
+              globalDefs = globalDefs.filterNot(_._1 == f)
+              fun(f,x,env.getOrElse(z,z))
+              println(s"### fun has been xformed: $a = $x => $z / ${env.getOrElse(z,z)}")
+            case _ =>
+          }
+        }*/
 
         val res1 = xformSubst.getOrElse(res,res)
         println("*** done iterate: "+res1)
