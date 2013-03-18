@@ -531,8 +531,8 @@ TODO:
                 // where x6 is the loop var and x100 the recursive call
               }
               println(s"subst $prevRes -> $prev1 -> $prev2")
-              val zrescall = call(GRef(`f`),GConst(0))
-              val y1 = subst(subst(y,zrescall,zeroRes),prevRes,prev2)
+              val zrescall = call(GRef(f),GConst(0))
+              val y1 = subst(subst(y,prevRes,prev2),zrescall,zeroRes)
               println("sym " +y1)
               fun(f,x,y1)
             case d @ GConst(_) if !dependsOn(d,GRef(x)) =>  // error in iterateAll if not a const ??
