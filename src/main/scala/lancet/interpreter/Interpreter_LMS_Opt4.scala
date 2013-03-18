@@ -249,7 +249,6 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
     // config options
 
     var debugBlocks = false
-    var debugBlockKeys = true
     var debugMethods = false
     var debugReturns = false
     var debugLoops = false

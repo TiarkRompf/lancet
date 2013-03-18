@@ -3,18 +3,30 @@ package interpreter
 
 import lancet.api._
 
-class TestInterpreter3 extends FileDiffSuite {
-
+class TestInterpreter3 extends BaseTestInterpreter3 {
   val prefix = "test-out/test-interpreter-3"
+  def newCompiler = new BytecodeInterpreter_LIR_Opt {
+    initialize()
+    debugBlockKeys = false
+  }
+}
+
+class TestInterpreter3LMS extends BaseTestInterpreter3 {
+  val prefix = "test-out/test-interpreter-3-LMS-"
+  def newCompiler = new BytecodeInterpreter_LMS_Opt {
+    initialize()
+    debugBlockKeys = false
+  }
+}
+
+trait BaseTestInterpreter3 extends FileDiffSuite {
+
+  def newCompiler: BytecodeInterpreter_Common_Compile
+  val prefix: String
 
   final class Bar {
     var intField: Int = _
     var objField: AnyRef = _
-  }
-
-  class Compiler extends BytecodeInterpreter_LIR_Opt {
-    initialize()
-    debugBlockKeys = false
   }
 
   // test the following:
@@ -25,7 +37,7 @@ class TestInterpreter3 extends FileDiffSuite {
   // dynamically allocated object
 
   def testA1 = withOutFileChecked(prefix+"A1") {
-    val it = new Compiler
+    val it = newCompiler
     val f = it.compile { (x:Int) => 
         val b = new Bar
         b.intField = 7
@@ -38,7 +50,7 @@ class TestInterpreter3 extends FileDiffSuite {
   }
 
   def testA2 = withOutFileChecked(prefix+"A2") {
-    val it = new Compiler
+    val it = newCompiler
     val f = it.compile { (x:Int) => 
         val b = new Bar
         b.intField = 7
@@ -53,7 +65,7 @@ class TestInterpreter3 extends FileDiffSuite {
   }
 
   def testA3 = withOutFileChecked(prefix+"A3") {
-    val it = new Compiler
+    val it = newCompiler
     val f = it.compile { (x:Int) => 
         val b = new Bar
         b.intField = 7
@@ -73,7 +85,7 @@ class TestInterpreter3 extends FileDiffSuite {
   // static object
 
   def testB1 = withOutFileChecked(prefix+"B1") {
-    val it = new Compiler
+    val it = newCompiler
     val b = new Bar
     b.intField = 7
     val f = it.compile { (x:Int) => 
@@ -86,7 +98,7 @@ class TestInterpreter3 extends FileDiffSuite {
   }
 
   def testB2 = withOutFileChecked(prefix+"B2") {
-    val it = new Compiler
+    val it = newCompiler
     val b = new Bar
     b.intField = 7
     val f = it.compile { (x:Int) => 
@@ -101,7 +113,7 @@ class TestInterpreter3 extends FileDiffSuite {
   }
 
   def testB3 = withOutFileChecked(prefix+"B3") {
-    val it = new Compiler
+    val it = newCompiler
     val b = new Bar
     b.intField = 7
     val f = it.compile { (x:Int) => 

@@ -12,18 +12,17 @@
       val x7 = x0.asInstanceOf[Int];
       ;{;
         val PHI_3_5 = x7 // LUBC(DynExp(PHI_3_5):Int,Sym(7):Int);
-        val x90: Int = unsafe.getInt(pConst_0,16);
+        val x90: Int = unsafe.getInt(pConst_0,16L);
         val LUB_pConst_1_intField = x90; // XXX LUBC(Some(DynExp(LUB_pConst_1_intField)),None);
         BLOCK_2(LUB_pConst_1_intField,PHI_3_5,x7);
       };
-      // 2:<TestInterpreter3LMS$$anonfun$testB2$1$$anonfun$5.apply$mcII$sp>HotSpotSignature<(I)I> // 5:<TestInterpreter3LMS$$anonfun$testB2$1$$anonfun$5.apply>HotSpotSignature<(I)I> // 0:<BytecodeInterpreter_Exec.execute>HotSpotSignature<(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
       def BLOCK_2(LUB_pConst_1_intField:Int,PHI_3_5:Int,x7:Int): Unit = {
         val x42 = 0 >= PHI_3_5;
         if (x42) {
           (RES = LUB_pConst_1_intField) // return to root;
         } else {
           val x55 = 1 + LUB_pConst_1_intField;
-          if (pConst_0 ne null) unsafe.putInt(pConst_0,16, x55) else println("BUG: putInt"+pConst_0);;
+          if (pConst_0 ne null) unsafe.putInt(pConst_0,16L, x55) else println("BUG: putInt"+pConst_0);;
           val x63 = -1 + PHI_3_5;
           ;{;
             val PHI_3_5 = x63 // LUBC(DynExp(PHI_3_5):Int,Sym(63):Int);
@@ -39,7 +38,5 @@
   /*****************************************
   End of Generated Code
   *******************************************/
-warning: there were 2 deprecation warnings; re-run with -deprecation for details
-one warning found
 compilation: ok
 14

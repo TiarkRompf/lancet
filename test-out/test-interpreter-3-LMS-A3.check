@@ -10,8 +10,8 @@
       def ERROR = assert(false, "ERROR");
       var RES = null.asInstanceOf[Int];
       val x7 = x0.asInstanceOf[Int];
-      val x8: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter3LMS$Bar"));
-      if (x8 ne null) unsafe.putInt(x8,16, 7) else println("BUG: putInt"+x8);;
+      val x8: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
+      if (x8 ne null) unsafe.putInt(x8,16L, 7) else println("BUG: putInt"+x8);;
       val x34 = 0 >= x7;
       if (x34) {
         ;{;
@@ -19,28 +19,26 @@
           BLOCK_12(LUB_x8_intField,x7,x8);
         };
       } else {
-        if (x8 ne null) unsafe.putInt(x8,16, 9) else println("BUG: putInt"+x8);;
+        if (x8 ne null) unsafe.putInt(x8,16L, 9) else println("BUG: putInt"+x8);;
         ;{;
           val LUB_x8_intField = 9; // Alias(Some(DynExp(LUB_x8_intField)),Some(Const(9)));
           BLOCK_12(LUB_x8_intField,x7,x8);
         };
       }
-      // 32:<TestInterpreter3LMS$$anonfun$testA3$1$$anonfun$3.apply$mcII$sp>HotSpotSignature<(I)I> // 5:<TestInterpreter3LMS$$anonfun$testA3$1$$anonfun$3.apply>HotSpotSignature<(I)I> // 0:<BytecodeInterpreter_Exec.execute>HotSpotSignature<(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
       def BLOCK_12(LUB_x8_intField:Int,x7:Int,x8:Object): Unit = {
         ;{;
           val PHI_3_6 = 0 // LUBC(DynExp(PHI_3_6):Int,Const(0):Int);
           BLOCK_13(LUB_x8_intField,PHI_3_6,x7,x8);
         };
       }
-      // 34:<TestInterpreter3LMS$$anonfun$testA3$1$$anonfun$3.apply$mcII$sp>HotSpotSignature<(I)I> // 5:<TestInterpreter3LMS$$anonfun$testA3$1$$anonfun$3.apply>HotSpotSignature<(I)I> // 0:<BytecodeInterpreter_Exec.execute>HotSpotSignature<(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
       def BLOCK_13(LUB_x8_intField:Int,PHI_3_6:Int,x7:Int,x8:Object): Unit = {
-        val x8: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter3LMS$Bar"));
+        val x8: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
         val x94 = 0 >= LUB_x8_intField;
         if (x94) {
           (RES = PHI_3_6) // return to root;
         } else {
           val x107 = -1 + LUB_x8_intField;
-          if (x8 ne null) unsafe.putInt(x8,16, x107) else println("BUG: putInt"+x8);;
+          if (x8 ne null) unsafe.putInt(x8,16L, x107) else println("BUG: putInt"+x8);;
           val x115 = 1 + PHI_3_6;
           ;{;
             val PHI_3_6 = x115 // LUBC(DynExp(PHI_3_6):Int,Sym(115):Int);
@@ -56,7 +54,5 @@
   /*****************************************
   End of Generated Code
   *******************************************/
-warning: there were 3 deprecation warnings; re-run with -deprecation for details
-one warning found
 compilation: ok
 9

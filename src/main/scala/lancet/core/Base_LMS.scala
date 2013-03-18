@@ -5,6 +5,8 @@ import scala.virtualization.lms.common._
 import java.lang.reflect.Modifier
 
 
+// *** core lms support classes
+
 trait IR_LMS_Base extends EffectExp {
 
   def liftConst[T:TypeRep](x:T): Rep[T]
@@ -37,6 +39,7 @@ trait IR_LMS_Base extends EffectExp {
 
 trait IR_LMS extends IR_LMS_Base
 
+// *** code generation
 
 trait GEN_Scala_LMS_Base extends ScalaGenEffect {
   val IR: Base_LMS
@@ -73,7 +76,7 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
       emitBlock(block)
     //stream.println("// patch "+sym+" }")
     case BlockDef(key, keyid, params, body) =>
-      //if (debugBlockKeys) 
+      if (debugBlockKeys) 
         stream.println("// "+key+"\n")
       stream.print("def BLOCK_"+keyid+"(")
       stream.print(params.map(v=>quote(v)+":"+remap(v.tp)).mkString(","))
@@ -100,10 +103,14 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
 trait GEN_Scala_LMS extends GEN_Scala_LMS_Base with ScalaGenCore
 
 
+// *** lancet -> lms interface
 
 trait Base_LMS1 extends Base with IR_LMS { self =>
   //val IR: IR_LMS
   val IR: self.type = self
+
+  // debug flags, move elsewhere?
+  var debugBlockKeys = true
 
   //type Rep[+T] = IR.Rep[T]
   type TypeRep[T]// = Manifest[T]
@@ -188,8 +195,9 @@ trait Base_LMS0 extends Base_LMS1 {
   def VConstToString[T:TypeRep](x:T): String = x match {
     case x: Boolean => ""+x
     case x: Int => ""+x
-    case x: Long => ""+x
-    case x: Double => ""+x
+    case x: Long => ""+x+"L"
+    case x: Double => ""+x+"d"
+    case x: Float => ""+x+"f"
     case x: Unit => "()"
     case null => "null"
     // TODO: primitives, arrays

@@ -3,11 +3,7 @@ package interpreter
 
 import lancet.api._
 
-import com.oracle.graal.api.meta._      // ResolvedJavaMethod
-import com.oracle.graal.hotspot._
-import com.oracle.graal.hotspot.meta._  // HotSpotRuntime
-
-class TestInterpreter3LMS extends FileDiffSuite {
+class XXXTestInterpreter3LMS extends FileDiffSuite {
 
   val prefix = "test-out/test-interpreter-3-LMS-"
 

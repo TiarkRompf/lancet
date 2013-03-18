@@ -39,7 +39,7 @@ import scala.virtualization.lms.internal._
 
 
 //@SuppressWarnings("static-method")
-trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInterpreter_Common { self =>
+trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInterpreter_Common_Compile { self =>
 
     import BytecodeInterpreter._
 

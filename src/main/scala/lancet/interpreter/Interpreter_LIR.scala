@@ -35,7 +35,7 @@ import com.oracle.graal.bytecode._;
 
 
 //@SuppressWarnings("static-method")
-trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInterpreter_Common {
+trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInterpreter_Common_Compile {
 
     import BytecodeInterpreter._
 
