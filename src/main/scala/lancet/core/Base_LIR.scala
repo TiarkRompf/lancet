@@ -1,37 +1,6 @@
 package lancet.core
 
-//import scala.virtualization.LIR.common._
-
 import java.lang.reflect.Modifier
-
-/*
-trait Base_LIR extends Base {
-  val IR: EffectExp
-
-  type Rep[+T] = IR.Rep[T]
-  type TypeRep[T] = Manifest[T]
-
-  def infix_typ[T](x: Rep[T]): TypeRep[T]
-
-}
-
-trait Base_LIR2 extends Base_LIR {
-  import IR._
-
-  type Static[+T] = IR.Const[T]
-  type Dyn[+T] = IR.Sym[T]
-
-  val Static = IR.Const
-  object Dyn {
-    def apply
-    def unapply[T](x: Rep[T]): Option[String] = x match {
-      case Sym(n) => Some("x"+n)
-      case _ => None
-    }
-  }
-
-  def constToString(x:Any): String
-*/
 
 
 trait Base_LIR0 extends Base {

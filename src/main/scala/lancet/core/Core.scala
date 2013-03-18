@@ -10,7 +10,6 @@ trait Core extends Base {
   //implicit def anyType[T:Manifest]: TypeRep[T]
 
 
-
   implicit def unit(x: Boolean): Rep[Boolean]
   implicit def unit(x: Byte): Rep[Byte]
   implicit def unit(x: Char): Rep[Char]
