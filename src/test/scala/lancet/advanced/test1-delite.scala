@@ -116,14 +116,15 @@ class TestDelite1 extends FileDiffSuite {
       42 // need result?
     }
 
-
+    lazy val VectorOperatorsRunner = new VectorOperatorsRunnerC
+    VectorOperatorsRunner.fun = x => myprog
 
     object Macros {
+      //type Rep[T] = VectorOperatorsRunner.Rep[T]
       import VectorOperatorsRunner._
-
       def Vector_rand(n: Rep[Int]): Rep[Vector[Double]] = {
         Console.println("catch vector_rand")
-        densevector_obj_rand(n).asInstanceOf[Rep[Vector[Double]]]
+        VectorOperatorsRunner.densevector_obj_rand(n).asInstanceOf[Rep[Vector[Double]]]
       }
       def Vector_apply[T](xs: Rep[Seq[T]]): Rep[Vector[T]] = {
         Console.println("catch vector_apply")
@@ -134,11 +135,19 @@ class TestDelite1 extends FileDiffSuite {
       }
     }
 
-
-    object VectorOperatorsRunner extends LancetImpl
+    class VectorOperatorsRunnerC extends LancetImpl
       with DeliteTestRunner with OptiMLApplicationRunner { self =>
-        //override def compile[A:Manifest,B:Manifest](f: A => B): A=>B = ??? {
-          def main() = ()//myprog
+
+      var fun: Int => Int = { x => x } // crashes if we refer to myprog directly!! GRRR ...
+
+      override def main(): Unit = {
+        val (arg,block) = reify0[Int,Int](fun)
+        reflect[Unit](block) // ok??
+      }
+
+      //override def main(): Unit = {
+        //densevector_obj_rand(unit(90)).asInstanceOf[Rep[Vector[Double]]]
+      //}
 
       // mix in delite and lancet generators
       override def createCodegen() = 
@@ -151,6 +160,7 @@ class TestDelite1 extends FileDiffSuite {
         }
     }
 
+
     trait LancetImpl extends BytecodeInterpreter_LMS_Opt { 
       import com.oracle.graal.api.meta._      // ResolvedJavaMethod
       import com.oracle.graal.hotspot._
@@ -158,6 +168,31 @@ class TestDelite1 extends FileDiffSuite {
 
       // *** macro implementations
       
+      // basically a clone of compile{} that doesn't compile...
+      def reify0[A:Manifest,B:Manifest](f: A=>B): (Rep[A],Block[B]) = {
+
+        implicit val tp = manifestToTypeRep(manifest[B])
+        val (maStr, mbStr) = (manifestStr(manifest[A]), manifestStr(manifest[B]))
+
+        val arg = fresh[A]
+        val y = reify {
+
+          emitString("import sun.misc.Unsafe")
+          emitString("val unsafe = { val fld = classOf[Unsafe].getDeclaredField(\"theUnsafe\"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }")
+          emitString("type char = Char")
+          emitString("def WARN = assert(false, \"WARN\")")
+          emitString("def ERROR = assert(false, \"ERROR\")")
+
+          emitString("  var RES = null.asInstanceOf["+mbStr+"]")
+
+
+          execute(f.getClass.getMethod("apply", manifest[A].erasure), Array[Rep[Object]](unit(f),arg.asInstanceOf[Rep[Object]])(repManifest[Object]))        
+
+          DynExp[B]("RES")
+        }
+        (arg,y)
+      }
+
       def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],Block[Object]) = {
         val arg = fresh[Object] // A?
         val body = reify {
@@ -166,7 +201,7 @@ class TestDelite1 extends FileDiffSuite {
           withScope {
             //println("{ object BODY {")
             emitString("  var RES = null.asInstanceOf["+typeRep[B]+"]")
-            execute(cls.getMethod("apply", classOf[Object]), Array[Rep[Object]](f,arg)(repManifest[Object]))
+            execute(cls.getMethod("apply", Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg)(repManifest[Object]))
             //println("}")
             //"BODY.RES.asInstanceOf["+typeRep[B]+"]}"
             Dyn[Object]("RES.asInstanceOf["+typeRep[B]+"]")
@@ -258,9 +293,19 @@ class TestDelite1 extends FileDiffSuite {
     VectorOperatorsRunner.initialize()
     VectorOperatorsRunner.traceMethods = true
     VectorOperatorsRunner.emitUniqueOpt = true
-    val fc = VectorOperatorsRunner.compile0((x: Int) => myprog)
-    printcheck(fc(0), 42)
+    
+    //val fc = VectorOperatorsRunner.compile0((x: Int) => myprog)
+    //printcheck(fc(0), 42)
+
+    VectorOperatorsRunner.generateScalaSource("Generated", new PrintWriter(System.out))
+
+
   }
+
+
+
+
+
 }
 
 
