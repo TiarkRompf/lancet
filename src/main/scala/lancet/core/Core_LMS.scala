@@ -45,10 +45,10 @@ trait Core_LMS extends Base_LMS {
   case class ObjectAsInstanceOf[A:TypeRep](x: Rep[Object]) extends Def[A] { def tpA = typeRep[A] }
   case class ObjectIsInstanceOf[A:TypeRep](x: Rep[Object]) extends Def[Boolean] { def tpA = typeRep[A] }
 
-  case class IfThenElse[A:TypeRep](x: Rep[Boolean], y: Block[A], z: Block[A]) extends Def[A] { def tpA = typeRep[A] }
+  case class IfElse[A:TypeRep](x: Rep[Boolean], y: Block[A], z: Block[A]) extends Def[A] { def tpA = typeRep[A] }
 
   override def boundSyms(e: Any): List[Sym[Any]] = e match {
-    case IfThenElse(c,a,b) => effectSyms(a) ++ effectSyms(b)
+    case IfElse(c,a,b) => effectSyms(a) ++ effectSyms(b)
     case _ => super.boundSyms(e)
   }
 
@@ -83,7 +83,7 @@ trait Core_LMS extends Base_LMS {
     case d@ObjectAsInstanceOf(x)            => ObjectAsInstanceOf(f(x))             (d.tpA)
     case d@ObjectIsInstanceOf(x)            => ObjectIsInstanceOf(f(x))             (d.tpA)
 
-    case d@IfThenElse(x, y, z)              => IfThenElse(f(x), f(y), f(z))         (d.tpA.relax)
+    case d@IfElse(x, y, z)                  => IfElse(f(x), f(y), f(z))             (d.tpA.relax)
 
     case _ => super.mirrorDef(d, f)    
   }).asInstanceOf[Def[A]]
@@ -276,7 +276,8 @@ trait Core_LMS extends Base_LMS {
   def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] = {
     //val save = exprs
     // TODO: state lub; reset exprs for both branches!
-    var r = reflect[T](IfThenElse(x,reify(y),reify(z)))
+    // TODO: LMS effects
+    var r = reflect[T](IfElse(x,reify(y),reify(z)))
     //exprs = save
     r
   }
@@ -316,7 +317,7 @@ trait ScalaGenCore extends GEN_Scala_LMS_Base {
     case ObjectAsInstanceOf(x)            => emitValDef(sym, quote(x)+".asInstanceOf["+remap(sym.tp)+"]")
     case ObjectIsInstanceOf(x)            => emitValDef(sym, quote(x)+".isInstanceOf["+remap(sym.tp)+"]")
 
-    case IfThenElse(x, y, z)              => stream.print("if ("+quote(x)+") ") // Unit result??
+    case IfElse(x, y, z)                  => stream.print("if ("+quote(x)+") ") // Unit result??
                                              emitBlockFull(y)
                                              stream.print(" else ")
                                              emitBlockFull(z)
