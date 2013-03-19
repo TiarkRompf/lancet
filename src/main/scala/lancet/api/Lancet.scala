@@ -233,6 +233,9 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
       var continuation: InterpreterFrame = parent
       def handle(f: List[Rep[Object]] => Rep[Object]): Option[InterpreterFrame] = {
         val returnValue = f(popArgumentsAsObject(parent, m, !java.lang.reflect.Modifier.isStatic(m.getModifiers)).toList)
+        
+        // NOTE: we should take m.getMethod.getSignature below (see delite test)
+
         pushAsObject(continuation, continuation.getMethod.getSignature().getReturnKind(), returnValue)
         Some(if (continuation == parent) null else continuation)
       }
