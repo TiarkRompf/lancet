@@ -63,21 +63,26 @@ class TestDelite1 extends FileDiffSuite {
       - ISSUE: control flow?? need to use DeliteIf, and don't have functions ...
     */
 
-    object Vector {
-      def rand[T](n:Int): Vector[T] = { println("Vector$.rand"); new Vector[T] }
-      def apply[T](xs: T*): Vector[T] = { println("Vector$.apply"); new Vector[T] }
+    def printxx(x:Any) = {}
+
+    class VectorCompanion {
+      def rand[T](n:Int): Vector[T] = { printxx("Vector$.rand"); new Vector[T] }
+      def apply[T](x: T): Vector[T] = { printxx("Vector$.apply"); new Vector[T] }
     }
     class Vector[T] {
-      def t: Vector[T] = { println("Vector.t"); new Vector[T] }
-      def isRow: Boolean = { println("Vector.isRow"); false }
+      def t: Vector[T] = { printxx("Vector.t"); new Vector[T] }
+      def isRow: Boolean = { printxx("Vector.isRow"); false }
     }
 
-    object Util {
-      def mean(v: Vector[Int]): Int = { println("Util.mean"); 0} 
-      def max(v: Vector[Int]): Int = { println("Util.mean"); 0 }
-      def min(v: Vector[Int]): Int = { println("Util.mean"); 0 }
-      def collect(b: Boolean): Unit = { println("Util.mean") }
+    class UtilCompanion {
+      def mean(v: Vector[Int]): Int = { printxx("Util.mean"); 0} 
+      def max(v: Vector[Int]): Int = { printxx("Util.max"); 0 }
+      def min(v: Vector[Int]): Int = { printxx("Util.min"); 0 }
+      def collect(b: Boolean): Unit = { printxx(b) }
     }
+
+    val Vector = new VectorCompanion
+    val Util = new UtilCompanion
 
     def myprog = {
       import Util._
@@ -90,11 +95,13 @@ class TestDelite1 extends FileDiffSuite {
       //val vc = v.clone
       //collect(vc.cmp(v) == true)
 
-      val v2 = Vector(1,2,3,4,5)
+      val v2 = Vector(1/*,2,3,4,5*/)
       //collect(median(v2) == 3)
       collect(mean(v2) == 3)
       collect(max(v2) == 5)
       collect(min(v2) == 1)
+
+      42 // need result?
     }
 
 
@@ -102,12 +109,17 @@ class TestDelite1 extends FileDiffSuite {
     object Macros {
       import VectorOperatorsRunner._
 
-      def Vector_rand(n: Rep[Int]): Rep[Vector[Int]] = 
+      def Vector_rand(n: Rep[Int]): Rep[Vector[Int]] = {
+        Console.println("catch vector_rand")
         reflect[Vector[Int]]("VectorRand(",n,")")(mtr[Vector[Int]])
-      def Vector_apply[T](xs: Rep[Seq[T]]): Rep[Vector[T]] = 
+      }
+      def Vector_apply[T](xs: Rep[Seq[T]]): Rep[Vector[T]] = {
+        Console.println("catch vector_apply")
         reflect[Vector[T]]("VectorApply(",xs,")")(mtr[Vector[Int]].relax)
-        // TODO: generic types are still problematic...
-
+        // TODO: generic types are problematic...
+        // require manifest parameter and try to eval that?
+        // or use scala reflection?
+      }
     }
 
 
@@ -151,14 +163,23 @@ class TestDelite1 extends FileDiffSuite {
         var continuation: InterpreterFrame = parent
         def handle(f: List[Rep[Object]] => Rep[Object]): Option[InterpreterFrame] = {
           val returnValue = f(popArgumentsAsObject(parent, m, !java.lang.reflect.Modifier.isStatic(m.getModifiers)).toList)
-          pushAsObject(continuation, continuation.getMethod.getSignature().getReturnKind(), returnValue)
+
+          //println("self return kind: "+m.getSignature().getReturnKind())
+          //println("cont return kind: "+continuation.getMethod.getSignature().getReturnKind())
+
+          //pushAsObject(continuation, continuation.getMethod.getSignature().getReturnKind(), returnValue)
+          pushAsObject(continuation, m.getSignature().getReturnKind(), returnValue)
           Some(if (continuation == parent) null else continuation)
         }
 
-        if (traceMethods) Console.println("// "+fullName)
+        //if (traceMethods) Console.println("// "+fullName)
 
         val vector_rand = Vector.getClass.getName+".rand"
         val vector_apply = Vector.getClass.getName+".apply"
+
+        //println("looking for: ")
+        //println(vector_rand)
+        //println(vector_apply)
 
         type R[T] = VectorOperatorsRunner.Rep[T]
 
@@ -166,20 +187,35 @@ class TestDelite1 extends FileDiffSuite {
         fullName match {
 
           case `vector_rand` => handle {
-            case r::n::Nil => Macros.Vector_rand(n.asInstanceOf[R[Int]]).asInstanceOf[Rep[Object]]
+            case r::n::Nil => 
+
+            println("catch vector_rand")
+            reflect[Vector[Int]]("new Vector(",n,")")(mtr[Vector[Int]])
+
+            //Macros.Vector_rand(n.asInstanceOf[R[Int]]).asInstanceOf[Rep[Object]]
           }
 
+          case "scala.runtime.BoxesRunTime.boxToBoolean" => handle {
+            case r::Nil => reflect[java.lang.Boolean](r,".asInstanceOf[java.lang.Boolean]")(mtr[java.lang.Boolean])
+          }
+          case "scala.runtime.BoxesRunTime.unboxToBoolean" => handle {
+            case r::Nil => reflect[Boolean](r,".asInstanceOf[Boolean]").asInstanceOf[Rep[Object]]
+          }
           case "scala.runtime.BoxesRunTime.boxToInteger" => handle {
-            case r::Nil => reflect[Integer](r,".asInstanceOf[Integer]")(mtr[Integer])
+            case r::Nil => reflect[java.lang.Integer](r,".asInstanceOf[java.lang.Integer]")(mtr[java.lang.Integer])
           }
           case "scala.runtime.BoxesRunTime.unboxToInt" => handle {
             case r::Nil => reflect[Int](r,".asInstanceOf[Int]").asInstanceOf[Rep[Object]]
           }
+/*
+          java.lang.Boolean.valueOf ?
+          java.lang.Integer.valueOf ?
+*/          
           case "scala.Predef$.println" => handle {
-            case r::Nil => reflect[Object]("println(",r,")")
+            case self::r::Nil => reflect[Unit]("println(",r,")").asInstanceOf[Rep[Object]]
           }
           case _ => 
-            //println(fullName)
+            println(fullName)
             None
         }
       }
@@ -205,7 +241,9 @@ class TestDelite1 extends FileDiffSuite {
 
     VectorOperatorsRunner.initialize()
     VectorOperatorsRunner.traceMethods = true
-    VectorOperatorsRunner.compile0((x: Int) => myprog)
+    VectorOperatorsRunner.emitUniqueOpt = true
+    val fc = VectorOperatorsRunner.compile0((x: Int) => myprog)
+    printcheck(fc(0), 42)
   }
 }
 
