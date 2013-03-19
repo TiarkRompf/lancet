@@ -35,15 +35,19 @@ import com.oracle.graal.bytecode._;
 
 trait RuntimeUniverse_LMS extends Core_LMS with RuntimeUniverse {
 
+var emitNullChecks = false
+var emitArrayChecks = false
+var emitMonitors = false
+var emitVolatile = false
 
 def unsafe: Unsafe_LMS
 
 trait Unsafe_LMS {
 
   def monitorEnter(value: Rep[Object]): Rep[Unit] = 
-    reflect[Unit]("unsafe.monitorEnter(",value,")")
+    if (emitMonitors) reflect[Unit]("unsafe.monitorEnter(",value,")") else liftConst(())
   def monitorExit(value: Rep[Object]): Rep[Unit] = 
-    reflect[Unit]("unsafe.monitorExit(",value,")")
+    if (emitMonitors) reflect[Unit]("unsafe.monitorExit(",value,")") else liftConst(())
 
   def getObject(base: Rep[Object], offset: Rep[Long]): Rep[Object] = 
     reflect[Object]("unsafe.getObject(",base,",",offset,")")
@@ -452,23 +456,27 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
     }
 
     def nullCheck(value: Rep[Object]): Rep[Object] = {
+      if (!emitNullChecks) return value
       if_(value === unit(null)) (reflect[Object]("throw new NullPointerException()")) (value)
       value // TBD: what's the result?
     }
 
     def checkArrayType(array: Rep[Object], arrayType: Class[_]): Unit = {
+        if (!emitArrayChecks) return
         val cond = objectGetClass(array).getComponentType().isAssignableFrom(liftConst(arrayType.asInstanceOf[Class[Object]]))
         //val cond = reflect[Boolean]("!",array,".getClass().getComponentType().isAssignableFrom(classOf[",arrayType.getName,"])")
         if_(!cond) (reflect[Unit]("throw new ArrayStoreException(\"",arrayType.getName(),"\")")) (liftConst())
     }
 
     def checkArrayType(array: Rep[Object], arrayType: Rep[Class[Object]]): Unit = { //TODO: shouldn't duplicate
+        if (!emitArrayChecks) return
         val cond = objectGetClass(array).getComponentType().isAssignableFrom(arrayType)
         if_(!cond) (reflect[Unit]("throw new ArrayStoreException(\"",arrayType.getName(),"\")")) (liftConst())
     }
 
 
     def checkArray(array: Rep[Object], index: Rep[Long]): Unit = {
+        if (!emitArrayChecks) return
         nullCheck(array)
         val typ = objectGetClass(array)
         val cond = typ.isArray()
@@ -484,7 +492,7 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
     }
 
     def isVolatile(field: ResolvedJavaField): Boolean = {
-        return Modifier.isVolatile(field.getModifiers());
+        return emitVolatile && Modifier.isVolatile(field.getModifiers());
     }
 
     def resolveOffset(field: ResolvedJavaField): Long = {

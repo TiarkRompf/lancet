@@ -37,16 +37,17 @@ trait RuntimeUniverse_LIR extends Core_LIR with RuntimeUniverse {
 
 var emitNullChecks = false
 var emitArrayChecks = false
-
+var emitMonitors = false
+var emitVolatile = false
 
 def unsafe: Unsafe_LIR
 
 trait Unsafe_LIR {
 
   def monitorEnter(value: Rep[Object]): Rep[Unit] = 
-    reflect[Unit]("unsafe.monitorEnter("+value+")")
+    if (emitMonitors) reflect[Unit]("unsafe.monitorEnter(",value,")") else liftConst(())
   def monitorExit(value: Rep[Object]): Rep[Unit] = 
-    reflect[Unit]("unsafe.monitorExit("+value+")")
+    if (emitMonitors) reflect[Unit]("unsafe.monitorExit(",value,")") else liftConst(())
 
   def getObject(base: Rep[Object], offset: Rep[Long]): Rep[Object] = 
     reflect[Object]("unsafe.getObject("+base+","+offset+")")
@@ -491,7 +492,7 @@ class Runtime_LIR(metaProvider: MetaAccessProvider) extends Runtime {
     }
 
     def isVolatile(field: ResolvedJavaField): Boolean = {
-        return Modifier.isVolatile(field.getModifiers());
+        return emitVolatile && Modifier.isVolatile(field.getModifiers());
     }
 
     def resolveOffset(field: ResolvedJavaField): Long = {
