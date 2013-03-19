@@ -93,6 +93,7 @@ class Runtime_Generic(metaProvider: MetaAccessProvider) extends Runtime_LMS(meta
         case "Float" => super.getFieldFloat(base, field).asInstanceOf[Rep[T]]
         case "Double" => super.getFieldDouble(base, field).asInstanceOf[Rep[T]]
         case "Object" => super.getFieldObject(base, field).asInstanceOf[Rep[T]]
+        case "java.lang.Object" => super.getFieldObject(base, field).asInstanceOf[Rep[T]]
       }
     }
 
@@ -107,6 +108,7 @@ class Runtime_Generic(metaProvider: MetaAccessProvider) extends Runtime_LMS(meta
         case "Float" => super.setFieldFloat(value.asInstanceOf[Rep[Float]], base, field)
         case "Double" => super.setFieldDouble(value.asInstanceOf[Rep[Double]], base, field)
         case "Object" => super.setFieldObject(value.asInstanceOf[Rep[Object]], base, field)
+        case "java.lang.Object" => super.setFieldObject(value.asInstanceOf[Rep[Object]], base, field)
       }
     }
 
@@ -121,6 +123,7 @@ class Runtime_Generic(metaProvider: MetaAccessProvider) extends Runtime_LMS(meta
         case "Float" => super.getArrayFloat(index, array).asInstanceOf[Rep[T]]
         case "Double" => super.getArrayDouble(index, array).asInstanceOf[Rep[T]]
         case "Object" => super.getArrayObject(index, array).asInstanceOf[Rep[T]]
+        case "java.lang.Object" => super.getArrayObject(index, array).asInstanceOf[Rep[T]]
       }
     }
 
@@ -135,6 +138,7 @@ class Runtime_Generic(metaProvider: MetaAccessProvider) extends Runtime_LMS(meta
         case "Float" => super.setArrayFloat(value.asInstanceOf[Rep[Float]], index, array)
         case "Double" => super.setArrayDouble(value.asInstanceOf[Rep[Double]], index, array)
         case "Object" => super.setArrayObject(value.asInstanceOf[Rep[Object]], index, array)
+        case "java.lang.Object" => super.setArrayObject(value.asInstanceOf[Rep[Object]], index, array)
       }
     }
 
