@@ -25,30 +25,7 @@ class TestDelite1 extends FileDiffSuite {
   }
 
   def testA1 = withOutFileChecked(prefix+"A1") {
-
-    val MAGICDELIMETER = "!~x02$758209"
-
-    trait DeliteTestRunner extends DeliteTestModule with DeliteApplication
-      with MiscOpsExp with SynchronizedArrayBufferOpsExp with StringOpsExp {
-
-      var resultBuffer: ArrayBuffer[Boolean] = _
-
-      def collector: Rep[ArrayBuffer[Boolean]] = staticData(resultBuffer)
-    }
-    trait DeliteTestModule extends Object
-      with MiscOps with SynchronizedArrayBufferOps with StringOps {
-
-      def main(): Unit
-
-      def collector: Rep[ArrayBuffer[Boolean]]
-
-      def collect(s: Rep[Boolean]) { collector += s }
-
-      def mkReport(): Rep[Unit] = {
-        println(unit(MAGICDELIMETER) + (collector mkString unit(",")) + unit(MAGICDELIMETER))
-      }
-    }
-
+    import DeliteRunner._
 
     object VectorOperatorsRunner extends DeliteTestRunner with OptiMLApplicationRunner with VectorOperators
     trait VectorOperators extends DeliteTestModule with OptiMLApplication {
@@ -71,8 +48,173 @@ class TestDelite1 extends FileDiffSuite {
         mkReport
       }
     }
+  
+    compileAndTest(VectorOperatorsRunner)
+  }
 
-  class TestFailedException(s: String, i: Int) extends Exception(s)
+
+  def testA2 = withOutFileChecked(prefix+"A2") {
+    import DeliteRunner._
+
+    /* TODO: 
+      - conflicts: IfThenElse, compiler {}
+      - make delite scala codegen generate lancet stuff
+      - lancet decompile bytecode -> delite backend
+      - ISSUE: control flow?? need to use DeliteIf, and don't have functions ...
+    */
+
+    object Vector {
+      def rand[T](n:Int): Vector[T] = { println("Vector$.rand"); new Vector[T] }
+      def apply[T](xs: T*): Vector[T] = { println("Vector$.apply"); new Vector[T] }
+    }
+    class Vector[T] {
+      def t: Vector[T] = { println("Vector.t"); new Vector[T] }
+      def isRow: Boolean = { println("Vector.isRow"); false }
+    }
+
+    object Util {
+      def mean(v: Vector[Int]): Int = { println("Util.mean"); 0} 
+      def max(v: Vector[Int]): Int = { println("Util.mean"); 0 }
+      def min(v: Vector[Int]): Int = { println("Util.mean"); 0 }
+      def collect(b: Boolean): Unit = { println("Util.mean") }
+    }
+
+    def myprog = {
+      import Util._
+
+      val v = Vector.rand(1000)
+
+      val vt = v.t
+      collect(vt.isRow != v.isRow)
+
+      //val vc = v.clone
+      //collect(vc.cmp(v) == true)
+
+      val v2 = Vector(1,2,3,4,5)
+      //collect(median(v2) == 3)
+      collect(mean(v2) == 3)
+      collect(max(v2) == 5)
+      collect(min(v2) == 1)
+    }
+
+
+
+    object Macros {
+      import VectorOperatorsRunner._
+
+      def Vector_rand(n: Rep[Int]): Rep[Vector[Int]] = 
+        reflect[Vector[Int]]("VectorRand(",n,")")(mtr[Vector[Int]])
+      def Vector_apply[T](xs: Rep[Seq[T]]): Rep[Vector[T]] = 
+        reflect[Vector[T]]("VectorApply(",xs,")")(mtr[Vector[Int]].relax)
+        // TODO: generic types are still problematic...
+
+    }
+
+
+    object VectorOperatorsRunner extends LancetImpl
+      with DeliteTestRunner with OptiMLApplicationRunner {
+        //override def compile[A:Manifest,B:Manifest](f: A => B): A=>B = ??? {
+          def main() = ()//myprog
+
+    }
+
+
+    trait LancetImpl extends BytecodeInterpreter_LMS_Opt { 
+      import com.oracle.graal.api.meta._      // ResolvedJavaMethod
+      import com.oracle.graal.hotspot._
+      import com.oracle.graal.hotspot.meta._  // HotSpotRuntime
+
+      // *** macro implementations
+      
+      def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],Block[Object]) = {
+        val arg = fresh[Object] // A?
+        val body = reify {
+          val Partial(fs) = eval(f)
+          val Static(cls: Class[_]) = fs("clazz")
+          withScope {
+            //println("{ object BODY {")
+            emitString("  var RES = null.asInstanceOf["+typeRep[B]+"]")
+            execute(cls.getMethod("apply", classOf[Object]), Array[Rep[Object]](f,arg)(repManifest[Object]))
+            //println("}")
+            //"BODY.RES.asInstanceOf["+typeRep[B]+"]}"
+            Dyn[Object]("RES.asInstanceOf["+typeRep[B]+"]")
+          }
+        }
+        (arg,body)
+      }
+
+      var traceMethods = true
+
+      def handleMethodCall(parent: InterpreterFrame, m: ResolvedJavaMethod): Option[InterpreterFrame] = {
+        val className = m.getDeclaringClass.toJava.getName
+        val fullName = className + "." + m.getName
+        var continuation: InterpreterFrame = parent
+        def handle(f: List[Rep[Object]] => Rep[Object]): Option[InterpreterFrame] = {
+          val returnValue = f(popArgumentsAsObject(parent, m, !java.lang.reflect.Modifier.isStatic(m.getModifiers)).toList)
+          pushAsObject(continuation, continuation.getMethod.getSignature().getReturnKind(), returnValue)
+          Some(if (continuation == parent) null else continuation)
+        }
+
+        if (traceMethods) Console.println("// "+fullName)
+
+        val vector_rand = Vector.getClass.getName+".rand"
+        val vector_apply = Vector.getClass.getName+".apply"
+
+        type R[T] = VectorOperatorsRunner.Rep[T]
+
+        // check for known methods
+        fullName match {
+
+          case `vector_rand` => handle {
+            case r::n::Nil => Macros.Vector_rand(n.asInstanceOf[R[Int]]).asInstanceOf[Rep[Object]]
+          }
+
+          case "scala.runtime.BoxesRunTime.boxToInteger" => handle {
+            case r::Nil => reflect[Integer](r,".asInstanceOf[Integer]")(mtr[Integer])
+          }
+          case "scala.runtime.BoxesRunTime.unboxToInt" => handle {
+            case r::Nil => reflect[Int](r,".asInstanceOf[Int]").asInstanceOf[Rep[Object]]
+          }
+          case "scala.Predef$.println" => handle {
+            case r::Nil => reflect[Object]("println(",r,")")
+          }
+          case _ => 
+            //println(fullName)
+            None
+        }
+      }
+
+
+      override def isSafeRead(base: Object, offset: Long, field: ResolvedJavaField, typ: TypeRep[_]): Boolean =
+        super.isSafeRead(base, offset, field, typ) || {
+          val name = field.getDeclaringClass.toJava.getName + "." + field.getName
+          name match {
+            case _ =>
+             false
+          }
+        }
+
+
+      override def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame =
+        handleMethodCall(parent,m).getOrElse(super.resolveAndInvoke(parent, m))
+
+      override def invokeDirect(parent: InterpreterFrame, m: ResolvedJavaMethod, hasReceiver: Boolean): InterpreterFrame =
+        handleMethodCall(parent,m).getOrElse(super.invokeDirect(parent, m, hasReceiver))
+
+    }
+
+    VectorOperatorsRunner.initialize()
+    VectorOperatorsRunner.traceMethods = true
+    VectorOperatorsRunner.compile0((x: Int) => myprog)
+  }
+}
+
+
+
+
+object DeliteRunner {
+
+  val MAGICDELIMETER = "!~x02$758209"
 
   val propFile = new File("delite.properties")
   if (!propFile.exists) throw new TestFailedException("could not find delite.properties", 3)
@@ -182,26 +324,31 @@ class TestDelite1 extends FileDiffSuite {
     }
   }
 
-  compileAndTest(VectorOperatorsRunner)
+  class TestFailedException(s: String, i: Int) extends Exception(s)
 
+  trait DeliteTestRunner extends DeliteTestModule with DeliteApplication
+    with MiscOpsExp with SynchronizedArrayBufferOpsExp with StringOpsExp {
 
+    var resultBuffer: ArrayBuffer[Boolean] = _
 
-/*
+    def collector: Rep[ArrayBuffer[Boolean]] = staticData(resultBuffer)
+  }
 
-    val it = newCompiler
-    val f = it.compile { (x:Int) => 
-        val b = new Bar
-        b.intField = 7
-        if (x > 0) {
-          b.intField = 9
-        }
-        b.intField
+  trait DeliteTestModule extends Object
+    with MiscOps with SynchronizedArrayBufferOps with StringOps {
+
+    def main(): Unit
+
+    def collector: Rep[ArrayBuffer[Boolean]]
+
+    def collect(s: Rep[Boolean]) { collector += s }
+
+    def mkReport(): Rep[Unit] = {
+      println(unit(MAGICDELIMETER) + (collector mkString unit(",")) + unit(MAGICDELIMETER))
     }
-    printcheck(f(7), 9)
-*/
-
-
   }
 
 
 }
+
+
