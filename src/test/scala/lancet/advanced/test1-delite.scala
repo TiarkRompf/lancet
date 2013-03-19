@@ -75,7 +75,7 @@ class TestDelite1 extends FileDiffSuite {
       - ISSUE: control flow?? need to use DeliteIf, and don't have functions ...
     */
 
-    def printxx(x:Any) = {}
+    def printxx(x:Any) = { println(x) }
 
     class VectorCompanion {
       def rand(n:Int): Vector[Double] = { printxx("Vector$.rand"); new Vector[Double] }
@@ -142,6 +142,7 @@ class TestDelite1 extends FileDiffSuite {
 
       override def main(): Unit = {
         val (arg,block) = reify0[Int,Int](fun)
+        emitString("val "+quote(arg)+" = " + 0) // make sure sym is defined
         reflect[Unit](block) // ok??
       }
 
@@ -178,6 +179,7 @@ class TestDelite1 extends FileDiffSuite {
         val y = reify {
 
           emitString("import sun.misc.Unsafe")
+          emitString("import generated.scala.DenseVectorDouble")
           emitString("val unsafe = { val fld = classOf[Unsafe].getDeclaredField(\"theUnsafe\"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }")
           emitString("type char = Char")
           emitString("def WARN = assert(false, \"WARN\")")
@@ -297,8 +299,17 @@ class TestDelite1 extends FileDiffSuite {
     //val fc = VectorOperatorsRunner.compile0((x: Int) => myprog)
     //printcheck(fc(0), 42)
 
+    VectorOperatorsRunner.VConstantPool = scala.collection.immutable.Vector.empty
+
     VectorOperatorsRunner.generateScalaSource("Generated", new PrintWriter(System.out))
 
+    val cst = VectorOperatorsRunner.VConstantPool
+
+    println("constants: "+cst)
+
+    VectorOperatorsRunner.execute(Array())
+
+    //compileAndTest(VectorOperatorsRunner)
 
   }
 
