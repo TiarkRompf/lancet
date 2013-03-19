@@ -3,14 +3,22 @@ package advanced
 
 import lancet.api._
 import lancet.interpreter._
+import lancet.core._
 
 import ppl.dsl.optiml.{Vector,DenseVector,RangeVector,IndexVectorRange}
 import ppl.dsl.optiml.{OptiMLApplication, OptiMLApplicationRunner}
 
 import ppl.delite.framework.DeliteApplication
 import ppl.delite.framework.Config
+
+import ppl.dsl.optiml.{OptiMLCodeGenScala}
+import ppl.delite.framework.codegen.{Target}
+import ppl.delite.framework.codegen.scala.{TargetScala}
+import scala.virtualization.lms.internal.{GenericFatCodegen}
+
 import scala.virtualization.lms.common._
 import scala.collection.mutable.{ ArrayBuffer, SynchronizedBuffer }
+
 import java.io.{ File, Console => _, _ }
 import java.io.FileSystem
 
@@ -56,17 +64,21 @@ class TestDelite1 extends FileDiffSuite {
   def testA2 = withOutFileChecked(prefix+"A2") {
     import DeliteRunner._
 
-    /* TODO: 
-      - conflicts: IfThenElse, compiler {}
+    /* 
+    CURRENT STATUS:
+      - work around issues/conflicts: IfThenElse, compile{x=>}
+      - using lancet lms codegen with embedded delite objects
+
+    TODO: 
       - make delite scala codegen generate lancet stuff
-      - lancet decompile bytecode -> delite backend
+      - use delite backend codegen, lancet just to decompile bytecode
       - ISSUE: control flow?? need to use DeliteIf, and don't have functions ...
     */
 
     def printxx(x:Any) = {}
 
     class VectorCompanion {
-      def rand[T](n:Int): Vector[T] = { printxx("Vector$.rand"); new Vector[T] }
+      def rand(n:Int): Vector[Double] = { printxx("Vector$.rand"); new Vector[Double] }
       def apply[T](x: T): Vector[T] = { printxx("Vector$.apply"); new Vector[T] }
     }
     class Vector[T] {
@@ -109,9 +121,9 @@ class TestDelite1 extends FileDiffSuite {
     object Macros {
       import VectorOperatorsRunner._
 
-      def Vector_rand(n: Rep[Int]): Rep[Vector[Int]] = {
+      def Vector_rand(n: Rep[Int]): Rep[Vector[Double]] = {
         Console.println("catch vector_rand")
-        reflect[Vector[Int]]("VectorRand(",n,")")(mtr[Vector[Int]])
+        densevector_obj_rand(n).asInstanceOf[Rep[Vector[Double]]]
       }
       def Vector_apply[T](xs: Rep[Seq[T]]): Rep[Vector[T]] = {
         Console.println("catch vector_apply")
@@ -124,12 +136,20 @@ class TestDelite1 extends FileDiffSuite {
 
 
     object VectorOperatorsRunner extends LancetImpl
-      with DeliteTestRunner with OptiMLApplicationRunner {
+      with DeliteTestRunner with OptiMLApplicationRunner { self =>
         //override def compile[A:Manifest,B:Manifest](f: A => B): A=>B = ??? {
           def main() = ()//myprog
 
-    }
+      // mix in delite and lancet generators
+      override def createCodegen() = 
+        new OptiMLCodeGenScala with GEN_Scala_LMS { val IR: self.type = self }
 
+      override def getCodeGenPkg(t: Target{val IR: self.type}) : 
+        GenericFatCodegen{val IR: self.type} = t match {
+          case _:TargetScala => new OptiMLCodeGenScala with GEN_Scala_LMS{val IR: self.type = self}
+          case _ => super.getCodeGenPkg(t)
+        }
+    }
 
     trait LancetImpl extends BytecodeInterpreter_LMS_Opt { 
       import com.oracle.graal.api.meta._      // ResolvedJavaMethod
@@ -188,11 +208,7 @@ class TestDelite1 extends FileDiffSuite {
 
           case `vector_rand` => handle {
             case r::n::Nil => 
-
-            println("catch vector_rand")
-            reflect[Vector[Int]]("new Vector(",n,")")(mtr[Vector[Int]])
-
-            //Macros.Vector_rand(n.asInstanceOf[R[Int]]).asInstanceOf[Rep[Object]]
+              Macros.Vector_rand(n.asInstanceOf[R[Int]]).asInstanceOf[Rep[Object]]
           }
 
           case "scala.runtime.BoxesRunTime.boxToBoolean" => handle {
