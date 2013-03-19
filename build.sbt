@@ -27,7 +27,18 @@ libraryDependencies += "org.scalatest" % "scalatest_2.10.0-virtualized-SNAPSHOT"
 
 libraryDependencies += "EPFL" % "lms_2.10.0-M1-virtualized" % "0.2"
 
+libraryDependencies += "stanford-ppl" % "framework_2.10.0-M1-virtualized" % "0.1-SNAPSHOT"
+
+libraryDependencies += "stanford-ppl" % "runtime_2.10.0-M1-virtualized" % "0.1-SNAPSHOT"
+
+libraryDependencies += "stanford-ppl" % "optiml_2.10.0-M1-virtualized" % "0.1-SNAPSHOT"
+
+libraryDependencies += "com.google.protobuf" % "protobuf-java" % "2.4.1"
+
+
 libraryDependencies += "junit" % "junit" % "4.8.1" % "test"
+
+
 
 unmanagedClasspath in Compile <++= baseDirectory map { base =>
   val graal = new File(System.getenv("JAVA_HOME")) / ".." / ".." / "graal"
