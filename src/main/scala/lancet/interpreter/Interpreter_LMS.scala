@@ -83,6 +83,9 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       }
     }
 
+    def createCodegen(): GEN_Scala_LMS { val IR: self.type } = 
+      new GEN_Scala_LMS { val IR: self.type = self }
+
     // XX conflict with delite method
     def compile0[A:Manifest,B:Manifest](f: A=>B): A=>B = {
 
@@ -106,7 +109,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
         DynExp[B]("RES")
       }
 
-      val codegen = new GEN_Scala_LMS { val IR: self.type = self }
+      val codegen = createCodegen()
 
       VConstantPool = Vector.empty
 
