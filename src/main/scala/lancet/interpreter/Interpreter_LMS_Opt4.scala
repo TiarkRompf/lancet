@@ -625,7 +625,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       val res = try { executeBlock(frame1, bs, bci) } catch {
         case e: InterpreterException =>
           emitString("// caught " + e)
-          reflect[Unit]("throw "+e.cause+".asInstanceOf[Throwable]")
+          reflect[Unit]("throw "+quote(e.cause)+".asInstanceOf[Throwable]")
         case e: Throwable =>
           emitString("ERROR /*")
           emitString(key)

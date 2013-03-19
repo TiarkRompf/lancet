@@ -179,9 +179,9 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
 
         if (!static) {
             if (args.length > 1)                                            // FIXME: don't quote -- need deps!!!!
-                reflect[Object](liftConst[Object](m),".invoke(",args.map(a=>quote(a)+".asInstanceOf[AnyRef]").mkString(","),").asInstanceOf[",mtyp,"] // ",holder,".",name)(mtyp)
+                reflect[Object](liftConst[Method](m)(mtr[Method]),".invoke(",args.map(a=>quote(a)+".asInstanceOf[AnyRef]").mkString(","),").asInstanceOf[",mtyp,"] // ",holder,".",name)(mtyp)
             else
-                reflect[Object](liftConst[Object](m),".invoke(",args(0),").asInstanceOf[",mtyp,"] // ",holder,".",name)(mtyp)
+                reflect[Object](liftConst[Method](m)(mtr[Method]),".invoke(",args(0),").asInstanceOf[",mtyp,"] // ",holder,".",name)(mtyp)
             //reflect[Object](args(0),".asInstanceOf[",holder,"].",name,"(",args.drop(1).mkString(","),").asInstanceOf[Object]")
         } else {
             reflect[Object](holder,".",name,"(",args.mkString(","),").asInstanceOf[",mtyp,"]")(mtyp)
