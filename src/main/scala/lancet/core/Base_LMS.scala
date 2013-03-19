@@ -3,7 +3,7 @@ package lancet.core
 import scala.virtualization.lms.common._
 
 import java.lang.reflect.Modifier
-
+import scala.reflect.SourceContext
 
 // *** core lms support classes
 
@@ -30,6 +30,14 @@ trait IR_LMS_Base extends EffectExp {
     case BlockDef(key,keyid,xs,body) => xs collect { case s@Sym(n) => s }
     case _ => super.tunnelSyms(e)
   }
+
+  override def mirrorDef[A:Manifest](d: Def[A], f: Transformer)(implicit pos: SourceContext): Def[A] = (d match {
+    case d@Unstructured(xs)                   => Unstructured(xs.map{ case x: Exp[Any] =>f(x) case x => x})
+    case d@Patch(key, block)                  => Patch(key,f(block))
+    case d@BlockDef(key, keyid, params, body) => BlockDef(key,keyid,params.map(x=>f(x)),f(body))
+    case _ => super.mirrorDef(d,f)
+  }).asInstanceOf[Def[A]]
+
 
   def reflect[A:TypeRep](s: Any*): Exp[A] = reflectEffect(Unstructured[A](s.toList))
 
