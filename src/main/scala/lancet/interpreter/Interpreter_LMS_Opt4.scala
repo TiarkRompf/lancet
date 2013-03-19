@@ -224,7 +224,7 @@ class BytecodeInterpreter_LMS_Opt4 extends AbstractInterpreter_LMS with Bytecode
     }
 
     // print stats after compiling
-    override def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
+    /*override def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
       val f1 = try super.compile(f) finally if (debugStats) {
         emitString("--- stats ---")
         val stats1 = stats.toList.map { case (k,v) => 
@@ -238,7 +238,7 @@ class BytecodeInterpreter_LMS_Opt4 extends AbstractInterpreter_LMS with Bytecode
         emitString("total: " + stats.map(_._2).sum)
       }
       f1
-    }
+    }*/
 
 
 }

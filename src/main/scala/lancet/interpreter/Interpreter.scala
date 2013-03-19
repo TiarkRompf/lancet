@@ -1535,6 +1535,6 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
 
 trait BytecodeInterpreter_Common_Compile extends BytecodeInterpreter_Common {
 
-  def compile[A:Manifest,B:Manifest](f: A => B): A=>B
+  //def compile[A:Manifest,B:Manifest](f: A => B): A=>B
 
 }
