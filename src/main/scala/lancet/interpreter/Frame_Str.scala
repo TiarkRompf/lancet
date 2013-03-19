@@ -566,8 +566,8 @@ with InterpreterFrame {
     }
 
     private def decrementTos(size: Int): Unit = {
-        assert (size >= 0);
-        assert (tos - size >= stackTos());
+        assert (size >= 0, "size <= 0 at : "+this.getMethod.toString);
+        assert (tos - size >= stackTos(), "tos - size >= stackTos() at : "+this.getMethod.toString);
         tos -= size;
         // TR: null slots!
         for (i <- 0 until size) {
