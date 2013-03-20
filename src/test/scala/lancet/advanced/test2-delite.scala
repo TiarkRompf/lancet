@@ -1,0 +1,170 @@
+package lancet
+package advanced
+
+import lancet.api._
+import lancet.interpreter._
+import lancet.core._
+
+import ppl.dsl.optiml.{Vector,DenseVector,RangeVector,IndexVectorRange}
+import ppl.dsl.optiml.{OptiMLApplication, OptiMLApplicationRunner}
+
+import ppl.delite.framework.DeliteApplication
+import ppl.delite.framework.Config
+
+import ppl.dsl.optiml.{OptiMLCodeGenScala,OptiMLExp}
+import scala.virtualization.lms.internal.{GenericFatCodegen}
+
+import scala.virtualization.lms.common._
+
+class TestDelite2 extends FileDiffSuite {
+  
+  val prefix = "test-out/test-delite-2"
+
+  def testA1 = withOutFileChecked(prefix+"A1") {
+    import DeliteRunner._
+
+    /* 
+    CURRENT STATUS / STEPS:
+      - work around issues/conflicts: IfThenElse, compile{x=>}
+      - using lancet lms codegen with embedded delite objects
+      - make delite scala codegen generate lancet stuff
+      - use delite backend codegen. lancet just for decompiling bytecode
+
+    TODO: 
+      - need to hook into DeliteCodegen for Base_LMS classes?
+      - ISSUE: control flow?? need to use DeliteIf, and don't have functions ...
+      - lancet generates lots of strong effect dependencies (objects, fields, etc): remove!!
+      - what to do about generic types? require manifests and evaluate then at compile time?
+    */
+
+    def printxx(x:Any) = { println(x) }
+
+    class VectorCompanion {
+      def rand(n:Int): Vector[Double] = { printxx("Vector$.rand"); new Vector[Double] }
+      def apply[T](xs: T*): Vector[T] = { printxx("Vector$.apply"); new Vector[T] }
+    }
+    class Vector[T] {
+      def t: Vector[T] = { printxx("Vector.t"); this } //new Vector[T] }  FIXME: ISSUE WITH OUTER POINTER / Delite conditionals
+      def isRow: Boolean = { printxx("Vector.isRow"); false }
+      def sum: T = ???
+      def max: T = ???
+      def min: T = ???
+      def length: Int = ???
+    }
+
+    class UtilCompanion {
+      def mean(v: Vector[Int]): Int = v.sum / v.length
+      def max(v: Vector[Int]): Int = v.max
+      def min(v: Vector[Int]): Int = v.min
+      def collect(b: Boolean): Unit = { println(b) }
+    }
+
+    val Vector = new VectorCompanion
+    val Util = new UtilCompanion
+
+    def myprog = {
+      import Util._
+
+      val v = Vector.rand(1000)
+
+      val vt = v.t
+      //collect(vt.isRow != v.isRow)
+
+      //val vc = v.clone
+      //collect(vc.cmp(v) == true)
+
+      val v2 = Vector(1,2,3,4,5)
+      //collect(median(v2) == 3)
+      collect(mean(v2) == 3)
+      collect(max(v2) == 5)
+      collect(min(v2) == 1)
+
+      printxx("AA")
+      printxx("BB")
+      printxx("CC")
+
+      42 // need result?
+    }
+
+    val VectorOperatorsRunner = new LancetDeliteRunner
+
+    VectorOperatorsRunner.initialize()
+    VectorOperatorsRunner.traceMethods = false
+    VectorOperatorsRunner.emitUniqueOpt = true
+    
+    object Macros extends VectorOperatorsRunner.ClassMacros {
+      val targets = List(classOf[VectorCompanion],classOf[Vector[_]])
+      //type Rep[T] = VectorOperatorsRunner.Rep[T]
+      import VectorOperatorsRunner.{Rep,reflect,mtr,infix_relax}
+      def rand(self: Rep[VectorCompanion], n: Rep[Int]): Rep[DenseVector[Double]] = {
+        Console.println("catch vector_rand")
+        VectorOperatorsRunner.densevector_obj_rand(n)
+      }
+      def apply[T](self: Rep[VectorCompanion], xs: Rep[Seq[T]]): Rep[DenseVector[T]] = {
+        Console.println("catch vector_apply")
+        implicit val mf = manifest[Int].asInstanceOf[Manifest[T]] //FIXME: generic types
+        VectorOperatorsRunner.densevector_obj_fromseq(xs)
+        // TODO: generic types are problematic...
+        // require manifest parameter and try to eval that?
+        // or use scala reflection?
+      }
+      def t[T](self: Rep[DenseVector[T]]): Rep[DenseVector[T]] = {
+        Console.println("catch vector_t")
+        implicit val mf = manifest[Int].asInstanceOf[Manifest[T]] //FIXME: generic types
+        VectorOperatorsRunner.densevector_trans(self)
+      }
+      def isRow[T](self: Rep[DenseVector[T]]): Rep[Boolean] = {
+        Console.println("catch vector_isRow")
+        implicit val mf = manifest[Int].asInstanceOf[Manifest[T]] //FIXME: generic types
+        VectorOperatorsRunner.densevector_isrow(self)
+      }
+      def length[T](self: Rep[DenseVector[T]]): Rep[Int] = {
+        Console.println("catch vector_length")
+        implicit val mf = manifest[Int].asInstanceOf[Manifest[T]] //FIXME: generic types
+        VectorOperatorsRunner.densevector_length(self)
+      }
+      def sum[T](self: Rep[DenseVector[T]]): Rep[T] = {
+        Console.println("catch vector_sum")
+        implicit val mf = manifest[Int].asInstanceOf[Manifest[T]] //FIXME: generic types
+        implicit val af = VectorOperatorsRunner.intArith.asInstanceOf[VectorOperatorsRunner.Arith[T]] //FIXME: generic types
+        VectorOperatorsRunner.vector_sum(VectorOperatorsRunner.denseVecToInterface(self))
+      }
+      def max[T](self: Rep[DenseVector[T]]): Rep[T] = {
+        Console.println("catch vector_max")
+        implicit val mf = manifest[Int].asInstanceOf[Manifest[T]] //FIXME: generic types
+        implicit val af = implicitly[Ordering[Int]].asInstanceOf[Ordering[T]] //FIXME: generic types
+        implicit val bf = VectorOperatorsRunner.intHasMinMax.asInstanceOf[VectorOperatorsRunner.HasMinMax[T]] //FIXME: generic types
+        VectorOperatorsRunner.vector_max(VectorOperatorsRunner.denseVecToInterface(self))
+      }
+      def min[T](self: Rep[DenseVector[T]]): Rep[T] = {
+        Console.println("catch vector_min")
+        implicit val mf = manifest[Int].asInstanceOf[Manifest[T]] //FIXME: generic types
+        implicit val af = implicitly[Ordering[Int]].asInstanceOf[Ordering[T]] //FIXME: generic types
+        implicit val bf = VectorOperatorsRunner.intHasMinMax.asInstanceOf[VectorOperatorsRunner.HasMinMax[T]] //FIXME: generic types
+        VectorOperatorsRunner.vector_min(VectorOperatorsRunner.denseVecToInterface(self))
+      }
+    }
+
+    VectorOperatorsRunner.install(Macros)
+
+    VectorOperatorsRunner.program = x => myprog
+
+    // now run stuff....
+
+    VectorOperatorsRunner.VConstantPool = scala.collection.immutable.Vector.empty
+
+    VectorOperatorsRunner.generateScalaSource("Generated", new java.io.PrintWriter(System.out))
+
+    val cst = VectorOperatorsRunner.VConstantPool
+    println("constants: "+cst)
+
+    //println("*** running execute ***")
+
+    //VectorOperatorsRunner.execute(Array())
+
+    println("*** running compileAndTest ***")
+    
+    compileAndTest(VectorOperatorsRunner)
+
+  }
+}
