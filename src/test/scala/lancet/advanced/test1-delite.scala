@@ -11,7 +11,7 @@ import ppl.dsl.optiml.{OptiMLApplication, OptiMLApplicationRunner}
 import ppl.delite.framework.DeliteApplication
 import ppl.delite.framework.Config
 
-import ppl.dsl.optiml.{OptiMLCodeGenScala}
+import ppl.dsl.optiml.{OptiMLCodeGenScala,OptiMLExp}
 import ppl.delite.framework.codegen.{Target}
 import ppl.delite.framework.codegen.scala.{TargetScala}
 import scala.virtualization.lms.internal.{GenericFatCodegen}
@@ -19,7 +19,7 @@ import scala.virtualization.lms.internal.{GenericFatCodegen}
 import scala.virtualization.lms.common._
 import scala.collection.mutable.{ ArrayBuffer, SynchronizedBuffer }
 
-import java.io.{ File, Console => _, _ }
+import java.io.{ Console => _, _ }
 import java.io.FileSystem
 
 
@@ -73,6 +73,7 @@ class TestDelite1 extends FileDiffSuite {
       - make delite scala codegen generate lancet stuff
       - use delite backend codegen, lancet just to decompile bytecode
       - ISSUE: control flow?? need to use DeliteIf, and don't have functions ...
+      - lancet generates lots of strong effect dependencies (objects, fields, etc): remove!!
     */
 
     def printxx(x:Any) = { println(x) }
@@ -139,33 +140,70 @@ class TestDelite1 extends FileDiffSuite {
       with DeliteTestRunner with OptiMLApplicationRunner { self =>
 
       var fun: Int => Int = { x => x } // crashes if we refer to myprog directly!! GRRR ...
-
       override def main(): Unit = {
         val (arg,block) = reify0[Int,Int](fun)
-        emitString("val "+quote(arg)+" = " + 0) // make sure sym is defined
+        // discard arg; hacked it to be a const ...
         reflect[Unit](block) // ok??
       }
-
-      //override def main(): Unit = {
-        //densevector_obj_rand(unit(90)).asInstanceOf[Rep[Vector[Double]]]
-      //}
-
       // mix in delite and lancet generators
-      override def createCodegen() = 
-        new OptiMLCodeGenScala with GEN_Scala_LMS { val IR: self.type = self }
-
+      override def createCodegen() = new Codegen { val IR: self.type = self }
       override def getCodeGenPkg(t: Target{val IR: self.type}) : 
         GenericFatCodegen{val IR: self.type} = t match {
-          case _:TargetScala => new OptiMLCodeGenScala with GEN_Scala_LMS{val IR: self.type = self}
+          case _:TargetScala => createCodegen()
           case _ => super.getCodeGenPkg(t)
         }
     }
+
+    trait Codegen extends OptiMLCodeGenScala with GEN_Scala_LMS { 
+      val IR: DeliteApplication with OptiMLExp with Core_LMS //LancetImpl
+      import IR._
+      override def emitKernelFooter(syms: List[Sym[Any]], vals: List[Sym[Any]], vars: List[Sym[Any]], resultType: String, resultIsVar: Boolean, external: Boolean): Unit = {
+        if (syms.length.equals(1) && syms.head.tp.equals(manifest[Unit]))
+          stream.println("}}")
+        else super.emitKernelFooter(syms,vals,vars,resultType,resultIsVar,external)
+      }
+      override def emitFileHeader() {
+        super.emitFileHeader()
+        stream.println("import generated.scala.LancetUtils._")
+      }
+      /*override def emitKernelHeader(syms: List[Sym[Any]], vals: List[Sym[Any]], vars: List[Sym[Any]], resultType: String, resultIsVar: Boolean, external: Boolean): Unit = {
+        super.emitKernelHeader(syms,vals,vars,resultType,resultIsVar,external)
+        stream.println("import generated.scala.LancetUtils._")
+      }*/
+      override def emitDataStructures(path: String) {
+        super.emitDataStructures(path)
+        val s = java.io.File.separator
+        val outFile = path + s + "LancetUtils.scala"
+        val out = new PrintWriter(new FileWriter(outFile))
+        out.println("package generated.scala")
+        out.println("import sun.misc.Unsafe")
+        out.println("object LancetUtils {")
+        out.println("val unsafe = { val fld = classOf[Unsafe].getDeclaredField(\"theUnsafe\"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }")
+        out.println("var RES: Any = _")
+
+        out.println("/*" + IR.asInstanceOf[VectorOperatorsRunnerC].VConstantPool + "*/")
+        out.println("/*" + IR.asInstanceOf[VectorOperatorsRunnerC].staticDataMap + "*/")
+
+        for ((s,v) <- IR.asInstanceOf[VectorOperatorsRunnerC].VConstantPool) { // right time?
+          val s1 = s.asInstanceOf[Exp[Any]]
+          out.println("def p"+quote(s1)+": "+remap(s1.tp)+" = ppl.delite.runtime.graph.ops.Arguments.staticData(\""+s1.toString+"\")")
+        }
+
+        out.println("}")
+        out.close()
+
+      }
+
+    }
+
 
 
     trait LancetImpl extends BytecodeInterpreter_LMS_Opt { 
       import com.oracle.graal.api.meta._      // ResolvedJavaMethod
       import com.oracle.graal.hotspot._
       import com.oracle.graal.hotspot.meta._  // HotSpotRuntime
+
+      // *** random stuff
 
       // *** macro implementations
       
@@ -175,7 +213,7 @@ class TestDelite1 extends FileDiffSuite {
         implicit val tp = manifestToTypeRep(manifest[B])
         val (maStr, mbStr) = (manifestStr(manifest[A]), manifestStr(manifest[B]))
 
-        val arg = fresh[A]
+        val arg = liftConst[Object](7:Integer) // just some dummy...
         val y = reify {
 
           emitString("import sun.misc.Unsafe")
@@ -192,7 +230,7 @@ class TestDelite1 extends FileDiffSuite {
 
           DynExp[B]("RES")
         }
-        (arg,y)
+        (arg.asInstanceOf[Rep[A]],y)
       }
 
       def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],Block[Object]) = {
@@ -307,9 +345,19 @@ class TestDelite1 extends FileDiffSuite {
 
     println("constants: "+cst)
 
+    println("*** running execute ***")
+
     VectorOperatorsRunner.execute(Array())
 
-    //compileAndTest(VectorOperatorsRunner)
+    println("*** running compileAndTest ***")
+try {
+    compileAndTest(VectorOperatorsRunner)
+    } finally {
+
+      println(VectorOperatorsRunner.staticDataMap)
+      println("---")
+      println(ppl.delite.runtime.graph.ops.Arguments.staticDataMap)
+    }
 
   }
 
@@ -407,17 +455,22 @@ object DeliteRunner {
     val name = "test.tmp"
     System.setProperty("delite.threads", threads.toString)
     System.setProperty("delite.code.cache.home", "generatedCache" + java.io.File.separator + uniqueTestName)
-    Console.withOut(new PrintStream(new FileOutputStream(name))) {
+    //Console.withOut(new PrintStream(new FileOutputStream(name))) {
       println("test output for: " + app.toString)
-      ppl.delite.runtime.Delite.embeddedMain(args, app.staticDataMap)
-    }
-    val buf = new Array[Byte](new File(name).length().toInt)
+      // NOTE: DeliteCodegen (which computes app.staticDataMap) does not know about VConstantPool!!!
+      val staticDataMap = app match {
+        case app: Base_LMS => app.VConstantPool.map(kv=>kv._1.toString->kv._2).toMap
+        case app => app.staticDataMap
+      }
+      ppl.delite.runtime.Delite.embeddedMain(args, staticDataMap) // was: app.staticDataMap
+    //}
+    /*val buf = new Array[Byte](new File(name).length().toInt)
     val fis = new FileInputStream(name)
     fis.read(buf)
     fis.close()
     val r = new String(buf)
     if (verbose) System.out.println(r)
-    r
+    r*/""
   }
 
 
