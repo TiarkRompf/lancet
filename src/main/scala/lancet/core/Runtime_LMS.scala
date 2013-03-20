@@ -177,10 +177,14 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
             case _ => "Object"
         })
 
+        // don't just quote -- need deps!!!!
+        // TODO: fix for static methods, too, and for LIR
+        // TODO: if method is accessible, call directly
         if (!static) {
-            if (args.length > 1)                                            // FIXME: don't quote -- need deps!!!!
-                reflect[Object](liftConst[Method](m)(mtr[Method]),".invoke(",args.map(a=>quote(a)+".asInstanceOf[AnyRef]").mkString(","),").asInstanceOf[",mtyp,"] // ",holder,".",name)(mtyp)
-            else
+            if (args.length > 1) {
+                val xs = args.flatMap(x => List(x,".asInstanceOf[Object]",",")).dropRight(1)
+                reflect[Object]((Seq(liftConst[Method](m)(mtr[Method]),".invoke(") ++ xs ++ Seq(").asInstanceOf[",mtyp,"] // ",holder,".",name)):_*) (mtyp)
+            } else
                 reflect[Object](liftConst[Method](m)(mtr[Method]),".invoke(",args(0),").asInstanceOf[",mtyp,"] // ",holder,".",name)(mtyp)
             //reflect[Object](args(0),".asInstanceOf[",holder,"].",name,"(",args.drop(1).mkString(","),").asInstanceOf[Object]")
         } else {
