@@ -1,0 +1,53 @@
+object GeneratedMain {
+def main(args: Array[String]) {
+val o = new Generated
+o.apply(args)
+ppl.delite.runtime.profiler.PerformanceTimer.print("app")
+}
+}
+/*****************************************
+  Emitting Generated Code                  
+*******************************************/
+class Generated(pConst_0:Object) extends ((Array[java.lang.String])=>(Unit)) {
+def apply(x0:Array[java.lang.String]): Unit = {
+{
+import sun.misc.Unsafe;
+import generated.scala.DenseVectorDouble;
+val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
+type char = Char;
+def WARN = assert(false, "WARN");
+def ERROR = assert(false, "ERROR");
+  var RES = null.asInstanceOf[Int];
+val x8 = 7.asInstanceOf[Int];
+println("AA");
+println("BB");
+println("CC");
+(RES = 42) // return to root;
+// (no return?);
+RES
+};
+()
+}
+}
+/*****************************************
+  End of Generated Code                  
+*******************************************/
+constants: Vector((Sym(-1000),<function1>))
+*** running compileAndTest ***
+=================================================================================================
+TEST: lancet.advanced.TestDelite1$$anonfun$testA2$1$VectorOperatorsRunnerC$1@5f4b5470
+=================================================================================================
+STAGING...
+Delite Application Being Staged:[lancet.advanced.TestDelite1$$anonfun$testA2$1$VectorOperatorsRunnerC$1]
+******Generating the program******
+EXECUTING...
+test output for: lancet.advanced.TestDelite1$$anonfun$testA2$1$VectorOperatorsRunnerC$1@5f4b5470
+Delite Runtime executing with the following arguments:
+lancet.advanced.TestDelite1anonfuntestA21VectorOperatorsRunnerC1-test.deg
+Delite Runtime executing with 1 CPU thread(s) and 0 GPU(s)
+Beginning Execution Run 1
+AA
+BB
+CC
+[METRICS]: Latest time for component all: 0.002933s
+CHECKING...

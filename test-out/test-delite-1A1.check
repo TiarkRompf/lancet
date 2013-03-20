@@ -1,23 +1,25 @@
 =================================================================================================
-TEST: lancet.advanced.TestDelite1$$anonfun$testA1$1$VectorOperatorsRunner$2$@558c190f
+TEST: lancet.advanced.TestDelite1$$anonfun$testA1$1$VectorOperatorsRunner$3$@749f355c
 =================================================================================================
 STAGING...
-Delite Application Being Staged:[lancet.advanced.TestDelite1$$anonfun$testA1$1$VectorOperatorsRunner$2$]
+Delite Application Being Staged:[lancet.advanced.TestDelite1$$anonfun$testA1$1$VectorOperatorsRunner$3$]
 ******Generating the program******
 EXECUTING...
-test output for: lancet.advanced.TestDelite1$$anonfun$testA1$1$VectorOperatorsRunner$2$@40ece856
+test output for: lancet.advanced.TestDelite1$$anonfun$testA1$1$VectorOperatorsRunner$3$@749f355c
 Delite Runtime executing with the following arguments:
-lancet.advanced.TestDelite1anonfuntestA11VectorOperatorsRunner2-test.deg
+lancet.advanced.TestDelite1anonfuntestA11VectorOperatorsRunner3-test.deg
 Delite Runtime executing with 1 CPU thread(s) and 0 GPU(s)
-scheduling loop op x818x998x1001 as Local
-scheduling loop op x983 as Local
+scheduling loop op x836x1036x1041 as Local
+scheduling loop op x1007 as Local
 Beginning Execution Run 1
+true
+true
+true
+true
+true
+AA
+BB
+CC
 !~x02$758209true,true,true,true,true!~x02$758209
-[METRICS]: Latest time for component all: 0.029545s
-
+[METRICS]: Latest time for component all: 0.039074s
 CHECKING...
-  condition 0: PASSED
-  condition 1: PASSED
-  condition 2: PASSED
-  condition 3: PASSED
-  condition 4: PASSED
