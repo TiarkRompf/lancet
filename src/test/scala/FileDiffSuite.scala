@@ -39,7 +39,9 @@ trait FileDiffSuite extends Suite {
     new String(buf)
   }
   def assertFileEqualsCheck(name: String): Unit = {
-    def sanitize(s: String) = s.replaceAll("@[0-9a-f]+","@") // disregard object ids
+    def sanitize(s: String) = 
+      s.replaceAll("@[0-9a-f]+","@").   // disregard object ids
+        replaceAll("[0-9]*\\.[0-9]+s","0.0s")  // disregard running times
     assert(sanitize(readFile(name)) == sanitize(readFile(name+".check")), "File differs: "+name) // TODO: diff output
     new File(name) delete ()
   }
