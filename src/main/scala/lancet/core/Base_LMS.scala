@@ -19,6 +19,12 @@ trait IR_LMS_Base extends EffectExp {
   case class Patch(key: String, var block: Block[Unit]) extends Def[Unit]
   case class BlockDef(key: String, keyid: Int, params: List[Rep[Any]], body: Block[Unit]) extends Def[Unit]
 
+  // idea: patches should not schedule stuff inside, but in
+  // their parent scope. thus, do not override boundSyms for Patch,
+  // but override effectsSyms to include effectSyms of all
+  // patches...
+
+
   override def boundSyms(e: Any): List[Sym[Any]] = e match {
     case Unstructured(xs) => blocks(xs) flatMap effectSyms
     case Patch(key,block) => effectSyms(block)
@@ -63,8 +69,8 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
   }}
 
   override def emitValDef(sym: Sym[Any], rhs: String) = 
-    if (sym.tp == manifest[Unit]) stream.println(rhs+";")
-    else super.emitValDef(sym,rhs+";")
+    /*if (sym.tp == manifest[Unit]) stream.println(rhs+";")
+    else*/ super.emitValDef(sym,rhs+";")
 
   override def emitNode(sym: Sym[Any], rhs: Def[Any]) = rhs match {
     case Unstructured(xs) =>
