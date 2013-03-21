@@ -297,7 +297,7 @@ TODO:
             zeros.toMap.apply(f.toString) match {
               case Def(DMap(m)) =>
                 def func(k: GVal) = GRef(mkey(f.toString,k))
-                def body(k: GVal) = select(xformSubst(z),k)
+                def body(k: GVal) = select(xformSubst.getOrElse(z,z),k)
                 m foreach (kv => kv._1 -> fun(func(kv._1).toString,x,body(kv._1)))
               case _ =>
                 if (xformSubst.contains(z)) {
@@ -409,8 +409,10 @@ TODO:
         case (GConst(x:Int),GConst(y:Int)) => GConst(x+y)
         case (GConst(0),_) => y
         case (_,GConst(0)) => x
-        case (Def(DPlus(a,b)),_) => plus(a,plus(b,y))
         case (Def(DIf(c,x,z)),_) => iff(c,plus(x,y),plus(z,y))
+        // random simplifications ...
+        case (Def(DPlus(a,b)),_) => plus(a,plus(b,y))
+        case (Def(DTimes(a,GConst(-1))),GConst(c:Int)) => plus(a,GConst(-c))
         case _ => super.plus(x,y)
       }
       override def times(x: From, y: From)            = (x,y) match {
@@ -420,12 +422,16 @@ TODO:
         case (GConst(1),_) => y
         case (_,GConst(1)) => x
         case (Def(DIf(c,x,z)),_) => iff(c,times(x,y),times(z,y))
+        // random simplifications ...
+        case (Def(DPlus(a,b)),c) => plus(times(a,c), times(b,c))
         case _ => super.times(x,y)
       }
       override def less(x: From, y: From)            = (x,y) match {
         case (GConst(x:Int),GConst(y:Int)) => GConst(if (x < y) 1 else 0)
-        case (Def(DPlus(a,GConst(b:Int))),c) =>  less(a,plus(c,const(-b)))// random rewrite ...
         case (Def(DIf(c,x,z)),_) => iff(c,less(x,y),less(z,y))
+        // random simplifications ...
+        case (GConst(0),Def(DPlus(a,GConst(b:Int)))) if b < 0 =>  less(a,const(-b))
+        case (Def(DPlus(a,GConst(b:Int))),c) =>  less(a,plus(c,const(-b)))
         case _ if x == y => const(0)
         // case (GConst(0),Def(DPlus())) => y
         case _ => super.less(x,y)
@@ -623,9 +629,28 @@ TODO:
         itvec = saveit
         val n = reflect(s"loop($store,0)._2 // count")}*/
 
+        import IR._
+
         val loop = GRef(freshVar)
         val n0 = GRef(freshVar)
 
+        store = iff(less(const(0), n0), call(loop,plus(n0,const(-1))), store)
+
+        val cv = eval(c)
+
+        val afterC = store
+
+        store = subst(afterC,cv,const(1)) // assertTrue
+        eval(b)
+
+        fun(loop.toString, n0.toString, store)
+
+        val nX = fixindex(n0.toString, cv)
+        store = call(loop,nX)
+        val cv1 = eval(c)
+        store = subst(store,cv1,const(0)) // assertFalse
+
+/*
 
 
           val savevc = varCount
@@ -659,6 +684,8 @@ TODO:
         store = IR.call(loop,n)
 
         eval(c) // once more (this one will fail)
+*/
+
 
         // TODO: fixpoint
 
