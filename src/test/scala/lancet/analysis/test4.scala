@@ -70,7 +70,7 @@ TODO:
     case class DLess(x: GVal, y: GVal) extends Def
     case class DPair(x: GVal, y: GVal) extends Def
     case class DIf(c: GVal, x: GVal, y: GVal) extends Def
-    case class DFixIndex(c: GVal) extends Def
+    case class DFixIndex(x: String, c: GVal) extends Def
     case class DCall(f: GVal, x: GVal) extends Def
     case class DFun(f: String, x: String, y: GVal) extends Def
     case class DOther(s: String) extends Def
@@ -84,7 +84,7 @@ TODO:
       case DLess(x: GVal, y: GVal)            => dst.less(x,y)
       case DPair(x: GVal, y: GVal)            => dst.pair(x,y)
       case DIf(c: GVal, x: GVal, y: GVal)     => dst.iff(c,x,y)
-      case DFixIndex(c: GVal)                 => dst.fixindex(c)
+      case DFixIndex(x: String, c: GVal)      => dst.fixindex(x,c)
       case DCall(f: GVal, x: GVal)            => dst.call(f,x)
       case DFun(f: String, x: String, y: GVal)=> dst.fun(f,x,y)
       case DOther(s: String)                  => dst.other(s)
@@ -101,7 +101,7 @@ TODO:
       def less(x: From, y: From): To
       def pair(x: From, y: From): To
       def iff(c: From, x: From, y: From): To
-      def fixindex(c: From): To
+      def fixindex(x: String, c: From): To
       def call(f: From, x: From): To
       def fun(f: String, x: String, y: From): To
       def other(s: String): To
@@ -118,7 +118,7 @@ TODO:
       def less(x: From, y: From)            = s"$x < $y"
       def pair(x: From, y: From)            = s"($x,$y)"
       def iff(c: From, x: From, y: From)    = s"if ($c) $x else $y"
-      def fixindex(c: From)                 = s"fixindex($c)"
+      def fixindex(x: String, c: From)      = s"fixindex($x => $c)"
       def call(f: From, x: From)            = s"$f($x)"
       def fun(f: String, x: String, y: From)= s"{ $x => $y }"
       def other(s: String)                  = s
@@ -135,7 +135,7 @@ TODO:
       def less(x: From, y: From)            = DLess(x,y)
       def pair(x: From, y: From)            = DPair(x,y)
       def iff(c: From, x: From, y: From)    = DIf(c,x,y)
-      def fixindex(c: From)                 = DFixIndex(c)
+      def fixindex(x: String, c: From)      = DFixIndex(x,c)
       def call(f: From, x: From)            = DCall(f,x)
       def fun(f: String, x: String, y: From)= DFun(f,x,y)
       def other(s: String)                  = DOther(s)
@@ -155,7 +155,7 @@ TODO:
       def less(x: From, y: From)            = post(next.less(pre(x),pre(y)))
       def pair(x: From, y: From)            = post(next.pair(pre(x),pre(y)))
       def iff(c: From, x: From, y: From)    = post(next.iff(pre(c),pre(x),pre(y)))
-      def fixindex(c: From)                 = post(next.fixindex(pre(c)))
+      def fixindex(x: String, c: From)      = post(next.fixindex(x,pre(c)))
       def call(f: From, x: From)            = post(next.call(pre(f),pre(x)))
       def fun(f: String, x: String, y: From)= post(next.fun(f,x,pre(y)))
       def other(s: String)                  = post(next.other(s))
@@ -280,7 +280,7 @@ TODO:
               case Def(DMap(m)) =>
                 def func(k: GVal) = GRef(mkey(f.toString,k))
                 def arg(k: GVal) = z match {
-                  case Def(DFixIndex(`f`)) => fixindex(func(k))
+                  case Def(DFixIndex(x,`f`)) => fixindex(x, func(k)) // OLD
                   case _ => z
                 }
                 List(GRef(a) -> map(m map (kv => kv._1 -> call(func(kv._1), arg(kv._1)))))
@@ -469,21 +469,11 @@ TODO:
         }
       }
 
-      override def fixindex(c: From)                 = c match {
-        case Def(DFun(f1,x1,y1)) if !dependsOn(y1,c) =>
-          // TODO / WIP !!!  right now we just pick a "large enough" number ...
-          val par = GRef(x1)
-          y1 match {
-            case LowBound(LowBound(lv,`par`,hb,hv),GConst(0),`par`,hv1) =>
-              println(s"*** will exec fixindex $c $f1($x1) = $y1 -> $hb")
-              // NOTE that hb is 'a' higher bound but not the tightest one
-              // still f(hb) will return the correct max value
-              hb
-            case _ => 
-              GConst(99999) //super.fixindex(c) //subst(y1,GRef(x1),x)
-          }
+      override def fixindex(x: String, c: From)       = c match {
+        //case Def(DLess(GConst(0), Def(GTimes, GPlus(u)))) => plus(u,const(+1))
+        case Def(DLess(GRef(`x`),u)) => plus(u,const(-1))
         case _ =>
-          GConst(99999) //super.fixindex(c)
+          super.fixindex(x,subst(c,less(const(0),GRef(x)),const(1))) // GConst(99999)
       }
 
       override def call(f: From, x: From)            = f match {
@@ -496,73 +486,29 @@ TODO:
       }
 
       override def fun(f: String, x: String, y: From) = y match {
-        // try to remove loop carried deps. TODO: make more principled ...
-        // if (0 < x) { if (f(x-1) < n) f(x-1) + d else f(x-1) } else zeroRes
-        // --->  if (0 < x) { if (x < n) zeroRes + x * d else zeroRes + n * d } else zeroRes
-        // if (0 < x) { if (loopc) d else f(x-1) } else zeroRes  
-        // --->  if (0 < x) d  else zeroRes
         case Def(DIf(zc @ Def(DLess(GConst(0),GRef(`x`))),
-          Def(DIf(loopc, 
-            incRes, 
-            prevRes @ Def(DCall(GRef(`f`),prevx @ Def(DPlus(GRef(`x`),GConst(-1))))))),
-          zeroRes)) =>
-
-          println(s"fun $f = $zeroRes -> while($loopc) $x -> $incRes")
+            incRes, zeroRes)) =>
 
           // alt: calc y - subst(y,x,x-1) and see if it depends on x ...
+          val prevx = plus(GRef(x),const(-1))
+          val prevRes = call(GRef(f),prevx)
 
           incRes match {
             case Def(DPlus(`prevRes`, d)) if !dependsOn(d,GRef(x)) => 
               println(s"invariant stride $d")
               println(s"result = $zeroRes + $x * $d")
-              val prev1 = iff(less(const(0),prevx),plus(times(prevx,d), zeroRes),zeroRes)
-              // TODO: figure out more interesting cases ...
-              val prev2 = loopc match {
-                case Def(DLess(`prevRes`, max)) => iff(less(prev1,max), prev1, max)
-                case Def(DLess(min, `prevRes`)) => iff(less(min,prev1), min, prev1)
-                //case Def(DIf(Def(DLess()),x,y)) =>
-                case Def(dd) => prevRes
-                // TODO: for y_val, this is i_val(prevx) < 100 !!! (test a)
-                //       (but it gets transformed to something more complex by inlining i_val)
-                //
-                // if (0 < x6) if (0 < x6 + -1) if (0 < x6 + -2) if (x6 < 102) if (x6 < 101) x100 + 1 
-                // else x100 else x100 else x100 + 1 else x100 + 1 else 0
-                //
-                // where x6 is the loop var and x100 the recursive call
-              }
-              println(s"subst $prevRes -> $prev1 -> $prev2")
-              val zrescall = call(GRef(f),GConst(0))
-              val y1 = subst(subst(y,prevRes,prev2),zrescall,zeroRes)
+              val y1 = plus(times(GRef(x),d), zeroRes)
               println("sym " +y1)
               fun(f,x,y1)
             case d @ GConst(_) if !dependsOn(d,GRef(x)) =>  // error in iterateAll if not a const ??
               println(s"invariant res $d")
               println(s"result = $d")
-              val prev1 = iff(less(const(0),prevx),d,zeroRes)
-              val y1 = subst(y,prevRes,prev1)
+              val y1 = iff(zc,d,zeroRes)
               fun(f,x,y1)
             case _ =>
               dreflect(f,next.fun(f,x,pre(y)))            
           }
 
-
-        // if (loopc) { if (0 < x) incRes else zeroRes } else if (0 < x) f(x-1)
-        case Def(DIf(loopc,
-          incRes  ,//@ Def(DIf(Def(DLess(GConst(0),`x`)), zeroRes)),
-          prevRes @ Def(DIf(Def(zc @ DLess(GConst(0),GRef(`x`))), 
-            prevCall @ Def(DCall(GRef(`f`),Def(DPlus(GRef(`x`),GConst(-1))))), 
-            zeroRes)))) =>
-
-          println(s"fun $f = $zeroRes -> while($loopc) $x -> $incRes")
-
-          val d = incRes match {
-            case Def(DIf(_,Def(DPlus(`prevCall`, d)), _)) => 
-              println(s"stride $d")
-            case _ =>
-          }
-
-
-          dreflect(f,next.fun(f,x,pre(y)))            
         case _ =>
           dreflect(f,next.fun(f,x,pre(y))) // reuse fun sym (don't call super)
       }
