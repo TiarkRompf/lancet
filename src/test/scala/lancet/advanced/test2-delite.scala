@@ -103,7 +103,8 @@ class TestDelite2 extends FileDiffSuite {
       def apply[T](self: Rep[VectorCompanion], xs: Rep[Seq[T]]): Rep[DenseVector[T]] = {
         Console.println("catch vector_apply")
         implicit val mf = manifest[Int].asInstanceOf[Manifest[T]] //FIXME: generic types
-        VectorOperatorsRunner.densevector_obj_fromseq(xs)
+        val xs1 = reflect[Seq[T]](xs,".asInstanceOf[Seq[Int]]")(mtr[Seq[Int]].relax) // need cast ...
+        VectorOperatorsRunner.densevector_obj_fromseq(xs1)
         // TODO: generic types are problematic...
         // require manifest parameter and try to eval that?
         // or use scala reflection?
@@ -154,6 +155,8 @@ class TestDelite2 extends FileDiffSuite {
     VectorOperatorsRunner.VConstantPool = scala.collection.immutable.Vector.empty
 
     VectorOperatorsRunner.generateScalaSource("Generated", new java.io.PrintWriter(System.out))
+
+    VectorOperatorsRunner.globalDefs.foreach(println)    
 
     val cst = VectorOperatorsRunner.VConstantPool
     println("constants: "+cst)

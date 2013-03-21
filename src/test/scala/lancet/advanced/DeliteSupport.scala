@@ -149,6 +149,47 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
   //override def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T]
   //  = this.asInstanceOf[VectorOperatorsRunnerC].ifThenElse(x,y,z,false)  // DeliteIfThenElse ...
 
+
+  override def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] = eval(x) match {
+    case VConst(x) => if (x) y else z
+    case _ => 
+
+    //val save = exprs
+    // TODO: state lub; reset exprs for both branches!
+
+    val store0 = store
+    val yb = reify(y)
+    //println("store1")
+    //println(store)
+
+    store = store0
+    val zb = reify(z)
+    //println("store1")
+    //println(store)
+
+    //println("IF "+x+"="+Def.unapply(x))
+    yb.res match {
+      case Def(Reify(c,u,es)) => 
+        //println("   "+yb+"="+Def.unapply(yb.res))
+        //println("   "+es.map(e=>Def.unapply(e)))
+      case _ =>
+    }
+    zb.res match {
+      case Def(Reify(c,u,es)) => 
+        //println("   "+zb+"="+Def.unapply(zb.res))
+        //println("   "+es.map(e=>Def.unapply(e)))
+      case _ =>
+    }
+
+    // TODO: LMS effects
+    var r = reflect[T](IfElse(x,yb,zb))
+    //exprs = save
+    r
+  }
+
+  handler = execMethodPostDom
+  
+
   // *** macro interface
 
   abstract class ClassMacros {
