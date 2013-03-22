@@ -64,14 +64,20 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
 
     def unquote[A](f: => Rep[A]): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
+
     def reset[A](f: => A): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
     def shift[A,B](f: (A=>B) => B): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
+
     def slowpath(): Unit = () //??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
+
+    def fastpath(): Unit = () //??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
+
 
     def speculate(x: Boolean): Boolean = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
+    def stable[A](x: A): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
 
     // *** macro implementations
@@ -325,6 +331,12 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
 
             res.asInstanceOf[Rep[Object]]
         }
+
+        case "lancet.api.DefaultMacros.fastpath" => handle {
+          case r::Nil => 
+            liftConst(()).asInstanceOf[Rep[Object]]
+        }
+
         
         case "lancet.api.DefaultMacros.unquote" => handle {
           case r::f::Nil => 
