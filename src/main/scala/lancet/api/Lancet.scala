@@ -108,7 +108,11 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
       frame.setBCI(bci)
       frame.setStackTop(tos)
       assert(locals.length == frame.locals.length)
-      val liftedLocals = locals.map(x => liftConst(x)(typeRep[Object])) // FIXME: types!
+      val liftedLocals = locals.map {
+        case x: Integer => liftConst(x:Int)(typeRep[Int])
+        case null => liftConst(null)
+        case x: Object => liftConst(x)(typeRep[Object])
+      } // FIXME: types!
       // 0-2 are reserved for parent link, bci etc. don't overwrite
       System.arraycopy(liftedLocals, BASE_LENGTH, frame.locals, BASE_LENGTH, locals.length - BASE_LENGTH)
       frame
@@ -155,16 +159,19 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
       Console.println("root:")
       dump(root)
 
-      val compiled = lms0[Unit,Object] { x =>
+      val tp = root.getMethod.getSignature.getReturnKind()
+
+      val compiled = lms0[Unit,Int] { x => // FIXME: types
         executeRoot(root,frame1)
-        liftConst[Object]("done")
+        666//popAsObject(root, tp).asInstanceOf[Rep[Int]]
+        reflect[Int]("{println(\"BOO!\");666} // recompiled result -- never seen; not assigned to RES")
       }
       Console.println("-- compiled")
 
       val res = compiled() // call it!!
 
       Console.println("result: " + res)
-      res
+      res:Integer
     }
 
     // *** global interpreter interface
