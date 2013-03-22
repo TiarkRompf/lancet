@@ -88,7 +88,6 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
     it.TRACE_BYTE_CODE = true
 
     def mkInterpreterFrame(locals: Array[AnyRef], bci: Int, tos: Int, method: ResolvedJavaMethod, parent: SlowpathFrame): SlowpathFrame = {
-
       // encapsulation -- shouldn't do this calculation here
       import InterpreterFrame.BASE_LENGTH
       val additionalStackSpace = locals.length - (method.getMaxLocals() + method.getMaxStackSize() + BASE_LENGTH)
@@ -99,8 +98,22 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
       // 0-2 are reserved for parent link, bci etc. don't overwrite
       System.arraycopy(locals, BASE_LENGTH, frame.locals, BASE_LENGTH, locals.length - BASE_LENGTH)
       frame
-
     }
+
+    def mkCompilerFrame(locals: Array[AnyRef], bci: Int, tos: Int, method: ResolvedJavaMethod, parent: SlowpathFrame): SlowpathFrame = {
+      // encapsulation -- shouldn't do this calculation here
+      import InterpreterFrame.BASE_LENGTH
+      val additionalStackSpace = locals.length - (method.getMaxLocals() + method.getMaxStackSize() + BASE_LENGTH)
+      val frame = new InterpreterFrame_Str(method, parent.asInstanceOf[InterpreterFrame_Str], additionalStackSpace);
+      frame.setBCI(bci)
+      frame.setStackTop(tos)
+      assert(locals.length == frame.locals.length)
+      val liftedLocals = locals.map(x => liftConst(x)(typeRep[Object])) // FIXME: types!
+      // 0-2 are reserved for parent link, bci etc. don't overwrite
+      System.arraycopy(liftedLocals, BASE_LENGTH, frame.locals, BASE_LENGTH, locals.length - BASE_LENGTH)
+      frame
+    }
+
 
     def execInterpreter(frame: SlowpathFrame): Object = {
       Console.println("-- start interpreting")
@@ -126,11 +139,33 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
 
       Console.println("result: " + res)
       res
-
-      // pass it on to compiler result
-      // need to abort -- throw new InterpreterException
     }
 
+    def execCompiler(frame: SlowpathFrame): Object = {
+      Console.println("-- start compiling")
+      val frame1 = frame.asInstanceOf[InterpreterFrame_Str]
+      def dump(f: InterpreterFrame_Str): Unit = if (f != null) {
+        Console.println(f.getMethod)
+        Console.println(f.locals.drop(InterpreterFrame.BASE_LENGTH).mkString(","))
+        dump(f.getParentFrame.asInstanceOf[InterpreterFrame_Str])
+      }
+      Console.println("frame:")
+      dump(frame1)
+      val root = frame1.getTopFrame().asInstanceOf[InterpreterFrame_Str]
+      Console.println("root:")
+      dump(root)
+
+      val compiled = lms0[Unit,Object] { x =>
+        executeRoot(root,frame1)
+        liftConst[Object]("done")
+      }
+      Console.println("-- compiled")
+
+      val res = compiled() // call it!!
+
+      Console.println("result: " + res)
+      res
+    }
 
     // *** global interpreter interface
     def interpret[A:Manifest,B:Manifest](f: A=>B): A=>B = { arg =>
@@ -334,7 +369,36 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
 
         case "lancet.api.DefaultMacros.fastpath" => handle {
           case r::Nil => 
-            liftConst(()).asInstanceOf[Rep[Object]]
+            val self = liftConst(this)
+            // get caller frame from compiler ('parent')
+            // emit code to construct interpreter state
+            def rec(frame: InterpreterFrame): Rep[Object] = if (frame == null) liftConst(null) else {
+              val p = rec(frame.getParentFrame)
+              val frame1 = frame.asInstanceOf[InterpreterFrame_Str]
+              reflect[Object](self,".mkCompilerFrame(Array[Object]("+
+                frame1.locals.map(x=>x+".asInstanceOf[AnyRef]").mkString(",")+"), "+ // cast is not nice
+                frame1.nextBci+", "+ // need to take *next* bci (cur points to call!)
+                frame1.getStackTop()+", "+
+                liftConst(frame1.getMethod)+", "+p+")")
+            }
+            val frame = rec(parent)
+
+            // discard compiler state
+            val callers = getContext(parent)
+            continuation = callers.reverse.tail.head // second from top! copy or not?
+
+            /* NOTE: correctly unwinding the stack would also mean unlocking monitors and
+            calling .dispose on frames)*/
+
+            // exec interpreter to resume at caller frame
+
+            val typ = continuation.getMethod.getSignature.getReturnKind // FIXME
+            val res = reflect[Int](self,".execCompiler("+frame+").asInstanceOf[Int] // drop into freshly compiled")
+
+            emitString("// old parent: " + contextKey(parent))
+            emitString("// new parent: " + contextKey(continuation))
+
+            res.asInstanceOf[Rep[Object]]
         }
 
         
