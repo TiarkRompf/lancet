@@ -42,13 +42,25 @@ def apply(ARG: Int): Int = { object BODY {
     def kx10(x5:Int): Int = {
       var RES = null.asInstanceOf[Int]
       val x6 = x5.asInstanceOf[Int]
+      // need to fix block ordering for bci=14
+      // old: B0[0->6],B1[9->9],B2[14->14],B3[17->17]
+      // new: B2[14->14],B3[17->17]
+      // fixed: B0[14->14],B1[17->17]
       val x7 = x6.asInstanceOf[Int]
       val x8 = x7.asInstanceOf[Int]
-      // return 3_0 to 21:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+      // return 1_0 to 21:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
       // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$4>
+      // need to fix block ordering for bci=21
+      // old: B0[0->4],B1[7->18],B2[21->24]
+      // new: B2[21->24]
+      // fixed: B0[21->24]
       val x9 = 100 * x8
-      // return 2_0 to 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+      // return 0_0 to 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
       // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4$$anonfun$apply$mcII$sp$1.apply$mcI$sp>
+      // need to fix block ordering for bci=4
+      // old: B0[0->1],B1[4->4]
+      // new: B1[4->4]
+      // fixed: B0[4->4]
       (RES = x9) // return to root
       // (no return?)
       RES.asInstanceOf[Int]

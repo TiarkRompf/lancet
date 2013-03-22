@@ -1,4 +1,4 @@
-// constants: <function1>,lancet.interpreter.TestInterpreter5$Decompiler@138de67e,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
+// constants: <function1>,lancet.interpreter.TestInterpreter5$Decompiler@3f7b9068,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
 class Generated2(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3,CONST_1: lancet.interpreter.TestInterpreter5#Decompiler,CONST_2: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_3: Array[lancet.core.Base_LIR$Rep],CONST_4: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1,CONST_7: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -9,23 +9,19 @@ def apply(ARG: Int): Int = { object BODY {
   var RES = null.asInstanceOf[Int]
   val x0 = ARG
   val x1 = x0.asInstanceOf[Int]
-  // block 0
   // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>
   ;{
     var vPHI_2_5 = null.asInstanceOf[Int]
     var vx0 = null.asInstanceOf[Int]
     var vx1 = null.asInstanceOf[Int]
     var vx3 = null.asInstanceOf[Boolean]
-    // block 0
     ;{
       val PHI_3_5 = 0 // LUBC(PHI_3_5:Int,0:Int)
       BLOCK_2(PHI_3_5,x0,x1)
     }
     def BLOCK_2(PHI_3_5:Int,x0:Int,x1:Int): Unit = {
-      // block 1
       val x3 = x1 <= PHI_3_5
       if (x3) {
-        // block 4
         // return 4_0 to 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
         /*R_1_4_0;*/;{
           val PHI_2_5 = PHI_3_5 // LUBC(x10:Int,PHI_3_5:Int)
@@ -35,21 +31,16 @@ def apply(ARG: Int): Int = { object BODY {
           vx3 = x3
         };
       } else {
-        // block 2
         // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
-        // block 0
         val x4 = 50 != PHI_3_5
         if (x4) {
-          // block 2
           // return 2_0 to 19:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
-          // block 3
           val x11 = 1 + PHI_3_5
           ;{
             val PHI_3_5 = x11 // LUBC(PHI_3_5:Int,x11:Int)
             BLOCK_2(PHI_3_5,x0,x1)
           }
         } else {
-          // block 1
           val x5 = CONST_1.mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_1.asInstanceOf[AnyRef],CONST_2.asInstanceOf[AnyRef],CONST_3.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), -1, 6, CONST_4, null)
           val x6 = CONST_1.mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_0.asInstanceOf[AnyRef],x1.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 5, 5, CONST_2, x5)
           val x7 = CONST_1.mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_0.asInstanceOf[AnyRef],x1.asInstanceOf[AnyRef],PHI_3_5.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 19, 6, CONST_5, x6)
@@ -76,7 +67,6 @@ def apply(ARG: Int): Int = { object BODY {
       val x0 = vx0
       val x1 = vx1
       val x3 = vx3
-      // block 1
       (RES = PHI_2_5) // return to root
   }}
   // (no return?)
@@ -97,7 +87,7 @@ CONST_1,CONST_2,CONST_3,null,null,null,null,null,null
 root:
 HotSpotMethod<BytecodeInterpreter_Exec.execute>
 CONST_1,CONST_2,CONST_3,null,null,null,null,null,null
-// constants: <function1>,lancet.interpreter.TestInterpreter5$Decompiler@138de67e,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
+// constants: <function1>,lancet.interpreter.TestInterpreter5$Decompiler@3f7b9068,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
 class Generated3(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3,CONST_1: lancet.interpreter.TestInterpreter5#Decompiler,CONST_2: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_3: Array[lancet.core.Base_LIR$Rep],CONST_4: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1,CONST_7: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (Unit=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -111,7 +101,6 @@ def apply(ARG: Unit): Int = { object BODY {
   // old: B0[0->3],B1[6->7],B2[12->12]
   // new: B2[12->12]
   // fixed: B0[12->12]
-  // block 0
   // return 0_0 to 19:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // -1:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
   // ret single HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
   // need to fix block ordering for bci=19
@@ -132,12 +121,9 @@ def apply(ARG: Unit): Int = { object BODY {
       BLOCK_11(PHI_3_5,PHI_3_6,PHI_3_7,PHI_3_8)
     }
     def BLOCK_11(PHI_3_5:Int,PHI_3_6:scala.runtime.Null$,PHI_3_7:scala.runtime.Null$,PHI_3_8:scala.runtime.Null$): Unit = {
-      // block 0
       val x12 = 1 + PHI_3_5
-      // block 1
       val x13 = 100 <= x12
       if (x13) {
-        // block 3
         // return 3_0 to 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // -1:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
         /*R_11_3_0;*/;{
           val PHI_2_5 = x12 // LUBC(x20:Int,x12:Int)
@@ -146,12 +132,9 @@ def apply(ARG: Unit): Int = { object BODY {
           vx13 = x13
         };
       } else {
-        // block 2
         // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
-        // block 0
         val x14 = 50 != x12
         if (x14) {
-          // block 2
           // return 2_0 to 19:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // -1:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
           ;{
             val PHI_3_5 = x12 // LUBC(PHI_3_5:Int,x12:Int)
@@ -161,7 +144,6 @@ def apply(ARG: Unit): Int = { object BODY {
             BLOCK_11(PHI_3_5,PHI_3_6,PHI_3_7,PHI_3_8)
           }
         } else {
-          // block 1
           val x15 = CONST_1.mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_1.asInstanceOf[AnyRef],CONST_2.asInstanceOf[AnyRef],CONST_3.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), -1, 6, CONST_4, null)
           val x16 = CONST_1.mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_0.asInstanceOf[AnyRef],100.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), -1, 5, CONST_2, x15)
           val x17 = CONST_1.mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_0.asInstanceOf[AnyRef],100.asInstanceOf[AnyRef],x12.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 19, 6, CONST_5, x16)
@@ -190,7 +172,6 @@ def apply(ARG: Unit): Int = { object BODY {
       // old: B0[0->2],B1[5->5]
       // new: B1[5->5]
       // fixed: B0[5->5]
-      // block 0
       (RES = PHI_2_5) // return to root
       // (no return?)
   }}
