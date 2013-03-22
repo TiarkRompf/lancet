@@ -338,8 +338,11 @@ TODO:
         case GConst(_)           => x
         case Def(DUpdate(x,f,y)) => update(subst(x,a,b),subst(f,a,b),subst(y,a,b))
         case Def(DSelect(x,f))   => select(subst(x,a,b),subst(f,a,b))
-        case Def(DMap(m))        => map(m.map(kv => subst(kv._1,a,b) -> subst(kv._2,a,b)))
-        case Def(DMap(m))        => map(m.map(kv => subst(kv._1,a,b) -> subst(kv._2,a,b)))
+        case Def(DMap(m))        => 
+
+          // TODO: what if stuff is substituted to the same key??
+          map(m.map(kv => subst(kv._1,a,b) -> subst(kv._2,a,b)))
+
         case Def(dd@DIf(c@Def(o@DLess(u,v)),x,y)) => 
           // in general, if a implies c we can take branch x; if a refutes c, y.
           // if a & c implies that something is a constant, propagate that
@@ -383,24 +386,44 @@ TODO:
           }
           iff(subst(c,a,b),subst(x,a,b),subst(y,a,b))
         case Def(DIf(c,x,y))     => iff(subst(c,a,b),subst(x,a,b),subst(y,a,b))
+        case Def(DPair(x,y))     => pair(subst(x,a,b),subst(y,a,b))
         case Def(DPlus(x,y))     => plus(subst(x,a,b),subst(y,a,b))
         case Def(DTimes(x,y))    => times(subst(x,a,b),subst(y,a,b))
         case Def(DLess(x,y))     => less(subst(x,a,b),subst(y,a,b))
         case Def(DCall(f,y))     => call(subst(f,a,b),subst(y,a,b))
         case Def(DFun(f,x1,y))   => x//subst(y,a,b); x // binding??
-        case Def(_)              => println("no subst: "+x); x
+        case Def(DFixIndex(x,y)) => fixindex(x,subst(y,a,b))
+        case Def(d)              => println("no subst: "+x+"="+d); x
         case _                   => x // TOOD
       }
 
 
       override def update(x: From, f: From, y: From) = x match {
+        case GConst("undefined") => x
         case GConst(m:Map[_,_]) if m.isEmpty => map(Map(f -> y))
-        case Def(DMap(m)) => map(m + (f -> y)) // only if const!
+        case Def(DMap(m)) => 
+          // TODO
+          f match {
+            case GConst(_) => map(m + (f -> y)) // TODO: y = DIf ??
+            case Def(DIf(c,u,v)) => iff(c,update(x,u,y),update(x,v,y))
+            case _ => 
+              //if (y != GConst("undefined"))
+                map(m + (f -> y))//super.update(x,f,y)
+              //else
+                //x//super.update(x,f,y) // OK??
+          }
+        case Def(DIf(c,u,v)) => iff(c,update(u,f,y),update(v,f,y))
         case _ => super.update(x,f,y)
       }
       override def select(x: From, f: From)          = x match {
         //case GConst(m:Map[From,From]) => GConst(m.getOrElse(f,GConst("nil"))) // f must be const!
-        case Def(DMap(m)) => m.getOrElse(f, super.select(x,f))
+        case Def(DMap(m)) => 
+          // TODO
+          f match {
+            case GConst(_) => m.getOrElse(f, GConst("undefined")) // f const?
+            case Def(DIf(c,u,v)) => iff(c,select(x,u),select(x,v))
+            case _ => m.getOrElse(f, GConst("undefined"))
+          }
         case Def(DUpdate(x2,f2,y2)) => if (f2 == f) y2 else select(x2,f)
         case Def(DIf(c,x,y)) => iff(c,select(x,f),select(y,f))
         case _ => super.select(x,f)
@@ -411,6 +434,7 @@ TODO:
         case (_,GConst(0)) => x
         case (Def(DIf(c,x,z)),_) => iff(c,plus(x,y),plus(z,y))
         // random simplifications ...
+        case (GConst(c),b) => plus(b,const(c))
         case (Def(DPlus(a,b)),_) => plus(a,plus(b,y))
         case (Def(DTimes(a,GConst(-1))),GConst(c:Int)) => plus(a,GConst(-c))
         case _ => super.plus(x,y)
@@ -423,7 +447,10 @@ TODO:
         case (_,GConst(1)) => x
         case (Def(DIf(c,x,z)),_) => iff(c,times(x,y),times(z,y))
         // random simplifications ...
+        case (GConst(c),b) => times(b,const(c))
+        case (Def(DTimes(a,b)),_) => times(a,times(b,y))
         case (Def(DPlus(a,b)),c) => plus(times(a,c), times(b,c))
+        case (a,Def(DPlus(b,c))) => plus(times(a,b), times(a,c))
         case _ => super.times(x,y)
       }
       override def less(x: From, y: From)            = (x,y) match {
@@ -511,6 +538,8 @@ TODO:
               println(s"result = $d")
               val y1 = iff(zc,d,zeroRes)
               fun(f,x,y1)
+            case `prevRes` =>
+              fun(f,x,zeroRes)
             case _ =>
               dreflect(f,next.fun(f,x,pre(y)))            
           }
@@ -630,9 +659,12 @@ TODO:
         val n = reflect(s"loop($store,0)._2 // count")}*/
 
         import IR._
+        val saveit = itvec
 
         val loop = GRef(freshVar)
         val n0 = GRef(freshVar)
+
+        itvec = pair(itvec,n0)
 
         store = iff(less(const(0), n0), call(loop,plus(n0,const(-1))), store)
 
@@ -649,6 +681,8 @@ TODO:
         store = call(loop,nX)
         val cv1 = eval(c)
         store = subst(store,cv1,const(0)) // assertFalse
+
+        itvec = saveit         
 
 /*
 
