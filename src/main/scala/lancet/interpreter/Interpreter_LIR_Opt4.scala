@@ -531,11 +531,14 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
         if (shouldInline(b.blockID)) {
           emitAll(blockInfoOut(b.blockID).code)
         } else {
-          emitString("// should not have inlined "+b.blockID)
+          emitString("// should not inline start block "+b.blockID)
+          val s0 = blockInfo(b.blockID).inEdges.find(_._1 == -1).get._2
           val s1 = blockInfo(b.blockID).inState
+          val fields = getFields(s1)
           val (key,keyid) = contextKeyId(getFrame(s1))
-          emitString("// instead call BLOCK_"+keyid)
-          emitAll(blockInfoOut(b.blockID).code)         
+          val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
+          val call = genBlockCall(keyid, fields)
+          reflect[Unit](";", Block[Unit](head.stms:+Unstructured(call), head.res))
         }
 
         // emit all non-inlined blocks
