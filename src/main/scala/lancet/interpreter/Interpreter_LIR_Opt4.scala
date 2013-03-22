@@ -369,6 +369,9 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
       val graalBlocks = getGraalBlocks(method)
       def getGraalBlock(fr: InterpreterFrame) = graalBlocks.blocks.find(_.startBci == fr.getBCI).get
 
+      if (mframe.getBCI != 0)
+        emitString("// warning: block ordering will be wrong! bci="+mframe.getBCI)
+
 /*
       emitString("/*")
       val postDom = postDominators(graalBlock.blocks.toList)
@@ -441,7 +444,7 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
         }
 
         val out = blockInfoOut(curBlock)
-        emitString("GOTO_"+(out.gotos.length)+";")
+        emitString("GOTO_"+mkeyid+"_"+curBlock+"_"+(out.gotos.length))
         blockInfoOut(curBlock) = out.copy(gotos = out.gotos :+ s)
         liftConst(())
       }
@@ -473,7 +476,7 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
 
         def getPreds(i: Int) = blockInfo(i).inEdges.map(_._1)
         def shouldInline(i: Int) = getPreds(i).length < 2
-        assert(getPreds(b.blockID) == List(-1))
+        //assert(getPreds(b.blockID) == List(-1)) we do have preds for OSR!
 
         // fix jumps inside blocks: either call or inline
         for (b <- graalBlocks.blocks.reverse if blockInfo.contains(b.blockID)) {
@@ -495,14 +498,24 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
               val call = genBlockCall(keyid, fields)
               reify { reflect[Unit](";", Block[Unit](head.stms:+Unstructured(call), head.res)) }
             }
-            src = src.replace("GOTO_"+i+";", rhs)
+            src = src.replace("GOTO_"+mkeyid+"_"+b.blockID+"_"+i, rhs)
           }
           blockInfoOut(i) = BlockInfoOut(returns, gotos, src) // update body src
         }
 
         // initial block -- do we ever need to lub here?
-        assert(getPreds(b.blockID) == List(-1))
-        emitAll(blockInfoOut(b.blockID).code)
+        //assert(getPreds(b.blockID) == List(-1)) we do have preds for OSR!
+        //emitAll(blockInfoOut(b.blockID).code)
+
+        if (shouldInline(b.blockID)) {
+          emitAll(blockInfoOut(b.blockID).code)
+        } else {
+          emitString("// should not have inlined "+b.blockID)
+          val s1 = blockInfo(b.blockID).inState
+          val (key,keyid) = contextKeyId(getFrame(s1))
+          emitString("// instead call BLOCK_"+keyid)
+          emitAll(blockInfoOut(b.blockID).code)         
+        }
 
         // emit all non-inlined blocks
         for (b <- graalBlocks.blocks if blockInfo.contains(b.blockID)) {
