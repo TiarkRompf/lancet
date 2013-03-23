@@ -338,7 +338,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       val name = if (params.length == 0) cls.getName
                  else cls.getName + "[" + params.map(x=>"_").mkString(",") + "]"
 
-      reflect[Object](value+".asInstanceOf["+name+"] // checkCast")
+      reflect[Object](value,".asInstanceOf["+name+"] // checkCast")
     }
 
     // called by invokeVirtual

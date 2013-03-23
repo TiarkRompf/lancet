@@ -361,7 +361,7 @@ trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInter
       val name = if (params.length == 0) cls.getName
                  else cls.getName + "[" + params.map(x=>"_").mkString(",") + "]"
 
-      reflect[Object](value+".asInstanceOf["+name+"] // checkCast")
+      reflect[Object](value,".asInstanceOf["+name+"] // checkCast")
     }
 
     // called by invokeVirtual
