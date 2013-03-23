@@ -49,8 +49,8 @@ trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInter
     }
 
 
-    var emitCheckCast = false
-    var emitUniqueOpt = false
+    var emitCheckCast = true
+    var emitUniqueOpt = true
 
 
     def withScope[A](body: =>A): A
