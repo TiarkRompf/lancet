@@ -13,7 +13,6 @@ import scala.tools.nsc.interpreter.AbstractFileClassLoader
 object ScalaCompile {
 
   var compiler: Global = _
-  //var output: ByteArrayOutputStream = _ 
   var external = false
 
   def setCompiler(c: Global): Unit = {
@@ -22,10 +21,6 @@ object ScalaCompile {
   }
 
   def setupCompiler() = {
-    /*
-      output = new ByteArrayOutputStream()
-      val writer = new PrintWriter(new OutputStreamWriter(output))
-    */
     val settings = new Settings()
 
     settings.classpath.value = this.getClass.getClassLoader match {
