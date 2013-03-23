@@ -1,0 +1,512 @@
+==== fun/printcode
+25
+// constants: <function1>
+class Generated0(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$1) extends (Int=>Int){
+import sun.misc.Unsafe
+val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
+type char = Char
+def WARN = assert(false, "WARN")
+def ERROR = assert(false, "ERROR")
+def apply(ARG: Int): Int = { object BODY {
+  var RES = null.asInstanceOf[Int]
+  val x0 = ARG
+  val x1 = x0.asInstanceOf[Int]
+  val x2 = x1 * 3
+  val x3 = 4 + x2
+  (RES = x3) // return to root
+  // (no return?)
+}; BODY.RES }
+}
+
+compilation: ok
+25
+// constants: <function1>
+class Generated0(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$1) extends (Int=>Int){
+import sun.misc.Unsafe
+val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
+type char = Char
+def WARN = assert(false, "WARN")
+def ERROR = assert(false, "ERROR")
+def apply(ARG: Int): Int = { object BODY {
+  var RES = null.asInstanceOf[Int]
+  val x0 = ARG
+  val x1 = x0.asInstanceOf[Int]
+  val x2 = x1 * 3
+  val x3 = 4 + x2
+  (RES = x3) // return to root
+  // (no return?)
+}; BODY.RES }
+}
+
+// constants: <function1>
+class Generated1(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$2) extends (Int=>Int){
+import sun.misc.Unsafe
+val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
+type char = Char
+def WARN = assert(false, "WARN")
+def ERROR = assert(false, "ERROR")
+def apply(ARG: Int): Int = { object BODY {
+  var RES = null.asInstanceOf[Int]
+  val x4 = ARG
+  val x5 = x4.asInstanceOf[Int]
+  val x6 = x5 + 18
+  (RES = x6) // return to root
+  // (no return?)
+}; BODY.RES }
+}
+
+compilation: ok
+// constants: <function1>
+class Generated1(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$2) extends (Int=>Int){
+import sun.misc.Unsafe
+val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
+type char = Char
+def WARN = assert(false, "WARN")
+def ERROR = assert(false, "ERROR")
+def apply(ARG: Int): Int = { object BODY {
+  var RES = null.asInstanceOf[Int]
+  val x4 = ARG
+  val x5 = x4.asInstanceOf[Int]
+  val x6 = x5 + 18
+  (RES = x6) // return to root
+  // (no return?)
+}; BODY.RES }
+}
+
+// constants: <function1>
+class Generated2(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$fooX$1$1) extends (Int=>Int){
+import sun.misc.Unsafe
+val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
+type char = Char
+def WARN = assert(false, "WARN")
+def ERROR = assert(false, "ERROR")
+def apply(ARG: Int): Int = { object BODY {
+  var RES = null.asInstanceOf[Int]
+  val x7 = ARG
+  val x8 = x7.asInstanceOf[Int]
+  val x9 = x8 + 18
+  (RES = x9) // return to root
+  // (no return?)
+}; BODY.RES }
+}
+
+compilation: ok
+// constants: <function1>
+class Generated2(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$fooX$1$1) extends (Int=>Int){
+import sun.misc.Unsafe
+val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
+type char = Char
+def WARN = assert(false, "WARN")
+def ERROR = assert(false, "ERROR")
+def apply(ARG: Int): Int = { object BODY {
+  var RES = null.asInstanceOf[Int]
+  val x7 = ARG
+  val x8 = x7.asInstanceOf[Int]
+  val x9 = x8 + 18
+  (RES = x9) // return to root
+  // (no return?)
+}; BODY.RES }
+}
+
+==== staging: quote/unquote
+// constants: 
+class Generated3() extends (Int=>Int){
+import sun.misc.Unsafe
+val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
+type char = Char
+def WARN = assert(false, "WARN")
+def ERROR = assert(false, "ERROR")
+def apply(ARG: Int): Int = { object BODY {
+  var RES = null.asInstanceOf[Int]
+  val x10 = ARG
+  val x11 = x10 * 4
+  val x12 = RES = x11
+}; BODY.RES }
+}
+
+compilation: ok
+32
+// constants: <function0>
+class Generated4(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$6$$anonfun$apply$1) extends (Int=>Int){
+import sun.misc.Unsafe
+val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
+type char = Char
+def WARN = assert(false, "WARN")
+def ERROR = assert(false, "ERROR")
+def apply(ARG: Int): Int = { object BODY {
+  var RES = null.asInstanceOf[Int]
+  val x13 = ARG
+  val x14 = {
+    var RES = null.asInstanceOf[Int]
+    (RES = 12) // return to root
+    // (no return?)
+    RES.asInstanceOf[Int]
+  }
+  val x15 = RES = x14
+}; BODY.RES }
+}
+
+compilation: ok
+12
+// constants: <function0>,<function1>
+class Generated5(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$7$$anonfun$apply$2,CONST_1: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$7) extends (Int=>Int){
+import sun.misc.Unsafe
+val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
+type char = Char
+def WARN = assert(false, "WARN")
+def ERROR = assert(false, "ERROR")
+def apply(ARG: Int): Int = { object BODY {
+  var RES = null.asInstanceOf[Int]
+  val x16 = ARG
+  val x22 = {
+    var RES = null.asInstanceOf[Int]
+    val x17 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$7$$anonfun$apply$2$$anonfun$apply$mcI$sp$1"))
+    unsafe.putObject(x17,16L, CONST_0)
+    val x18 = x16.asInstanceOf[Int]
+    val x19 = x18.asInstanceOf[Int]
+    val x20 = x19.asInstanceOf[Int]
+    val x21 = x20 * 3
+    (RES = x21) // return to root
+    // (no return?)
+    RES.asInstanceOf[Int]
+  }
+  val x23 = RES = x22
+}; BODY.RES }
+}
+
+compilation: ok
+24
+==== continuations: shift/reset
+scala.NotImplementedError: an implementation is missing
+// constants: <function1>,<function0>,public abstract int scala.Function1.apply$mcII$sp(int)
+class Generated6(CONST_0: lancet.api.DefaultMacros$$anonfun$exec$1,CONST_1: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$3,CONST_2: java.lang.reflect.Method) extends (Int=>Int){
+import sun.misc.Unsafe
+val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
+type char = Char
+def WARN = assert(false, "WARN")
+def ERROR = assert(false, "ERROR")
+def apply(ARG: Int): Int = { object BODY {
+  var RES = null.asInstanceOf[Int]
+  val x24 = ARG
+  val x25 = x24.asInstanceOf[Int]
+  val x26 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$foo$4$1"))
+  unsafe.putInt(x26,16L, 7)
+  //begin shift
+  def kx33(x27:Int): Int = {
+    var RES = null.asInstanceOf[Int]
+    val x28 = x27.asInstanceOf[Int]
+    // need to fix block ordering for bci=15
+    // old: B0[0->7],B1[10->10],B2[15->15],B3[18->18]
+    // new: B2[15->15],B3[18->18]
+    // fixed: B0[15->15],B1[18->18]
+    val x29 = x28.asInstanceOf[Int]
+    val x30 = x29.asInstanceOf[Int]
+    // need to fix block ordering for bci=13
+    // old: B0[0->10],B1[13->15]
+    // new: B1[13->15]
+    // fixed: B0[13->15]
+    val x31 = 3 + x30
+    // need to fix block ordering for bci=4
+    // old: B0[0->1],B1[4->4]
+    // new: B1[4->4]
+    // fixed: B0[4->4]
+    // need to fix block ordering for bci=4
+    // old: B0[0->1],B1[4->4],B2[7->7]
+    // new: B1[4->4],B2[7->7]
+    // fixed: B0[4->4],B1[7->7]
+    val x32 = x31.asInstanceOf[Integer]
+    // need to fix block ordering for bci=9
+    // old: B0[0->4],B1[9->9]
+    // new: B1[9->9]
+    // fixed: B0[9->9]
+    (RES = x32) // return to root
+    // (no return?)
+    RES.asInstanceOf[Int]
+  }
+  val x33 = kx33 _
+  val x39 = {
+    var RES = null.asInstanceOf[Int]
+    val x34 = x33.asInstanceOf[scala.Function1[_,_]] // checkCast
+    val x35 = CONST_2.invoke(x34.asInstanceOf[AnyRef],7.asInstanceOf[AnyRef]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp
+    val x36 = x35.asInstanceOf[Int]
+    /* cse: WrappedArray(CONST_2, .invoke(x34.asInstanceOf[AnyRef],7.asInstanceOf[AnyRef]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp) = x35*/
+    /* cse: WrappedArray(ObjectAsInstanceOf(x35)) = x36*/
+    val x37 = x36 + x36
+    val x38 = x37.asInstanceOf[Integer]
+    (RES = x38) // return to root
+    // (no return?)
+    RES.asInstanceOf[Int]
+  }
+  //end shift
+  (RES = x39) // return to root
+  // (no return?)
+}; BODY.RES }
+}
+
+compilation: ok
+20
+==== speculate/slowpath
+// constants: <function1>,<function0>,10,lancet.api.Lancet$$anon$1@269bfe2a,public abstract int scala.Function1.apply$mcII$sp(int),HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,Array(x42, x49),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>
+class Generated7(CONST_0: lancet.interpreter.BytecodeInterpreter_LIR$$anonfun$fun$1,CONST_1: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$4,CONST_2: scala.runtime.IntRef,CONST_3: lancet.api.Lancet$$anon$1,CONST_4: java.lang.reflect.Method,CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: Array[lancet.core.Base_LIR$Rep],CONST_7: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_8: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (java.lang.Object=>Int){
+import sun.misc.Unsafe
+val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
+type char = Char
+def WARN = assert(false, "WARN")
+def ERROR = assert(false, "ERROR")
+def apply(ARG: java.lang.Object): Int = { object BODY {
+  var RES = null.asInstanceOf[Int]
+  val x40 = ARG
+  val x41 = unsafe.getInt(CONST_2,16L)
+  val x42 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1"))
+  unsafe.putObject(x42,24L, CONST_3)
+  unsafe.putInt(x42,16L, x41)
+  unsafe.putInt(x42,20L, 10)
+  //begin shift
+  def kx49(x43:Int): Int = {
+    var RES = null.asInstanceOf[Int]
+    val x44 = x43.asInstanceOf[Int]
+    // need to fix block ordering for bci=17
+    // old: B0[0->9],B1[12->12],B2[17->17],B3[20->20]
+    // new: B2[17->17],B3[20->20]
+    // fixed: B0[17->17],B1[20->20]
+    val x45 = x44.asInstanceOf[Int]
+    val x46 = x45.asInstanceOf[Int]
+    // need to fix block ordering for bci=20
+    // old: B0[0->17],B1[20->23]
+    // new: B1[20->23]
+    // fixed: B0[20->23]
+    val x47 = 100 + x46
+    // need to fix block ordering for bci=4
+    // old: B0[0->1],B1[4->4]
+    // new: B1[4->4]
+    // fixed: B0[4->4]
+    // need to fix block ordering for bci=4
+    // old: B0[0->1],B1[4->4],B2[7->7]
+    // new: B1[4->4],B2[7->7]
+    // fixed: B0[4->4],B1[7->7]
+    val x48 = x47.asInstanceOf[Integer]
+    // need to fix block ordering for bci=9
+    // old: B0[0->4],B1[9->9]
+    // new: B1[9->9]
+    // fixed: B0[9->9]
+    (RES = x48) // return to root
+    // (no return?)
+    RES.asInstanceOf[Int]
+  }
+  val x49 = kx49 _
+  val x59 = {
+    var RES = null.asInstanceOf[Int]
+    val x50 = x49.asInstanceOf[scala.Function1[_,_]] // checkCast
+    // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>
+    ;{
+      var vPHI_2_5 = null.asInstanceOf[Int]
+      var vx40 = null.asInstanceOf[java.lang.Object]
+      var vx41 = null.asInstanceOf[Int]
+      var vx42 = null.asInstanceOf[Object]
+      var vx49 = null.asInstanceOf[Object]
+      var vx50 = null.asInstanceOf[Object]
+      var vx51 = null.asInstanceOf[Boolean]
+      val x51 = 10 != x41
+      if (x51) {
+        val x54 = CONST_3.mkInterpreterFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_3.asInstanceOf[AnyRef],CONST_5.asInstanceOf[AnyRef],CONST_6.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), -1, 6, CONST_7, null)
+        val x55 = CONST_3.mkInterpreterFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],x42.asInstanceOf[AnyRef],x49.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 8, 5, CONST_5, x54)
+        val x56 = CONST_3.mkInterpreterFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],x42.asInstanceOf[AnyRef],x50.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 33, 5, CONST_8, x55)
+        val x57 = CONST_3.execInterpreter(x56).asInstanceOf[Int] // drop into interpreter
+        // old parent: 28:<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply><(Lscala/Function1;)I> // 8:<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply><(Ljava/lang/Object;)Ljava/lang/Object;> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+        // new parent: 8:<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply><(Ljava/lang/Object;)Ljava/lang/Object;> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+        /*R_79_3_0;*/;{
+          val PHI_2_5 = x57 // LUBC(x53:Int,x57:Int)
+          vPHI_2_5 = PHI_2_5
+          vx40 = x40
+          vx41 = x41
+          vx42 = x42
+          vx49 = x49
+          vx50 = x50
+          vx51 = x51
+        };
+      } else {
+        val x52 = CONST_4.invoke(x50.asInstanceOf[AnyRef],10.asInstanceOf[AnyRef]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp
+        val x53 = x52.asInstanceOf[Int]
+        /*R_79_5_0;*/;{
+          val PHI_2_5 = x53 // LUBC(x57:Int,x53:Int)
+          vPHI_2_5 = PHI_2_5
+          vx40 = x40
+          vx41 = x41
+          vx42 = x42
+          vx49 = x49
+          vx50 = x50
+          vx51 = x51
+        };
+      }
+      ;{
+        val PHI_2_5 = vPHI_2_5
+        val x40 = vx40
+        val x41 = vx41
+        val x42 = vx42
+        val x49 = vx49
+        val x50 = vx50
+        val x51 = vx51
+        val x58 = PHI_2_5.asInstanceOf[Integer]
+        (RES = x58) // return to root
+    }}
+    // (no return?)
+    RES.asInstanceOf[Int]
+  }
+  //end shift
+  (RES = x59) // return to root
+  // (no return?)
+}; BODY.RES }
+}
+
+compilation: ok
+110
+-- start interpreting
+frame:
+HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>
+<function1>,<function1>,null,null
+HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>
+<function1>,<function1>,null,null
+HotSpotMethod<BytecodeInterpreter_Exec.execute>
+lancet.api.Lancet$$anon$1@269bfe2a,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@34359aa2,null,null,null,null,null,null
+root:
+HotSpotMethod<BytecodeInterpreter_Exec.execute>
+lancet.api.Lancet$$anon$1@269bfe2a,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@34359aa2,null,null,null,null,null,null
+      RootCall HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply> - HotSpotSignature<(Lscala/Function1;)I>
+      33: aload_1
+      34: aload_0
+      35: getfield
+      38: invokeinterface
+        Call HotSpotMethod<Generated7$BODY$2$$anonfun$1.apply$mcII$sp> - HotSpotSignature<(I)I>
+        0: aload_0
+        1: getfield
+        4: iload_1
+        5: invokevirtual
+          Call HotSpotMethod<Generated7$BODY$2$.kx49> - HotSpotSignature<(I)I>
+          0: aconst_null
+          1: invokestatic
+            Call HotSpotMethod<BoxesRunTime.unboxToInt> - HotSpotSignature<(Ljava/lang/Object;)I>
+            0: aload_0
+            1: ifnonnull
+            4: iconst_0
+            5: goto
+            15: ireturn
+            Ret HotSpotMethod<BoxesRunTime.unboxToInt> - HotSpotSignature<(Ljava/lang/Object;)I>
+          4: istore_2
+          5: iload_1
+          6: istore_3
+          7: iload_3
+          8: istore
+          10: iload
+          12: istore
+          14: bipush
+          16: iload
+          18: iadd
+          19: istore
+          21: iload
+          23: invokestatic
+            Call HotSpotMethod<BoxesRunTime.boxToInteger> - HotSpotSignature<(I)Ljava/lang/Integer;>
+            0: iload_0
+            1: invokestatic
+              Call HotSpotMethod<Integer.valueOf> - HotSpotSignature<(I)Ljava/lang/Integer;>
+              0: getstatic
+              3: ifne
+              22: iload_0
+              23: bipush
+              25: if_icmplt
+              28: iload_0
+              29: getstatic
+              32: if_icmpgt
+              45: new
+              48: dup
+              49: iload_0
+              50: invokespecial
+                Call HotSpotMethod<Integer.<init>> - HotSpotSignature<(I)V>
+                0: aload_0
+                1: invokespecial
+                  Call HotSpotMethod<Number.<init>> - HotSpotSignature<()V>
+                  0: aload_0
+                  1: invokespecial
+                    Call HotSpotMethod<Object.<init>> - HotSpotSignature<()V>
+                    0: return
+                    Ret HotSpotMethod<Object.<init>> - HotSpotSignature<()V>
+                  4: return
+                  Ret HotSpotMethod<Number.<init>> - HotSpotSignature<()V>
+                4: aload_0
+                5: iload_1
+                6: putfield
+                9: return
+                Ret HotSpotMethod<Integer.<init>> - HotSpotSignature<(I)V>
+              53: areturn
+              Ret HotSpotMethod<Integer.valueOf> - HotSpotSignature<(I)Ljava/lang/Integer;>
+            4: areturn
+            Ret HotSpotMethod<BoxesRunTime.boxToInteger> - HotSpotSignature<(I)Ljava/lang/Integer;>
+          26: checkcast
+          29: astore
+          31: getstatic
+          34: aload
+          36: invokevirtual
+            Call HotSpotMethod<Predef$.Integer2int> - HotSpotSignature<(Ljava/lang/Integer;)I>
+            0: aload_1
+            1: invokevirtual
+              Call HotSpotMethod<Integer.intValue> - HotSpotSignature<()I>
+              0: aload_0
+              1: getfield
+              4: ireturn
+              Ret HotSpotMethod<Integer.intValue> - HotSpotSignature<()I>
+            4: ireturn
+            Ret HotSpotMethod<Predef$.Integer2int> - HotSpotSignature<(Ljava/lang/Integer;)I>
+          39: istore_2
+          40: iload_2
+          41: ireturn
+          Ret HotSpotMethod<Generated7$BODY$2$.kx49> - HotSpotSignature<(I)I>
+        8: ireturn
+        Ret HotSpotMethod<Generated7$BODY$2$$anonfun$1.apply$mcII$sp> - HotSpotSignature<(I)I>
+      43: ireturn
+      Ret HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply> - HotSpotSignature<(Lscala/Function1;)I>
+    8: invokestatic
+      Call HotSpotMethod<BoxesRunTime.boxToInteger> - HotSpotSignature<(I)Ljava/lang/Integer;>
+      0: iload_0
+      1: invokestatic
+        Call HotSpotMethod<Integer.valueOf> - HotSpotSignature<(I)Ljava/lang/Integer;>
+        0: getstatic
+        3: ifne
+        22: iload_0
+        23: bipush
+        25: if_icmplt
+        28: iload_0
+        29: getstatic
+        32: if_icmpgt
+        45: new
+        48: dup
+        49: iload_0
+        50: invokespecial
+          Call HotSpotMethod<Integer.<init>> - HotSpotSignature<(I)V>
+          0: aload_0
+          1: invokespecial
+            Call HotSpotMethod<Number.<init>> - HotSpotSignature<()V>
+            0: aload_0
+            1: invokespecial
+              Call HotSpotMethod<Object.<init>> - HotSpotSignature<()V>
+              0: return
+              Ret HotSpotMethod<Object.<init>> - HotSpotSignature<()V>
+            4: return
+            Ret HotSpotMethod<Number.<init>> - HotSpotSignature<()V>
+          4: aload_0
+          5: iload_1
+          6: putfield
+          9: return
+          Ret HotSpotMethod<Integer.<init>> - HotSpotSignature<(I)V>
+        53: areturn
+        Ret HotSpotMethod<Integer.valueOf> - HotSpotSignature<(I)Ljava/lang/Integer;>
+      4: areturn
+      Ret HotSpotMethod<BoxesRunTime.boxToInteger> - HotSpotSignature<(I)Ljava/lang/Integer;>
+    11: areturn
+    Ret HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply> - HotSpotSignature<(Ljava/lang/Object;)Ljava/lang/Object;>
+-- done interpreting
+HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>
+null,null,null,null
+root:
+HotSpotMethod<BytecodeInterpreter_Exec.execute>
+lancet.api.Lancet$$anon$1@269bfe2a,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@34359aa2,200,null,null,null,null,null
+result: 200
+200
