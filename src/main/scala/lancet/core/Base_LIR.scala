@@ -245,20 +245,20 @@ trait Base_LIR extends Base_LIR0 {
       case Some(y) =>
         emitString("/* cse: "+rhs+" = "+ y + "*/")
         y
-      case None =>
-      if (typeRep[T] == typeRep[Unit]) {
-        emit(ValDef("_", typeRep[T], s.toList)); liftConst(()).asInstanceOf[Rep[T]]
-      } else {
-        val x = fresh; 
-        emit(ValDef(x,typeRep[T],s.toList)); 
-        val y = Dyn[T](x)
-        //FIXME: can't cse if stm has effects
-        //FIXME: not everything is SSA (CONST_LUB) -- need to kill! (TODO: in emit if lhs not a fresh var)
-        def isPure = !(rhs.contains("throw") || rhs.contains("new") || rhs.contains(".alloc") || rhs.contains(".put")) //HACK
-        if (isPure)
-          rewrite(rhs, y)
-        y
-      }
+      case _ =>
+        if (typeRep[T] == typeRep[Unit]) {
+          emit(ValDef("_", typeRep[T], s.toList)); liftConst(()).asInstanceOf[Rep[T]]
+        } else {
+          val x = fresh; 
+          emit(ValDef(x,typeRep[T],s.toList)); 
+          val y = Dyn[T](x)
+          //FIXME: can't cse if stm has effects
+          //FIXME: not everything is SSA (CONST_LUB) -- need to kill! (TODO: in emit if lhs not a fresh var)
+          def isPure = !(rhs.contains("throw") || rhs.contains("new") || rhs.contains(".alloc") || rhs.contains(".put")) //HACK
+          if (isPure && emitCSE)
+            rewrite(rhs, y)
+          y
+        }
     }).asInstanceOf[Rep[T]]
   }
 /*
@@ -276,6 +276,8 @@ trait Base_LIR extends Base_LIR0 {
   }
 */
 
+
+  var emitCSE = true
 
   var exprs: Map[String, Rep[Any]] = Map.empty // maps
   //var envdef: Map[String, ValDef[T]] = Map.empty
