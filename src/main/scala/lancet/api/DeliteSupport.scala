@@ -275,6 +275,19 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
     (arg,body)
   }
 
+  def decompileFun[A:TypeRep,B:TypeRep](f: Rep[A=>B]): Rep[A] => Rep[B] = {
+    val Partial(fs) = eval(f)
+    val Static(cls: Class[_]) = fs("clazz");
+    { arg => 
+      withScope {
+        emitString("  var RES = null.asInstanceOf["+typeRep[B]+"]")
+        execute(cls.getMethod("apply", Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
+        Dyn[B]("RES.asInstanceOf["+typeRep[B]+"]")
+      }
+    }
+  }
+
+
   var traceMethods = false
 
   def handleMethodCall(parent: InterpreterFrame, m: ResolvedJavaMethod): Option[InterpreterFrame] = {

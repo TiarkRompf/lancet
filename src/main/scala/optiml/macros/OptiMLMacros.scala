@@ -21,7 +21,7 @@ import OptiMLLancetRunner._
 
 object OptiMLMacros extends OptiMLRunner.ClassMacros {
   val targets = List(classOf[OptiMLCompanion])
-  import OptiMLRunner.{Rep,reflect,mtr,infix_relax}
+  import OptiMLRunner._ //{Rep,reflect,mtr,infix_relax}
   
   def readMatrix(self: Rep[OptiMLCompanion], path: Rep[String]): Rep[DenseMatrix[Double]] = {
     Console.println("catch readMatrix")
@@ -60,15 +60,28 @@ object OptiMLMacros extends OptiMLRunner.ClassMacros {
   }
 
   // typing assertion fails here too
-  // def untilconverged[T](self: Rep[OptiMLCompanion], x: Rep[DenseMatrix[T]], tol: Rep[Double], block: Rep[DenseMatrix[T]] => Rep[DenseMatrix[T]]): Rep[DenseMatrix[T]] = {
-  //   Console.println("catch untilconverged")
-  //   implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
-  //   implicit val matOps = OptiMLRunner.repToDenseMatOps(x).asInstanceOf[Rep[DenseMatrix[Double]] => OptiMLRunner.MatOpsCls[Double]]
-  //   implicit val cl = OptiMLRunner.matrixCloneable[Double,DenseMatrix[Double]].asInstanceOf[OptiMLRunner.Cloneable[DenseMatrix[T]]]
-  //   implicit val ar = OptiMLRunner.doubleArith.asInstanceOf[OptiMLRunner.Arith[T]]
-  //   implicit val diff = (a: Rep[DenseMatrix[T]], b: Rep[DenseMatrix[T]]) => (OptiMLRunner.optila_matrix_dist_square(OptiMLRunner.denseMatToInterface(a),OptiMLRunner.denseMatToInterface(b))(mf,ar,implicitly[SourceContext])).asInstanceOf[Rep[Double]]
-  //   OptiMLRunner.optiml_untilconverged[DenseMatrix[T]](x,(a: Rep[DenseMatrix[T]]) => tol,OptiMLRunner.unit(10),OptiMLRunner.unit(true),block,diff)
-  // }
+   def untilconverged[T](self: Rep[OptiMLCompanion], x: Rep[DenseMatrix[T]], tol: Rep[Double], block: Rep[DenseMatrix[T] => DenseMatrix[T]]): Rep[DenseMatrix[T]] = {
+     try {
+     Console.println("catch untilconverged")
+     implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
+     Console.println("catch untilconverged1")
+     //implicit val matOps = OptiMLRunner.repToDenseMatOps(x).asInstanceOf[Rep[DenseMatrix[Double]] => OptiMLRunner.MatOpsCls[Double]]
+     Console.println("catch untilconverged2")
+     implicit val cl = OptiMLRunner.matrixCloneable[Double,DenseMatrix[Double]].asInstanceOf[OptiMLRunner.Cloneable[DenseMatrix[T]]]
+     Console.println("catch untilconverged3")
+     implicit val ar = OptiMLRunner.doubleArith.asInstanceOf[OptiMLRunner.Arith[T]]
+     Console.println("catch untilconverged4")
+     implicit val diff = (a: Rep[DenseMatrix[T]], b: Rep[DenseMatrix[T]]) => (OptiMLRunner.optila_matrix_dist_square(OptiMLRunner.denseMatToInterface(a),OptiMLRunner.denseMatToInterface(b))(mf,ar,implicitly[SourceContext])).asInstanceOf[Rep[Double]]
+     Console.println("catch untilconverged5")
+     val block1 = decompileFun(block)(mtr[DenseMatrix[T]],mtr[DenseMatrix[T]])
+     Console.println("catch untilconverged6")
+     OptiMLRunner.optiml_untilconverged[DenseMatrix[T]](x,(a: Rep[DenseMatrix[T]]) => tol,OptiMLRunner.unit(10),OptiMLRunner.unit(true),block1,diff)
+      } catch {
+          case e =>
+            e.printStackTrace
+            throw e
+      }
+   }
   
 }
 

@@ -19,12 +19,13 @@ import OptiMLLancetRunner._
 
 object IndexVectorMacros extends OptiMLRunner.ClassMacros {
   val targets = List(classOf[optiml.library.IndexVectorRange])
-  import OptiMLRunner.{Rep,reflect,mtr,infix_relax}
+  import OptiMLRunner._ //{Rep,reflect,mtr,infix_relax,decompileFun}
 
-  def construct[T](self: Rep[IndexVectorRange], f: Rep[Int] => Rep[T]): Rep[DenseVector[T]] = {
+  def construct[T](self: Rep[IndexVectorRange], f: Rep[Int=>T]): Rep[DenseVector[T]] = {
     Console.println("catch indexvector_construct_rows")
     implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
-    OptiMLRunner.indexvector_construct(OptiMLRunner.indexVecRangeToInterface(self),f) 
+    val f1 = decompileFun(f)(typeRep[Int],mtr[T])
+    OptiMLRunner.indexvector_construct(OptiMLRunner.indexVecRangeToInterface(self),f1) 
   }
   
   // same problem with interface function as MatrixMapRowsToVec...

@@ -18,6 +18,7 @@ object OptiMLLancetRunner {
   OptiMLRunner.install(OptiMLMacros)  
   OptiMLRunner.install(DenseVectorMacros)
   OptiMLRunner.install(DenseMatrixMacros)
+  OptiMLRunner.install(IndexVectorMacros)
   
   def infix_run(runner: LancetDeliteRunner) = {
     // now run stuff....
