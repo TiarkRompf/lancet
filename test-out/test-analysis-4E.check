@@ -2,10 +2,269 @@ prog: {
   Assign(x,New(X))
   Put(Ref(x),a,New(A))
   Put(Get(Ref(x),a),baz,Const(3))
-  While(Direct(input),{
+  While(Direct("input"),{
     Put(Ref(x),a,New(B))
     Put(Get(Ref(x),a),foo,Const(5))
   })
   Put(Get(Ref(x),a),bar,Const(7))
   Assign(xbar,Get(Get(Ref(x),a),bar))
 }
+val x0 = ("X",1)
+val x1 = Map(x0 -> Map())
+val x2 = Map("val" -> x0)
+val x3 = Map("&x" -> x2)
+val x4 = ("A",1)
+val x5 = Map("&x" -> x2, x4 -> Map())
+val x6 = Map("&x" -> x2, x0 -> "undefined")
+val x7 = "undefined"("a")
+val x8 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined")
+val x11 = (1,x10)
+val x12 = 0 < x10
+val x13 = x10 + -1
+val x14 = x9(x13)
+val x15 = if (x12) x14 else x8
+val x16 = x14("&x")
+val x17 = if (x12) x16 else x2
+val x18 = x16("val")
+val x19 = if (x12) x18 else x0
+val x20 = x14(x19)
+another < flying by: 0 < x10, 0 < x10 -> 1
+val x21 = x14(x18)
+val x22 = if (x12) x21 else "undefined"
+val x23 = ("B",x11)
+val x24 = x14 + (x23 -> Map())
+val x25 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", x23 -> Map())
+val x26 = if (x12) x24 else x25
+val x27 = x21 + ("a" -> x23)
+val x28 = if (x12) x27 else "undefined"
+val x29 = x14 + (x19 -> x28)
+val x30 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", x18 -> x28)
+val x31 = Map("&x" -> x2, x0 -> x28, x7 -> "undefined")
+another < flying by: 0 < x10, 0 < x10 -> 0
+val x32 = if (x12) "undefined" else "undefined"
+another < flying by: 0 < x10, 0 < x10 -> 1
+val x33 = if (x12) x27 else "nil"
+val x34 = Map("&x" -> x2, x0 -> x32, x7 -> "undefined", x18 -> x33)
+another < flying by: 0 < x10, 0 < x10 -> 1
+another < flying by: 0 < x10, 0 < x10 -> 1
+val x35 = x14 + (x18 -> x27)
+another < flying by: 0 < x10, 0 < x10 -> 0
+another < flying by: 0 < x10, 0 < x10 -> 0
+val x36 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", x18 -> "nil")
+val x37 = if (x12) x35 else x36
+val x38 = if (x12) "nil" else "undefined"
+another < flying by: 0 < x10, 0 < x10 -> 1
+another < flying by: 0 < x10, 0 < x10 -> 0
+val x39 = x21("a")
+val x40 = if (x12) x39 else x7
+val x41 = x14(x40)
+another < flying by: 0 < x10, 0 < x10 -> 1
+val x42 = x14(x39)
+val x43 = if (x12) x42 else "undefined"
+val x44 = x42 + ("foo" -> 5)
+val x45 = if (x12) x44 else "undefined"
+val x46 = x35 + (x40 -> x45)
+val x47 = Map("&x" -> x2, x18 -> "nil", x0 -> "undefined", x39 -> x45, x7 -> "undefined")
+val x48 = Map("&x" -> x2, x0 -> "undefined", x7 -> x45, x18 -> "nil")
+another < flying by: 0 < x10, 0 < x10 -> 1
+val x49 = if (x12) x44 else "nil"
+another < flying by: 0 < x10, 0 < x10 -> 0
+val x50 = Map("&x" -> x2, x18 -> "nil", x0 -> "undefined", x39 -> x49, x7 -> x32)
+another < flying by: 0 < x10, 0 < x10 -> 1
+another < flying by: 0 < x10, 0 < x10 -> 1
+val x51 = x35 + (x39 -> x44)
+another < flying by: 0 < x10, 0 < x10 -> 0
+another < flying by: 0 < x10, 0 < x10 -> 0
+val x52 = Map("&x" -> x2, x18 -> "nil", x0 -> "undefined", x39 -> "nil", x7 -> "undefined")
+val x53 = if (x12) x51 else x52
+val x9 = { x10 => x53 }
+val x54 = fixindex(x10 => "input")
+val x55 = x9(x54)
+val x56 = fixindex(x10 => 0)
+val x57 = x9(x56)
+val x58 = x57("&x")
+val x59 = x58("val")
+val x60 = x57(x59)
+val x61 = x60("a")
+val x62 = x57(x61)
+val x63 = x62 + ("bar" -> 7)
+val x64 = x57 + (x61 -> x63)
+val x65 = Map("val" -> 7)
+val x66 = x64 + ("&xbar" -> x65)
+res: ()
+store: x66
+*** begin iterate: x66
+funs:
+val x9 = { x10 => x53 }
+calls:
+val x14 = x9(x13)
+val x57 = x9(x56)
+subst: Map(x10 -> 0)
+val x67 = (1,0)
+val x68 = x9(-1)
+val x69 = x68("&x")
+val x70 = x69("val")
+val x71 = x68(x0)
+val x72 = x68(x70)
+val x73 = ("B",x67)
+val x74 = x68 + (x73 -> Map())
+val x75 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", x73 -> Map())
+val x76 = x72 + ("a" -> x73)
+val x77 = x68 + (x0 -> "undefined")
+val x78 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", x70 -> "undefined")
+val x79 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", x70 -> "nil")
+val x80 = x68 + (x70 -> x76)
+val x81 = x72("a")
+val x82 = x68(x7)
+val x83 = x68(x81)
+val x84 = x83 + ("foo" -> 5)
+val x85 = x80 + (x7 -> "undefined")
+val x86 = Map("&x" -> x2, x0 -> "undefined", x81 -> "undefined", x70 -> "nil", x7 -> "undefined")
+val x87 = Map("&x" -> x2, x0 -> "undefined", x81 -> "nil", x70 -> "nil", x7 -> "undefined")
+val x88 = x80 + (x81 -> x84)
+zeros: Map(x9 -> x87)
+val x89 = x9_&x(x13)
+val x90 = x9_x0(x13)
+val x91 = x9_x81(x13)
+val x92 = x9_x70(x13)
+val x93 = x9_x7(x13)
+val x94 = Map("&x" -> x89, x0 -> x90, x81 -> x91, x70 -> x92, x7 -> x93)
+val x95 = x9_&x(x56)
+val x96 = x9_x0(x56)
+val x97 = x9_x81(x56)
+val x98 = x9_x70(x56)
+val x99 = x9_x7(x56)
+val x100 = Map("&x" -> x95, x0 -> x96, x81 -> x97, x70 -> x98, x7 -> x99)
+xform: Map(x14 -> x94, x57 -> x100)
+val x101 = if (x12) x89 else x2
+val x102 = if (x12) x90 else "undefined"
+val x103 = if (x12) x91 else "nil"
+val x104 = if (x12) x92 else "nil"
+val x105 = if (x12) x93 else "undefined"
+val x106 = Map("&x" -> x101, x0 -> x102, x81 -> x103, x70 -> x104, x7 -> x105)
+val x107 = x89("val")
+val x108 = if (x12) x107 else x0
+val x109 = if (x12) "undefined" else x90
+val x110 = Map("&x" -> x89, x0 -> x90, x81 -> x91, x23 -> Map(), x70 -> x92, x7 -> x93)
+val x111 = Map("&x" -> x101, x0 -> x102, x81 -> x103, x23 -> Map(), x70 -> x104, x7 -> x105)
+val x112 = Map("&x" -> x89, x0 -> x90, x81 -> x91, x70 -> x92, x7 -> x93, x107 -> "undefined")
+val x113 = Map("&x" -> x89, x0 -> "undefined", x81 -> x91, x70 -> x92, x7 -> x93)
+val x114 = if (x12) "undefined" else "nil"
+val x115 = Map("&x" -> x89, x0 -> x102, x81 -> x91, x70 -> x92, x7 -> x93, x107 -> x114)
+val x116 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", x107 -> "undefined")
+val x117 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", x107 -> x114)
+val x118 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", x107 -> "nil")
+val x119 = Map("&x" -> x101, x0 -> x102, x81 -> x103, x70 -> x104, x7 -> x105, x107 -> x114)
+val x120 = x93 + ("foo" -> 5)
+val x121 = if (x12) x120 else "undefined"
+val x122 = Map("&x" -> x89, x0 -> x90, x81 -> x91, x70 -> x92, x7 -> x121, x107 -> "undefined")
+val x123 = Map("&x" -> x2, x0 -> "undefined", x7 -> x121, x107 -> "nil")
+val x124 = if (x12) x120 else "nil"
+val x125 = Map("&x" -> x89, x0 -> x90, x81 -> x91, x70 -> x92, x7 -> x120, x107 -> "undefined")
+val x126 = Map("&x" -> x101, x0 -> x102, x81 -> x103, x70 -> x104, x7 -> x121, x107 -> x114)
+val x127 = x95("val")
+val x128 = x99 + ("bar" -> 7)
+val x129 = Map("&x" -> x95, x0 -> x96, x81 -> x97, x70 -> x98, x7 -> x128)
+val x130 = Map("&x" -> x95, "&xbar" -> x65, x0 -> x96, x81 -> x97, x70 -> x98, x7 -> x128)
+val x9_&x = { x10 => x2 }
+val x9_x0 = { x10 => "undefined" }
+val x9_x81 = { x10 => "nil" }
+val x9_x70 = { x10 => "nil" }
+val x9_x7 = { x10 => x121 }
+*** done iterate: x130
+*** begin iterate: x130
+funs:
+val x9 = { x10 => x53 }
+val x9_&x = { x10 => x2 }
+val x9_x0 = { x10 => "undefined" }
+val x9_x81 = { x10 => "nil" }
+val x9_x70 = { x10 => "nil" }
+val x9_x7 = { x10 => x121 }
+calls:
+val x14 = x9(x13)
+val x68 = x9(-1)
+val x95 = x9_&x(x56)
+val x96 = x9_x0(x56)
+val x97 = x9_x81(x56)
+val x98 = x9_x70(x56)
+val x93 = x9_x7(x13)
+val x99 = x9_x7(x56)
+subst: Map(x10 -> 0)
+val x131 = x9_x7(-1)
+val x132 = Map("&x" -> x2, x0 -> "undefined", x81 -> "nil", x70 -> "nil", x7 -> x131)
+val x133 = Map("&x" -> x2, x0 -> "undefined", x81 -> "nil", x70 -> "nil", x7 -> x99)
+val x134 = Map("&x" -> x2, x0 -> "undefined", x81 -> "nil", x70 -> "nil", x73 -> Map(), x7 -> x131)
+val x135 = Map("&x" -> x2, x0 -> "undefined", x81 -> "nil", x70 -> "nil", x73 -> Map(), x7 -> "undefined")
+val x136 = Map("&x" -> x2, x0 -> "nil", x81 -> "nil", x70 -> "nil", x7 -> x131)
+val x137 = Map("&x" -> x2, x0 -> "nil", x7 -> "undefined")
+val x138 = Map("&x" -> x2, x0 -> "nil", x81 -> "nil", x70 -> "nil", x7 -> "undefined")
+val x139 = x131 + ("foo" -> 5)
+val x140 = Map("&x" -> x2, x0 -> "undefined", x81 -> "nil", x70 -> "nil", x7 -> x139)
+val x141 = Map("&x" -> x2, x0 -> "undefined", x81 -> "nil", x70 -> "nil", x7 -> x128)
+val x142 = Map("&x" -> x2, "&xbar" -> x65, x0 -> "undefined", x81 -> "nil", x70 -> "nil", x7 -> x128)
+zeros: Map(x9_x81 -> "nil", x9 -> x87, x9_&x -> x2, x9_x0 -> "undefined", x9_x7 -> "undefined", x9_x70 -> "nil")
+val x143 = Map("&x" -> x2, x0 -> "undefined", x81 -> "nil", x70 -> "nil", x7 -> x93)
+val x144 = x9_&x_val(x56)
+val x145 = Map("val" -> x144)
+xform: Map(x14 -> x143, x68 -> x132, x95 -> x145)
+val x146 = Map("&x" -> x2, x0 -> "undefined", x81 -> "nil", x70 -> "nil", x7 -> x105)
+val x147 = Map("&x" -> x2, x0 -> "undefined", x81 -> "nil", x23 -> Map(), x70 -> "nil", x7 -> x93)
+val x148 = Map("&x" -> x2, x0 -> "undefined", x81 -> "nil", x23 -> Map(), x70 -> "nil", x7 -> x105)
+val x149 = Map("&x" -> x2, x0 -> x114, x7 -> "undefined")
+val x150 = Map("&x" -> x2, x0 -> x114, x81 -> "nil", x70 -> "nil", x7 -> x105)
+val x151 = Map("&x" -> x2, x0 -> "undefined", x81 -> "nil", x70 -> "nil", x7 -> x121)
+val x152 = Map("&x" -> x2, x0 -> "nil", x7 -> x121)
+val x153 = Map("&x" -> x2, x0 -> "undefined", x81 -> "nil", x70 -> "nil", x7 -> x120)
+val x154 = Map("&x" -> x2, x0 -> "nil", x7 -> x93)
+val x155 = Map("&x" -> x2, x0 -> "nil", x7 -> x99)
+val x156 = Map("&x" -> x2, x0 -> "nil", x7 -> x105)
+val x157 = Map("&x" -> x2, x0 -> "nil", x7 -> x93, x23 -> Map())
+val x158 = Map("&x" -> x2, x0 -> "nil", x7 -> x105, x23 -> Map())
+val x159 = Map("&x" -> x2, x0 -> "undefined", x7 -> x93)
+val x160 = Map("&x" -> x2, x0 -> x114, x7 -> x93)
+val x161 = Map("&x" -> x2, x0 -> x114, x7 -> x105)
+val x162 = Map("&x" -> x2, x0 -> "undefined", x7 -> x121)
+val x163 = Map("&x" -> x2, x0 -> "undefined", x7 -> x120)
+val x164 = Map("&x" -> x2, x0 -> x114, x7 -> x121)
+val x165 = Map("&x" -> x2, x0 -> "nil", x7 -> x128)
+val x166 = Map("&x" -> x2, "&xbar" -> x65, x0 -> "nil", x7 -> x128)
+val x167 = Map("&x" -> x2, x0 -> "nil", x7 -> x131)
+val x168 = Map("&x" -> x2, x0 -> "nil", x7 -> x131, x73 -> Map())
+val x169 = Map("&x" -> x2, x0 -> "nil", x7 -> "undefined", x73 -> Map())
+val x170 = Map("&x" -> x2, x0 -> "nil", x7 -> x139)
+val x171 = Map("&x" -> x2, x0 -> "nil", x7 -> x120)
+val x9_&x_val = { x10 => x0 }
+*** done iterate: x166
+*** begin iterate: x166
+funs:
+val x9_x7 = { x10 => x121 }
+calls:
+val x93 = x9_x7(x13)
+val x99 = x9_x7(x56)
+subst: Map(x10 -> 0)
+val x172 = Map("&x" -> x2, x0 -> "undefined", x7 -> x131)
+val x173 = Map("&x" -> x2, x0 -> "undefined", x7 -> x139)
+zeros: Map(x9_x7 -> "undefined")
+xform: Map()
+val x174 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", x18 -> x33)
+val x175 = Map("&x" -> x2, x18 -> "nil", x0 -> "undefined", x39 -> x49, x7 -> "undefined")
+val x176 = Map("&x" -> x2, x0 -> x114, x81 -> "nil", x70 -> "nil", x7 -> x93)
+val x177 = Map("&x" -> x2, x0 -> x114, x81 -> "nil", x70 -> "nil", x7 -> x121)
+*** done iterate: x166
+transformed: x166
+sched:
+val x0 = ("X",1)
+val x2 = Map("val" -> x0)
+val x7 = "undefined"("a")
+val x65 = Map("val" -> 7)
+val x56 = fixindex(x10 => 0)
+val x12 = 0 < x10
+val x13 = x10 + -1
+val x93 = x9_x7(x13)
+val x120 = x93 + ("foo" -> 5)
+val x121 = if (x12) x120 else "undefined"
+val x9_x7 = { x10 => x121 }
+val x99 = x9_x7(x56)
+val x128 = x99 + ("bar" -> 7)
+val x166 = Map("&x" -> x2, "&xbar" -> x65, x0 -> "nil", x7 -> x128)
+----

@@ -1,6 +1,6 @@
 prog: {
   Assign(x,New(A))
-  If(Direct(input),{
+  If(Direct("input"),{
     Put(Ref(x),a,New(B))
     Put(Get(Ref(x),a),foo,Const(5))
   },{
@@ -10,29 +10,48 @@ prog: {
   Assign(foo,Get(Get(Ref(x),a),foo))
   Assign(bar,Get(Get(Ref(x),a),bar))
 }
-default case for mayZero input
---> phi input allocB allocC
---> phi input 0 0
---> phi input 5 undef
---> phi input undef 5
-res: undef
-env: 
-allocB -> OIf(input,ONew(B)+{foo -> 5},OUndef())
-&x -> OStatic(&x)+{val -> allocA}
-allocC -> OIf(input,OUndef(),ONew(C)+{bar -> 5})
-&bar -> OStatic(&bar)+{val -> phi(input:undef,5)}
-&foo -> OStatic(&foo)+{val -> phi(input:5,undef)}
-allocA -> ONew(A)+{a -> phi(input:allocB,allocC)}
-rec: 
-
-true: Set()
-false: Set()
+val x0 = ("A",1)
+val x1 = Map(x0 -> Map())
+val x2 = Map("val" -> x0)
+val x3 = Map("&x" -> x2)
+val x4 = ("B",1)
+val x5 = Map("&x" -> x2, x4 -> Map())
+val x6 = Map("&x" -> x2, x0 -> "undefined")
+val x7 = "undefined"("a")
+val x8 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined")
+val x9 = ("C",1)
+val x10 = Map("&x" -> x2, x9 -> Map())
+val x11 = "undefined"("foo")
+val x12 = Map("val" -> x11)
+val x13 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", "&foo" -> x12)
+val x14 = "undefined"("bar")
+val x15 = Map("val" -> x14)
+val x16 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", "&foo" -> x12, "&bar" -> x15)
+res: ()
+store: x16
+*** begin iterate: x16
+funs:
+calls:
+subst: Map()
+zeros: Map()
+xform: Map()
+*** done iterate: x16
+transformed: x16
+sched:
+val x0 = ("A",1)
+val x2 = Map("val" -> x0)
+val x7 = "undefined"("a")
+val x11 = "undefined"("foo")
+val x12 = Map("val" -> x11)
+val x14 = "undefined"("bar")
+val x15 = Map("val" -> x14)
+val x16 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", "&foo" -> x12, "&bar" -> x15)
 ----
 prog: {
   Assign(x,New(A))
   Put(Ref(x),a,New(A2))
   Put(Get(Ref(x),a),baz,Const(3))
-  If(Direct(input),{
+  If(Direct("input"),{
     Put(Ref(x),a,New(B))
     Put(Get(Ref(x),a),foo,Const(5))
   },{
@@ -42,20 +61,37 @@ prog: {
   Put(Get(Ref(x),a),bar,Const(7))
   Assign(xbar,Get(Get(Ref(x),a),bar))
 }
-default case for mayZero input
---> phi input allocB allocC
---> phi input 0 0
---> phi input 7 7
-res: undef
-env: 
-allocB -> OIf(input,ONew(B)+{foo -> 5,bar -> 7},OUndef())
-&x -> OStatic(&x)+{val -> allocA}
-allocC -> OIf(input,OUndef(),ONew(C)+{foo -> undef,bar -> 7})
-&xbar -> OStatic(&xbar)+{val -> 7}
-allocA2 -> ONew(A2)+{baz -> 3}
-allocA -> ONew(A)+{a -> phi(input:allocB,allocC)}
-rec: 
-
-true: Set()
-false: Set()
+val x0 = ("A",1)
+val x1 = Map(x0 -> Map())
+val x2 = Map("val" -> x0)
+val x3 = Map("&x" -> x2)
+val x4 = ("A2",1)
+val x5 = Map("&x" -> x2, x4 -> Map())
+val x6 = Map("&x" -> x2, x0 -> "undefined")
+val x7 = "undefined"("a")
+val x8 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined")
+val x9 = ("B",1)
+val x10 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", x9 -> Map())
+val x11 = ("C",1)
+val x12 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", x11 -> Map())
+val x13 = "undefined"("bar")
+val x14 = Map("val" -> x13)
+val x15 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", "&xbar" -> x14)
+res: ()
+store: x15
+*** begin iterate: x15
+funs:
+calls:
+subst: Map()
+zeros: Map()
+xform: Map()
+*** done iterate: x15
+transformed: x15
+sched:
+val x0 = ("A",1)
+val x2 = Map("val" -> x0)
+val x7 = "undefined"("a")
+val x13 = "undefined"("bar")
+val x14 = Map("val" -> x13)
+val x15 = Map("&x" -> x2, x0 -> "undefined", x7 -> "undefined", "&xbar" -> x14)
 ----
