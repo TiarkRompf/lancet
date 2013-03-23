@@ -35,13 +35,13 @@ trait Base_LIR0 extends Base {
   var constantPool: Vector[AnyRef] = Vector.empty
 
   def constToString[T:TypeRep](x:T): String = x match {
-    case x: Boolean => ""+x
-    case x: Int => ""+x
-    case x: Long => ""+x+"L"
-    case x: Double => ""+x+"d"
-    case x: Float => ""+x+"f"
-    case x: Unit => "()"
-    case null => "null"
+    case x: Boolean   => if (typeRep[T] != typeRep[Boolean]) ""+x+".asInstanceOf["+typeRep[T]+"]/*const-widen*/" else ""+x
+    case x: Int       => if (typeRep[T] != typeRep[Int])     ""+x+".asInstanceOf["+typeRep[T]+"]/*const-widen*/" else ""+x
+    case x: Long      => if (typeRep[T] != typeRep[Long])    ""+x+".asInstanceOf["+typeRep[T]+"]/*const-widen*/" else ""+x+"L"
+    case x: Double    => if (typeRep[T] != typeRep[Double])  ""+x+".asInstanceOf["+typeRep[T]+"]/*const-widen*/" else ""+x+"d"
+    case x: Float     => if (typeRep[T] != typeRep[Float])   ""+x+".asInstanceOf["+typeRep[T]+"]/*const-widen*/" else ""+x+"f"
+    case x: Unit      => if (typeRep[T] != typeRep[Unit])    ""+x+".asInstanceOf["+typeRep[T]+"]/*const-widen*/" else "()"
+    case null         => if (typeRep[T] != typeRep[Null])    ""+x+".asInstanceOf["+typeRep[T]+"]/*const-widen*/" else "null"
     // TODO: primitives, arrays
     case s: String => ("\""+s.replace("\n","\\n")+"\"") // TODO: proper escape
     case c: Class[_] => 
