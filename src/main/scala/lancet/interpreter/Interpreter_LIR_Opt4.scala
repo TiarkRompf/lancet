@@ -247,11 +247,35 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
     // global internal data structures
 
     val graalBlockMapping = new mutable.HashMap[ResolvedJavaMethod, BciBlockMapping] // map key to store
-    def getGraalBlocks(method: ResolvedJavaMethod) = graalBlockMapping.getOrElseUpdate(method, {
+    def getGraalBlocks(method: ResolvedJavaMethod, bci: Int) = if (bci == 0) graalBlockMapping.getOrElseUpdate(method, {
       val map = new BciBlockMapping(method);
       map.build();
       map
-    })
+    }) else { // OSR
+      import scala.collection.JavaConversions._
+      val map = new BciBlockMapping(method);
+      map.build();
+      emitString("// need to fix block ordering for bci="+bci)
+      emitString("// old: " + map.blocks.mkString(","))
+      val start = map.blocks.find(_.startBci == bci).get
+      var reach = List[BciBlockMapping.Block]()
+      var seen = Set[BciBlockMapping.Block]()
+      def rec(block: BciBlockMapping.Block) {
+        if (!seen(block)) {
+          seen += block
+          block.successors.foreach(rec)
+          reach = block::reach
+        }
+      }
+      rec(start)
+      emitString("// new: " + reach.mkString(","))
+      map.blocks.clear
+      map.blocks.addAll(reach)
+      // do we really need to rename them??
+      for ((b,i) <- reach.zipWithIndex) b.blockID = i
+      emitString("// fixed: " + map.blocks.mkString(","))
+      map
+    }
 
     val stats = new mutable.HashMap[String, Int] // map key to id
 
@@ -366,7 +390,7 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
 
       // obtain block mapping that will tell us about dominance relations
       val method = mframe.getMethod()
-      val graalBlocks = getGraalBlocks(method)
+      val graalBlocks = getGraalBlocks(method,mframe.getBCI)
       def getGraalBlock(fr: InterpreterFrame) = graalBlocks.blocks.find(_.startBci == fr.getBCI).get
 
 /*
@@ -441,7 +465,7 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
         }
 
         val out = blockInfoOut(curBlock)
-        emitString("GOTO_"+(out.gotos.length)+";")
+        emitString("GOTO_"+mkeyid+"_"+curBlock+"_"+(out.gotos.length))
         blockInfoOut(curBlock) = out.copy(gotos = out.gotos :+ s)
         liftConst(())
       }
@@ -473,7 +497,7 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
 
         def getPreds(i: Int) = blockInfo(i).inEdges.map(_._1)
         def shouldInline(i: Int) = getPreds(i).length < 2
-        assert(getPreds(b.blockID) == List(-1))
+        //assert(getPreds(b.blockID) == List(-1)) we do have preds for OSR!
 
         // fix jumps inside blocks: either call or inline
         for (b <- graalBlocks.blocks.reverse if blockInfo.contains(b.blockID)) {
@@ -495,14 +519,27 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
               val call = genBlockCall(keyid, fields)
               reify { reflect[Unit](";", Block[Unit](head.stms:+Unstructured(call), head.res)) }
             }
-            src = src.replace("GOTO_"+i+";", rhs)
+            src = src.replace("GOTO_"+mkeyid+"_"+b.blockID+"_"+i, rhs)
           }
           blockInfoOut(i) = BlockInfoOut(returns, gotos, src) // update body src
         }
 
         // initial block -- do we ever need to lub here?
-        assert(getPreds(b.blockID) == List(-1))
-        emitAll(blockInfoOut(b.blockID).code)
+        //assert(getPreds(b.blockID) == List(-1)) we do have preds for OSR!
+        //emitAll(blockInfoOut(b.blockID).code)
+
+        if (shouldInline(b.blockID)) {
+          emitAll(blockInfoOut(b.blockID).code)
+        } else {
+          emitString("// should not inline start block "+b.blockID)
+          val s0 = blockInfo(b.blockID).inEdges.find(_._1 == -1).get._2
+          val s1 = blockInfo(b.blockID).inState
+          val fields = getFields(s1)
+          val (key,keyid) = contextKeyId(getFrame(s1))
+          val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
+          val call = genBlockCall(keyid, fields)
+          reflect[Unit](";", Block[Unit](head.stms:+Unstructured(call), head.res))
+        }
 
         // emit all non-inlined blocks
         for (b <- graalBlocks.blocks if blockInfo.contains(b.blockID)) {

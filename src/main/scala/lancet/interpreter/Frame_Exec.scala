@@ -988,7 +988,6 @@ with InterpreterFrame {
         tos = x
     }
 
-
     def pushVoid(count: Int): Unit = {
         incrementTos(count * SINGLE);
     }

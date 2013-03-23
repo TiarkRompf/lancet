@@ -1,5 +1,5 @@
 // constants: <function1>,<function0>
-class Generated1(CONST_0: lancet.interpreter.BaseTestInterpreter3$$anonfun$testA2$1$$anonfun$2,CONST_1: lancet.interpreter.BaseTestInterpreter3$$anonfun$testA2$1) extends (Int=>Int){
+class Generated0(CONST_0: lancet.interpreter.BaseTestInterpreter3$$anonfun$testA2$1$$anonfun$2,CONST_1: lancet.interpreter.BaseTestInterpreter3$$anonfun$testA2$1) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char

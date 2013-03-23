@@ -62,6 +62,8 @@ class TestInterpreter1 extends FileDiffSuite {
     compile           7s
 */
 
+/*
+  // TODO: revisit once we have a better handle on path dependent conditionals
 
   // compile optimized
   def testC = withOutFileChecked(prefix+"C") {
@@ -79,5 +81,6 @@ class TestInterpreter1 extends FileDiffSuite {
     val f = it.compile((x:Int) => o.bar(8))
     println(f(7))
   }
+*/
 
 }

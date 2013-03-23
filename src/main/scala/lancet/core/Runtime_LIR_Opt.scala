@@ -358,6 +358,7 @@ class Runtime_Opt(metaProvider: MetaAccessProvider) extends Runtime_Generic(meta
     def getFieldUnsafe[T:TypeRep](base: Object, offset: Long): T = {
       typeRep[T].toString match {
         case "Int" => static.unsafe.getInt(base, offset).asInstanceOf[T]
+        case "Long" => static.unsafe.getLong(base, offset).asInstanceOf[T]
         case "Short" => static.unsafe.getShort(base, offset).asInstanceOf[T]
         case "Byte" => static.unsafe.getByte(base, offset).asInstanceOf[T]
         case "Boolean" => static.unsafe.getBoolean(base, offset).asInstanceOf[T]

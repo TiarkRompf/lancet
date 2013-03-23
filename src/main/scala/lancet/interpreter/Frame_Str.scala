@@ -589,6 +589,10 @@ with InterpreterFrame {
         return tos;
     }
 
+    def setStackTop(x: Int): Unit = { // unsafe!
+        tos = x
+    }
+
     def pushVoid(count: Int): Unit = {
         incrementTos(count * SINGLE);
     }

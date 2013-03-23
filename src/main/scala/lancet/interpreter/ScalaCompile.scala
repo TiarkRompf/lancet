@@ -13,7 +13,6 @@ import scala.tools.nsc.interpreter.AbstractFileClassLoader
 object ScalaCompile {
 
   var compiler: Global = _
-  //var output: ByteArrayOutputStream = _ 
   var external = false
 
   def setCompiler(c: Global): Unit = {
@@ -22,10 +21,6 @@ object ScalaCompile {
   }
 
   def setupCompiler() = {
-    /*
-      output = new ByteArrayOutputStream()
-      val writer = new PrintWriter(new OutputStreamWriter(output))
-    */
     val settings = new Settings()
 
     settings.classpath.value = this.getClass.getClassLoader match {
@@ -47,8 +42,13 @@ object ScalaCompile {
     compiler = new Global(settings, reporter)
   }
 
+  // mostly to generate deterministic test output
+  def reset() = {
+    compileCount = 0
+  }
+
   var compileCount = 0
-  
+
   var dumpGeneratedCode = false
 
   def compile[A:Manifest,B:Manifest](source: String, className: String, staticData: List[(AnyRef,Class[_])]): A=>B = {
