@@ -1,4 +1,4 @@
-package optiml
+package lancet.api
 
 /**
  * Copy and pasted from test/scala/lancet/advanced/DeliteSupport.scala!! Need to refactor.
