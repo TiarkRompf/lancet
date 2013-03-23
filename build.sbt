@@ -38,7 +38,7 @@ libraryDependencies += "com.google.protobuf" % "protobuf-java" % "2.4.1"
 
 libraryDependencies += "junit" % "junit" % "4.8.1" % "test"
 
-
+retrieveManaged := true
 
 unmanagedClasspath in Compile <++= baseDirectory map { base =>
   val graal = new File(System.getenv("JAVA_HOME")) / ".." / ".." / "graal"
