@@ -1,5 +1,5 @@
 // constants: <function1>,public abstract int scala.Function1.apply$mcII$sp(int)
-class Generated1(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$testCps1$1$$anonfun$4,CONST_1: java.lang.reflect.Method) extends (Int=>Int){
+class Generated0(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$testCps1$1$$anonfun$4,CONST_1: java.lang.reflect.Method) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -25,7 +25,7 @@ def apply(ARG: Int): Int = { object BODY {
   // return 4_0 to 13:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
   // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4$$anonfun$apply$mcII$sp$1.<init>>
   //begin reset
-  val x19 = {
+  val x20 = {
     var RES = null.asInstanceOf[Int]
     // return 0_0 to 7:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
     // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4.lancet$interpreter$TestInterpreter5$$anonfun$$anonfun$$$outer>
@@ -66,37 +66,38 @@ def apply(ARG: Int): Int = { object BODY {
       RES.asInstanceOf[Int]
     }
     val x10 = kx10 _
-    val x17 = {
+    val x18 = {
       var RES = null.asInstanceOf[Int]
-      val x11 = CONST_1.invoke(x10.asInstanceOf[AnyRef],7.asInstanceOf[AnyRef]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp
-      val x12 = x11.asInstanceOf[Int]
-      val x13 = CONST_1.invoke(x10.asInstanceOf[AnyRef],9.asInstanceOf[AnyRef]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp
-      val x14 = x13.asInstanceOf[Int]
-      val x15 = x14 + x12
+      val x11 = x10.asInstanceOf[scala.Function1[_,_]] // checkCast
+      val x12 = CONST_1.invoke(x11.asInstanceOf[AnyRef],7.asInstanceOf[AnyRef]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp
+      val x13 = x12.asInstanceOf[Int]
+      val x14 = CONST_1.invoke(x11.asInstanceOf[AnyRef],9.asInstanceOf[AnyRef]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp
+      val x15 = x14.asInstanceOf[Int]
+      val x16 = x15 + x13
       // return 2_0 to 8:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$4$1.apply><(Ljava/lang/Object;)Ljava/lang/Object;> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
       // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$4$1.apply>
-      val x16 = x15.asInstanceOf[Integer]
-      (RES = x16) // return to root
+      val x17 = x16.asInstanceOf[Integer]
+      (RES = x17) // return to root
       // (no return?)
       RES.asInstanceOf[Int]
     }
     //end shift
-    val x18 = x17.asInstanceOf[Int]
+    val x19 = x18.asInstanceOf[Int]
     // return 1_0 to 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
     // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$4>
     // return 1_0 to 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
     // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4$$anonfun$apply$mcII$sp$1.apply$mcI$sp>
-    (RES = x18) // return to root
+    (RES = x19) // return to root
     // (no return?)
     RES.asInstanceOf[Int]
   }
   //end reset
-  val x20 = x19.asInstanceOf[Int]
   val x21 = x20.asInstanceOf[Int]
   val x22 = x21.asInstanceOf[Int]
+  val x23 = x22.asInstanceOf[Int]
   // return 3_0 to 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
   // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4.apply$mcII$sp>
-  (RES = x22) // return to root
+  (RES = x23) // return to root
   // (no return?)
 }; BODY.RES }
 }
