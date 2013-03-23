@@ -121,17 +121,18 @@ class TestInterpreter2 extends FileDiffSuite {
     //it.emitControlFlow = false
     //it.debugBlocks = true
     it.emitRecursive = true
+    it.emitCSE = false
     it.initialize()
-    val f = it.compile((x:Int) => Program.draw)
-    
+    try {
+    val f = it.compile((x:Int) => {Program.draw; 0})
+    } catch { case _: ClassNotFoundException =>  // we don't expect this to compile ...
+    }
   }
 
   // TODO: html header / footer, val def syntax
   // TODO: remove null receiver for `document` var
   // TODO: generate `snowflake` and `leg` as JS methods instead of unfolding everything
   // TODO: remove null receiver for `document` var
-
-  def ??? = throw new Exception("not implemented")
 
   val header =
 """<html>
@@ -156,6 +157,11 @@ class TestInterpreter2 extends FileDiffSuite {
       override def isVolatile(field: ResolvedJavaField) = false // don't honor volatile
     }
 
+    override def isSafeRead(base: Object, offset: Long, field: ResolvedJavaField, typ: TypeRep[_]): Boolean = {
+      // TODO: we should have a more general scheme for lazy vals
+      if (field.getDeclaringClass.toJava == classOf[TestInterpreter2]) true
+      else super.isSafeRead(base,offset,field,typ)
+    }
     def handleJsMethod(parent: InterpreterFrame, m: ResolvedJavaMethod): Boolean = {
       val holder = m.getDeclaringClass
       if (classOf[Program.JS].isAssignableFrom(holder.toJava())) {

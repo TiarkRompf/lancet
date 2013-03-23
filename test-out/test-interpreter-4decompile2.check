@@ -1,5 +1,5 @@
-// constants: <function1>,<function0>,lancet.interpreter.TestInterpreter4@31e0f474
-class Generated(CONST_0: lancet.interpreter.TestInterpreter4$$anonfun$test2$1$$anonfun$2,CONST_1: lancet.interpreter.TestInterpreter4$$anonfun$test2$1,CONST_2: lancet.interpreter.TestInterpreter4) extends (scala.collection.Seq[_]=>scala.collection.Seq[_]){
+// constants: <function1>,<function0>,lancet.interpreter.TestInterpreter4@2d46c9dd
+class Generated0(CONST_0: lancet.interpreter.TestInterpreter4$$anonfun$test2$1$$anonfun$2,CONST_1: lancet.interpreter.TestInterpreter4$$anonfun$test2$1,CONST_2: lancet.interpreter.TestInterpreter4) extends (scala.collection.Seq[_]=>scala.collection.Seq[_]){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -9,79 +9,43 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
   var RES = null.asInstanceOf[scala.collection.Seq[_]]
   val x0 = ARG
   val x1 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test2$1$$anonfun$2$$anonfun$apply$2"))
-  unsafe.putObject(x1,16.asInstanceOf[Long], CONST_0.asInstanceOf[Object])
-  val x19 = x0.asInstanceOf[Traversable[Object]].filter { (x2:Object) => {
+  unsafe.putObject(x1,16L, CONST_0)
+  val x11 = x0.asInstanceOf[Traversable[Object]].filter { (x2:Object) => {
       var RES = null.asInstanceOf[Object]
       val x3 = x2.asInstanceOf[lancet.interpreter.TestInterpreter4$Person] // checkCast
-      val x4 = x3 eq null
-      val x6 = if (x4) {
-        val x5 = throw new NullPointerException()
-        x5
-      } else {
-        x3
-      }
       // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-      /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
-      val x8 = if (x4) {
-        val x7 = throw new NullPointerException()
-        x7
+      val x4 = unsafe.getBoolean(x3,20L)
+      val x5 = if (x4) {
+        1
       } else {
-        x3
+        0
       }
-      val x9 = unsafe.getBoolean(x3,20.asInstanceOf[Long])
-      val x10 = if (x9) {
-        1.asInstanceOf[Int]
+      val x6 = x5 == 0
+      if (x6) {
+        val PHI_4_5 = 1 // LUBC(PHI_4_5:Int,1:Int)
+        BLOCK_25(PHI_4_5,x0,x1,x2,x3,x4,x6)
       } else {
-        0.asInstanceOf[Int]
-      }
-      val x11 = x10 == 0.asInstanceOf[Int]
-      if (x11) {
-        val PHI_4_5 = 1.asInstanceOf[Int] // LUBC(PHI_4_5:Int,1.asInstanceOf[Int]:Int)
-        BLOCK_25(PHI_4_5,x0,x1,x11,x2,x3,x4,x9)
-      } else {
-        /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
-        val x13 = if (x4) {
-          val x12 = throw new NullPointerException()
-          x12
-        } else {
-          x3
-        }
         // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-        /* cse: WrappedArray(ObjectEqual(x3,null)) = x4*/
-        val x15 = if (x4) {
-          val x14 = throw new NullPointerException()
-          x14
+        val x7 = unsafe.getInt(x3,16L)
+        val x8 = 42 <= x7
+        if (x8) {
+          val PHI_4_5 = 0 // LUBC(PHI_4_5:Int,0:Int)
+          BLOCK_25(PHI_4_5,x0,x1,x2,x3,x4,x6)
         } else {
-          x3
-        }
-        val x16 = unsafe.getInt(x3,16.asInstanceOf[Long])
-        val x17 = 42.asInstanceOf[Int] <= x16
-        if (x17) {
-          val PHI_4_5 = 0.asInstanceOf[Int] // LUBC(PHI_4_5:Int,0.asInstanceOf[Int]:Int)
-          BLOCK_25(PHI_4_5,x0,x1,x11,x2,x3,x4,x9)
-        } else {
-          val PHI_4_5 = 1.asInstanceOf[Int] // LUBC(PHI_4_5:Int,1.asInstanceOf[Int]:Int)
-          BLOCK_25(PHI_4_5,x0,x1,x11,x2,x3,x4,x9)
+          val PHI_4_5 = 1 // LUBC(PHI_4_5:Int,1:Int)
+          BLOCK_25(PHI_4_5,x0,x1,x2,x3,x4,x6)
         }
       }
-      def BLOCK_25(PHI_4_5:Int,x0:scala.collection.Seq[_],x1:Object,x11:Boolean,x2:Object,x3:Object,x4:Boolean,x9:Boolean): Unit = {
-        val x18 = PHI_4_5 == 0.asInstanceOf[Int]
-        if (x18) {
-          val PHI_4_4 = false.asInstanceOf[Object] // LUBC(PHI_4_4:Object,false.asInstanceOf[Object]:Object)
-          BLOCK_32(PHI_4_4,PHI_4_5,x0,x1,x11,x18,x2,x3,x4,x9)
-        } else {
-          val PHI_4_4 = true.asInstanceOf[Object] // LUBC(PHI_4_4:Object,true.asInstanceOf[Object]:Object)
-          BLOCK_32(PHI_4_4,PHI_4_5,x0,x1,x11,x18,x2,x3,x4,x9)
-        }
-        def BLOCK_32(PHI_4_4:Object,PHI_4_5:Int,x0:scala.collection.Seq[_],x1:Object,x11:Boolean,x18:Boolean,x2:Object,x3:Object,x4:Boolean,x9:Boolean): Unit = {
-          (RES = PHI_4_4) // return to root
-        }
+      def BLOCK_25(PHI_4_5:Int,x0:scala.collection.Seq[_],x1:Object,x2:Object,x3:Object,x4:Boolean,x6:Boolean): Unit = {
+        val x9 = PHI_4_5 == 1
+        val x10 = x9.asInstanceOf[java.lang.Boolean]
+        (RES = x10) // return to root
       }
       // (no return?)
       RES.asInstanceOf[Boolean]
   }}
-  val x20 = x19.asInstanceOf[scala.collection.Seq[_]] // checkCast
-  (RES = x20) // return to root
+  val x12 = x11.asInstanceOf[scala.collection.Seq[_]] // checkCast
+  (RES = x12) // return to root
   // (no return?)
 }; BODY.RES }
 }

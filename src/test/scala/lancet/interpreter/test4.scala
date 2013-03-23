@@ -70,6 +70,7 @@ class TestInterpreter4 extends FileDiffSuite {
     println(e)
   }
 
+
   class Marker
 
   class Decompiler extends BytecodeInterpreter_LIR_Opt {
@@ -103,7 +104,10 @@ class TestInterpreter4 extends FileDiffSuite {
       // check for known collection methods
       fullName match {
         case "java.lang.Integer.valueOf" => handle {
-          case r::Nil => reflect[Object]("Integer.valueOf("+r+")")
+          case r::Nil => reflect[java.lang.Integer](r,".asInstanceOf[java.lang.Integer]")
+        }
+        case "java.lang.Boolean.valueOf" => handle {
+          case r::Nil => reflect[java.lang.Boolean](r,".asInstanceOf[java.lang.Boolean]")
         }
         case "java.lang.Object.getClass" => handle {
           case receiver::Nil =>
@@ -152,7 +156,6 @@ class TestInterpreter4 extends FileDiffSuite {
       }
     }
 
-
     override def isSafeRead(base: Object, offset: Long, field: ResolvedJavaField, typ: TypeRep[_]): Boolean = {
     super.isSafeRead(base, offset, field, typ) || {
       val name = field.getDeclaringClass.toJava.getName + "." + field.getName
@@ -164,9 +167,6 @@ class TestInterpreter4 extends FileDiffSuite {
       }
     }}
 
-
-
-
     override def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = { // stupid value classes ...
       val y = super.checkCastInternal(typ,value)
       if (typ.toJava == Class.forName("scala.collection.TraversableLike")) {
@@ -175,15 +175,12 @@ class TestInterpreter4 extends FileDiffSuite {
       } else y
     }
 
-
-
     // TODO: do we need to reconstruct generic types, i.e. Seq[A] ?
 
     override def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame =
       if (handleMethodCall(parent,m)) null else super.resolveAndInvoke(parent, m)
     override def invokeDirect(parent: InterpreterFrame, m: ResolvedJavaMethod, hasReceiver: Boolean): InterpreterFrame =
       if (handleMethodCall(parent,m)) null else super.invokeDirect(parent, m, hasReceiver)
-
 
     initialize()
     emitUniqueOpt = true
