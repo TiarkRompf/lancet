@@ -41,7 +41,7 @@ class TestDelite2 extends FileDiffSuite {
 
     class VectorCompanion {
       def rand(n:Int): Vector[Double] = { printxx("Vector$.rand"); new Vector[Double] }
-      def apply[T](xs: T*): Vector[T] = { printxx("Vector$.apply"); new Vector[T] }
+      def apply[T:Manifest](xs: T*): Vector[T] = { printxx("Vector$.apply"); new Vector[T] }
     }
     class Vector[T] {
       def t: Vector[T] = { printxx("Vector.t"); this } //new Vector[T] }  FIXME: ISSUE WITH OUTER POINTER / Delite conditionals
@@ -95,14 +95,21 @@ class TestDelite2 extends FileDiffSuite {
     object Macros extends VectorOperatorsRunner.ClassMacros {
       val targets = List(classOf[VectorCompanion],classOf[Vector[_]])
       //type Rep[T] = VectorOperatorsRunner.Rep[T]
-      import VectorOperatorsRunner.{Rep,reflect,mtr,infix_relax}
+      import VectorOperatorsRunner.{Rep,reflect,mtr,infix_relax,eval,VConst,Def}
       def rand(self: Rep[VectorCompanion], n: Rep[Int]): Rep[DenseVector[Double]] = {
         Console.println("catch vector_rand")
         VectorOperatorsRunner.densevector_obj_rand(n)
       }
-      def apply[T](self: Rep[VectorCompanion], xs: Rep[Seq[T]]): Rep[DenseVector[T]] = {
+      def apply[T](self: Rep[VectorCompanion], xs: Rep[Seq[T]], mf: Rep[Manifest[T]]): Rep[DenseVector[T]] = {
         Console.println("catch vector_apply")
-        implicit val mf = manifest[Int].asInstanceOf[Manifest[T]] //FIXME: generic types
+        implicit val mfT = eval(mf) match {
+          case VConst(mf: Manifest[T]) => mf
+          case _ => 
+            Console.println("ERROR: non-constant manifest in vector_apply: "+mf+"="+Def.unapply(mf)+" -- assuming Double")
+            manifest[Double].asInstanceOf[Manifest[T]]
+        }
+
+        //implicit val mf = manifest[Int].asInstanceOf[Manifest[T]] //FIXME: generic types
         val xs1 = reflect[Seq[T]](xs,".asInstanceOf[Seq[Int]]")(mtr[Seq[Int]].relax) // need cast ...
         VectorOperatorsRunner.densevector_obj_fromseq(xs1)
         // TODO: generic types are problematic...

@@ -19,7 +19,7 @@ ppl.delite.runtime.profiler.PerformanceTimer.print("app")
 /*****************************************
   Emitting Generated Code                  
 *******************************************/
-class Generated(pConst_0:Object,pConst_1:Object,pConst_2:Object) extends ((Array[java.lang.String])=>(Unit)) {
+class Generated(pConst_0:Object,pConst_1:Object,pConst_2:Object,pConst_3:Object,pConst_4:Object) extends ((Array[java.lang.String])=>(Unit)) {
 def apply(x0:Array[java.lang.String]): Unit = {
 {
 val x1 = 7.asInstanceOf[Int];
@@ -676,13 +676,13 @@ TP(Sym(381),Reflect(IfElse(Sym(368),Block(Sym(374)),Block(Sym(380))),Summary(tru
 TP(Sym(382),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267), Sym(268), Sym(366), Sym(367), Sym(368), Sym(381))))
 TP(Sym(383),Reflect(IfElse(Sym(190),Block(Sym(364)),Block(Sym(382))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188), Sym(189), Sym(190))))
 TP(Sym(384),Reify(DynExp(RES),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188), Sym(189), Sym(190), Sym(383))))
-constants: Vector((Sym(-1000),<function1>), (Sym(-1001),scala.Predef$@1d218c26), (Sym(-1002),lancet.advanced.TestDelite2$$anonfun$testA1$1$UtilCompanion$1@4c264026))
+constants: Vector((Sym(-1000),<function1>), (Sym(-1001),scala.Predef$@3fed7658), (Sym(-1002),scala.reflect.Manifest$@7834124a), (Sym(-1003),Int), (Sym(-1004),lancet.advanced.TestDelite2$$anonfun$testA1$1$UtilCompanion$1@65707ca))
 *** running compileAndTest ***
 =================================================================================================
-TEST: lancet.advanced.LancetDeliteRunner@6f12a72e
+TEST: lancet.api.LancetDeliteRunner@425bdd1c
 =================================================================================================
 STAGING...
-Delite Application Being Staged:[lancet.advanced.LancetDeliteRunner]
+Delite Application Being Staged:[lancet.api.LancetDeliteRunner]
 ******Generating the program******
 catch vector_rand
 catch vector_t
@@ -696,9 +696,9 @@ catch vector_max
 catch vector_min
 catch vector_min
 EXECUTING...
-test output for: lancet.advanced.LancetDeliteRunner@6f12a72e
+test output for: lancet.api.LancetDeliteRunner@425bdd1c
 Delite Runtime executing with the following arguments:
-lancet.advanced.LancetDeliteRunner-test.deg
+lancet.api.LancetDeliteRunner-test.deg
 Delite Runtime executing with 1 CPU thread(s) and 0 GPU(s)
 Beginning Execution Run 1
 true
@@ -707,5 +707,5 @@ true
 AA
 BB
 CC
-[METRICS]: Latest time for component all: 0.008621s
+[METRICS]: Latest time for component all: 0.008105s
 CHECKING...
