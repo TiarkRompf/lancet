@@ -43,6 +43,11 @@ trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInter
 
     override def trace(level: Int, message: String)  = super.trace(level, "// " + message)
 
+    override def initialize(): Unit = {
+      ScalaCompile.reset()
+      super.initialize()
+    }
+
 
     var emitCheckCast = false
     var emitUniqueOpt = false

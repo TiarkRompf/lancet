@@ -47,8 +47,13 @@ object ScalaCompile {
     compiler = new Global(settings, reporter)
   }
 
+  // mostly to generate deterministic test output
+  def reset() = {
+    compileCount = 0
+  }
+
   var compileCount = 0
-  
+
   var dumpGeneratedCode = false
 
   def compile[A:Manifest,B:Manifest](source: String, className: String, staticData: List[(AnyRef,Class[_])]): A=>B = {

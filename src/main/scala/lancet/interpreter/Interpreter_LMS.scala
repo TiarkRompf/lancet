@@ -47,6 +47,10 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
     override def trace(level: Int, message: String)  = super.trace(level, "// " + message)
 
+    override def initialize(): Unit = {
+      ScalaCompile.reset()
+      super.initialize()
+    }
 
     var emitUniqueOpt = false
     var debugGlobalDefs = false
