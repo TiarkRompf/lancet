@@ -282,7 +282,7 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
       withScope {
         emitString("  var RES = null.asInstanceOf["+typeRep[B]+"]")
         execute(cls.getMethod("apply", Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
-        Dyn[B]("RES.asInstanceOf["+typeRep[B]+"]")
+        reflect[B]("RES.asInstanceOf["+typeRep[B]+"]")
       }
     }
   }

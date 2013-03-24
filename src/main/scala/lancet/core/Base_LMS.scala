@@ -81,6 +81,10 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
             emitBlockFull(b)
           case b: Exp[a] => 
             stream.print(quote(b))
+/*          case b: Manifest[a] => 
+            stream.print(remap(b))
+          case b: TypeRep[a] => 
+            stream.print(remap(b.manif)) // ok?*/
           case e =>
             stream.print(e)
         }
