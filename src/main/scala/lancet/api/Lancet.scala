@@ -65,7 +65,7 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
     def unquote[A](f: => Rep[A]): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
 
-    def freeze[A:TypeRep](f: => A): A = unquote(liftConst(f)) // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
+    def freeze[A](f: => A): A = ??? //unquote(liftConst(f)) // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
     def frozen[A](f: A): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
@@ -414,32 +414,56 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
         }
 
         
+        case "lancet.api.DefaultMacros.freeze" => handle {
+          case r::f::Nil => 
+            //println("unquote")
+            val Partial(fs) = eval(f)
+            val Static(cls: Class[_]) = fs("clazz")
+
+            val typ = metaAccessProvider.lookupJavaType(cls)
+            val obj = it.runtimeInterface.newObject(typ)
+
+            val fs1 = fs - "clazz" - "alloc"
+            val fs2 = typ.getInstanceFields(false) //.find(_.getName == k)
+
+            //println(fs)
+            //println(fs2.mkString(","))
+
+            for (fld <- fs2) {
+              val name = fld.getName
+              val offset = fld.asInstanceOf[HotSpotResolvedJavaField].offset
+              val Static(value) = fs1(name)
+              it.Runtime.unsafe.putObject(obj, offset, value)
+            }
+
+            val m = cls.getMethod("apply")
+            val block = m.invoke(obj).asInstanceOf[Rep[Object]]
+            liftConst(block)
+        }
+
         case "lancet.api.DefaultMacros.unquote" => handle {
           case r::f::Nil => 
             //println("unquote")
             val Partial(fs) = eval(f)
             val Static(cls: Class[_]) = fs("clazz")
 
-            //val cls = fun.instanceClass.toJava.asInstanceOf[Class[()=>Code[Any]]]
-
-            //println(fs)
-
-            //cls.getMethods.foreach(println)
-
             val typ = metaAccessProvider.lookupJavaType(cls)
-
             val obj = it.runtimeInterface.newObject(typ)
 
-            val Static(value) = fs("$outer")
+            val fs1 = fs - "clazz" - "alloc"
+            val fs2 = typ.getInstanceFields(false) //.find(_.getName == k)
 
-            val offset = 16 // HACK !!!
+            //println(fs)
+            //println(fs2.mkString(","))
 
-            it.Runtime.unsafe.putObject(obj, offset, value)
+            for (fld <- fs2) {
+              val name = fld.getName
+              val offset = fld.asInstanceOf[HotSpotResolvedJavaField].offset
+              val Static(value) = fs1(name)
+              it.Runtime.unsafe.putObject(obj, offset, value)
+            }
 
             val m = cls.getMethod("apply")
-
-            //println("meth: " + m)
-
             val block = m.invoke(obj).asInstanceOf[Rep[Object]]
             block
 /*
