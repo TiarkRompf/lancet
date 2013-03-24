@@ -65,6 +65,11 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
     def unquote[A](f: => Rep[A]): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
 
+    def freeze[A:TypeRep](f: => A): A = unquote(liftConst(f)) // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
+
+    def frozen[A](f: A): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
+
+
     def reset[A](f: => A): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
     def shift[A,B](f: (A=>B) => B): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
