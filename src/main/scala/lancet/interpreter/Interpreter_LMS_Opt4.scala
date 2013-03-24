@@ -625,12 +625,16 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       val res = try { executeBlock(frame1, bs, bci) } catch {
         case e: InterpreterException =>
           emitString("// caught " + e)
-          reflect[Unit]("throw ",e.cause,".asInstanceOf[Throwable]")
+          reflect[Unit]("throw "+e.cause+".asInstanceOf[Throwable]")
         case e: Throwable =>
+          val e1 = e match {
+            case e: java.lang.reflect.InvocationTargetException => e.getCause
+            case _ => e
+          }
           emitString("ERROR /*")
           emitString(key)
-          emitString(e.toString)
-          emitString(e.getStackTrace().take(100).mkString("\n"))
+          emitString(e1.toString)
+          emitString(e1.getStackTrace().take(100).mkString("\n"))
           emitString("*/")
           liftConst(())
       }

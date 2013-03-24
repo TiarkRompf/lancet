@@ -672,10 +672,14 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
           emitString("// caught " + e)
           reflect[Unit]("throw "+e.cause+".asInstanceOf[Throwable]")
         case e: Throwable =>
+          val e1 = e match {
+            case e: java.lang.reflect.InvocationTargetException => e.getCause
+            case _ => e
+          }
           emitString("ERROR /*")
           emitString(key)
-          emitString(e.toString)
-          emitString(e.getStackTrace().take(100).mkString("\n"))
+          emitString(e1.toString)
+          emitString(e1.getStackTrace().take(100).mkString("\n"))
           emitString("*/")
           liftConst(())
       }
