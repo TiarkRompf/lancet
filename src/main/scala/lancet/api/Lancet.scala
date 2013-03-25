@@ -420,6 +420,11 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
             val Partial(fs) = eval(f)
             val Static(cls: Class[_]) = fs("clazz")
 
+            // TODO: materialize objects recursively
+            // to resolve non-constant fields.
+            // (is this sensible? what if the graph
+            // is really big?)
+
             val typ = metaAccessProvider.lookupJavaType(cls)
             val obj = it.runtimeInterface.newObject(typ)
 
