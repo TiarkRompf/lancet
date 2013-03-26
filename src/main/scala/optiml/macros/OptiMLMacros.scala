@@ -25,12 +25,12 @@ object OptiMLMacros extends OptiMLRunner.ClassMacros {
   
   def readMatrix(self: Rep[OptiMLCompanion], path: Rep[String]): Rep[DenseMatrix[Double]] = {
     Console.println("catch readMatrix")
-    OptiMLRunner.readMatrix(path)
+    OptiMLRunner.readMatrix(ensureType(path))
   }
   
   def readVector(self: Rep[OptiMLCompanion], path: Rep[String]): Rep[DenseVector[Double]] = {
     Console.println("catch readVector")
-    OptiMLRunner.readVector(path)
+    OptiMLRunner.readVector(ensureType(path))
   }
   
   // using Seq[Rep[Any]] causes an assertion to fail in DeliteSupport
