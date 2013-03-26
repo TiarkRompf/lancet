@@ -473,6 +473,7 @@ object DeliteRunner {
     println("EXECUTING...")
     ppl.delite.runtime.profiler.PerformanceTimer.times.clear // don't print running time (messes up check file)
     val name = "test.tmp"
+    System.setProperty("delite.runs", 10.toString)
     System.setProperty("delite.threads", threads.toString)
     System.setProperty("delite.code.cache.home", "generatedCache" + java.io.File.separator + uniqueTestName)
     //Console.withOut(new PrintStream(new FileOutputStream(name))) {

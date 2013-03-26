@@ -25,13 +25,13 @@ libraryDependencies += "org.scala-lang" % "scala-compiler" % "2.10.0-M1-virtuali
 
 libraryDependencies += "org.scalatest" % "scalatest_2.10.0-virtualized-SNAPSHOT" % "1.6.1-SNAPSHOT" % "test"
 
-libraryDependencies += "EPFL" % "lms_2.10.0-M1-virtualized" % "0.2"
+libraryDependencies += "EPFL" % "lms_2.10" % "0.2"
 
-libraryDependencies += "stanford-ppl" % "framework_2.10.0-M1-virtualized" % "0.1-SNAPSHOT"
+libraryDependencies += "stanford-ppl" % "framework_2.10" % "0.1-SNAPSHOT"
 
-libraryDependencies += "stanford-ppl" % "runtime_2.10.0-M1-virtualized" % "0.1-SNAPSHOT"
+libraryDependencies += "stanford-ppl" % "runtime_2.10" % "0.1-SNAPSHOT"
 
-libraryDependencies += "stanford-ppl" % "optiml_2.10.0-M1-virtualized" % "0.1-SNAPSHOT"
+libraryDependencies += "stanford-ppl" % "optiml_2.10" % "0.1-SNAPSHOT"
 
 libraryDependencies += "com.google.protobuf" % "protobuf-java" % "2.4.1"
 

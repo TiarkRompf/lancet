@@ -9,7 +9,7 @@ import Util._
 
 class DenseVectorCompanion {
   def rand(n:Int): DenseVector[Double] = { printxx("DenseVector$.rand"); ??? }
-  def zeros(n:Int,isRow:Boolean): DenseVector[Double] = { printxx("DenseVector$.rand"); ??? }
+  def zeros(n:Int,isRow:Boolean): DenseVector[Double] = { printxx("DenseVector$.rand"); new DenseVector(n,isRow) }
   // def apply[T](xs: T*): DenseVector[T] = { printxx("DenseVector$.apply"); ??? }
 }
 

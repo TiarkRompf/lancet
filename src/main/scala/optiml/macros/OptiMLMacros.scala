@@ -33,16 +33,15 @@ object OptiMLMacros extends OptiMLRunner.ClassMacros {
     OptiMLRunner.readVector(ensureType(path))
   }
   
-  // using Seq[Rep[Any]] causes an assertion to fail in DeliteSupport
-  // def tic(self: Rep[OptiMLCompanion], deps: Rep[Seq[Any]]): Rep[Unit] = {
-  //   Console.println("catch tic")
-  //   OptiMLRunner.profile_start(OptiMLRunner.strToRepStr("app"),deps)
-  // }
-  // 
-  // def toc(self: Rep[OptiMLCompanion], deps: Rep[Seq[Any]]): Rep[Unit] = {
-  //   Console.println("catch toc")
-  //   OptiMLRunner.profile_stop(OptiMLRunner.strToRepStr("app"),deps)
-  // }  
+  def tic(self: Rep[OptiMLCompanion], dep: Rep[Any]): Rep[Unit] = {
+    Console.println("catch tic")
+    OptiMLRunner.profile_start(OptiMLRunner.strToRepStr("app"),scala.Seq(dep))
+  }
+  
+  def toc(self: Rep[OptiMLCompanion], dep: Rep[Any]): Rep[Unit] = {
+    Console.println("catch toc")
+    OptiMLRunner.profile_stop(OptiMLRunner.strToRepStr("app"),scala.Seq(dep))
+  }  
   
   def index_new(self: Rep[OptiMLCompanion], start: Rep[Int], end: Rep[Int]): Rep[IndexVectorRange] = {
     Console.println("catch index_new")

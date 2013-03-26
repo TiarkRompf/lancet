@@ -108,6 +108,7 @@ class OptiMLCompanion {
        last = next
        iter += 1
      }
+     println("Finished in " + iter + " iterations")
      last
    }
    
@@ -123,6 +124,7 @@ class OptiMLCompanion {
        last = next
        iter += 1
      }
+     println("Finished in " + iter + " iterations")
      last     
    }
    
@@ -175,6 +177,12 @@ class OptiMLCompanion {
    /**
     * profiling
     */
-  def tic[T](args: T*): Unit = ???
-  def toc[T](args: T*): Unit = ???
+  var profileTime: Long = _
+  def tic[T](arg: T): Unit = {
+    profileTime = System.currentTimeMillis()
+  }
+  def toc[T](arg: T): Unit = {
+    val now = System.currentTimeMillis()
+    println("(elapsed time: " + (now-profileTime)/1000D + "s)")
+  }
 }
