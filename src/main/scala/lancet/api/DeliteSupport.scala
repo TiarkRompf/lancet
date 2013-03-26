@@ -347,6 +347,12 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
       case "scala.runtime.BoxesRunTime.unboxToInt" => handle {
         case r::Nil => reflect[Int](r,".asInstanceOf[Int]").asInstanceOf[Rep[Object]]
       }
+      case "scala.runtime.BoxesRunTime.boxToDouble" => handle {
+        case r::Nil => reflect[java.lang.Double](r,".asInstanceOf[java.lang.Double]")(mtr[java.lang.Double])
+      }
+      case "scala.runtime.BoxesRunTime.unboxToDouble" => handle {
+        case r::Nil => reflect[Double](r,".asInstanceOf[Double]").asInstanceOf[Rep[Object]]
+      }
 /*
       java.lang.Boolean.valueOf ?
       java.lang.Integer.valueOf ?
