@@ -13,7 +13,7 @@ object OptiMLLancetRunner {
   val OptiMLRunner = new LancetDeliteRunner
 
   OptiMLRunner.initialize()
-  OptiMLRunner.traceMethods = false
+  OptiMLRunner.traceMethods = true
   OptiMLRunner.emitUniqueOpt = true
   OptiMLRunner.emitCheckCast = false
   
