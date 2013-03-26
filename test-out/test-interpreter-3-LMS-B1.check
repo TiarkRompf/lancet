@@ -10,7 +10,7 @@
         type char = Char;
         def WARN = assert(false, "WARN");
         def ERROR = assert(false, "ERROR");
-        var RES = null.asInstanceOf[Int];
+        var RES0 = null.asInstanceOf[Int];
         val x7 = x0.asInstanceOf[Int];
         val x8 = 0 >= x7;
         if (x8) {
@@ -27,10 +27,10 @@
           };
         }
         def BLOCK_4(LUB_pConst_1_intField:Int,x7:Int): Unit = {
-          (RES = LUB_pConst_1_intField) // return to root;
+          (RES0 = LUB_pConst_1_intField) // return to root;
         }
         // (no return?);
-        RES
+        RES0
       };
       x66
     }

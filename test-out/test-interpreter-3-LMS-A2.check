@@ -10,7 +10,7 @@
         type char = Char;
         def WARN = assert(false, "WARN");
         def ERROR = assert(false, "ERROR");
-        var RES = null.asInstanceOf[Int];
+        var RES0 = null.asInstanceOf[Int];
         val x7 = x0.asInstanceOf[Int];
         val x8: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
         if (x8 ne null) unsafe.putInt(x8,16L, 7) else println("BUG: putInt"+x8);;
@@ -23,7 +23,7 @@
           val x65 = 0 >= PHI_3_6;
           val x8: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
           if (x65) {
-            (RES = LUB_x8_intField) // return to root;
+            (RES0 = LUB_x8_intField) // return to root;
           } else {
             val x78 = 1 + LUB_x8_intField;
             if (x8 ne null) unsafe.putInt(x8,16L, x78) else println("BUG: putInt"+x8);;
@@ -36,7 +36,7 @@
           }
         }
         // (no return?);
-        RES
+        RES0
       };
       x135
     }

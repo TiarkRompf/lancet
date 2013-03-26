@@ -39,7 +39,7 @@ var x14: Array[Double] = x13
 var x15: Int = x10
 var x16: Boolean = x12
 val x17 = new DenseVectorDouble(x14,x15,x16);
-val x78_data: DenseVectorDouble = x17
+val x78_data: generated.scala.DenseVectorDouble = x17
 var x78_size: Int = 0
 var x8: Int = 0
 while (x8 < x7) {  // begin fat loop x78
@@ -239,14 +239,14 @@ println(x219);
 println("AA");
 println("BB");
 println("CC");
-(RES = 42) // return to root;
+(RES0 = 42) // return to root;
 } else {
 val x226: java.lang.Boolean = true.asInstanceOf[java.lang.Boolean];
 println(x226);
 println("AA");
 println("BB");
 println("CC");
-(RES = 42) // return to root;
+(RES0 = 42) // return to root;
 }
 } else {
 val x235: java.lang.Boolean = true.asInstanceOf[java.lang.Boolean];
@@ -260,14 +260,14 @@ println(x249);
 println("AA");
 println("BB");
 println("CC");
-(RES = 42) // return to root;
+(RES0 = 42) // return to root;
 } else {
 val x256: java.lang.Boolean = true.asInstanceOf[java.lang.Boolean];
 println(x256);
 println("AA");
 println("BB");
 println("CC");
-(RES = 42) // return to root;
+(RES0 = 42) // return to root;
 }
 }
 } else {
@@ -288,14 +288,14 @@ println(x295);
 println("AA");
 println("BB");
 println("CC");
-(RES = 42) // return to root;
+(RES0 = 42) // return to root;
 } else {
 val x302: java.lang.Boolean = true.asInstanceOf[java.lang.Boolean];
 println(x302);
 println("AA");
 println("BB");
 println("CC");
-(RES = 42) // return to root;
+(RES0 = 42) // return to root;
 }
 } else {
 val x311: java.lang.Boolean = true.asInstanceOf[java.lang.Boolean];
@@ -309,18 +309,18 @@ println(x325);
 println("AA");
 println("BB");
 println("CC");
-(RES = 42) // return to root;
+(RES0 = 42) // return to root;
 } else {
 val x332: java.lang.Boolean = true.asInstanceOf[java.lang.Boolean];
 println(x332);
 println("AA");
 println("BB");
 println("CC");
-(RES = 42) // return to root;
+(RES0 = 42) // return to root;
 }
 }
 }
-RES
+RES0
 };
 ()
 }
@@ -527,14 +527,14 @@ TP(Sym(220),Reflect(Unstructured(List(println(, Sym(219), ))),Summary(true,true,
 TP(Sym(221),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(219), Sym(220))))
 TP(Sym(222),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(219), Sym(220), Sym(221))))
 TP(Sym(223),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(219), Sym(220), Sym(221), Sym(222))))
-TP(Sym(224),Reflect(Unstructured(List((RES = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(219), Sym(220), Sym(221), Sym(222), Sym(223))))
+TP(Sym(224),Reflect(Unstructured(List((RES0 = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(219), Sym(220), Sym(221), Sym(222), Sym(223))))
 TP(Sym(225),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(219), Sym(220), Sym(221), Sym(222), Sym(223), Sym(224))))
 TP(Sym(226),Reflect(Unstructured(List(Const(true), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
 TP(Sym(227),Reflect(Unstructured(List(println(, Sym(226), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(226))))
 TP(Sym(228),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(226), Sym(227))))
 TP(Sym(229),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(226), Sym(227), Sym(228))))
 TP(Sym(230),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(226), Sym(227), Sym(228), Sym(229))))
-TP(Sym(231),Reflect(Unstructured(List((RES = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(226), Sym(227), Sym(228), Sym(229), Sym(230))))
+TP(Sym(231),Reflect(Unstructured(List((RES0 = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(226), Sym(227), Sym(228), Sym(229), Sym(230))))
 TP(Sym(232),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(226), Sym(227), Sym(228), Sym(229), Sym(230), Sym(231))))
 TP(Sym(233),Reflect(IfElse(Sym(218),Block(Sym(225)),Block(Sym(232))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(205), Sym(206), Sym(216), Sym(217), Sym(218))))
 TP(Sym(234),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(205), Sym(206), Sym(216), Sym(217), Sym(218), Sym(233))))
@@ -554,14 +554,14 @@ TP(Sym(250),Reflect(Unstructured(List(println(, Sym(249), ))),Summary(true,true,
 TP(Sym(251),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(249), Sym(250))))
 TP(Sym(252),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(249), Sym(250), Sym(251))))
 TP(Sym(253),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(249), Sym(250), Sym(251), Sym(252))))
-TP(Sym(254),Reflect(Unstructured(List((RES = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(249), Sym(250), Sym(251), Sym(252), Sym(253))))
+TP(Sym(254),Reflect(Unstructured(List((RES0 = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(249), Sym(250), Sym(251), Sym(252), Sym(253))))
 TP(Sym(255),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(249), Sym(250), Sym(251), Sym(252), Sym(253), Sym(254))))
 TP(Sym(256),Reflect(Unstructured(List(Const(true), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
 TP(Sym(257),Reflect(Unstructured(List(println(, Sym(256), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(256))))
 TP(Sym(258),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(256), Sym(257))))
 TP(Sym(259),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(256), Sym(257), Sym(258))))
 TP(Sym(260),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(256), Sym(257), Sym(258), Sym(259))))
-TP(Sym(261),Reflect(Unstructured(List((RES = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(256), Sym(257), Sym(258), Sym(259), Sym(260))))
+TP(Sym(261),Reflect(Unstructured(List((RES0 = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(256), Sym(257), Sym(258), Sym(259), Sym(260))))
 TP(Sym(262),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(256), Sym(257), Sym(258), Sym(259), Sym(260), Sym(261))))
 TP(Sym(263),Reflect(IfElse(Sym(248),Block(Sym(255)),Block(Sym(262))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(235), Sym(236), Sym(246), Sym(247), Sym(248))))
 TP(Sym(264),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(235), Sym(236), Sym(246), Sym(247), Sym(248), Sym(263))))
@@ -594,14 +594,14 @@ TP(Sym(296),Reflect(Unstructured(List(println(, Sym(295), ))),Summary(true,true,
 TP(Sym(297),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295), Sym(296))))
 TP(Sym(298),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295), Sym(296), Sym(297))))
 TP(Sym(299),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295), Sym(296), Sym(297), Sym(298))))
-TP(Sym(300),Reflect(Unstructured(List((RES = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295), Sym(296), Sym(297), Sym(298), Sym(299))))
+TP(Sym(300),Reflect(Unstructured(List((RES0 = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295), Sym(296), Sym(297), Sym(298), Sym(299))))
 TP(Sym(301),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295), Sym(296), Sym(297), Sym(298), Sym(299), Sym(300))))
 TP(Sym(302),Reflect(Unstructured(List(Const(true), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
 TP(Sym(303),Reflect(Unstructured(List(println(, Sym(302), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(302))))
 TP(Sym(304),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(302), Sym(303))))
 TP(Sym(305),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(302), Sym(303), Sym(304))))
 TP(Sym(306),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(302), Sym(303), Sym(304), Sym(305))))
-TP(Sym(307),Reflect(Unstructured(List((RES = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(302), Sym(303), Sym(304), Sym(305), Sym(306))))
+TP(Sym(307),Reflect(Unstructured(List((RES0 = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(302), Sym(303), Sym(304), Sym(305), Sym(306))))
 TP(Sym(308),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(302), Sym(303), Sym(304), Sym(305), Sym(306), Sym(307))))
 TP(Sym(309),Reflect(IfElse(Sym(294),Block(Sym(301)),Block(Sym(308))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(281), Sym(282), Sym(292), Sym(293), Sym(294))))
 TP(Sym(310),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(281), Sym(282), Sym(292), Sym(293), Sym(294), Sym(309))))
@@ -621,21 +621,21 @@ TP(Sym(326),Reflect(Unstructured(List(println(, Sym(325), ))),Summary(true,true,
 TP(Sym(327),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(325), Sym(326))))
 TP(Sym(328),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(325), Sym(326), Sym(327))))
 TP(Sym(329),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(325), Sym(326), Sym(327), Sym(328))))
-TP(Sym(330),Reflect(Unstructured(List((RES = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(325), Sym(326), Sym(327), Sym(328), Sym(329))))
+TP(Sym(330),Reflect(Unstructured(List((RES0 = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(325), Sym(326), Sym(327), Sym(328), Sym(329))))
 TP(Sym(331),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(325), Sym(326), Sym(327), Sym(328), Sym(329), Sym(330))))
 TP(Sym(332),Reflect(Unstructured(List(Const(true), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
 TP(Sym(333),Reflect(Unstructured(List(println(, Sym(332), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(332))))
 TP(Sym(334),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(332), Sym(333))))
 TP(Sym(335),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(332), Sym(333), Sym(334))))
 TP(Sym(336),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(332), Sym(333), Sym(334), Sym(335))))
-TP(Sym(337),Reflect(Unstructured(List((RES = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(332), Sym(333), Sym(334), Sym(335), Sym(336))))
+TP(Sym(337),Reflect(Unstructured(List((RES0 = 42) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(332), Sym(333), Sym(334), Sym(335), Sym(336))))
 TP(Sym(338),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(332), Sym(333), Sym(334), Sym(335), Sym(336), Sym(337))))
 TP(Sym(339),Reflect(IfElse(Sym(324),Block(Sym(331)),Block(Sym(338))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(311), Sym(312), Sym(322), Sym(323), Sym(324))))
 TP(Sym(340),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(311), Sym(312), Sym(322), Sym(323), Sym(324), Sym(339))))
 TP(Sym(341),Reflect(IfElse(Sym(280),Block(Sym(310)),Block(Sym(340))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267), Sym(268), Sym(278), Sym(279), Sym(280))))
 TP(Sym(342),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267), Sym(268), Sym(278), Sym(279), Sym(280), Sym(341))))
 TP(Sym(343),Reflect(IfElse(Sym(190),Block(Sym(266)),Block(Sym(342))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188), Sym(189), Sym(190))))
-TP(Sym(344),Reify(DynExp(RES),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188), Sym(189), Sym(190), Sym(343))))
+TP(Sym(344),Reify(DynExp(RES0),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188), Sym(189), Sym(190), Sym(343))))
 TP(Sym(345),Reflect(Unstructured(List(Block(Sym(344)))),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
 TP(Sym(346),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(345))))
 TP(Sym(347),VectorMax(VInterface(Sym(175)  [Int])))
@@ -675,11 +675,11 @@ TP(Sym(380),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),Li
 TP(Sym(381),Reflect(IfElse(Sym(368),Block(Sym(374)),Block(Sym(380))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267), Sym(268), Sym(366), Sym(367), Sym(368))))
 TP(Sym(382),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267), Sym(268), Sym(366), Sym(367), Sym(368), Sym(381))))
 TP(Sym(383),Reflect(IfElse(Sym(190),Block(Sym(364)),Block(Sym(382))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188), Sym(189), Sym(190))))
-TP(Sym(384),Reify(DynExp(RES),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188), Sym(189), Sym(190), Sym(383))))
-constants: Vector((Sym(-1000),<function1>), (Sym(-1001),scala.Predef$@3fed7658), (Sym(-1002),scala.reflect.Manifest$@7834124a), (Sym(-1003),Int), (Sym(-1004),lancet.advanced.TestDelite2$$anonfun$testA1$1$UtilCompanion$1@65707ca))
+TP(Sym(384),Reify(DynExp(RES0),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188), Sym(189), Sym(190), Sym(383))))
+constants: Vector((Sym(-1000),<function1>), (Sym(-1001),scala.Predef$@6d1b8b34), (Sym(-1002),scala.reflect.Manifest$@51839d8f), (Sym(-1003),Int), (Sym(-1004),lancet.advanced.TestDelite2$$anonfun$testA1$1$UtilCompanion$1@5796cf8c))
 *** running compileAndTest ***
 =================================================================================================
-TEST: lancet.api.LancetDeliteRunner@425bdd1c
+TEST: lancet.api.LancetDeliteRunner@5aa167
 =================================================================================================
 STAGING...
 Delite Application Being Staged:[lancet.api.LancetDeliteRunner]
@@ -696,7 +696,7 @@ catch vector_max
 catch vector_min
 catch vector_min
 EXECUTING...
-test output for: lancet.api.LancetDeliteRunner@425bdd1c
+test output for: lancet.api.LancetDeliteRunner@5aa167
 Delite Runtime executing with the following arguments:
 lancet.api.LancetDeliteRunner-test.deg
 Delite Runtime executing with 1 CPU thread(s) and 0 GPU(s)
@@ -707,5 +707,5 @@ true
 AA
 BB
 CC
-[METRICS]: Latest time for component all: 0.008105s
+[METRICS]: Latest time for component all: 0.005460s
 CHECKING...

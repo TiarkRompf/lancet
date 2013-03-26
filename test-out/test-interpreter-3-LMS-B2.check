@@ -10,7 +10,7 @@
         type char = Char;
         def WARN = assert(false, "WARN");
         def ERROR = assert(false, "ERROR");
-        var RES = null.asInstanceOf[Int];
+        var RES0 = null.asInstanceOf[Int];
         val x7 = x0.asInstanceOf[Int];
         ;{;
           val PHI_3_5 = x7 // LUBC(DynExp(PHI_3_5):Int,Sym(7):Int);
@@ -21,7 +21,7 @@
         def BLOCK_2(LUB_pConst_1_intField:Int,PHI_3_5:Int,x7:Int): Unit = {
           val x42 = 0 >= PHI_3_5;
           if (x42) {
-            (RES = LUB_pConst_1_intField) // return to root;
+            (RES0 = LUB_pConst_1_intField) // return to root;
           } else {
             val x55 = 1 + LUB_pConst_1_intField;
             if (pConst_0 ne null) unsafe.putInt(pConst_0,16L, x55) else println("BUG: putInt"+pConst_0);;
@@ -34,7 +34,7 @@
           }
         }
         // (no return?);
-        RES
+        RES0
       };
       x114
     }

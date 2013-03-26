@@ -1,4 +1,4 @@
-// constants: scala.collection.Seq$@1f213de2,public final native java.lang.Class java.lang.Object.getClass(),public abstract java.lang.reflect.Method scala.runtime.MethodCache.find(java.lang.Class),Array(),public boolean java.lang.reflect.AccessibleObject.isAccessible(),public void java.lang.reflect.AccessibleObject.setAccessible(boolean) throws java.lang.SecurityException,public abstract scala.runtime.MethodCache scala.runtime.MethodCache.add(java.lang.Class,java.lang.reflect.Method)
+// constants: scala.collection.Seq$@6b20e5b,public final native java.lang.Class java.lang.Object.getClass(),public abstract java.lang.reflect.Method scala.runtime.MethodCache.find(java.lang.Class),Array(),public boolean java.lang.reflect.AccessibleObject.isAccessible(),public void java.lang.reflect.AccessibleObject.setAccessible(boolean) throws java.lang.SecurityException,public abstract scala.runtime.MethodCache scala.runtime.MethodCache.add(java.lang.Class,java.lang.reflect.Method)
 class Generated0(CONST_0: scala.collection.Seq$,CONST_1: java.lang.reflect.Method,CONST_2: java.lang.reflect.Method,CONST_3: Array[java.lang.Class[_]],CONST_4: java.lang.reflect.Method,CONST_5: java.lang.reflect.Method,CONST_6: java.lang.reflect.Method) extends (scala.collection.Seq[_]=>scala.collection.Seq[_]){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -132,7 +132,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             }
           }
           def BLOCK_71(x0:scala.collection.Seq[_],x1:Object,x10:Object,x11:Object,x12:Object,x13:Object,x14:Boolean,x23:Object,x24:Boolean,x8:Object,x9:Object): Unit = {
-            /* cse: WrappedArray(x13.asInstanceOf[scala.runtime.MethodCache] // checkCast) = x23*/
+            /* cse: WrappedArray(x13, .asInstanceOf[scala.runtime.MethodCache] // checkCast) = x23*/
             val x38 = CONST_2.invoke(x23.asInstanceOf[AnyRef],x11.asInstanceOf[AnyRef]).asInstanceOf[Object] // scala.runtime.MethodCache.find
             val x39 = x38 ne null
             if (x39) {
@@ -207,7 +207,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
                   }
                 }
                 def BLOCK_87(x0:scala.collection.Seq[_],x1:Object,x10:Object,x11:Object,x12:Object,x13:Object,x14:Boolean,x23:Object,x24:Boolean,x38:Object,x39:Boolean,x40:Object,x41:Boolean,x43:Boolean,x44:Object,x8:Object,x9:Object): Unit = {
-                  /* cse: WrappedArray(x13.asInstanceOf[scala.runtime.MethodCache] // checkCast) = x23*/
+                  /* cse: WrappedArray(x13, .asInstanceOf[scala.runtime.MethodCache] // checkCast) = x23*/
                   val x53 = CONST_6.invoke(x23.asInstanceOf[AnyRef],x11.asInstanceOf[AnyRef],x40.asInstanceOf[AnyRef]).asInstanceOf[Object] // scala.runtime.MethodCache.add
                   unsafe.putObject(x44,16L, x53)
                   val x54 = unsafe.getObject(Class.forName("java.lang.ref.ReferenceQueue"),200L)

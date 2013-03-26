@@ -10,7 +10,7 @@
         type char = Char;
         def WARN = assert(false, "WARN");
         def ERROR = assert(false, "ERROR");
-        var RES = null.asInstanceOf[Int];
+        var RES0 = null.asInstanceOf[Int];
         val x7 = x0.asInstanceOf[Int];
         val x8: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
         if (x8 ne null) unsafe.putInt(x8,16L, 7) else println("BUG: putInt"+x8);;
@@ -28,10 +28,10 @@
           };
         }
         def BLOCK_12(LUB_x8_intField:Int,x7:Int,x8:Object): Unit = {
-          (RES = LUB_x8_intField) // return to root;
+          (RES0 = LUB_x8_intField) // return to root;
         }
         // (no return?);
-        RES
+        RES0
       };
       x90
     }
