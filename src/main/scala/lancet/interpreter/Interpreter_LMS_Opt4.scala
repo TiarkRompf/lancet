@@ -282,7 +282,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
     // dynamically scoped internal data structures
 
     def defaultReturnHandler: (Rep[Object] => Rep[Unit]) = { p =>
-      reflect[Unit]("("+RES+" = "+quote(p)+") // return to root")
+      reflect[Unit]("("+RES+" = ",quote(p),") // return to root")
     }
 
     def defaultHandler: (InterpreterFrame => Rep[Unit]) = execMethod
