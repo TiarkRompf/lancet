@@ -281,22 +281,30 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
     // dynamically scoped internal data structures
 
+    def defaultReturnHandler: (Rep[Object] => Rep[Unit]) = { p =>
+      reflect[Unit]("("+RES+" = "+quote(p)+") // return to root")
+    }
+
     def defaultHandler: (InterpreterFrame => Rep[Unit]) = execMethod
 
     var handler: (InterpreterFrame => Rep[Unit]) = defaultHandler
+    var returnHandler: (Rep[Object] => Rep[Unit]) = defaultReturnHandler
     var depth = 0
 
     def withScope[A](body: =>A): A = { // reset scope, e.g. for nested calls
       val saveHandler = handler
+      val saveReturnHandler = returnHandler
       val saveDepth = depth
       val saveResId = curResId
       try {
         handler = defaultHandler
+        returnHandler = defaultReturnHandler
         depth = 0
-        curResId += 1
+        curResId += 1 //XX remove
         body
       } finally {
         handler = saveHandler
+        returnHandler = saveReturnHandler
         depth = saveDepth
         curResId = saveResId
       }
@@ -325,7 +333,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       if (frame.getParentFrame == null) { // TODO: cleanup?
         val p = popAsObject(frame, frame.getMethod.getSignature.getReturnKind())
-        return reflect[Unit]("("+RES+" = "+quote(p)+") // return to root") 
+        return returnHandler(p)
       }
 
       val method = frame.getMethod()
