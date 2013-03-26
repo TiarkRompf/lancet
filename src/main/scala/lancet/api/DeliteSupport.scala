@@ -235,6 +235,9 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
   // basically a clone of compile{} that doesn't compile...
   def reify0[A:Manifest,B:Manifest](f: A=>B): (Rep[A],Block[B]) = {
 
+    val mb = manifest[B]
+    assert(mb ne null, "manifest[B] is null")
+
     implicit val tp = manifestToTypeRep(manifest[B])
     val (maStr, mbStr) = (manifestStr(manifest[A]), manifestStr(manifest[B]))
 

@@ -164,9 +164,9 @@ trait Base_LMS0 extends Base_LMS1 {
 
   type Block[+T]
 
-  case class TypeRep[T:Manifest](s: String) { override def toString = s; def manif = manifest[T] }
+  case class TypeRep[T:Manifest](s: String) { override def toString = s; val manif = manifest[T] }
 
-  implicit def typeRepToManifest[T:TypeRep]: Manifest[T] = typeRep[T].manif
+  def typeRepToManifest[T:TypeRep]: Manifest[T] = typeRep[T].manif
 
   //implicit def anyType[T:Manifest] = new TypeRep[T](manifestStr(manifest[T]))
 
@@ -233,7 +233,7 @@ trait Base_LMS0 extends Base_LMS1 {
       var idx = VConstantPool.indexWhere(_._2 == x) // should use eq ??
       if (idx < 0) {
         idx = VConstantPool.size
-        VConstantPool = VConstantPool :+ ((Sym(-1000-idx)(manifest[T]),x.asInstanceOf[AnyRef]))
+        VConstantPool = VConstantPool :+ ((Sym(-1000-idx)(typeRep[T].manif),x.asInstanceOf[AnyRef]))
       }
 
       "pConst_" + idx
@@ -283,13 +283,13 @@ trait Base_LMS0 extends Base_LMS1 {
 
 trait Base_LMS extends Base_LMS0 {
 
-  def reflect[T:TypeRep](d: Def[T]): Rep[T] = reflectEffect(d)//toAtom(d)
-  def reify[T:TypeRep](x: => Rep[T]): Block[T] = reifyEffects(x)
+  def reflect[T:TypeRep](d: Def[T]): Rep[T] = reflectEffect(d)(typeRep[T].manif,implicitly[SourceContext])//toAtom(d)
+  def reify[T:TypeRep](x: => Rep[T]): Block[T] = reifyEffects(x)(typeRep[T].manif)
 
   def liftConst[T:TypeRep](x:T): Rep[T] = {
     //if (!isPrimitive(x))
       //VConstToString(x) // add to constant pool
-    unit(x)
+    unit(x)(typeRep[T].manif)
   }
 
   def repManifest[T:Manifest]: Manifest[Rep[T]] = manifest[Rep[T]]
