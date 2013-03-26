@@ -47,7 +47,7 @@ class LancetDeliteRunner extends LancetImpl
       case _:TargetScala => createCodegen()
       case _ => super.getCodeGenPkg(t)
     }
-  override val deliteGenerator = new DeliteCodegen { 
+  override lazy val deliteGenerator = new DeliteCodegen { 
     val IR : self.type = self;
     val generators = self.generators; 
     //Console.println("DCG")
