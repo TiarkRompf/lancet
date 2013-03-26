@@ -189,7 +189,8 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
                 reflect[Object](liftConst[Method](m)(mtr[Method]),".invoke(",args(0),").asInstanceOf[",mtyp,"] // ",holder,".",name)(mtyp)
             //reflect[Object](args(0),".asInstanceOf[",holder,"].",name,"(",args.drop(1).mkString(","),").asInstanceOf[Object]")
         } else {
-            reflect[Object](holder,".",name,"(",args.mkString(","),").asInstanceOf[",mtyp,"]")(mtyp)
+            val xs = args.flatMap(x => List(x,/*".asInstanceOf[Object]",*/",")).dropRight(1)
+            reflect[Object](Seq(holder,".",name,"(") ++ xs ++ Seq(").asInstanceOf[",mtyp,"]"):_*)(mtyp)
         }
 
 
