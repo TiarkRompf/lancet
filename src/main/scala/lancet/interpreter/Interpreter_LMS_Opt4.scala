@@ -300,7 +300,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
         handler = defaultHandler
         returnHandler = defaultReturnHandler
         depth = 0
-        curResId += 1 //XX remove
+        curResId += 1 //still needed?
         body
       } finally {
         handler = saveHandler
