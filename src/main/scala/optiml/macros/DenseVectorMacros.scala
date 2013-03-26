@@ -133,4 +133,9 @@ object DenseVectorMacros extends OptiMLRunner.ClassMacros {
     implicit val bldr = OptiMLRunner.denseVectorBuilder[Double].asInstanceOf[OptiMLRunner.VectorBuilder[T,DenseVector[T]]]
     OptiMLRunner.vector_plus[T,DenseVector[T]](OptiMLRunner.denseVecToInterface(self),OptiMLRunner.denseVecToInterface(b))
   }
+  def pprint[T](self: Rep[DenseVector[T]]): Rep[Unit] = {
+    Console.println("catch vector_pprint")
+    implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
+    OptiMLRunner.vector_pprint(OptiMLRunner.denseVecToInterface(self))
+  }    
 }
