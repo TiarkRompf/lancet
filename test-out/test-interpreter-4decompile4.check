@@ -132,7 +132,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             }
           }
           def BLOCK_73(x0:scala.collection.Seq[_],x1:Object,x10:Object,x11:Object,x12:Object,x13:Object,x14:Boolean,x23:Object,x24:Boolean,x8:Object,x9:Object): Unit = {
-            /* cse: WrappedArray(x13.asInstanceOf[scala.runtime.MethodCache] // checkCast) = x23*/
+            /* cse: WrappedArray(x13, .asInstanceOf[scala.runtime.MethodCache] // checkCast) = x23*/
             val x38 = CONST_2.invoke(x23.asInstanceOf[AnyRef],x11.asInstanceOf[AnyRef]).asInstanceOf[Object] // scala.runtime.MethodCache.find
             val x39 = x38 ne null
             if (x39) {
@@ -208,7 +208,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
                   }
                 }
                 def BLOCK_89(x0:scala.collection.Seq[_],x1:Object,x10:Object,x11:Object,x12:Object,x13:Object,x14:Boolean,x23:Object,x24:Boolean,x38:Object,x39:Boolean,x40:Object,x41:Object,x42:Boolean,x44:Boolean,x45:Object,x8:Object,x9:Object): Unit = {
-                  /* cse: WrappedArray(x13.asInstanceOf[scala.runtime.MethodCache] // checkCast) = x23*/
+                  /* cse: WrappedArray(x13, .asInstanceOf[scala.runtime.MethodCache] // checkCast) = x23*/
                   val x54 = CONST_5.invoke(x23.asInstanceOf[AnyRef],x11.asInstanceOf[AnyRef],x41.asInstanceOf[AnyRef]).asInstanceOf[Object] // scala.runtime.MethodCache.add
                   unsafe.putObject(x45,16L, x54)
                   val x55 = unsafe.getObject(Class.forName("java.lang.ref.ReferenceQueue"),200L)
