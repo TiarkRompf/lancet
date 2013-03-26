@@ -399,18 +399,18 @@ object DeliteRunner {
   props.load(new FileReader(propFile))
 
   // test parameters
-  val verbose = props.getProperty("tests.verbose", "false").toBoolean
-  val verboseDefs = props.getProperty("tests.verboseDefs", "false").toBoolean
-  val threads = props.getProperty("tests.threads", "1")
-  val cacheSyms = false /* NNOOOOOOOOOO!!!!!!!!!!!*/   //props.getProperty("tests.cacheSyms", "true").toBoolean
-  val javaHome = new File(props.getProperty("java.home", ""))
-  val scalaHome = new File(props.getProperty("scala.vanilla.home", ""))
-  val runtimeClasses = new File(props.getProperty("runtime.classes", ""))
-  val runtimeExternalProc = false // scalaHome and runtimeClasses only required if runtimeExternalProc is true. should this be configurable? or should we just remove execTestExternal?
+  var verbose = props.getProperty("tests.verbose", "false").toBoolean
+  var verboseDefs = props.getProperty("tests.verboseDefs", "false").toBoolean
+  var threads = props.getProperty("tests.threads", "1")
+  var cacheSyms = false /* NNOOOOOOOOOO!!!!!!!!!!!*/   //props.getProperty("tests.cacheSyms", "true").toBoolean
+  var javaHome = new File(props.getProperty("java.home", ""))
+  var scalaHome = new File(props.getProperty("scala.vanilla.home", ""))
+  var runtimeClasses = new File(props.getProperty("runtime.classes", ""))
+  var runtimeExternalProc = false // scalaHome and runtimeClasses only required if runtimeExternalProc is true. should this be configurable? or should we just remove execTestExternal?
 
-  val javaBin = new File(javaHome, "bin/java")
-  val scalaCompiler = new File(scalaHome, "lib/scala-compiler.jar")
-  val scalaLibrary = new File(scalaHome, "lib/scala-library.jar")
+  var javaBin = new File(javaHome, "bin/java")
+  var scalaCompiler = new File(scalaHome, "lib/scala-compiler.jar")
+  var scalaLibrary = new File(scalaHome, "lib/scala-library.jar")
 
   def validateParameters() {
     if (!javaHome.exists) throw new TestFailedException("java.home must be a valid path in delite.properties", 3)

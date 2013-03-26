@@ -41,6 +41,7 @@ object OptiMLLancetRunner {
 
     println("*** running compileAndTest ***")
     
+    DeliteRunner.verboseDefs = true
     DeliteRunner.compileAndTest(runner)        
   }  
 }
