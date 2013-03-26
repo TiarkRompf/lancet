@@ -38,6 +38,26 @@ object DenseVectorMacros extends OptiMLRunner.ClassMacros {
     // or use scala reflection?
   }
   */
+  def apply[T](self: Rep[DenseVector[T]], n: Rep[Int]): Rep[T] = {
+    Console.println("catch vector_apply1")
+    implicit val mf = manifest[Double].asInstanceOf[Manifest[T]]
+    OptiMLRunner.densevector_apply(self,n)
+  }  
+  def apply2[T](self: Rep[DenseVector[T]], n: Rep[Int]): Rep[T] = {
+    Console.println("catch vector_apply2")
+    implicit val mf = manifest[Int].asInstanceOf[Manifest[T]]
+    OptiMLRunner.densevector_apply(self,n)
+  }
+  def apply3[T](self: Rep[DenseVector[T]], n: Rep[Int]): Rep[T] = {
+    Console.println("catch vector_apply3")
+    implicit val mf = manifest[DenseVector[Double]].asInstanceOf[Manifest[T]]
+    OptiMLRunner.densevector_apply(self,n)
+  }  
+  def apply4[T](self: Rep[DenseVectorView[T]], n: Rep[Int]): Rep[T] = {
+    Console.println("catch vector_view_apply")
+    implicit val mf = manifest[Double].asInstanceOf[Manifest[T]]
+    OptiMLRunner.dense_vectorview_apply(self,n)
+  }  
   def t[T](self: Rep[DenseVector[T]]): Rep[DenseVector[T]] = {
     Console.println("catch vector_t")
     implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
@@ -60,12 +80,24 @@ object DenseVectorMacros extends OptiMLRunner.ClassMacros {
     implicit val bf = OptiMLRunner.doubleHasMinMax.asInstanceOf[OptiMLRunner.HasMinMax[T]] //FIXME: generic types    
     OptiMLRunner.vector_minindex(OptiMLRunner.denseVecToInterface(self))
   }    
-  def Clone[T](self: Rep[DenseVectorView[T]]): Rep[DenseVector[T]] = {
+  def Clone[T](self: Rep[DenseVector[T]]): Rep[DenseVector[T]] = {
+    Console.println("catch vector_clone")
+    implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
+    implicit val bldr = OptiMLRunner.denseVectorBuilder[Double].asInstanceOf[OptiMLRunner.VectorBuilder[T,DenseVector[T]]]
+    OptiMLRunner.vector_clone[T,DenseVector[T]](OptiMLRunner.denseVecToInterface(self))
+  }
+  def Clone2[T](self: Rep[DenseVectorView[T]]): Rep[DenseVector[T]] = {
     Console.println("catch vectorview_clone")
     implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
     implicit val bldr = OptiMLRunner.denseVectorBuilder[Double].asInstanceOf[OptiMLRunner.VectorBuilder[T,DenseVector[T]]]
     OptiMLRunner.vector_clone[T,DenseVector[T]](OptiMLRunner.denseViewToInterface(self))
-  }
+  }  
+  def *:*[T](self: Rep[DenseVector[T]], b: Rep[DenseVectorView[T]]): Rep[T] = {    
+    Console.println("catch vector_dot_product")
+    implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
+    implicit val a = OptiMLRunner.doubleArith.asInstanceOf[OptiMLRunner.Arith[T]]
+    OptiMLRunner.vector_dot_product[T](OptiMLRunner.denseVecToInterface(self),OptiMLRunner.denseViewToInterface(b))
+  }  
   def /[T](self: Rep[DenseVector[T]], b: Rep[T]): Rep[DenseVector[T]] = {    
     Console.println("catch vector_divide_scalar")
     implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
@@ -73,6 +105,27 @@ object DenseVectorMacros extends OptiMLRunner.ClassMacros {
     implicit val bldr = OptiMLRunner.denseVectorBuilder[Double].asInstanceOf[OptiMLRunner.VectorBuilder[T,DenseVector[T]]]
     OptiMLRunner.vector_divide_scalar[T,DenseVector[T]](OptiMLRunner.denseVecToInterface(self),b)
   }
+  def -[T](self: Rep[DenseVector[T]], b: Rep[T]): Rep[DenseVector[T]] = {    
+    Console.println("catch vector_minus_scalar")
+    implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
+    implicit val a = OptiMLRunner.doubleArith.asInstanceOf[OptiMLRunner.Arith[T]]
+    implicit val bldr = OptiMLRunner.denseVectorBuilder[Double].asInstanceOf[OptiMLRunner.VectorBuilder[T,DenseVector[T]]]
+    OptiMLRunner.vector_minus_scalar[T,DenseVector[T]](OptiMLRunner.denseVecToInterface(self),b)
+  }  
+  def times2[T](self: Rep[DenseVectorView[T]], b: Rep[T]): Rep[DenseVector[T]] = {    
+    Console.println("catch vectorview_times_scalar")
+    implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
+    implicit val a = OptiMLRunner.doubleArith.asInstanceOf[OptiMLRunner.Arith[T]]
+    implicit val bldr = OptiMLRunner.denseVectorBuilder[Double].asInstanceOf[OptiMLRunner.VectorBuilder[T,DenseVector[T]]]
+    OptiMLRunner.vector_times_scalar[T,DenseVector[T]](OptiMLRunner.denseViewToInterface(self),b)
+  }    
+  def *[T](self: Rep[DenseVector[T]], b: Rep[T]): Rep[DenseVector[T]] = {    
+    Console.println("catch vector_times_scalar")
+    implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
+    implicit val a = OptiMLRunner.doubleArith.asInstanceOf[OptiMLRunner.Arith[T]]
+    implicit val bldr = OptiMLRunner.denseVectorBuilder[Double].asInstanceOf[OptiMLRunner.VectorBuilder[T,DenseVector[T]]]
+    OptiMLRunner.vector_times_scalar[T,DenseVector[T]](OptiMLRunner.denseVecToInterface(self),b)
+  }      
   def +[T](self: Rep[DenseVector[T]], b: Rep[DenseVector[T]]): Rep[DenseVector[T]] = {    
     Console.println("catch vector_plus")
     implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
@@ -81,4 +134,3 @@ object DenseVectorMacros extends OptiMLRunner.ClassMacros {
     OptiMLRunner.vector_plus[T,DenseVector[T]](OptiMLRunner.denseVecToInterface(self),OptiMLRunner.denseVecToInterface(b))
   }
 }
-

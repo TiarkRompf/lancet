@@ -11,22 +11,15 @@ import Util._
 
 object kmeans {
 
-  // vars end up as objects..
-  
-  // var xPath: String = _
-  // var muPath: String = _
-  val xPath = "/Users/asujeeth/data/ml/kmeans/mandrill-large.dat"
-  val muPath = "/Users/asujeeth/data/ml/kmeans/initmu.dat"
-  
   def print_usage = {
     println("Usage: kmeans <input data file> <initmu data file>")
     exit(-1)
   }
   
-  def prog = {
+  // def prog(x: DenseMatrix[Double], mu: DenseMatrix[Double]) = {
+  def prog(xPath: String, muPath: String) = {
     val OptiML = new OptiMLCompanion
     
-    val tol = 0.001 // tolerance (for convergence)
     val k = 16 // num clusters
     // var iter = 0
     
@@ -35,16 +28,16 @@ object kmeans {
     val m = x.numRows
     
     // OptiML.tic(mu)
-    val newMu = OptiML.untilconverged(mu, tol, { mu: DenseMatrix[Double] =>
+    val newMu = OptiML.untilconverged(mu, .001, 10, { mu: DenseMatrix[Double] =>
       // iter += 1
 
-      val c = OptiML.index_new(0,m).construct{ e => (mu mapRowsToVector { row => OptiML.dist(x(e), row) }).minIndex }
-      val allWP = OptiML.indexvector_hashreduce(OptiML.index_new(0,m), i => c(i), i => x(i).Clone, (a:DenseVector[Double],b:DenseVector[Double]) => a + b)
-      val allP = OptiML.indexvector_hashreduce(OptiML.index_new(0,m), i => c(i), i => 1, (a:Int,b:Int) => a + b)
+      val c = OptiML.index_new(0,m).construct{ e => (mu mapRowsToVector { row => OptiML.dist(x.getRow(e), row) }).minIndex }
+      val allWP = OptiML.indexvector_hashreduce(OptiML.index_new(0,m), i => c.apply2(i), i => x.getRow(i).Clone2, (a:DenseVector[Double],b:DenseVector[Double]) => a + b)
+      val allP = OptiML.indexvector_hashreduce2(OptiML.index_new(0,m), i => c.apply2(i), i => 1, (a:Int,b:Int) => a + b)
 
       OptiML.index_new(0,k).constructRows { j =>
-        val weightedpoints = allWP(j)
-        val points = allP(j)
+        val weightedpoints = allWP.apply3(j)
+        val points = allP.apply2(j)
         val d = if (points == 0) 1 else points 
         weightedpoints / d
       }
@@ -57,35 +50,23 @@ object kmeans {
     42
   }
   
-  def simple = {
-    val DenseVector = new DenseVectorCompanion
-    
-    val v = DenseVector.rand(1000)
-
-    val vt = v.t
-    //collect(vt.isRow != v.isRow)
-
-    //val vc = v.clone
-    //collect(vc.cmp(v) == true)
-
-    // val v2 = DenseVector(1,2,3,4,5)
-    //collect(median(v2) == 3)
-    // collect(mean(v2) == 3)
-    // collect(max(v2) == 5)
-    // collect(min(v2) == 1)
-     
-    printxx("AA")
-    printxx("BB")
-    printxx("CC")
-
-    42 // need result?
-  }
-  
   def main(args: Array[String]) = {
-    // if (args.length < 1) print_usage
-    // xPath = args(0)
-    // muPath = args(1)    
-    OptiMLRunner.program = x => prog
+    if (args.length < 2) print_usage
+    
+    // we'll need to macro these for cluster delite, but we can interpret for cpu/gpu    
+    // val OptiML = new OptiMLCompanion
+    // val x = OptiML.readMatrix(args(0))
+    // val mu = OptiML.readMatrix(args(1))
+    
+    // macros
+    // just crashes somewhere if no macros are installed..
+    // OptiMLRunner.program = y => prog(x,mu)
+    OptiMLRunner.program = y => prog(args(0),args(1))
     OptiMLRunner.run()
+    
+    // pure
+    // prog(x,mu)
+    // prog(args(0),args(1))
+    ()
   }
 }

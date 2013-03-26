@@ -259,7 +259,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
     var emitRecursive = false
 
     var budget = 200000
-
+    
     // global internal data structures
 
     val graalBlockMapping = new mutable.HashMap[ResolvedJavaMethod, BciBlockMapping] // map key to store
@@ -287,13 +287,16 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
     def withScope[A](body: =>A): A = { // reset scope, e.g. for nested calls
       val saveHandler = handler
       val saveDepth = depth
+      val saveResId = curResId
       try {
         handler = execMethod
         depth = 0
+        curResId += 1
         body
       } finally {
         handler = saveHandler
         depth = saveDepth
+        curResId = saveResId
       }
     }
 
@@ -320,7 +323,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       if (frame.getParentFrame == null) { // TODO: cleanup?
         val p = popAsObject(frame, frame.getMethod.getSignature.getReturnKind())
-        return reflect[Unit]("(RES = "+quote(p)+") // return to root")
+        return reflect[Unit]("("+RES+" = "+quote(p)+") // return to root") 
       }
 
       val method = frame.getMethod()

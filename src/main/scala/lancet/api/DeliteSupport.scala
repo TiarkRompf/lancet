@@ -122,7 +122,7 @@ trait ScalaCodegen extends OptiMLCodeGenScala with GEN_Scala_LMS {
     out.println("import sun.misc.Unsafe")
     out.println("object LancetUtils {")
     out.println("val unsafe = { val fld = classOf[Unsafe].getDeclaredField(\"theUnsafe\"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }")
-    out.println("var RES: Any = _")
+    out.println("var RES0: Any = _")
 
     out.println("/*" + IR.asInstanceOf[LancetDeliteRunner].VConstantPool + "*/")
     out.println("/*" + IR.asInstanceOf[LancetDeliteRunner].staticDataMap + "*/")
@@ -209,7 +209,7 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
     val repClass = classOf[Rep[_]]
     for (meth <- m.getClass.getMethods) {
       if (meth.getReturnType == repClass || meth.getParameterTypes.exists(_ == repClass)) {
-        assert(meth.getReturnType == repClass && meth.getParameterTypes.forall(_ == repClass)) // TODO: error message
+        assert(meth.getReturnType == repClass && meth.getParameterTypes.forall(_ == repClass), "macro type mismatch for method " + meth + ", repClass = " + repClass + ", meth.getReturnType = " + meth.getReturnType + ", meth.getParameterTypes = " + meth.getParameterTypes.toList) // TODO: error message
 
         // TODO: automatically convert to constants if parameter is non-rep
         // TODO: 
@@ -253,7 +253,7 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
 
       execute(f.getClass.getMethod("apply", manifest[A].erasure), Array[Rep[Object]](unit(f),arg.asInstanceOf[Rep[Object]])(repManifest[Object]))        
 
-      DynExp[B]("RES")
+      DynExp[B](RES)
     }
     (arg.asInstanceOf[Rep[A]],y)
   }
@@ -275,18 +275,40 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
     (arg,body)
   }
 
-  def decompileFun[A:TypeRep,B:TypeRep](f: Rep[A=>B]): Rep[A] => Rep[B] = {
+  def decompileFun[A:TypeRep,B:TypeRep](f: Rep[A=>B], id: Int = 0): Rep[A] => Rep[B] = {
     val Partial(fs) = eval(f)
     val Static(cls: Class[_]) = fs("clazz");
     { arg => 
       withScope {
-        emitString("  var RES = null.asInstanceOf["+typeRep[B]+"]")
+        val save = curResId
+        curResId = curResId+id+1 // unique to both scope and arg id
+        emitString("  var "+RES+" = null.asInstanceOf["+typeRep[B]+"]")
         execute(cls.getMethod("apply", Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
-        reflect[B]("RES.asInstanceOf["+typeRep[B]+"]")
+        // reflect[B](RES+".asInstanceOf["+typeRep[B]+"]")
+        val out = reflect[B](RES+".asInstanceOf["+typeRep[B]+"]")
+        curResId = save
+        out
       }
     }
   }
 
+  def decompileFun2[A:TypeRep,B:TypeRep,R:TypeRep](f: Rep[(A,B)=>R], id: Int = 0): (Rep[A],Rep[B]) => Rep[R] = {
+    val Partial(fs) = eval(f)
+    val Static(cls: Class[_]) = fs("clazz");
+    { (arg1,arg2) => 
+      withScope {
+        val save = curResId
+        curResId = curResId+id+1   
+        emitString("  var "+RES+" = null.asInstanceOf["+typeRep[R]+"]")
+        execute(cls.getMethod("apply", Class.forName("java.lang.Object"), Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg1.asInstanceOf[Rep[Object]],arg2.asInstanceOf[Rep[Object]])(repManifest[Object]))
+        // reflect[R](RES+".asInstanceOf["+typeRep[R]+"]")
+        val out = reflect[R](RES+".asInstanceOf["+typeRep[R]+"]")        
+        curResId = save
+        out
+      }
+    }
+  }
+  
 
   var traceMethods = false
 

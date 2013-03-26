@@ -52,9 +52,14 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       super.initialize()
     }
 
+    var emitCheckCast = false
     var emitUniqueOpt = false
     var debugGlobalDefs = false
     var debugDepGraph = false
+    
+    // for scoping "RES" vars. TODO: move?
+    var curResId = 0
+    def RES = "RES" + curResId    
 
     // ---------- high level execution loop ----------
 
@@ -105,12 +110,12 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
         emitString("def WARN = assert(false, \"WARN\")")
         emitString("def ERROR = assert(false, \"ERROR\")")
 
-        emitString("  var RES = null.asInstanceOf["+mbStr+"]")
+        emitString("  var "+RES+" = null.asInstanceOf["+mbStr+"]")
 
 
         execute(f.getClass.getMethod("apply", manifest[A].erasure), Array[Rep[Object]](unit(f),arg.asInstanceOf[Rep[Object]])(repManifest[Object]))        
 
-        DynExp[B]("RES")
+        DynExp[B](RES)
       }
 
       val codegen = createCodegen()
@@ -332,7 +337,8 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
 
     def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = {
-
+      if (!emitCheckCast) return value
+      
       val cls = typ.toJava
       val params = cls.getTypeParameters
       val name = if (params.length == 0) cls.getName

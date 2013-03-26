@@ -28,6 +28,11 @@ object OptiMLMacros extends OptiMLRunner.ClassMacros {
     OptiMLRunner.readMatrix(path)
   }
   
+  def readVector(self: Rep[OptiMLCompanion], path: Rep[String]): Rep[DenseVector[Double]] = {
+    Console.println("catch readVector")
+    OptiMLRunner.readVector(path)
+  }
+  
   // using Seq[Rep[Any]] causes an assertion to fail in DeliteSupport
   // def tic(self: Rep[OptiMLCompanion], deps: Rep[Seq[Any]]): Rep[Unit] = {
   //   Console.println("catch tic")
@@ -44,23 +49,73 @@ object OptiMLMacros extends OptiMLRunner.ClassMacros {
     OptiMLRunner.indexvector_range(start,end)
   }
 
-  // typing assertion fails for this one. could be that either functions or tuples are getting reified differently than we expect
-  // def indexvector_hashreduce[V](self: Rep[OptiMLCompanion], x: Rep[IndexVectorRange], f: Rep[Int] => Rep[Int], map: Rep[Int] => Rep[V], reduce: (Rep[V],Rep[V]) => Rep[V]): Rep[DenseVector[V]] = {
-  //   Console.println("catch indexvector_hashreduce")
-  //   implicit val mf = manifest[DenseVector[Double]].asInstanceOf[Manifest[V]] //FIXME: generic types
-  //   implicit val a = OptiMLRunner.doubleArith.asInstanceOf[OptiMLRunner.Arith[V]]
-  //   OptiMLRunner.indexvector_hashreduce(OptiMLRunner.indexVecRangeToInterface(x),f,map,reduce)    
-  // }
+  def indexvector_hashreduce(self: Rep[OptiMLCompanion], x: Rep[IndexVectorRange], f: Rep[Int => Int], map: Rep[Int => DenseVector[Double]], reduce: Rep[(DenseVector[Double],DenseVector[Double]) => DenseVector[Double]]): Rep[DenseVector[DenseVector[Double]]] = {
+    try {
+      Console.println("catch indexvector_hashreduce")
+      implicit val mf = manifest[DenseVector[Double]] //FIXME: generic types
+      implicit val a = OptiMLRunner.denseVectorArith[Double]
+      val block1 = decompileFun(f)(intType,intType)
+      val vType = TypeRep("generated.scala.DenseVectorDouble")(mf)
+      val block2 = decompileFun(map,1)(intType,vType)
+      // val tvType = TypeRep("(generated.scala.DenseVectorDouble,generated.scala.DenseVectorDouble)")(manifest[(V,V)])
+      val block3 = decompileFun2(reduce,2)(vType,vType,vType)
+      OptiMLRunner.indexvector_hashreduce(OptiMLRunner.indexVecRangeToInterface(x),block1,block2,block3)    
+    } catch {
+      case e => e.printStackTrace; throw e
+    }
+  }
   
-  def dist[T](self: Rep[OptiMLCompanion], x: Rep[DenseVectorView[T]], y: Rep[DenseVector[T]]): Rep[T] = {
+  def indexvector_hashreduce2(self: Rep[OptiMLCompanion], x: Rep[IndexVectorRange], f: Rep[Int => Int], map: Rep[Int => Int], reduce: Rep[(Int,Int) => Int]): Rep[DenseVector[Int]] = {
+    try {
+      Console.println("catch indexvector_hashreduce2")
+      // implicit val mf = manifest[Int] //FIXME: generic types
+      // implicit val a = OptiMLRunner.intArith
+      val block1 = decompileFun(f)(intType,intType)
+      val block2 = decompileFun(map,1)(intType,intType)
+      val block3 = decompileFun2(reduce,2)(intType,intType,intType)
+      OptiMLRunner.indexvector_hashreduce(OptiMLRunner.indexVecRangeToInterface(x),block1,block2,block3)    
+    } catch {
+      case e => e.printStackTrace; throw e
+    }
+  }  
+  
+  def dist[T](self: Rep[OptiMLCompanion], x: Rep[DenseVectorView[T]], y: Rep[DenseVectorView[T]]): Rep[T] = {
     Console.println("catch dist")
     implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
     implicit val a = OptiMLRunner.doubleArith.asInstanceOf[OptiMLRunner.Arith[T]]
-    OptiMLRunner.optila_vector_dist_square(OptiMLRunner.denseViewToInterface(x),OptiMLRunner.denseVecToInterface(y)) 
+    OptiMLRunner.optila_vector_dist_square(OptiMLRunner.denseViewToInterface(x),OptiMLRunner.denseViewToInterface(y)) 
   }
+  
+  def dist2[T](self: Rep[OptiMLCompanion], x: Rep[DenseVector[T]], y: Rep[DenseVector[T]]): Rep[T] = {
+    Console.println("catch dist2")
+    implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
+    implicit val a = OptiMLRunner.doubleArith.asInstanceOf[OptiMLRunner.Arith[T]]
+    OptiMLRunner.optila_vector_dist_square(OptiMLRunner.denseVecToInterface(x),OptiMLRunner.denseVecToInterface(y)) 
+  }
+  
+  def dist3[T](self: Rep[OptiMLCompanion], x: Rep[DenseMatrix[T]], y: Rep[DenseMatrix[T]]): Rep[T] = {
+    Console.println("catch dist3")
+    implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
+    implicit val a = OptiMLRunner.doubleArith.asInstanceOf[OptiMLRunner.Arith[T]]
+    OptiMLRunner.optila_matrix_dist_square(OptiMLRunner.denseMatToInterface(x),OptiMLRunner.denseMatToInterface(y)) 
+  }
+  
+  def sum(self: Rep[OptiMLCompanion], start: Rep[Int], end: Rep[Int], size: Rep[Int], block: Rep[Int => DenseVector[Double]]): Rep[DenseVector[Double]] = {
+    try{
+      Console.println("catch sum")
+      implicit val mf = manifest[Double]
+      implicit val cl = OptiMLRunner.vectorCloneable[Double,DenseVector[Double]]
+      implicit val ar = OptiMLRunner.denseVectorArith[Double]
+      val tpe = TypeRep("generated.scala.DenseVectorDouble")(manifest[DenseVector[Double]])
+      val block1 = decompileFun(block)(intType,tpe)
+      OptiMLRunner.optiml_sum[DenseVector[Double]](start,end,block1)
+    } catch {
+      case e => e.printStackTrace; throw e
+    }
+  }  
 
-  // typing assertion fails here too
-  def untilconverged[T](self: Rep[OptiMLCompanion], x: Rep[DenseMatrix[T]], tol: Rep[Double], block: Rep[DenseMatrix[T] => DenseMatrix[T]]): Rep[DenseMatrix[T]] = {
+  // somehow Delite is generating the entire untilconverged as a singletask, when it should be a DeliteOpWhile that gets unrolled..
+  def untilconverged[T](self: Rep[OptiMLCompanion], x: Rep[DenseMatrix[T]], tol: Rep[Double], maxIter: Rep[Int], block: Rep[DenseMatrix[T] => DenseMatrix[T]]): Rep[DenseMatrix[T]] = {
     try {
       Console.println("catch untilconverged")
       implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
@@ -71,11 +126,28 @@ object OptiMLMacros extends OptiMLRunner.ClassMacros {
       // somehow the default string output is just ppl.dsl.optila.DenseMatrix (without type param)
       val tpe = TypeRep("generated.scala.DenseMatrixDouble")(manifest[DenseMatrix[T]])
       val block1 = decompileFun(block)(tpe,tpe)
-      OptiMLRunner.optiml_untilconverged[DenseMatrix[T]](x,(a: Rep[DenseMatrix[T]]) => tol,OptiMLRunner.unit(10),OptiMLRunner.unit(true),block1,diff)
+      OptiMLRunner.optiml_untilconverged[DenseMatrix[T]](x,(a: Rep[DenseMatrix[T]]) => tol,maxIter,OptiMLRunner.unit(true),block1,diff)
     } catch {
       case e => e.printStackTrace; throw e
     }
   }
+  
+  def untilconverged2[T](self: Rep[OptiMLCompanion], x: Rep[DenseVector[T]], tol: Rep[Double], maxIter: Rep[Int], block: Rep[DenseVector[T] => DenseVector[T]]): Rep[DenseVector[T]] = {
+    try {
+      Console.println("catch untilconverged2")
+      implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
+      implicit val cl = OptiMLRunner.vectorCloneable[Double,DenseVector[Double]].asInstanceOf[OptiMLRunner.Cloneable[DenseVector[T]]]
+      implicit val ar = OptiMLRunner.doubleArith.asInstanceOf[OptiMLRunner.Arith[T]]
+      implicit val diff = (a: Rep[DenseVector[T]], b: Rep[DenseVector[T]]) => (OptiMLRunner.optila_vector_dist_square(OptiMLRunner.denseVecToInterface(a),OptiMLRunner.denseVecToInterface(b))(mf,ar,implicitly[SourceContext])).asInstanceOf[Rep[Double]]
+      // somehow the default string output is just ppl.dsl.optila.DenseVector (without type param)
+      val tpe = TypeRep("generated.scala.DenseVectorDouble")(manifest[DenseVector[T]])
+      val block1 = decompileFun(block)(tpe,tpe)
+      OptiMLRunner.optiml_untilconverged[DenseVector[T]](x,(a: Rep[DenseVector[T]]) => tol,maxIter,OptiMLRunner.unit(true),block1,diff)
+    } catch {
+      case e => e.printStackTrace; throw e
+    }
+  }
+  
   
 }
 

@@ -5,6 +5,8 @@ import lancet.api._
 import lancet.interpreter._
 import lancet.core._
 
+import ppl.delite.framework.Config
+
 import optiml._
 
 object OptiMLLancetRunner {
@@ -25,8 +27,9 @@ object OptiMLLancetRunner {
     println("starting run")
     
     runner.VConstantPool = scala.collection.immutable.Vector.empty    
-    runner.generateScalaSource("Generated", new java.io.PrintWriter(System.out))
-    runner.globalDefs.foreach(println)    
+    // Config.cacheSyms = false
+    // runner.generateScalaSource("Generated", new java.io.PrintWriter(System.out))
+    // runner.globalDefs.foreach(println)    
 
     val cst = runner.VConstantPool
     println("constants: "+cst)

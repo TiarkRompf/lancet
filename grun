@@ -22,7 +22,7 @@ export JAVA_CLASSPATH=$JAVA_CLASSPATH:lib_managed/jars/com.google.protobuf/proto
 # lancet
 export JAVA_CLASSPATH=$JAVA_CLASSPATH:target/scala-2.10/classes/
 
-export JAVA_OPTS="-Xms512M -Xmx1G -XX:+CMSClassUnloadingEnabled -XX:-BootstrapGraal"
-export JAVA_OPTS="$JAVA_OPTS -Ddelite.home.dir=/Users/asujeeth/src/workspace/delite2"
+export JAVA_OPTS="-Xms512M -Xmx1G -XX:+CMSClassUnloadingEnabled -XX:-BootstrapGraal -Xss10m"
+export JAVA_OPTS="$JAVA_OPTS -Ddelite.home.dir=$DELITE_HOME"
 
 $JAVA_HOME/bin/java -graal $JAVA_OPTS -cp $JAVA_CLASSPATH "$@"
