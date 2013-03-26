@@ -27,6 +27,13 @@ object DenseMatrixMacros extends OptiMLRunner.ClassMacros {
     OptiMLRunner.densematrix_numrows(self)
   }  
 
+  def numCols[T](self: Rep[DenseMatrix[T]]): Rep[Int] = {
+    Console.println("catch matrix_numcols")
+    implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
+    OptiMLRunner.densematrix_numcols(self)
+  }
+
+
   def getRow[T](self: Rep[DenseMatrix[T]], i: Rep[Int]): Rep[DenseVectorView[T]] = {
     Console.println("catch matrix_getrow")
     implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
