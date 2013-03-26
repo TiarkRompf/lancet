@@ -101,7 +101,7 @@ trait ScalaCodegen extends OptiMLCodeGenScala with GEN_Scala_LMS {
   }*/
 
   override def emitKernelFooter(syms: List[Sym[Any]], vals: List[Sym[Any]], vars: List[Sym[Any]], resultType: String, resultIsVar: Boolean, external: Boolean): Unit = {
-    if (syms.length.equals(1) && syms.head.tp.equals(manifest[Unit]))
+    if (syms.length.equals(1) && resultType == "Unit")
       stream.println("}}")
     else super.emitKernelFooter(syms,vals,vars,resultType,resultIsVar,external)
   }
