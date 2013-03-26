@@ -285,14 +285,12 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
     val Static(cls: Class[_]) = fs("clazz");
     { arg => 
       withScope {
-        val save = curResId
-        curResId = curResId+id+1 // unique to both scope and arg id
-        emitString("  var "+RES+" = null.asInstanceOf["+typeRep[B]+"]")
+        val Sym(id) = f
+        curResId = id
+        emitString("var "+RES+" = null.asInstanceOf["+typeRep[B]+"]")
+        returnHandler = p => reflect[Unit]("("+RES+" = ",p,".asInstanceOf[",typeRep[B],"]) // return to closure")
         execute(cls.getMethod("apply", Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
-        // reflect[B](RES+".asInstanceOf["+typeRep[B]+"]")
-        val out = reflect[B](RES+".asInstanceOf["+typeRep[B]+"]")
-        curResId = save
-        out
+        reflect[B](RES)
       }
     }
   }
@@ -302,14 +300,12 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
     val Static(cls: Class[_]) = fs("clazz");
     { (arg1,arg2) => 
       withScope {
-        val save = curResId
-        curResId = curResId+id+1   
-        emitString("  var "+RES+" = null.asInstanceOf["+typeRep[R]+"]")
+        val Sym(id) = f
+        curResId = id
+        emitString("var "+RES+" = null.asInstanceOf["+typeRep[R]+"]")
+        returnHandler = p => reflect[Unit]("("+RES+" = ",p,".asInstanceOf[",typeRep[R],"]) // return to closure")
         execute(cls.getMethod("apply", Class.forName("java.lang.Object"), Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg1.asInstanceOf[Rep[Object]],arg2.asInstanceOf[Rep[Object]])(repManifest[Object]))
-        // reflect[R](RES+".asInstanceOf["+typeRep[R]+"]")
-        val out = reflect[R](RES+".asInstanceOf["+typeRep[R]+"]")        
-        curResId = save
-        out
+        reflect[R](RES)
       }
     }
   }
