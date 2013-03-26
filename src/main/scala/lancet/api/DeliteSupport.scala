@@ -287,7 +287,7 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
       withScope {
         implicit val mb = typeRep[B].manif
         val U = this.asInstanceOf[Variables { type Rep[T] = Exp[T] }]
-        val RES = U.var_new(Dyn[B]("null.asInstanceOf["+typeRep[B]+"]"))
+        val RES = U.var_new[B](Dyn[B]("null.asInstanceOf["+typeRep[B]+"]"))
         returnHandler = p => U.var_assign(RES,p)
         execute(cls.getMethod("apply", Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
         U.readVar(RES)
@@ -302,7 +302,7 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
       withScope {
         implicit val mb = typeRep[R].manif
         val U = this.asInstanceOf[Variables { type Rep[T] = Exp[T] }]
-        val RES = U.var_new(Dyn[R]("null.asInstanceOf["+typeRep[R]+"]"))
+        val RES = U.var_new[R](Dyn[R]("null.asInstanceOf["+typeRep[R]+"]"))
         returnHandler = p => U.var_assign(RES,p)
         execute(cls.getMethod("apply", Class.forName("java.lang.Object"), Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg1.asInstanceOf[Rep[Object]],arg2.asInstanceOf[Rep[Object]])(repManifest[Object]))
         U.readVar(RES)
