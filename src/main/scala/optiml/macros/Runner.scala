@@ -15,6 +15,7 @@ object OptiMLLancetRunner {
   OptiMLRunner.initialize()
   OptiMLRunner.traceMethods = false
   OptiMLRunner.emitUniqueOpt = true
+  OptiMLRunner.emitCheckCast = false
   
   // add macros
   OptiMLRunner.install(OptiMLMacros)  

@@ -52,8 +52,9 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       super.initialize()
     }
 
-    var emitCheckCast = false
-    var emitUniqueOpt = false
+    var emitCheckCast = true
+    var emitUniqueOpt = true
+    
     var debugGlobalDefs = false
     var debugDepGraph = false
     
