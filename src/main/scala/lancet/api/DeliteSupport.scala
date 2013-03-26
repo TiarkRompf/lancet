@@ -191,7 +191,7 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
     r
   }
 
-  handler = execMethodPostDom
+  override def defaultHandler = execMethodPostDom
   
 
   // *** macro interface

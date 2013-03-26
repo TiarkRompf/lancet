@@ -281,7 +281,9 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
     // dynamically scoped internal data structures
 
-    var handler: (InterpreterFrame => Rep[Unit]) = execMethod
+    def defaultHandler: (InterpreterFrame => Rep[Unit]) = execMethod
+
+    var handler: (InterpreterFrame => Rep[Unit]) = defaultHandler
     var depth = 0
 
     def withScope[A](body: =>A): A = { // reset scope, e.g. for nested calls
@@ -289,7 +291,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       val saveDepth = depth
       val saveResId = curResId
       try {
-        handler = execMethod
+        handler = defaultHandler
         depth = 0
         curResId += 1
         body
