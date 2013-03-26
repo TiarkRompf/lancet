@@ -27,6 +27,10 @@ object DenseVectorMacros extends OptiMLRunner.ClassMacros {
     Console.println("catch vector_rand")
     OptiMLRunner.densevector_obj_rand(n)
   }
+  def zeros(self: Rep[DenseVectorCompanion], n: Rep[Int], isRow: Rep[Boolean]): Rep[DenseVector[Double]] = {
+    Console.println("catch vector_new")
+    OptiMLRunner.densevector_obj_new(n, isRow)
+  }
   /*
   def apply[T](self: Rep[DenseVectorCompanion], xs: Rep[Seq[T]]): Rep[DenseVector[T]] = {
     Console.println("catch vector_apply")
