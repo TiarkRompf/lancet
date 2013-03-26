@@ -14,7 +14,7 @@ fi
 export JAVA_CLASSPATH=$JAVA_CLASSPATH:~/.sbt/boot/scala-2.10.0-M1-virtualized/lib/*
 
 # lms, delite
-export JAVA_CLASSPATH=$JAVA_CLASSPATH:lib_managed/jars/EPFL/lms_2.10/*:lib_managed/jars/stanford-ppl/framework_2.10/*:lib_managed/jars/stanford-ppl/optila_2.10/*:lib_managed/jars/stanford-ppl/optiml_2.10/*:lib_managed/jars/stanford-ppl/runtime_2.10/*
+export JAVA_CLASSPATH=$JAVA_CLASSPATH:lib_managed/jars/EPFL/lms_2.10.0-M1-virtualized/*:lib_managed/jars/stanford-ppl/framework_2.10.0-M1-virtualized/*:lib_managed/jars/stanford-ppl/optila_2.10.0-M1-virtualized/*:lib_managed/jars/stanford-ppl/optiml_2.10.0-M1-virtualized/*:lib_managed/jars/stanford-ppl/runtime_2.10.0-M1-virtualized/*
                                                                 
 # cluster stuff
 export JAVA_CLASSPATH=$JAVA_CLASSPATH:lib_managed/jars/com.google.protobuf/protobuf-java/*:lib_managed/jars/org.apache.mesos/mesos/*
