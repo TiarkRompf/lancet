@@ -235,7 +235,7 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
   def ensureType[T:Manifest](x: Rep[T]) = if (x.tp == manifest[T]) x else objectAsInstanceOf[T](x.asInstanceOf[Rep[Object]])(mtr[T])
 
   // basically a clone of compile{} that doesn't compile...
-  def reify0[A:Manifest,B:Manifest](f: A=>B): (Rep[A],Block[B]) = {
+  def reify0[A:Manifest,B:Manifest](f: A=>B): (Rep[A],Rep[B]) = {
 
     val mb = manifest[B]
     assert(mb ne null, "manifest[B] is null")
@@ -244,7 +244,7 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
     val (maStr, mbStr) = (manifestStr(manifest[A]), manifestStr(manifest[B]))
 
     val arg = liftConst[Object](7:Integer) // just some dummy...
-    val y = reify {
+    val y = /*reify*/ {
 
       //emitString("import sun.misc.Unsafe")
       //emitString("import generated.scala.DenseVectorDouble")
