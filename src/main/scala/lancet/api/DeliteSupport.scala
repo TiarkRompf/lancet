@@ -70,7 +70,7 @@ class LancetDeliteRunner extends LancetImpl
 // *** code generator overrides
 
 trait DeliteCodegen extends DeliteCodeGenPkg { self =>
-  val IR: DeliteApplication with Core_LMS
+  val IR: DeliteApplication with Core_LMS //with LancetImpl
   import IR._
   override def runTransformations[A:Manifest](b: Block[A]): Block[A] = {
     //Console.println("no transformations on block "+b)
@@ -85,10 +85,20 @@ trait DeliteCodegen extends DeliteCodeGenPkg { self =>
     level foreach println
     level
   }*/
+
+  /*// note: must make sure deadObjects are actually dead!
+  override def emitNode(sym: Sym[Any], rhs: Def[Any]) = {
+    if (rhs.isInstanceOf[Reflect[_]] || rhs.isInstanceOf[Reify[_]] || 
+      !(sym::syms(rhs)).exists(deadObjects contains _))
+      super.emitNode(sym,rhs)
+    else {
+      Console.println("not emitting "+quote(sym)+"="+rhs+": dead "+deadObjects)
+    }
+  }*/
 }
 
 trait ScalaCodegen extends OptiMLCodeGenScala with GEN_Scala_LMS { 
-  val IR: DeliteApplication with OptiMLExp with Core_LMS //LancetImpl
+  val IR: DeliteApplication with OptiMLExp with Core_LMS //with LancetImpl
   import IR._
 
   /*override def getExactScope[A](currentScope: List[Stm])(result: List[Exp[Any]]): List[Stm] = {
@@ -98,6 +108,16 @@ trait ScalaCodegen extends OptiMLCodeGenScala with GEN_Scala_LMS {
     Console.println("scala level scope for "+result)
     level.foreach(Console.println)
     level
+  }*/
+
+  /*// note: must make sure deadObjects are actually dead!
+  override def emitNode(sym: Sym[Any], rhs: Def[Any]) = {
+    if (rhs.isInstanceOf[Reflect[_]] || rhs.isInstanceOf[Reify[_]] || 
+      !(sym::syms(rhs)).exists(deadObjects contains _))
+      super.emitNode(sym,rhs)
+    else {
+      Console.println("not emitting "+quote(sym)+"="+rhs+": dead "+deadObjects)
+    }
   }*/
 
   override def emitKernelFooter(syms: List[Sym[Any]], vals: List[Sym[Any]], vars: List[Sym[Any]], resultType: String, resultIsVar: Boolean, external: Boolean): Unit = {
@@ -280,7 +300,14 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
     (arg,body)
   }
 
+  //var deadObjects: List[Rep[Object]] = Nil
+  def killObject(x: Rep[Any]) = {
+    //remove effect deps to enable dce
+    context = context.filterNot { case s@Def(d) => (s::syms(d)) contains x }
+  }
+
   def decompileFun[A:TypeRep,B:TypeRep](f: Rep[A=>B], id: Int = 0): Rep[A] => Rep[B] = {
+    killObject(f)
     val Partial(fs) = eval(f)
     val Static(cls: Class[_]) = fs("clazz");
     { arg => 
@@ -296,6 +323,7 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
   }
 
   def decompileFun2[A:TypeRep,B:TypeRep,R:TypeRep](f: Rep[(A,B)=>R], id: Int = 0): (Rep[A],Rep[B]) => Rep[R] = {
+    killObject(f)
     val Partial(fs) = eval(f)
     val Static(cls: Class[_]) = fs("clazz");
     { (arg1,arg2) => 
