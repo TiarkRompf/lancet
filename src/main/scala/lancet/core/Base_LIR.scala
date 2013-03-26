@@ -76,7 +76,7 @@ trait Base_LIR0 extends Base {
     //TODO/FIXME
     case s if !Modifier.isPublic(x.getModifiers) => "Object /*" + s + "*/" //s <-- class may be private...
     case s if s.contains("$read$$") => "Object"
-    case s => s
+    case s => 
       //if (s.contains("$")) println("careful: "+s)
       val params = x.getTypeParameters
       if (params.length == 0) s
