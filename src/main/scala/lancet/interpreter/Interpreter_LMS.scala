@@ -332,6 +332,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
 
     def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = {
+// TODO: add emitCheckCast check
 
       val cls = typ.toJava
       val params = cls.getTypeParameters
