@@ -20,6 +20,9 @@ import lancet.core._
  
 // object OptiML {
 class OptiMLCompanion {
+  val DenseVector = new DenseVectorCompanion
+  val DenseMatrix = new DenseMatrixCompanion
+
   /**
    * i/o
    */ 

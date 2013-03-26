@@ -23,7 +23,7 @@ object logreg {
     val x = OptiML.readMatrix(xPath)
     val y = OptiML.readVector(yPath).t
     
-    val theta = new DenseVector[Double](x.numCols,true)
+    val theta = OptiML.DenseVector.zeros(x.numCols,true)//new DenseVector[Double](x.numCols,true)
     var iter = 0
     
     // tic(theta)
