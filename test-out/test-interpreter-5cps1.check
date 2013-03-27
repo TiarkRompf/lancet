@@ -94,10 +94,9 @@ def apply(ARG: Int): Int = { object BODY {
   //end reset
   val x20 = x19.asInstanceOf[Int]
   val x21 = x20.asInstanceOf[Int]
-  val x22 = x21.asInstanceOf[Int]
   // return 3_0 to 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
   // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4.apply$mcII$sp>
-  (RES = x22) // return to root
+  (RES = x21) // return to root
   // (no return?)
 }; BODY.RES }
 }
