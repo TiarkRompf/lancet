@@ -263,6 +263,35 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
     }
 
 
+    // materialize an object
+    def evalM[A](x: Rep[A]): A = eval (x) match {
+      case Const(x) => x
+      case Partial(fs) =>
+        val Static(cls: Class[_]) = fs("clazz")
+
+        // materialize objects recursively
+        // to resolve non-constant fields.
+        // (question: is this sensible? what if the 
+        // graph is really big?)
+
+        val typ = metaAccessProvider.lookupJavaType(cls)
+        val obj = it.runtimeInterface.newObject(typ).asInstanceOf[A]
+
+        val fs1 = fs - "clazz" - "alloc"
+        val fs2 = typ.getInstanceFields(false) //.find(_.getName == k)
+
+        //println(fs)
+        //println(fs2.mkString(","))
+
+        for (fld <- fs2) {
+          val name = fld.getName
+          val offset = fld.asInstanceOf[HotSpotResolvedJavaField].offset
+          val value = evalM(fs1(name))
+          it.Runtime.unsafe.putObject(obj, offset, value)
+        }
+        obj
+    }
+
 
 
     var traceMethods = false
@@ -434,107 +463,17 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
         case "lancet.api.DefaultMacros.freeze" => handle {
           case r::(f:Rep[()=>Int])::Nil => 
             //println("freeze")
-
-            def evalM[A](x: Rep[A]): A = eval (x) match {
-              case Const(x) => x
-              case Partial(fs) =>
-                val Static(cls: Class[_]) = fs("clazz")
-
-                // materialize objects recursively
-                // to resolve non-constant fields.
-                // (question: is this sensible? what if the 
-                // graph is really big?)
-
-                val typ = metaAccessProvider.lookupJavaType(cls)
-                val obj = it.runtimeInterface.newObject(typ).asInstanceOf[A]
-
-                val fs1 = fs - "clazz" - "alloc"
-                val fs2 = typ.getInstanceFields(false) //.find(_.getName == k)
-
-                //println(fs)
-                //println(fs2.mkString(","))
-
-                for (fld <- fs2) {
-                  val name = fld.getName
-                  val offset = fld.asInstanceOf[HotSpotResolvedJavaField].offset
-                  val value = evalM(fs1(name))
-                  it.Runtime.unsafe.putObject(obj, offset, value)
-                }
-                obj
-            }
-
             val obj = evalM(f)
             val block = obj.apply()
             liftConst(block).asInstanceOf[Rep[Object]]
         }
 
         case "lancet.api.DefaultMacros.unquote" => handle {
-          case r::f::Nil => 
+          case r::(f:Rep[()=>Rep[Int]])::Nil => 
             //println("unquote")
-            val Partial(fs) = eval(f)
-            val Static(cls: Class[_]) = fs("clazz")
-
-            val typ = metaAccessProvider.lookupJavaType(cls)
-            val obj = it.runtimeInterface.newObject(typ)
-
-            val fs1 = fs - "clazz" - "alloc"
-            val fs2 = typ.getInstanceFields(false) //.find(_.getName == k)
-
-            //println(fs)
-            //println(fs2.mkString(","))
-
-            for (fld <- fs2) {
-              val name = fld.getName
-              val offset = fld.asInstanceOf[HotSpotResolvedJavaField].offset
-              val Static(value) = fs1(name)
-              it.Runtime.unsafe.putObject(obj, offset, value)
-            }
-
-            val m = cls.getMethod("apply")
-            val block = m.invoke(obj).asInstanceOf[Rep[Object]]
-            block
-/*
-      // need to find constructor invocation...
-      println("self: " + self)
-      println("fun: " + fun + "/" + cls + "/" + fun.next())
-      val init = fun.next().asInstanceOf[InvokeNode]
-      val initCallTarget = init.callTarget()
-      val initTarget = initCallTarget.targetMethod()
-      assert(initTarget.name == "<init>")
-      val initArgs = initCallTarget.arguments()
-      println("init: " + init + " " + initArgs + " " + initArgs.map(_.kind()))
-      val initOuter = initArgs(1).asInstanceOf[ConstantNode].value.boxedValue()
-      
-      // TODO: need to be more robust
-      
-      println(initTarget)
-      println(initTarget.signature())
-      println("--")
-      
-      cls.getConstructors.foreach(println)
-      
-      // all constructor arguments (free variables) need to be Code types!
-      // (TODO: add check + error messages)
-      // other types should be fine, too, if the args are constants.
-      
-      val a = Array.fill[Class[_]](initArgs.length-1)(classOf[Code[_]])
-      a(0) = initOuter.getClass
-      
-      val ctor = cls.getConstructor(a:_*)
-      
-      def nodeToCode(n: ValueNode): Code[_] = { // does this work always?
-        val graph = new StructuredGraph()
-        val n2 = n.clone(graph).asInstanceOf[ValueNode]
-        val ret = graph.add(new ReturnNode(n2))
-        graph.start().setNext(ret)
-        Code(graph, null)
-      }
-      
-      val ctorArgs = initOuter +: initArgs.drop(2).map(nodeToCode)
-      
-      val Code(intrinsicGraph,meth) = ctor.newInstance(ctorArgs:_*).apply()
-      intrinsicGraph
-*/
+            val obj = evalM(f)
+            val block = obj.apply()
+            block.asInstanceOf[Rep[Object]]
         }
 
         case "scala.runtime.BoxesRunTime.boxToInteger" => handle {
