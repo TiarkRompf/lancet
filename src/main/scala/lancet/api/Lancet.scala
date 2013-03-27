@@ -3,7 +3,14 @@ package lancet.api
 import lancet.core._
 import lancet.interpreter._
 
-class stable extends scala.annotation.Annotation 
+import java.lang.annotation._
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(Array(ElementType.FIELD))
+class stable extends scala.annotation.Annotation with java.lang.annotation.Annotation {
+//scala.annotation.Annotation 
+def annotationType = classOf[stable]
+}
 
 object Lancet {
 
