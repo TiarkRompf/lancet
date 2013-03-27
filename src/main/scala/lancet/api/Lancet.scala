@@ -291,6 +291,11 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
         def decompile: (Rep[A], Block[B]) = {
           decompileDelimited[A,B](frame)
         }
+        def fundef: Rep[A=>B] = {
+          val (arg,block) = decompileDelimited[A,B](frame)
+          reflect[Unit]("def f",arg,"(",arg,":","Int","): Int = ", block)
+          reflect[A=>B]("f"+arg+" _")(TypeRep(typeRep[A]+" => "+typeRep[B]))
+        }
       }
 
       def shiftR[A:TypeRep,B:TypeRep](body: FunR[A,B] => Rep[B]): Rep[B] = {
@@ -307,27 +312,21 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
       fullName match {
         case "lancet.api.DefaultMacros.shift" => handle {
           case r::(f:Rep[(Int=>Int)=>Int])::Nil => 
-            //val reset = null
-            //val reset = resetStack.head
-            //continuation = reset
-            continuation = getContext(parent).reverse.tail.head // we're inside reset's scope, abort full
-            emitString("//begin shift")
-            //emitString("// looking for delimiter "+contextKey(reset))
-            
-            val (argk,blockk) = decompileDelimited[Int,Int](parent)
-            val (args,blocks) = decompileInternal[(Int=>Int),Int](f)
 
-            reflect[Unit]("def k",args,"(",argk,":","Int","): Int = ", blockk)
-            emitString("val "+args+" = k"+args+" _")
+            shiftR[Int,Int] { k =>
+              emitString("//begin shift")
 
-            val res = reflect[Int](blocks)
+              val k1 = k.fundef
 
-            // RES multiply defined ...
-            //reflect[Unit]("def k",argk,"(",argk,":","Int","): Int = ", blockk)
-            //val res = decompileFun(f).apply(Dyn[Int=>Int]("k"+argk))
+              val res = reflect[Int](reify{ // protect RES
 
-            emitString("//end shift")
-            res.asInstanceOf[Rep[Object]]
+                decompileFun(f).apply(k1)
+
+              })
+              emitString("//end shift")
+              res
+
+            }.asInstanceOf[Rep[Object]]
         }
 
         case "lancet.api.DefaultMacros.reset" => handle {
