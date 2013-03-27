@@ -14,10 +14,11 @@ import ppl.dsl.optiml.{OptiMLApplication, OptiMLApplicationRunner}
 import ppl.delite.framework.DeliteApplication
 import ppl.delite.framework.Config
 
-import ppl.dsl.optiml.{OptiMLCodeGenScala,OptiMLExp}
+import ppl.dsl.optiml.{OptiMLCodeGenScala,OptiMLCodeGenCuda,OptiMLExp}
 import ppl.delite.framework.codegen.delite.{DeliteCodeGenPkg, TargetDelite}
 import ppl.delite.framework.codegen.{Target}
 import ppl.delite.framework.codegen.scala.{TargetScala}
+import ppl.delite.framework.codegen.cuda.{TargetCuda}
 import scala.virtualization.lms.internal.{GenericFatCodegen}
 
 import scala.virtualization.lms.common._
@@ -31,7 +32,7 @@ import java.io.{File,FileSystem}
 // *** integration class: takes the role of DeliteApplication
 
 class LancetDeliteRunner extends LancetImpl
-  with DeliteTestRunner with OptiMLApplicationRunner with VariablesExpOpt { self =>
+  with DeliteTestRunner with OptiMLApplicationRunner /*with VariablesExpOpt*/ { self =>
 
   var program: Int => Int = { x => x } // crashes if we refer to myprog directly!! GRRR ...
   override def main(): Unit = {
@@ -45,6 +46,7 @@ class LancetDeliteRunner extends LancetImpl
   override def getCodeGenPkg(t: Target{val IR: self.type}) : 
     GenericFatCodegen{val IR: self.type} = t match {
       case _:TargetScala => createCodegen()
+      case _:TargetCuda => new CudaCodegen { val IR: self.type = self }
       case _ => super.getCodeGenPkg(t)
     }
   override lazy val deliteGenerator = new DeliteCodegen { 
@@ -159,6 +161,17 @@ trait ScalaCodegen extends OptiMLCodeGenScala with GEN_Scala_LMS {
 
 }
 
+trait CudaCodegen extends OptiMLCodeGenCuda { 
+  val IR: DeliteApplication with OptiMLExp with Core_LMS //with LancetImpl
+  import IR._
+
+  // lots of other stuff missing from GEN_Scala_LMS_Base..
+
+  override def quote(x: Exp[Any]) : String = x match {
+    case DynExp(a) => "null" // pray?
+    case _ => super.quote(x)
+  }
+}
 
 // *** delite-specific lancet support
 
@@ -319,7 +332,7 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
         returnHandler = p => U.var_assign(RES,p)
         execute(cls.getMethod("apply", Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
         val res = U.readVar(RES)
-        killObject(RES.e)
+        //killObject(RES.e)
         res
       }
     }
@@ -337,7 +350,7 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
         returnHandler = p => U.var_assign(RES,p)
         execute(cls.getMethod("apply", Class.forName("java.lang.Object"), Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg1.asInstanceOf[Rep[Object]],arg2.asInstanceOf[Rep[Object]])(repManifest[Object]))
         val res = U.readVar(RES)
-        killObject(RES.e)
+        //killObject(RES.e)
         res
       }
     }
@@ -481,7 +494,8 @@ object DeliteRunner {
     try {
       Config.degFilename = degName
       Config.buildDir = generatedDir
-      Config.cacheSyms = cacheSyms
+      Config.cacheSyms = cacheSyms 
+      //Config.generateCUDA = true
       val screenOrVoid = if (verbose) System.out else new PrintStream(new ByteArrayOutputStream())
       Console.withOut(screenOrVoid) {
         app.main(Array())
@@ -508,7 +522,9 @@ object DeliteRunner {
     val name = "test.tmp"
     System.setProperty("delite.runs", 10.toString)
     System.setProperty("delite.threads", threads.toString)
-    System.setProperty("delite.code.cache.home", "generatedCache" + java.io.File.separator + uniqueTestName)
+    System.setProperty("delite.home", Config.homeDir)
+    //System.setProperty("delite.cuda", 1.toString)
+    System.setProperty("delite.code.cache.home", System.getProperty("user.dir") + java.io.File.separator + "generatedCache" + java.io.File.separator + uniqueTestName)
     //Console.withOut(new PrintStream(new FileOutputStream(name))) {
       println("test output for: " + app.toString)
       // NOTE: DeliteCodegen (which computes app.staticDataMap) does not know about VConstantPool!!!
