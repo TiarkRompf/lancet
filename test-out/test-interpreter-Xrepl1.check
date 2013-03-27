@@ -1,7 +1,7 @@
 ==== fun/printcode
 25
 // constants: <function1>
-class Generated0(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$1) extends (Int=>Int){
+class Generated0(CONST_0: lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$1) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -21,7 +21,7 @@ def apply(ARG: Int): Int = { object BODY {
 compilation: ok
 25
 // constants: <function1>
-class Generated0(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$1) extends (Int=>Int){
+class Generated0(CONST_0: lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$1) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -39,7 +39,7 @@ def apply(ARG: Int): Int = { object BODY {
 }
 
 // constants: <function1>
-class Generated1(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$2) extends (Int=>Int){
+class Generated1(CONST_0: lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$2) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -57,7 +57,7 @@ def apply(ARG: Int): Int = { object BODY {
 
 compilation: ok
 // constants: <function1>
-class Generated1(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$2) extends (Int=>Int){
+class Generated1(CONST_0: lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$2) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -74,7 +74,7 @@ def apply(ARG: Int): Int = { object BODY {
 }
 
 // constants: <function1>
-class Generated2(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$fooX$1$1) extends (Int=>Int){
+class Generated2(CONST_0: lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$fooX$1$1) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -92,7 +92,7 @@ def apply(ARG: Int): Int = { object BODY {
 
 compilation: ok
 // constants: <function1>
-class Generated2(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$fooX$1$1) extends (Int=>Int){
+class Generated2(CONST_0: lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$fooX$1$1) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -127,7 +127,7 @@ def apply(ARG: Int): Int = { object BODY {
 compilation: ok
 32
 // constants: <function0>
-class Generated4(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$6$$anonfun$apply$1) extends (Int=>Int){
+class Generated4(CONST_0: lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$6$$anonfun$apply$1) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -149,7 +149,7 @@ def apply(ARG: Int): Int = { object BODY {
 compilation: ok
 12
 // constants: <function0>,<function1>
-class Generated5(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$7$$anonfun$apply$2,CONST_1: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$7) extends (Int=>Int){
+class Generated5(CONST_0: lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$7$$anonfun$apply$2,CONST_1: lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$7) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -160,7 +160,7 @@ def apply(ARG: Int): Int = { object BODY {
   val x16 = ARG
   val x22 = {
     var RES = null.asInstanceOf[Int]
-    val x17 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$7$$anonfun$apply$2$$anonfun$apply$mcI$sp$1"))
+    val x17 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$7$$anonfun$apply$2$$anonfun$apply$mcI$sp$1"))
     unsafe.putObject(x17,16L, CONST_0)
     val x18 = x16.asInstanceOf[Int]
     val x19 = x18.asInstanceOf[Int]
@@ -179,7 +179,7 @@ compilation: ok
 ==== continuations: shift/reset
 scala.NotImplementedError: an implementation is missing
 // constants: <function1>,<function0>,public abstract int scala.Function1.apply$mcII$sp(int)
-class Generated6(CONST_0: lancet.api.DefaultMacros$$anonfun$exec$1,CONST_1: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$3,CONST_2: java.lang.reflect.Method) extends (Int=>Int){
+class Generated6(CONST_0: lancet.api.DefaultMacros$$anonfun$exec$1,CONST_1: lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$3,CONST_2: java.lang.reflect.Method) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -189,7 +189,7 @@ def apply(ARG: Int): Int = { object BODY {
   var RES = null.asInstanceOf[Int]
   val x24 = ARG
   val x25 = x24.asInstanceOf[Int]
-  val x26 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$foo$4$1"))
+  val x26 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$foo$4$1"))
   unsafe.putInt(x26,16L, 7)
   //begin shift
   def fx27(x27:Int): Int = {
@@ -246,8 +246,8 @@ def apply(ARG: Int): Int = { object BODY {
 compilation: ok
 20
 ==== speculate/slowpath
-// constants: <function1>,<function0>,10,lancet.api.Lancet$$anon$1@11cec86e,public abstract int scala.Function1.apply$mcII$sp(int),HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,Array(x42, x49),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>
-class Generated7(CONST_0: lancet.interpreter.BytecodeInterpreter_LIR$$anonfun$fun$1,CONST_1: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$4,CONST_2: scala.runtime.IntRef,CONST_3: lancet.api.Lancet$$anon$1,CONST_4: java.lang.reflect.Method,CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: Array[lancet.core.Base_LIR$Rep],CONST_7: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_8: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (java.lang.Object=>Int){
+// constants: <function1>,<function0>,10,lancet.api.Lancet$$anon$1@3bd70f7,public abstract int scala.Function1.apply$mcII$sp(int),HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>,Array(x42, x49),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>
+class Generated7(CONST_0: lancet.interpreter.BytecodeInterpreter_LIR$$anonfun$fun$1,CONST_1: lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$4,CONST_2: scala.runtime.IntRef,CONST_3: lancet.api.Lancet$$anon$1,CONST_4: java.lang.reflect.Method,CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: Array[lancet.core.Base_LIR$Rep],CONST_7: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_8: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (java.lang.Object=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -257,7 +257,7 @@ def apply(ARG: java.lang.Object): Int = { object BODY {
   var RES = null.asInstanceOf[Int]
   val x40 = ARG
   val x41 = unsafe.getInt(CONST_2,16L)
-  val x42 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1"))
+  val x42 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1"))
   unsafe.putObject(x42,24L, CONST_3)
   unsafe.putInt(x42,16L, x41)
   unsafe.putInt(x42,20L, 10)
@@ -297,7 +297,7 @@ def apply(ARG: java.lang.Object): Int = { object BODY {
   val x59 = {
     var RES = null.asInstanceOf[Int]
     val x50 = x49.asInstanceOf[scala.Function1[_,_]] // checkCast
-    // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>
+    // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>
     ;{
       var vPHI_2_5 = null.asInstanceOf[Int]
       var vx40 = null.asInstanceOf[java.lang.Object]
@@ -312,8 +312,8 @@ def apply(ARG: java.lang.Object): Int = { object BODY {
         val x55 = CONST_3.mkInterpreterFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],x42.asInstanceOf[AnyRef],x49.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 8, 5, CONST_5, x54)
         val x56 = CONST_3.mkInterpreterFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],x42.asInstanceOf[AnyRef],x50.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 33, 5, CONST_8, x55)
         val x57 = CONST_3.execInterpreter(x56).asInstanceOf[Int] // drop into interpreter
-        // old parent: 28:<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply><(Lscala/Function1;)I> // 8:<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply><(Ljava/lang/Object;)Ljava/lang/Object;> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
-        // new parent: 8:<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply><(Ljava/lang/Object;)Ljava/lang/Object;> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+        // old parent: 28:<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply><(Lscala/Function1;)I> // 8:<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply><(Ljava/lang/Object;)Ljava/lang/Object;> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+        // new parent: 8:<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply><(Ljava/lang/Object;)Ljava/lang/Object;> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
         /*R_79_3_0;*/;{
           val PHI_2_5 = x57 // LUBC(x53:Int,x57:Int)
           vPHI_2_5 = PHI_2_5
@@ -362,16 +362,16 @@ compilation: ok
 110
 -- start interpreting
 frame:
-HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>
+HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>
 <function1>,<function1>,null,null
-HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>
+HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>
 <function1>,<function1>,null,null
 HotSpotMethod<BytecodeInterpreter_Exec.execute>
-lancet.api.Lancet$$anon$1@11cec86e,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@7cf44e8e,null,null,null,null,null,null
+lancet.api.Lancet$$anon$1@3bd70f7,HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@7c0add50,null,null,null,null,null,null
 root:
 HotSpotMethod<BytecodeInterpreter_Exec.execute>
-lancet.api.Lancet$$anon$1@11cec86e,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@7cf44e8e,null,null,null,null,null,null
-      RootCall HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply> - HotSpotSignature<(Lscala/Function1;)I>
+lancet.api.Lancet$$anon$1@3bd70f7,HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@7c0add50,null,null,null,null,null,null
+      RootCall HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply> - HotSpotSignature<(Lscala/Function1;)I>
       33: aload_1
       34: aload_0
       35: getfield
@@ -462,7 +462,7 @@ lancet.api.Lancet$$anon$1@11cec86e,HotSpotMethod<TestInterpreter6$$anonfun$test1
         8: ireturn
         Ret HotSpotMethod<Generated7$BODY$2$$anonfun$1.apply$mcII$sp> - HotSpotSignature<(I)I>
       43: ireturn
-      Ret HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply> - HotSpotSignature<(Lscala/Function1;)I>
+      Ret HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply> - HotSpotSignature<(Lscala/Function1;)I>
     8: invokestatic
       Call HotSpotMethod<BoxesRunTime.boxToInteger> - HotSpotSignature<(I)Ljava/lang/Integer;>
       0: iload_0
@@ -501,12 +501,12 @@ lancet.api.Lancet$$anon$1@11cec86e,HotSpotMethod<TestInterpreter6$$anonfun$test1
       4: areturn
       Ret HotSpotMethod<BoxesRunTime.boxToInteger> - HotSpotSignature<(I)Ljava/lang/Integer;>
     11: areturn
-    Ret HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply> - HotSpotSignature<(Ljava/lang/Object;)Ljava/lang/Object;>
+    Ret HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply> - HotSpotSignature<(Ljava/lang/Object;)Ljava/lang/Object;>
 -- done interpreting
-HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>
+HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>
 null,null,null,null
 root:
 HotSpotMethod<BytecodeInterpreter_Exec.execute>
-lancet.api.Lancet$$anon$1@11cec86e,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@7cf44e8e,200,null,null,null,null,null
+lancet.api.Lancet$$anon$1@3bd70f7,HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@7c0add50,200,null,null,null,null,null
 result: 200
 200

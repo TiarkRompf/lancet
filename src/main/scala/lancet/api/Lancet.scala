@@ -3,6 +3,8 @@ package lancet.api
 import lancet.core._
 import lancet.interpreter._
 
+class stable // annotation
+
 object Lancet {
 
   def setScalac(global: scala.tools.nsc.Global) = ScalaCompile.setCompiler(global)
@@ -31,8 +33,6 @@ object Lancet {
     setScalac(global)
     newCompilerOpt
   }
-
-
 
 
   // method and field hints (unfold/macro, frozen/stable, etc..)

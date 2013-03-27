@@ -3,9 +3,9 @@ package interpreter
 
 import lancet.api._
 
-class TestInterpreter6 extends FileDiffSuite {
+class TestInterpreterX extends FileDiffSuite {
 
-  val prefix = "test-out/test-interpreter-6"
+  val prefix = "test-out/test-interpreter-X"
 
   def test1 = withOutFileChecked(prefix+"repl1") {
 
