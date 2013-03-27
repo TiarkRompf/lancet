@@ -85,7 +85,7 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
     def stable[A](x: A): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
 
-    // *** macro implementations
+    // *** macro implementations: runtime callbacks
     type SlowpathFrame = AnyRef
 
     val it = Lancet.newInterpreter
@@ -168,7 +168,7 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
 
       val compiled = lms0[Unit,Int] { x => // FIXME: types
         executeRoot(root,frame1)
-        666//popAsObject(root, tp).asInstanceOf[Rep[Int]]
+        //popAsObject(root, tp).asInstanceOf[Rep[Int]]
         reflect[Int]("{println(\"BOO!\");666} // recompiled result -- never seen; not assigned to RES")
       }
       Console.println("-- compiled")
@@ -179,7 +179,7 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
       res:Integer
     }
 
-    // *** global interpreter interface
+    // *** global interface
     def interpret[A:Manifest,B:Manifest](f: A=>B): A=>B = { arg =>
       val meth = f.getClass.getMethod("apply", manifest[A].erasure)
       val res = it.execute(meth, Array[Object](f,arg.asInstanceOf[Object]))
