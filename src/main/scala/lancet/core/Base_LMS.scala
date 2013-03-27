@@ -47,6 +47,9 @@ trait IR_LMS_Base extends EffectExp {
 
   def reflect[A:TypeRep](s: Any*): Exp[A] = reflectEffect(Unstructured[A](s.toList))
 
+  def reflectPure[A:TypeRep](s: Any*): Exp[A] = toAtom(Unstructured[A](s.toList))
+
+
   def emitString(s: String)(implicit e:TypeRep[Unit]) = reflect[Unit](s)
   def emitAll[A:TypeRep](s: Block[A]) = reflect[A](s)
 }
@@ -285,6 +288,9 @@ trait Base_LMS extends Base_LMS0 {
 
   def reflect[T:TypeRep](d: Def[T]): Rep[T] = reflectEffect(d)(typeRep[T].manif,implicitly[SourceContext])//toAtom(d)
   def reify[T:TypeRep](x: => Rep[T]): Block[T] = reifyEffects(x)(typeRep[T].manif)
+
+  def reflectPure[T:TypeRep](d: Def[T]): Rep[T] = toAtom(d)(typeRep[T].manif,implicitly[SourceContext])
+
 
   def liftConst[T:TypeRep](x:T): Rep[T] = {
     //if (!isPrimitive(x))

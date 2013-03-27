@@ -72,10 +72,10 @@ class LancetDeliteRunner extends LancetImpl
 trait DeliteCodegen extends DeliteCodeGenPkg { self =>
   val IR: DeliteApplication with Core_LMS //with LancetImpl
   import IR._
-  override def runTransformations[A:Manifest](b: Block[A]): Block[A] = {
+  //override def runTransformations[A:Manifest](b: Block[A]): Block[A] = {
     //Console.println("no transformations on block "+b)
-    b
-  }
+    //b
+  //}
 
   /*override def getExactScope[A](currentScope: List[Stm])(result: List[Exp[Any]]): List[Stm] = {
     val level = super.getExactScope(currentScope)(result)
@@ -303,7 +303,7 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
   //var deadObjects: List[Rep[Object]] = Nil
   def killObject(x: Rep[Any]) = {
     //remove effect deps to enable dce
-    context = context.filterNot { case s@Def(d) => (s::syms(d)) contains x }
+    context = context.filterNot { case s@Def(Reflect(d, _,_)) => (s::syms(d)) contains x }
   }
 
   def decompileFun[A:TypeRep,B:TypeRep](f: Rep[A=>B], id: Int = 0): Rep[A] => Rep[B] = {
@@ -364,22 +364,22 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
     } else fullName match {
 
       case "scala.runtime.BoxesRunTime.boxToBoolean" => handle {
-        case r::Nil => reflect[java.lang.Boolean](r,".asInstanceOf[java.lang.Boolean]")(mtr[java.lang.Boolean])
+        case r::Nil => r.asInstanceOf[Rep[Object]]//reflect[java.lang.Boolean](r,".asInstanceOf[java.lang.Boolean]")(mtr[java.lang.Boolean])
       }
       case "scala.runtime.BoxesRunTime.unboxToBoolean" => handle {
-        case r::Nil => reflect[Boolean](r,".asInstanceOf[Boolean]").asInstanceOf[Rep[Object]]
+        case r::Nil => r.asInstanceOf[Rep[Object]]//reflect[Boolean](r,".asInstanceOf[Boolean]").asInstanceOf[Rep[Object]]
       }
       case "scala.runtime.BoxesRunTime.boxToInteger" => handle {
-        case r::Nil => reflect[java.lang.Integer](r,".asInstanceOf[java.lang.Integer]")(mtr[java.lang.Integer])
+        case r::Nil => r.asInstanceOf[Rep[Object]]//reflect[java.lang.Integer](r,".asInstanceOf[java.lang.Integer]")(mtr[java.lang.Integer])
       }
       case "scala.runtime.BoxesRunTime.unboxToInt" => handle {
-        case r::Nil => reflect[Int](r,".asInstanceOf[Int]").asInstanceOf[Rep[Object]]
+        case r::Nil => r.asInstanceOf[Rep[Object]]//reflect[Int](r,".asInstanceOf[Int]").asInstanceOf[Rep[Object]]
       }
       case "scala.runtime.BoxesRunTime.boxToDouble" => handle {
-        case r::Nil => reflect[java.lang.Double](r,".asInstanceOf[java.lang.Double]")(mtr[java.lang.Double])
+        case r::Nil => r.asInstanceOf[Rep[Object]]//reflect[java.lang.Double](r,".asInstanceOf[java.lang.Double]")(mtr[java.lang.Double])
       }
       case "scala.runtime.BoxesRunTime.unboxToDouble" => handle {
-        case r::Nil => reflect[Double](r,".asInstanceOf[Double]").asInstanceOf[Rep[Object]]
+        case r::Nil => r.asInstanceOf[Rep[Object]]//reflect[Double](r,".asInstanceOf[Double]").asInstanceOf[Rep[Object]]
       }
 /*
       java.lang.Boolean.valueOf ?

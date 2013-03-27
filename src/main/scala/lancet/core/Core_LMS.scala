@@ -165,6 +165,7 @@ trait Core_LMS extends Base_LMS {
   }
 */
 
+  // TODO: switch all to reflectPure, but this leads to effect order violations on kmeans
 
   def byteToInt(x: Rep[Byte]): Rep[Int] = reflect[Int](PrimConvert[Byte,Int](x))
   def charToInt(x: Rep[Char]): Rep[Int] = reflect[Int](PrimConvert[Char,Int](x))
@@ -268,10 +269,10 @@ trait Core_LMS extends Base_LMS {
   def doubleNotEqual(x: Rep[Double], y: Rep[Double]): Rep[Boolean] = reflect[Boolean](PrimNotEqual[Double](x,y))
 
 
-  def objectEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflect[Boolean](ObjectEqual(x,y))
-  def objectNotEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflect[Boolean](ObjectNotEqual(x,y))
-  def objectAsInstanceOf[T:TypeRep](x: Rep[Object]): Rep[T] = reflect[T](ObjectAsInstanceOf[T](x))
-  def objectIsInstanceOf[T:TypeRep](x: Rep[Object]): Rep[Boolean] = reflect[Boolean](ObjectIsInstanceOf[T](x))
+  def objectEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflectPure[Boolean](ObjectEqual(x,y))
+  def objectNotEqual(x: Rep[Object], y: Rep[Object]): Rep[Boolean] = reflectPure[Boolean](ObjectNotEqual(x,y))
+  def objectAsInstanceOf[T:TypeRep](x: Rep[Object]): Rep[T] = reflectPure(ObjectAsInstanceOf[T](x))
+  def objectIsInstanceOf[T:TypeRep](x: Rep[Object]): Rep[Boolean] = reflectPure[Boolean](ObjectIsInstanceOf[T](x))
 
   def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] = {
     //val save = exprs
