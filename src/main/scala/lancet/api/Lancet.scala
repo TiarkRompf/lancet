@@ -513,8 +513,11 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
         /*case "scala.runtime.BoxesRunTime.boxToBoolean" => handle {
           case r::Nil => reflect[java.lang.Boolean](r,".asInstanceOf[Boolean]")
         }*/
+        case "scala.Predef$.print" => handle {
+          case self::r::Nil => reflect[Unit]("print(",r,")").asInstanceOf[Rep[Object]]
+        }
         case "scala.Predef$.println" => handle {
-          case r::Nil => reflect[Object]("println(",r,")")
+          case self::r::Nil => reflect[Unit]("println(",r,")").asInstanceOf[Rep[Object]]
         }
         case _ => 
           //println(fullName)
