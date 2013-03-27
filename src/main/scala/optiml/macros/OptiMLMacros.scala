@@ -33,9 +33,9 @@ object OptiMLMacros extends OptiMLRunner.ClassMacros {
     OptiMLRunner.readVector(ensureType(path))
   }
   
-  def tic(self: Rep[OptiMLCompanion], dep: Rep[Any]): Rep[Unit] = {
+  def tic(self: Rep[OptiMLCompanion], dep1: Rep[Any], dep2: Rep[Any]): Rep[Unit] = {
     Console.println("catch tic")
-    OptiMLRunner.profile_start(OptiMLRunner.strToRepStr("app"),scala.Seq(dep))
+    OptiMLRunner.profile_start(OptiMLRunner.strToRepStr("app"),scala.Seq(dep1,dep2))
   }
   
   def toc(self: Rep[OptiMLCompanion], dep: Rep[Any]): Rep[Unit] = {

@@ -23,6 +23,6 @@ export JAVA_CLASSPATH=$JAVA_CLASSPATH:lib_managed/jars/com.google.protobuf/proto
 export JAVA_CLASSPATH=$JAVA_CLASSPATH:target/scala-2.10/classes/
 
 export JAVA_OPTS="-Xms512M -Xmx1G -XX:+CMSClassUnloadingEnabled -Xss10m" #  -XX:-BootstrapGraal 
-export JAVA_OPTS="$JAVA_OPTS -Ddelite.home.dir=$DELITE_HOME"
+export JAVA_OPTS="$JAVA_OPTS -Ddelite.home.dir=$DELITE_HOME" # -Dlms.verbosity=3"
 
 $JAVA_HOME/bin/java -graal $JAVA_OPTS -cp $JAVA_CLASSPATH "$@"

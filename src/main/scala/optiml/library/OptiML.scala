@@ -178,7 +178,7 @@ class OptiMLCompanion {
     * profiling
     */
   var profileTime: Long = _
-  def tic[T](arg: T): Unit = {
+  def tic[T](arg1: T, arg2: T): Unit = {
     profileTime = System.currentTimeMillis()
   }
   def toc[T](arg: T): Unit = {

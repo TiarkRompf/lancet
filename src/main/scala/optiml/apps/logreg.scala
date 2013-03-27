@@ -22,11 +22,12 @@ object logreg {
 
     val x = OptiML.readMatrix(xPath)
     val y = OptiML.readVector(yPath).t
+
+    OptiML.tic(x,y)
     
     val theta = OptiML.DenseVector.zeros(x.numCols,true)//new DenseVector[Double](x.numCols,true)
     var iter = 0
-    
-    // tic(theta)
+        
     val w = OptiML.untilconverged2(theta, .001, 30, { cur: DenseVector[Double] => 
       // println("current theta: ")
       // cur.pprint
@@ -39,7 +40,7 @@ object logreg {
       cur + gradient // note that each term in the gradient has opposite sign as in Spark      
     })
     
-    // toc(w)
+    OptiML.toc(w)
     println("w:")
     w.pprint   
     
@@ -57,12 +58,14 @@ object logreg {
     // macros
     // just crashes somewhere, whether macros are installed or not
     // OptiMLRunner.program = z => prog(x,y)
-    OptiMLRunner.program = z => prog(args(0),args(1))
-    OptiMLRunner.run()
+    // OptiMLRunner.program = z => prog(args(0),args(1))
+    // OptiMLRunner.run()
     
     // pure
-    // prog(x,y)
-    //prog(args(0),args(1))
+    for (i <- 0 until 10) {
+      // prog(x,y)
+      prog(args(0),args(1))
+    }
     ()
   }
 }

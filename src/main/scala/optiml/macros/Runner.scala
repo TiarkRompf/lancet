@@ -31,7 +31,7 @@ object OptiMLLancetRunner {
     // Config.cacheSyms = false
     // runner.generateScalaSource("Generated", new java.io.PrintWriter(System.out))
     // runner.globalDefs.foreach(println)    
-
+    // sys.exit(0)
     val cst = runner.VConstantPool
     println("constants: "+cst)
 

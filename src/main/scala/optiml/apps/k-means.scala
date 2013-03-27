@@ -27,7 +27,7 @@ object kmeans {
     val mu = OptiML.readMatrix(muPath)
     val m = x.numRows
     
-    OptiML.tic(mu)
+    OptiML.tic(x,mu)
     val newMu = OptiML.untilconverged(mu, .001, 10, { mu: DenseMatrix[Double] =>
       // iter += 1
 
@@ -61,14 +61,14 @@ object kmeans {
     // macros
     // just crashes somewhere if no macros are installed..
     // OptiMLRunner.program = y => prog(x,mu)
-    // OptiMLRunner.program = y => prog(args(0),args(1))
-    // OptiMLRunner.run()
+    OptiMLRunner.program = y => prog(args(0),args(1))
+    OptiMLRunner.run()
     
     // pure
-    for (i <- 0 until 10) {
-      // prog(x,mu)
-      prog(args(0),args(1))
-    }
+    // for (i <- 0 until 10) {
+    //   // prog(x,mu)
+    //   prog(args(0),args(1))
+    // }
     ()
   }
 }
