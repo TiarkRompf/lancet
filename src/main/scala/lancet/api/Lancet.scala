@@ -528,6 +528,10 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
 
     override def isSafeRead(base: Object, offset: Long, field: ResolvedJavaField, typ: TypeRep[_]): Boolean =
       super.isSafeRead(base, offset, field, typ) || {
+        val isStable = field.getAnnotation(classOf[stable])
+        if (isStable != null)
+          println("STABLE READ: "+field)
+
         val name = field.getDeclaringClass.toJava.getName + "." + field.getName
         name match {
           case _ =>
