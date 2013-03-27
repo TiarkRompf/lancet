@@ -7,10 +7,32 @@ class TestInterpreter6 extends FileDiffSuite {
 
   val prefix = "test-out/test-interpreter-6"
 
+
   def test1 = withOutFileChecked(prefix+"stable1") {
     val it = new Decompiler
 
-    def compute(i: Int) = stable(i >= 50)
+    def stable(x: => Int): Int = {
+      val c = it.freeze(x)
+      val y = x
+      if (c != y) { it.fastpath; y }
+      else c
+    }
+
+
+    var fiftyOrMore = 99
+
+    def compute(i: Int) = {
+      val c = it.freeze[Int](fiftyOrMore)
+      if (c != fiftyOrMore) 
+        it.fastpath()
+
+      print("static:  ");    println(c)
+      print("dynamic: ");    println(fiftyOrMore)
+
+      fiftyOrMore = if (i < 50) 0 else 1
+
+      7
+    }
 
     val f = it.compile { (x:Int) => 
       var i = 0
@@ -26,9 +48,12 @@ class TestInterpreter6 extends FileDiffSuite {
   def test2 = withOutFileChecked(prefix+"stable2") {
     val it = new Decompiler
 
-    @stable var fiftyOrMore = false
+    class Holder {
+      @stable var fiftyOrMore = false
+    }
+    val Holder = new Holder
 
-    def compute(i: Int) = fiftyOrMore = (i >= 50)
+    def compute(i: Int) = Holder.fiftyOrMore = (i >= 50)
 
     val f = it.compile { (x:Int) => 
       var i = 0
