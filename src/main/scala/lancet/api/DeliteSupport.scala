@@ -31,7 +31,7 @@ import java.io.{File,FileSystem}
 // *** integration class: takes the role of DeliteApplication
 
 class LancetDeliteRunner extends LancetImpl
-  with DeliteTestRunner with OptiMLApplicationRunner { self =>
+  with DeliteTestRunner with OptiMLApplicationRunner with VariablesExpOpt { self =>
 
   var program: Int => Int = { x => x } // crashes if we refer to myprog directly!! GRRR ...
   override def main(): Unit = {
@@ -168,6 +168,7 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
   import com.oracle.graal.hotspot.meta._  // HotSpotRuntime
 
   // *** random stuff
+
 
   // TODO: DeliteIfThenElse !
   //override def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T]
@@ -313,11 +314,13 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
     { arg => 
       withScope {
         implicit val mb = typeRep[B].manif
-        val U = this.asInstanceOf[Variables { type Rep[T] = Exp[T] }]
+        val U = this.asInstanceOf[Variables { type Rep[T] = Exp[T]; type Var[T] = Variable[T] }]
         val RES = U.var_new[B](Dyn[B]("null.asInstanceOf["+typeRep[B]+"]"))
         returnHandler = p => U.var_assign(RES,p)
         execute(cls.getMethod("apply", Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
-        U.readVar(RES)
+        val res = U.readVar(RES)
+        killObject(RES.e)
+        res
       }
     }
   }
@@ -329,11 +332,13 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
     { (arg1,arg2) => 
       withScope {
         implicit val mb = typeRep[R].manif
-        val U = this.asInstanceOf[Variables { type Rep[T] = Exp[T] }]
+        val U = this.asInstanceOf[Variables { type Rep[T] = Exp[T]; type Var[T] = Variable[T] }]
         val RES = U.var_new[R](Dyn[R]("null.asInstanceOf["+typeRep[R]+"]"))
         returnHandler = p => U.var_assign(RES,p)
         execute(cls.getMethod("apply", Class.forName("java.lang.Object"), Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg1.asInstanceOf[Rep[Object]],arg2.asInstanceOf[Rep[Object]])(repManifest[Object]))
-        U.readVar(RES)
+        val res = U.readVar(RES)
+        killObject(RES.e)
+        res
       }
     }
   }
