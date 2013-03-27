@@ -394,13 +394,11 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
             val self = liftConst(this)
             // get caller frame from compiler ('parent')
             // emit code to construct interpreter state
-
             def mkInterpreterFrameR(locals: Array[Rep[Object]], bci: Rep[Int], tos: Rep[Int], method: Rep[ResolvedJavaMethod], parent: Rep[InterpreterFrame]): Rep[InterpreterFrame] =
               reflect[InterpreterFrame](self,".mkInterpreterFrame(Array[Object]("+
                 locals.map(x=>x+".asInstanceOf[AnyRef]").mkString(",")+"), "+ // cast is not nice
                 bci+", "+ // need to take *next* bci (cur points to call!)
-                tos+", "+
-                method+", "+parent+")")
+                tos+", "+method+", "+parent+")")
 
             def execInterpreterR[B:TypeRep](frame: Rep[InterpreterFrame]) = 
               reflect[B](self,".execInterpreter("+frame+").asInstanceOf["+typeRep[B]+"] // drop into interpreter")
@@ -435,33 +433,34 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
             val self = liftConst(this)
             // get caller frame from compiler ('parent')
             // emit code to construct interpreter state
-            def rec(frame: InterpreterFrame): Rep[Object] = if (frame == null) liftConst(null) else {
+            def mkCompilerFrameR(locals: Array[Rep[Object]], bci: Rep[Int], tos: Rep[Int], method: Rep[ResolvedJavaMethod], parent: Rep[InterpreterFrame]): Rep[InterpreterFrame] =
+              reflect[InterpreterFrame](self,".mkCompilerFrame(Array[Object]("+
+                locals.map(x=>x+".asInstanceOf[AnyRef]").mkString(",")+"), "+ // cast is not nice
+                bci+", "+ // need to take *next* bci (cur points to call!)
+                tos+", "+method+", "+parent+")")
+
+            def execCompilerR[B:TypeRep](frame: Rep[InterpreterFrame]) = 
+              reflect[B](self,".execCompiler("+frame+").asInstanceOf["+typeRep[B]+"] // drop into freshly compiled")
+
+            def rec(frame: InterpreterFrame): Rep[InterpreterFrame] = if (frame == null) liftConst(null) else {
               val p = rec(frame.getParentFrame)
               val frame1 = frame.asInstanceOf[InterpreterFrame_Str]
-              reflect[Object](self,".mkCompilerFrame(Array[Object]("+
-                frame1.locals.map(x=>x+".asInstanceOf[AnyRef]").mkString(",")+"), "+ // cast is not nice
-                frame1.nextBci+", "+ // need to take *next* bci (cur points to call!)
-                frame1.getStackTop()+", "+
-                liftConst(frame1.getMethod)+", "+p+")")
+              mkCompilerFrameR(frame1.locals,frame1.nextBci,frame1.getStackTop(),liftConst(frame1.getMethod), p)
             }
-            val frame = rec(parent)
 
-            // discard compiler state
-            val callers = getContext(parent)
-            continuation = callers.reverse.tail.head // second from top! copy or not?
+            def compiled[A:TypeRep,B:TypeRep](f: FunR[A,B]): Rep[A]=>Rep[B] = 
+              (x:Rep[A]) => execCompilerR[B](rec(f.frame)) // what to do with x:A ??
 
-            /* NOTE: correctly unwinding the stack would also mean unlocking monitors and
-            calling .dispose on frames)*/
+            shiftR[Unit,Int] { k =>
 
-            // exec interpreter to resume at caller frame
+              val k1 = compiled(k)
+              val res = k1(liftConst())
 
-            val typ = continuation.getMethod.getSignature.getReturnKind // FIXME
-            val res = reflect[Int](self,".execCompiler("+frame+").asInstanceOf[Int] // drop into freshly compiled")
+              emitString("// old parent: " + contextKey(parent))
+              emitString("// new parent: " + contextKey(continuation))
 
-            emitString("// old parent: " + contextKey(parent))
-            emitString("// new parent: " + contextKey(continuation))
-
-            res.asInstanceOf[Rep[Object]]
+              res
+            }.asInstanceOf[Rep[Object]]
         }
 
         
