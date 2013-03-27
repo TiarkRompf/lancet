@@ -77,6 +77,13 @@ object DenseVectorMacros extends OptiMLRunner.ClassMacros {
     implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types
     OptiMLRunner.densevector_length(self)
   }  
+  def sum[T](self: Rep[DenseVector[T]]): Rep[T] = {
+    Console.println("catch vector_sum")
+    implicit val mf = manifest[DenseVector[Double]].asInstanceOf[Manifest[T]] //FIXME: generic types
+    implicit val a = OptiMLRunner.doubleArith
+    implicit val ar = OptiMLRunner.denseVectorArith[Double].asInstanceOf[OptiMLRunner.Arith[T]]
+    OptiMLRunner.vector_sum(OptiMLRunner.denseVecToInterface(self))
+  }      
   def minIndex[T](self: Rep[DenseVector[T]]): Rep[Int] = {
     Console.println("catch vector_minIndex")
     implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types

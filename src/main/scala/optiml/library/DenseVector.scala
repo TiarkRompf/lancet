@@ -9,7 +9,7 @@ import Util._
 
 class DenseVectorCompanion {
   def rand(n:Int): DenseVector[Double] = { printxx("DenseVector$.rand"); ??? }
-  def zeros(n:Int,isRow:Boolean): DenseVector[Double] = { printxx("DenseVector$.rand"); new DenseVector(n,isRow) }
+  def zeros(n:Int,isRow:Boolean): DenseVector[Double] = { new DenseVector(n,isRow) }
   // def apply[T](xs: T*): DenseVector[T] = { printxx("DenseVector$.apply"); ??? }
 }
 
@@ -92,7 +92,15 @@ class DenseVector[T:Manifest](__length: Int, __isRow: Boolean) {
     }
     minIndex
   }
-  // def sum: T = ???
+
+  def sum: T = {
+    // hack, assume DenseVector[Double]
+    val acc = new DenseVector[Double](this(0).asInstanceOf[DenseVector[Double]].length, true)
+    for (i <- 0 until length) {
+      acc += this(i).asInstanceOf[DenseVector[Double]]
+    }
+    acc.asInstanceOf[T]
+  }
   
   def Clone: DenseVector[T] = {
     val out = new DenseVector(_length, _isRow)

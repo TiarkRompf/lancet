@@ -21,11 +21,16 @@ object IndexVectorMacros extends OptiMLRunner.ClassMacros {
   val targets = List(classOf[optiml.library.IndexVectorRange])
   import OptiMLRunner._ //{Rep,reflect,mtr,infix_relax,decompileFun}
 
-  // these seem to trigger collisions in the "RES" variables in the generated code
-  
   def construct[T](self: Rep[IndexVectorRange], f: Rep[Int=>T]): Rep[DenseVector[T]] = {
     Console.println("catch indexvector_construct")
     implicit val mf = manifest[Int].asInstanceOf[Manifest[T]] //FIXME: generic types
+    val f1 = decompileFun(f)(typeRep[Int],mtr[T])
+    OptiMLRunner.indexvector_construct(OptiMLRunner.indexVecRangeToInterface(self),f1) 
+  }
+
+  def construct2[T](self: Rep[IndexVectorRange], f: Rep[Int=>T]): Rep[DenseVector[T]] = {
+    Console.println("catch indexvector_construct2")
+    implicit val mf = manifest[DenseVector[Double]].asInstanceOf[Manifest[T]] //FIXME: generic types
     val f1 = decompileFun(f)(typeRep[Int],mtr[T])
     OptiMLRunner.indexvector_construct(OptiMLRunner.indexVecRangeToInterface(self),f1) 
   }

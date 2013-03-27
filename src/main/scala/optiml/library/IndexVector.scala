@@ -15,6 +15,15 @@ class IndexVectorRange(val _start: Int, val _end: Int) {
     }
     out        
   }
+
+  def construct2[T](f: Int => T): DenseVector[T] = {
+    assert(_start == 0)
+    val out = (new DenseVector[DenseVector[Double]](_end-_start,true)).asInstanceOf[DenseVector[T]]
+    for (i <- 0 until _end) {
+      out(i) = f(i)
+    }
+    out        
+  }
   
   /* Matrix constructor */
   def constructRows[T](f: Int => DenseVector[T]): DenseMatrix[T] = {

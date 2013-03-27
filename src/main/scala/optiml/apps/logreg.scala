@@ -32,9 +32,9 @@ object logreg {
       // println("current theta: ")
       // cur.pprint
        
-      val gradient = OptiML.sum(0, x.numRows, x.numCols, { i: Int =>
+      val gradient = OptiML.index_new(0, x.numRows).construct2 { i: Int =>
         (x.getRow(i).times2(y(i) - (1.0 / (1.0 + Math.exp(cur*(-1.0) *:* x.getRow(i)))))).Clone
-      })       
+      }.sum       
       
       iter += 1
       cur + gradient // note that each term in the gradient has opposite sign as in Spark      
@@ -58,14 +58,14 @@ object logreg {
     // macros
     // just crashes somewhere, whether macros are installed or not
     // OptiMLRunner.program = z => prog(x,y)
-    // OptiMLRunner.program = z => prog(args(0),args(1))
-    // OptiMLRunner.run()
+    OptiMLRunner.program = z => prog(args(0),args(1))
+    OptiMLRunner.run()
     
     // pure
-    for (i <- 0 until 10) {
-      // prog(x,y)
-      prog(args(0),args(1))
-    }
+    // for (i <- 0 until 10) {
+    //   // prog(x,y)
+    //   prog(args(0),args(1))
+    // }
     ()
   }
 }
