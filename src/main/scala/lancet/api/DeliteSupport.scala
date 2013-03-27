@@ -56,6 +56,8 @@ class LancetDeliteRunner extends LancetImpl
     //allClass(this.getClass)
   }
   
+
+  def remap[A](x: TypeRep[A]): String = scalaGen.remap(x.manif)
 }
 
 /*def allClass(x: Class[_]): Unit = {
@@ -330,6 +332,8 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
     context = context.filterNot { case s@Def(Reflect(d, _,_)) => (s::syms(d)) contains x }
   }
 
+  def remap[A](x: TypeRep[A]): String
+
   def decompileFun[A:TypeRep,B:TypeRep](f: Rep[A=>B], id: Int = 0): Rep[A] => Rep[B] = {
     killObject(f)
     val Partial(fs) = eval(f)
@@ -338,7 +342,7 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
       withScope {
         implicit val mb = typeRep[B].manif
         val U = this.asInstanceOf[Variables { type Rep[T] = Exp[T]; type Var[T] = Variable[T] }]
-        val RES = U.var_new[B](Dyn[B]("null.asInstanceOf["+typeRep[B]+"]"))
+        val RES = U.var_new[B](Dyn[B]("null.asInstanceOf["+remap(typeRep[B])+"]"))
         returnHandler = p => U.var_assign(RES,p)
         execute(cls.getMethod("apply", Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
         val res = U.readVar(RES)
@@ -356,7 +360,7 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
       withScope {
         implicit val mb = typeRep[R].manif
         val U = this.asInstanceOf[Variables { type Rep[T] = Exp[T]; type Var[T] = Variable[T] }]
-        val RES = U.var_new[R](Dyn[R]("null.asInstanceOf["+typeRep[R]+"]"))
+        val RES = U.var_new[R](Dyn[R]("null.asInstanceOf["+remap(typeRep[R])+"]"))
         returnHandler = p => U.var_assign(RES,p)
         execute(cls.getMethod("apply", Class.forName("java.lang.Object"), Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg1.asInstanceOf[Rep[Object]],arg2.asInstanceOf[Rep[Object]])(repManifest[Object]))
         val res = U.readVar(RES)
