@@ -322,9 +322,18 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
       def handle(f: List[Rep[Object]] => Rep[Object]): Option[InterpreterFrame] = {
         val returnValue = f(popArgumentsAsObject(parent, m, !java.lang.reflect.Modifier.isStatic(m.getModifiers)).toList)
         
-        // NOTE: we should take m.getMethod.getSignature below (see delite test)
+        // NOTE: we should take m.getSignature below (see delite test)
+        // not quite ... if we're not returning to out continuation we have a different type!
+        //println("return "+returnValue+"/"+returnValue.typ+"/"+m.getSignature().getReturnKind)
+        //println("to "+continuation.getMethod+"/"+continuation.getMethod.getSignature().getReturnKind)
 
-        pushAsObject(continuation, continuation.getMethod.getSignature().getReturnKind(), returnValue)
+        //pushAsObject(continuation, m.getSignature().getReturnKind(), returnValue)
+        if (continuation == parent)
+          pushAsObject(continuation, m.getSignature().getReturnKind(), returnValue)
+        else
+          pushAsObject(continuation, continuation.getMethod.getSignature().getReturnKind(), returnValue)
+        // better guess? take return kind from returnValue.typ??
+
         Some(if (continuation == parent) null else continuation)
       }
 
