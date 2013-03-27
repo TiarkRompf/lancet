@@ -276,6 +276,14 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
       case Partial(fs) =>
         val Static(cls: Class[_]) = fs("clazz")
 
+        // if the object is a compile time constant,
+        // just return that state. this may or may not
+        // be what we want!!
+        fs("alloc") match {
+          case Static(x:A) => return x
+          case _ =>
+        }
+
         // materialize objects recursively
         // to resolve non-constant fields.
         // (question: is this sensible? what if the 
