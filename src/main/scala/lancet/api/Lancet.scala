@@ -194,85 +194,76 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
       //assert(manifest[A] == manifest[Int]) // for now ...
       
       val f = toFunction(x)
-      val cls = f.getClass
-
-      val body = reify {
-        //withScope {
-          //println("{ object BODY {")
-          emitString("  var RES = null.asInstanceOf["+typeRep[B]+"]")
-          execute(cls.getMethod("apply"), Array[Rep[Object]](liftConst[Object](f))(repManifest[Object]))
-          //println("}")
-          //"BODY.RES.asInstanceOf["+typeRep[B]+"]}"
-          Dyn[B]("RES.asInstanceOf["+typeRep[B]+"]")
-        //}
-      }
-      reflect[B](body)
+      val f1 = decompileInternal0(liftConst(f)(typeRep[Object].asInstanceOf[TypeRep[()=>B]])) // FIXME: type
+      // could use decompileFun0, but then we get a conflict with RES values (TODO: incorp. changes from delite)
+      reflect[B](f1)
     }
 
 
+    // *** rep interface
 
-    def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],Block[Object]) = {
-      val arg = Dyn[Object](fresh)
-      val body = reify {
-        val Partial(fs) = eval(f)
-        val Static(cls: Class[_]) = fs("clazz")
+    def decompileFun[A:TypeRep,B:TypeRep](f: Rep[A=>B]): Rep[A] => Rep[B] = {
+      //val Partial(fs) = eval(f)
+      val Some(cls: Class[_]) = objectGetClass(f);
+      { arg => 
         withScope {
-          //println("{ object BODY {")
-          emitString("  var RES = null.asInstanceOf["+typeRep[B]+"]")
-          execute(cls.getMethod("apply", classOf[Object]), Array[Rep[Object]](f,arg)(repManifest[Object]))
-          //println("}")
-          //"BODY.RES.asInstanceOf["+typeRep[B]+"]}"
-          Dyn[Object]("RES.asInstanceOf["+typeRep[B]+"]")
+          emitString("var RES = null.asInstanceOf["+typeRep[B]+"]")
+          execute(cls.getMethod("apply", classOf[Object]), Array[Rep[Object]](f,arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
+          Dyn[B]("RES.asInstanceOf["+typeRep[B]+"]")
         }
+      }
+    }
+    def decompileFun0[B:TypeRep](f: Rep[()=>B]): () => Rep[B] = {
+      //val Partial(fs) = eval(f)
+      val Some(cls: Class[_]) = objectGetClass(f);
+      { () => 
+        withScope {
+          emitString("var RES = null.asInstanceOf["+typeRep[B]+"]")
+          execute(cls.getMethod("apply"), Array[Rep[Object]](f)(repManifest[Object]))
+          Dyn[B]("RES.asInstanceOf["+typeRep[B]+"]")
+        }
+      }
+    }
+
+
+    def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[A=>B]): (Rep[A],Block[B]) = {
+      val arg = Dyn[A](fresh)
+      val body = reify {
+        decompileFun(f)apply(arg)
       }
       (arg,body)
     }
 
-    def decompileInternal0[B:TypeRep](f: Rep[Object]): Block[Object] = {
-      val arg = Dyn[Object](fresh)
+    def decompileInternal0[B:TypeRep](f: Rep[()=>B]): Block[B] = {
       val body = reify {
-        val Partial(fs) = eval(f)
-        val Static(cls: Class[_]) = fs("clazz")
-        withScope {
-          //println("{ object BODY {")
-          emitString("  var RES = null.asInstanceOf["+typeRep[B]+"]")
-          execute(cls.getMethod("apply"), Array[Rep[Object]](f)(repManifest[Object]))
-          //println("}")
-          //"BODY.RES.asInstanceOf["+typeRep[B]+"]}"
-          Dyn[Object]("RES.asInstanceOf["+typeRep[B]+"]")
-        }
+        decompileFun0(f)apply()
       }
       body
     }
 
 
-    def decompileDelimited[A:TypeRep,B:TypeRep](parent: InterpreterFrame, delim: InterpreterFrame): (Rep[Object],Block[Object]) = {
-      val arg = Dyn[Object](fresh)
+    def runDelimited[A:TypeRep,B:TypeRep](frame0: InterpreterFrame)(arg: Rep[A]): Rep[B] = {
+      withScope {
+        emitString("var RES = null.asInstanceOf["+typeRep[B]+"]")
+        val frame = frame0.copy
+        val top = frame.getTopFrame.asInstanceOf[InterpreterFrame]
+        frame.setBCI(frame.getNextBCI)
+        pushAsObject(frame, frame.getMethod.getSignature().getReturnKind(), arg.asInstanceOf[Rep[Object]])
+        executeRoot(top,frame)
+        Dyn[B]("RES.asInstanceOf["+typeRep[B]+"]") // reflect??
+      }
+    }
+
+    def decompileDelimited[A:TypeRep,B:TypeRep](frame: InterpreterFrame): (Rep[A],Block[B]) = {
+      val arg = Dyn[A](fresh)
       val body = reify {
-        withScope {
-          emitString("  var RES = null.asInstanceOf["+typeRep[B]+"]")
-          //Console.println("delim: "+contextKey(parent) + "\n" + contextKey(delim))
-          /*def rec(frame: InterpreterFrame): InterpreterFrame = {
-            Console.println("rec: "+frame)
-            Console.println("rec: "+contextKey(frame))
-            if (contextKey(frame) == contextKey(delim)) frame.getTopFrame.asInstanceOf[InterpreterFrame]
-            else { 
-              frame.setParentFrame(rec(frame.getParentFrame)); frame 
-            }
-          }
-          val frame = rec(parent.copy)*/
-          val frame = parent.copy
-          val top = frame.getTopFrame.asInstanceOf[InterpreterFrame]
-          frame.setBCI(frame.getNextBCI)
-          //pushAsObject(arg,)
-          pushAsObject(frame, frame.getMethod.getSignature().getReturnKind(), arg)
-          executeRoot(top,frame)
-          //popAsObject(frame, delim.getMethod.getSignature.getReturnKind())
-          Dyn[Object]("RES.asInstanceOf["+typeRep[B]+"]")
-        }
+        runDelimited[A,B](frame)(arg)
       }
       (arg,body)
     }
+
+
+
 
     var traceMethods = false
 
@@ -293,33 +284,54 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
         Some(if (continuation == parent) null else continuation)
       }
 
+      case class FunR[A:TypeRep,B:TypeRep](frame: InterpreterFrame) {
+        def apply(x:Rep[A]): Rep[B] = {
+          runDelimited[A,B](frame)(x)
+        }
+        def decompile: (Rep[A], Block[B]) = {
+          decompileDelimited[A,B](frame)
+        }
+      }
+
+      def shiftR[A:TypeRep,B:TypeRep](body: FunR[A,B] => Rep[B]): Rep[B] = {
+        val k = FunR[A,B](continuation)
+        continuation = getContext(parent).reverse.tail.head // look for matching reset?
+        body(k)
+      }
+
+
+
       if (traceMethods) Console.println("// "+fullName)
 
       // check for known methods
       fullName match {
         case "lancet.api.DefaultMacros.shift" => handle {
-          case r::f::Nil => 
-            val reset = null
+          case r::(f:Rep[(Int=>Int)=>Int])::Nil => 
+            //val reset = null
             //val reset = resetStack.head
             //continuation = reset
             continuation = getContext(parent).reverse.tail.head // we're inside reset's scope, abort full
             emitString("//begin shift")
             //emitString("// looking for delimiter "+contextKey(reset))
             
-            val (argk,blockk) = decompileDelimited[Int,Int](parent,reset)
-            val (args,blocks) = decompileInternal[Int,Int](f)
+            val (argk,blockk) = decompileDelimited[Int,Int](parent)
+            val (args,blocks) = decompileInternal[(Int=>Int),Int](f)
 
             reflect[Unit]("def k",args,"(",argk,":","Int","): Int = ", blockk)
             emitString("val "+args+" = k"+args+" _")
 
             val res = reflect[Int](blocks)
 
+            // RES multiply defined ...
+            //reflect[Unit]("def k",argk,"(",argk,":","Int","): Int = ", blockk)
+            //val res = decompileFun(f).apply(Dyn[Int=>Int]("k"+argk))
+
             emitString("//end shift")
             res.asInstanceOf[Rep[Object]]
         }
 
         case "lancet.api.DefaultMacros.reset" => handle {
-          case r::f::Nil => 
+          case r::(f:Rep[()=>Int])::Nil => 
             emitString("//begin reset")
             val save = resetStack
             continuation.setBCI(continuation.getNextBCI) // XXX
@@ -347,6 +359,9 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
 
         case "lancet.api.DefaultMacros.slowpath" => handle {
           case r::Nil => 
+            /*
+            shift { k => val k1 = interpreted(k); k1() }
+            */
             val self = liftConst(this)
             // get caller frame from compiler ('parent')
             // emit code to construct interpreter state
@@ -381,6 +396,9 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
 
         case "lancet.api.DefaultMacros.fastpath" => handle {
           case r::Nil => 
+            /*
+            shift { k => val k1 = compiled(k); k1() }
+            */
             val self = liftConst(this)
             // get caller frame from compiler ('parent')
             // emit code to construct interpreter state
@@ -415,35 +433,40 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
 
         
         case "lancet.api.DefaultMacros.freeze" => handle {
-          case r::f::Nil => 
-            //println("unquote")
-            val Partial(fs) = eval(f)
-            val Static(cls: Class[_]) = fs("clazz")
+          case r::(f:Rep[()=>Int])::Nil => 
+            //println("freeze")
 
-            // TODO: materialize objects recursively
-            // to resolve non-constant fields.
-            // (is this sensible? what if the graph
-            // is really big?)
+            def evalM[A](x: Rep[A]): A = eval (x) match {
+              case Const(x) => x
+              case Partial(fs) =>
+                val Static(cls: Class[_]) = fs("clazz")
 
-            val typ = metaAccessProvider.lookupJavaType(cls)
-            val obj = it.runtimeInterface.newObject(typ)
+                // materialize objects recursively
+                // to resolve non-constant fields.
+                // (question: is this sensible? what if the 
+                // graph is really big?)
 
-            val fs1 = fs - "clazz" - "alloc"
-            val fs2 = typ.getInstanceFields(false) //.find(_.getName == k)
+                val typ = metaAccessProvider.lookupJavaType(cls)
+                val obj = it.runtimeInterface.newObject(typ).asInstanceOf[A]
 
-            //println(fs)
-            //println(fs2.mkString(","))
+                val fs1 = fs - "clazz" - "alloc"
+                val fs2 = typ.getInstanceFields(false) //.find(_.getName == k)
 
-            for (fld <- fs2) {
-              val name = fld.getName
-              val offset = fld.asInstanceOf[HotSpotResolvedJavaField].offset
-              val Static(value) = fs1(name)
-              it.Runtime.unsafe.putObject(obj, offset, value)
+                //println(fs)
+                //println(fs2.mkString(","))
+
+                for (fld <- fs2) {
+                  val name = fld.getName
+                  val offset = fld.asInstanceOf[HotSpotResolvedJavaField].offset
+                  val value = evalM(fs1(name))
+                  it.Runtime.unsafe.putObject(obj, offset, value)
+                }
+                obj
             }
 
-            val m = cls.getMethod("apply")
-            val block = m.invoke(obj).asInstanceOf[Rep[Object]]
-            liftConst(block)
+            val obj = evalM(f)
+            val block = obj.apply()
+            liftConst(block).asInstanceOf[Rep[Object]]
         }
 
         case "lancet.api.DefaultMacros.unquote" => handle {
