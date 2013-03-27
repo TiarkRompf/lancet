@@ -421,8 +421,7 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
             def mkInterpreterFrameR(locals: Array[Rep[Object]], bci: Rep[Int], tos: Rep[Int], method: Rep[ResolvedJavaMethod], parent: Rep[InterpreterFrame]): Rep[InterpreterFrame] =
               reflect[InterpreterFrame](self,".mkInterpreterFrame(Array[Object]("+
                 locals.map(x=>x+".asInstanceOf[AnyRef]").mkString(",")+"), "+ // cast is not nice
-                bci+", "+ // need to take *next* bci (cur points to call!)
-                tos+", "+method+", "+parent+")")
+                bci+", "+tos+", "+method+", "+parent+")")
 
             def execInterpreterR[B:TypeRep](frame: Rep[InterpreterFrame]) = 
               reflect[B](self,".execInterpreter("+frame+").asInstanceOf["+typeRep[B]+"] // drop into interpreter")
@@ -430,7 +429,8 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
             def rec(frame: InterpreterFrame): Rep[InterpreterFrame] = if (frame == null) liftConst(null) else {
               val p = rec(frame.getParentFrame)
               val frame1 = frame.asInstanceOf[InterpreterFrame_Str]
-              mkInterpreterFrameR(frame1.locals,frame1.nextBci,frame1.getStackTop(),liftConst(frame1.getMethod), p)
+              val bci = if (frame1.nextBci < 0) 0 else frame1.nextBci
+              mkInterpreterFrameR(frame1.locals,bci,frame1.getStackTop(),liftConst(frame1.getMethod), p)
             }
 
             def interpreted[A:TypeRep,B:TypeRep](f: FunR[A,B]): Rep[A]=>Rep[B] = 
@@ -460,8 +460,7 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
             def mkCompilerFrameR(locals: Array[Rep[Object]], bci: Rep[Int], tos: Rep[Int], method: Rep[ResolvedJavaMethod], parent: Rep[InterpreterFrame]): Rep[InterpreterFrame] =
               reflect[InterpreterFrame](self,".mkCompilerFrame(Array[Object]("+
                 locals.map(x=>x+".asInstanceOf[AnyRef]").mkString(",")+"), "+ // cast is not nice
-                bci+", "+ // need to take *next* bci (cur points to call!)
-                tos+", "+method+", "+parent+")")
+                bci+", "+tos+", "+method+", "+parent+")")
 
             def execCompilerR[B:TypeRep](frame: Rep[InterpreterFrame]) = 
               reflect[B](self,".execCompiler("+frame+").asInstanceOf["+typeRep[B]+"] // drop into freshly compiled")
@@ -469,7 +468,8 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
             def rec(frame: InterpreterFrame): Rep[InterpreterFrame] = if (frame == null) liftConst(null) else {
               val p = rec(frame.getParentFrame)
               val frame1 = frame.asInstanceOf[InterpreterFrame_Str]
-              mkCompilerFrameR(frame1.locals,frame1.nextBci,frame1.getStackTop(),liftConst(frame1.getMethod), p)
+              val bci = if (frame1.nextBci < 0) 0 else frame1.nextBci
+              mkCompilerFrameR(frame1.locals,bci,frame1.getStackTop(),liftConst(frame1.getMethod), p)
             }
 
             def compiled[A:TypeRep,B:TypeRep](f: FunR[A,B]): Rep[A]=>Rep[B] = 
