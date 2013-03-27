@@ -642,14 +642,14 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       def gotoBlock(blockFrame: InterpreterFrame): Rep[Unit] = {
         // make sure we're still in the same method! --> catch external calls that don't reset handler
-        assert(mframe.getMethod == blockFrame.getMethod, {"\n" +
-                mframe.getMethod + "\n" +
-                blockFrame.getMethod})
+        //assert(mframe.getMethod == blockFrame.getMethod, {"\n" +
+        //        mframe.getMethod + "\n" +
+        //        blockFrame.getMethod})
 
         // TODO: do not exec past control flow joins (only up to post-dom frontier)
 
         //println(">> "+contextKey(blockFrame))
-        val b = getGraalBlock(blockFrame)
+        //val b = getGraalBlock(blockFrame)
         //println(b + " --> " + postDom(b))
 
         execFoReal(blockFrame);

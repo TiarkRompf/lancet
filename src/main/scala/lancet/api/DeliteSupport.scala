@@ -395,6 +395,34 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
       handle(macroTable(fullName))
     } else fullName match {
 
+      case "optiml.library.OptiMLCompanion.readMatrix" => handle {
+        case self::r::Nil => reflect[Object](self,".readMatrix(",r,")")
+      }
+      case "scala.runtime.ScalaRunTime$.array_apply" => handle {
+        case self::a::b::Nil => reflect[Object](self,".array_apply(",a,",",b,")")
+      }
+      case "scala.runtime.ScalaRunTime$.array_update" => handle {
+        case self::a::b::c::Nil => reflect[Object](self,".array_update(",a,",",b,",",c,")")
+      }
+      case "scala.collection.immutable.Range.foreach$mVc$sp" => handle {
+        case self::a::Nil => reflect[Object](self,".foreach(",a,")")
+      }
+      case "scala.reflect.Manifest$.classType" => handle {
+        case self::a::b::c::Nil => reflect[Object](self,".classType(",a,",",b,",",c,")")
+      }
+      case "java.lang.StringBuilder.append" => handle {
+        case self::a::Nil => reflect[Object](self,".append(",a,")")
+      }
+      case "scala.collection.mutable.StringBuilder.append" => handle {
+        case self::a::Nil => reflect[Object](self,".append(",a,")")
+      }
+      case "java.lang.StringBuilder.toString" => handle {
+        case self::Nil => reflect[Object](self,".toString")
+      }
+      case "java.util.Arrays.copyOfRange" => handle {
+        case self::a::Nil => reflect[Object](self,".copyOfRange(",a,")")
+      }
+
       case "scala.runtime.BoxesRunTime.boxToBoolean" => handle {
         case r::Nil => r.asInstanceOf[Rep[Object]]//reflect[java.lang.Boolean](r,".asInstanceOf[java.lang.Boolean]")(mtr[java.lang.Boolean])
       }
