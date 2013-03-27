@@ -168,8 +168,18 @@ trait CudaCodegen extends OptiMLCodeGenCuda {
   // lots of other stuff missing from GEN_Scala_LMS_Base..
 
   override def quote(x: Exp[Any]) : String = x match {
-    case DynExp(a) => "null" // pray?
+    //case DynExp(a) => "0" // pray?
     case _ => super.quote(x)
+  }
+
+  override def emitNode(sym: Sym[Any], rhs: Def[Any]) = rhs match {
+    case NewVar(DynExp(a))                => stream.println(remap(sym.tp) + " " + quote(sym) + ";") // only works for the null string instances of DynExp
+    case ObjectAsInstanceOf(x)            => emitValDef(sym, "(%s) %s".format(remap(sym.tp),quote(x))) 
+    case PrimPlus(x, y)                   => emitValDef(sym, quote(x)+" + "+quote(y))
+    case PrimMinus(x, y)                  => emitValDef(sym, quote(x)+" - "+quote(y))
+    case PrimTimes(x, y)                  => emitValDef(sym, quote(x)+" * "+quote(y))
+    case PrimDiv(x, y)                    => emitValDef(sym, quote(x)+" / "+quote(y))
+    case _ => super.emitNode(sym,rhs)
   }
 }
 
@@ -494,7 +504,7 @@ object DeliteRunner {
     try {
       Config.degFilename = degName
       Config.buildDir = generatedDir
-      Config.cacheSyms = cacheSyms 
+      Config.cacheSyms = cacheSyms
       //Config.generateCUDA = true
       val screenOrVoid = if (verbose) System.out else new PrintStream(new ByteArrayOutputStream())
       Console.withOut(screenOrVoid) {
