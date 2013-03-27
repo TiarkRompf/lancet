@@ -58,6 +58,24 @@ class TestInterpreter5 extends FileDiffSuite {
   }
 
 
+  def testFastpath2 = withOutFileChecked(prefix+"fastpath2") {
+    val it = new Decompiler
+
+    def compute(i: Int) = if (i % 10 == 0) it.fastpath
+
+    val f = it.compile { (x:Int) => 
+      var i = 0
+      while (i < x) {
+        compute(i)
+        i += 1
+      }
+      i
+    }
+    printcheck(f(100), 100)
+  }
+
+
+
   def testCps1 = withOutFileChecked(prefix+"cps1") {
     val it = new Decompiler
 
