@@ -192,7 +192,7 @@ def apply(ARG: Int): Int = { object BODY {
   val x26 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$foo$4$1"))
   unsafe.putInt(x26,16L, 7)
   //begin shift
-  def kx33(x27:Int): Int = {
+  def fx27(x27:Int): Int = {
     var RES = null.asInstanceOf[Int]
     val x28 = x27.asInstanceOf[Int]
     // need to fix block ordering for bci=15
@@ -223,7 +223,7 @@ def apply(ARG: Int): Int = { object BODY {
     // (no return?)
     RES.asInstanceOf[Int]
   }
-  val x33 = kx33 _
+  val x33 = fx27 _
   val x39 = {
     var RES = null.asInstanceOf[Int]
     val x34 = x33.asInstanceOf[scala.Function1[_,_]] // checkCast
@@ -246,7 +246,7 @@ def apply(ARG: Int): Int = { object BODY {
 compilation: ok
 20
 ==== speculate/slowpath
-// constants: <function1>,<function0>,10,lancet.api.Lancet$$anon$1@2429a325,public abstract int scala.Function1.apply$mcII$sp(int),HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,Array(x42, x49),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>
+// constants: <function1>,<function0>,10,lancet.api.Lancet$$anon$1@11cec86e,public abstract int scala.Function1.apply$mcII$sp(int),HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,Array(x42, x49),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>
 class Generated7(CONST_0: lancet.interpreter.BytecodeInterpreter_LIR$$anonfun$fun$1,CONST_1: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$4,CONST_2: scala.runtime.IntRef,CONST_3: lancet.api.Lancet$$anon$1,CONST_4: java.lang.reflect.Method,CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: Array[lancet.core.Base_LIR$Rep],CONST_7: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_8: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (java.lang.Object=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -262,7 +262,7 @@ def apply(ARG: java.lang.Object): Int = { object BODY {
   unsafe.putInt(x42,16L, x41)
   unsafe.putInt(x42,20L, 10)
   //begin shift
-  def kx49(x43:Int): Int = {
+  def fx43(x43:Int): Int = {
     var RES = null.asInstanceOf[Int]
     val x44 = x43.asInstanceOf[Int]
     // need to fix block ordering for bci=17
@@ -293,7 +293,7 @@ def apply(ARG: java.lang.Object): Int = { object BODY {
     // (no return?)
     RES.asInstanceOf[Int]
   }
-  val x49 = kx49 _
+  val x49 = fx43 _
   val x59 = {
     var RES = null.asInstanceOf[Int]
     val x50 = x49.asInstanceOf[scala.Function1[_,_]] // checkCast
@@ -303,7 +303,7 @@ def apply(ARG: java.lang.Object): Int = { object BODY {
       var vx40 = null.asInstanceOf[java.lang.Object]
       var vx41 = null.asInstanceOf[Int]
       var vx42 = null.asInstanceOf[Object]
-      var vx49 = null.asInstanceOf[scala.Function1[_,_]]
+      var vx49 = null.asInstanceOf[Int => Int]
       var vx50 = null.asInstanceOf[Object]
       var vx51 = null.asInstanceOf[Boolean]
       val x51 = 10 != x41
@@ -367,10 +367,10 @@ HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$Test
 HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>
 <function1>,<function1>,null,null
 HotSpotMethod<BytecodeInterpreter_Exec.execute>
-lancet.api.Lancet$$anon$1@2429a325,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@6788dca8,null,null,null,null,null,null
+lancet.api.Lancet$$anon$1@11cec86e,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@7cf44e8e,null,null,null,null,null,null
 root:
 HotSpotMethod<BytecodeInterpreter_Exec.execute>
-lancet.api.Lancet$$anon$1@2429a325,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@6788dca8,null,null,null,null,null,null
+lancet.api.Lancet$$anon$1@11cec86e,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@7cf44e8e,null,null,null,null,null,null
       RootCall HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply> - HotSpotSignature<(Lscala/Function1;)I>
       33: aload_1
       34: aload_0
@@ -381,7 +381,7 @@ lancet.api.Lancet$$anon$1@2429a325,HotSpotMethod<TestInterpreter6$$anonfun$test1
         1: getfield
         4: iload_1
         5: invokevirtual
-          Call HotSpotMethod<Generated7$BODY$2$.kx49> - HotSpotSignature<(I)I>
+          Call HotSpotMethod<Generated7$BODY$2$.fx43> - HotSpotSignature<(I)I>
           0: aconst_null
           1: invokestatic
             Call HotSpotMethod<BoxesRunTime.unboxToInt> - HotSpotSignature<(Ljava/lang/Object;)I>
@@ -458,7 +458,7 @@ lancet.api.Lancet$$anon$1@2429a325,HotSpotMethod<TestInterpreter6$$anonfun$test1
           39: istore_2
           40: iload_2
           41: ireturn
-          Ret HotSpotMethod<Generated7$BODY$2$.kx49> - HotSpotSignature<(I)I>
+          Ret HotSpotMethod<Generated7$BODY$2$.fx43> - HotSpotSignature<(I)I>
         8: ireturn
         Ret HotSpotMethod<Generated7$BODY$2$$anonfun$1.apply$mcII$sp> - HotSpotSignature<(I)I>
       43: ireturn
@@ -507,6 +507,6 @@ HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$Test
 null,null,null,null
 root:
 HotSpotMethod<BytecodeInterpreter_Exec.execute>
-lancet.api.Lancet$$anon$1@2429a325,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@6788dca8,200,null,null,null,null,null
+lancet.api.Lancet$$anon$1@11cec86e,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreter6$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@7cf44e8e,200,null,null,null,null,null
 result: 200
 200

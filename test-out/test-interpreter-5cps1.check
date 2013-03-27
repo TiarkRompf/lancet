@@ -39,7 +39,7 @@ def apply(ARG: Int): Int = { object BODY {
     // return 1_0 to 9:<TestInterpreter5$$anonfun$testCps1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$4><(ILlancet/interpreter/TestInterpreter5$Decompiler;)I> // 21:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$4$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
     // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$4$1.<init>>
     //begin shift
-    def kx9(x4:Int): Int = {
+    def fx4(x4:Int): Int = {
       var RES = null.asInstanceOf[Int]
       val x5 = x4.asInstanceOf[Int]
       // need to fix block ordering for bci=14
@@ -65,7 +65,7 @@ def apply(ARG: Int): Int = { object BODY {
       // (no return?)
       RES.asInstanceOf[Int]
     }
-    val x9 = kx9 _
+    val x9 = fx4 _
     val x17 = {
       var RES = null.asInstanceOf[Int]
       val x10 = x9.asInstanceOf[scala.Function1[_,_]] // checkCast
