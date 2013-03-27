@@ -252,11 +252,13 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
       map.build();
       map
     }) else { // OSR
+      assert(bci >= 0,"bci: "+bci)
       import scala.collection.JavaConversions._
       val map = new BciBlockMapping(method);
       map.build();
       emitString("// need to fix block ordering for bci="+bci)
       emitString("// old: " + map.blocks.mkString(","))
+
       val start = map.blocks.find(_.startBci == bci).get
       var reach = List[BciBlockMapping.Block]()
       var seen = Set[BciBlockMapping.Block]()
