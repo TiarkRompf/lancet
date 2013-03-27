@@ -3,7 +3,7 @@ package lancet.api
 import lancet.core._
 import lancet.interpreter._
 
-class stable // annotation
+class stable extends scala.annotation.Annotation 
 
 object Lancet {
 
