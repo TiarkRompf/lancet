@@ -329,6 +329,7 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
 
       def shiftR[A:TypeRep,B:TypeRep](body: FunR[A,B] => Rep[B]): Rep[B] = {
         val k = FunR[A,B](continuation)
+        // NOTE: correctly unwinding the stack would also mean exiting monitors
         continuation = getContext(parent).reverse.tail.head // look for matching reset?
         body(k)
       }
@@ -393,33 +394,37 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
             val self = liftConst(this)
             // get caller frame from compiler ('parent')
             // emit code to construct interpreter state
-            def rec(frame: InterpreterFrame): Rep[Object] = if (frame == null) liftConst(null) else {
+
+            def mkInterpreterFrameR(locals: Array[Rep[Object]], bci: Rep[Int], tos: Rep[Int], method: Rep[ResolvedJavaMethod], parent: Rep[InterpreterFrame]): Rep[InterpreterFrame] =
+              reflect[InterpreterFrame](self,".mkInterpreterFrame(Array[Object]("+
+                locals.map(x=>x+".asInstanceOf[AnyRef]").mkString(",")+"), "+ // cast is not nice
+                bci+", "+ // need to take *next* bci (cur points to call!)
+                tos+", "+
+                method+", "+parent+")")
+
+            def execInterpreterR[B:TypeRep](frame: Rep[InterpreterFrame]) = 
+              reflect[B](self,".execInterpreter("+frame+").asInstanceOf["+typeRep[B]+"] // drop into interpreter")
+
+            def rec(frame: InterpreterFrame): Rep[InterpreterFrame] = if (frame == null) liftConst(null) else {
               val p = rec(frame.getParentFrame)
               val frame1 = frame.asInstanceOf[InterpreterFrame_Str]
-              reflect[Object](self,".mkInterpreterFrame(Array[Object]("+
-                frame1.locals.map(x=>x+".asInstanceOf[AnyRef]").mkString(",")+"), "+ // cast is not nice
-                frame1.nextBci+", "+ // need to take *next* bci (cur points to call!)
-                frame1.getStackTop()+", "+
-                liftConst(frame1.getMethod)+", "+p+")")
+              mkInterpreterFrameR(frame1.locals,frame1.nextBci,frame1.getStackTop(),liftConst(frame1.getMethod), p)
             }
-            val frame = rec(parent)
 
-            // discard compiler state
-            val callers = getContext(parent)
-            continuation = callers.reverse.tail.head // second from top! copy or not?
+            def interpreted[A:TypeRep,B:TypeRep](f: FunR[A,B]): Rep[A]=>Rep[B] = 
+              (x:Rep[A]) => execInterpreterR[B](rec(f.frame)) // what to do with x:A ??
 
-            /* NOTE: correctly unwinding the stack would also mean unlocking monitors and
-            calling .dispose on frames)*/
 
-            // exec interpreter to resume at caller frame
+            shiftR[Unit,Int] { k =>
 
-            val typ = continuation.getMethod.getSignature.getReturnKind // FIXME
-            val res = reflect[Int](self,".execInterpreter("+frame+").asInstanceOf[Int] // drop into interpreter")
+              val k1 = interpreted(k)
+              val res = k1(liftConst())
 
-            emitString("// old parent: " + contextKey(parent))
-            emitString("// new parent: " + contextKey(continuation))
+              emitString("// old parent: " + contextKey(parent))
+              emitString("// new parent: " + contextKey(continuation))
 
-            res.asInstanceOf[Rep[Object]]
+              res
+            }.asInstanceOf[Rep[Object]]
         }
 
         case "lancet.api.DefaultMacros.fastpath" => handle {
