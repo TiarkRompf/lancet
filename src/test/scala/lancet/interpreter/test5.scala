@@ -7,6 +7,8 @@ class TestInterpreter5 extends FileDiffSuite {
 
   val prefix = "test-out/test-interpreter-5"
 
+  // TODO: delimit scope of slowpath/fastpath
+
   def test1a = withOutFileChecked(prefix+"slowpath1a") {
     val it = new Decompiler
 
