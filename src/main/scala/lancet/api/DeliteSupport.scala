@@ -436,6 +436,9 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
       case "scala.runtime.BoxesRunTime.unboxToInt" => handle {
         case r::Nil => r.asInstanceOf[Rep[Object]]//reflect[Int](r,".asInstanceOf[Int]").asInstanceOf[Rep[Object]]
       }
+      case "scala.runtime.BoxesRunTime.unboxToChar" => handle {
+        case r::Nil => r.asInstanceOf[Rep[Object]]//reflect[Char](r,".asInstanceOf[Char]").asInstanceOf[Rep[Object]]
+      }      
       case "scala.runtime.BoxesRunTime.boxToDouble" => handle {
         case r::Nil => r.asInstanceOf[Rep[Object]]//reflect[java.lang.Double](r,".asInstanceOf[java.lang.Double]")(mtr[java.lang.Double])
       }
@@ -535,7 +538,7 @@ object DeliteRunner {
     val generatedDir = (new File("generated")).getAbsolutePath + /*protobuf wants absolute path*/
       java.io.File.separator + uniqueTestName
     try {
-      Config.degFilename = degName
+      Config.degFilename = degName 
       Config.buildDir = generatedDir
       Config.cacheSyms = cacheSyms
       //Config.generateCUDA = true
