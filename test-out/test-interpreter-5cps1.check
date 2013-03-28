@@ -1,5 +1,5 @@
 // constants: <function1>,public abstract int scala.Function1.apply$mcII$sp(int)
-class Generated0(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$testCps1$1$$anonfun$5,CONST_1: java.lang.reflect.Method) extends (Int=>Int){
+class Generated0(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$testCps1$1$$anonfun$7,CONST_1: java.lang.reflect.Method) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -9,35 +9,35 @@ def apply(ARG: Int): Int = { object BODY {
   var RES = null.asInstanceOf[Int]
   val x0 = ARG
   val x1 = x0.asInstanceOf[Int]
-  val x2 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1"))
+  val x2 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1"))
   unsafe.putObject(x2,24L, CONST_0)
   unsafe.putInt(x2,16L, x1)
-  // return 0_0 to 4:<AbstractFunction0.<init>><()V> // 4:<AbstractFunction0$mcI$sp.<init>><()V> // 26:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1$$anonfun$5;I)V> // 13:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+  // return 0_0 to 4:<AbstractFunction0.<init>><()V> // 4:<AbstractFunction0$mcI$sp.<init>><()V> // 26:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1$$anonfun$7;I)V> // 13:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
   // ret single HotSpotMethod<Object.<init>>
-  // return 0_0 to 8:<AbstractFunction0.<init>><()V> // 4:<AbstractFunction0$mcI$sp.<init>><()V> // 26:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1$$anonfun$5;I)V> // 13:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+  // return 0_0 to 8:<AbstractFunction0.<init>><()V> // 4:<AbstractFunction0$mcI$sp.<init>><()V> // 26:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1$$anonfun$7;I)V> // 13:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
   // ret single HotSpotMethod<Function0$class.$init$>
-  // return 2_0 to 4:<AbstractFunction0$mcI$sp.<init>><()V> // 26:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1$$anonfun$5;I)V> // 13:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+  // return 2_0 to 4:<AbstractFunction0$mcI$sp.<init>><()V> // 26:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1$$anonfun$7;I)V> // 13:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
   // ret single HotSpotMethod<AbstractFunction0.<init>>
-  // return 0_0 to 8:<AbstractFunction0$mcI$sp.<init>><()V> // 26:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1$$anonfun$5;I)V> // 13:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+  // return 0_0 to 8:<AbstractFunction0$mcI$sp.<init>><()V> // 26:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1$$anonfun$7;I)V> // 13:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
   // ret single HotSpotMethod<Function0$mcI$sp$class.$init$>
-  // return 2_0 to 26:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1$$anonfun$5;I)V> // 13:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+  // return 2_0 to 26:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1$$anonfun$7;I)V> // 13:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
   // ret single HotSpotMethod<AbstractFunction0$mcI$sp.<init>>
-  // return 4_0 to 13:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
-  // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.<init>>
+  // return 4_0 to 13:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+  // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.<init>>
   //begin reset
   val x19 = {
     var RES = null.asInstanceOf[Int]
-    // return 0_0 to 7:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
-    // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5.lancet$interpreter$TestInterpreter5$$anonfun$$anonfun$$$outer>
-    val x3 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$5$1"))
-    // return 0_0 to 4:<AbstractFunction1.<init>><()V> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$5$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1;)V> // 9:<TestInterpreter5$$anonfun$testCps1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$5><(ILlancet/interpreter/TestInterpreter5$Decompiler;)I> // 21:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+    // return 0_0 to 7:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+    // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7.lancet$interpreter$TestInterpreter5$$anonfun$$anonfun$$$outer>
+    val x3 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$7$1"))
+    // return 0_0 to 4:<AbstractFunction1.<init>><()V> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$7$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1;)V> // 9:<TestInterpreter5$$anonfun$testCps1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$7><(ILlancet/interpreter/TestInterpreter5$Decompiler;)I> // 21:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
     // ret single HotSpotMethod<Object.<init>>
-    // return 0_0 to 8:<AbstractFunction1.<init>><()V> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$5$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1;)V> // 9:<TestInterpreter5$$anonfun$testCps1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$5><(ILlancet/interpreter/TestInterpreter5$Decompiler;)I> // 21:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+    // return 0_0 to 8:<AbstractFunction1.<init>><()V> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$7$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1;)V> // 9:<TestInterpreter5$$anonfun$testCps1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$7><(ILlancet/interpreter/TestInterpreter5$Decompiler;)I> // 21:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
     // ret single HotSpotMethod<Function1$class.$init$>
-    // return 2_0 to 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$5$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1;)V> // 9:<TestInterpreter5$$anonfun$testCps1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$5><(ILlancet/interpreter/TestInterpreter5$Decompiler;)I> // 21:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+    // return 2_0 to 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$7$1.<init>><(Llancet/interpreter/TestInterpreter5$$anonfun$testCps1$1;)V> // 9:<TestInterpreter5$$anonfun$testCps1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$7><(ILlancet/interpreter/TestInterpreter5$Decompiler;)I> // 21:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
     // ret single HotSpotMethod<AbstractFunction1.<init>>
-    // return 1_0 to 9:<TestInterpreter5$$anonfun$testCps1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$5><(ILlancet/interpreter/TestInterpreter5$Decompiler;)I> // 21:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
-    // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$5$1.<init>>
+    // return 1_0 to 9:<TestInterpreter5$$anonfun$testCps1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$7><(ILlancet/interpreter/TestInterpreter5$Decompiler;)I> // 21:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+    // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$7$1.<init>>
     //begin shift
     def fx4(x4:Int): Int = {
       var RES = null.asInstanceOf[Int]
@@ -48,15 +48,15 @@ def apply(ARG: Int): Int = { object BODY {
       // fixed: B0[14->14],B1[17->17]
       val x6 = x5.asInstanceOf[Int]
       val x7 = x6.asInstanceOf[Int]
-      // return 1_0 to 21:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
-      // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$5>
+      // return 1_0 to 21:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply$mcI$sp><()I> // 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+      // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$7>
       // need to fix block ordering for bci=21
       // old: B0[0->4],B1[7->18],B2[21->24]
       // new: B2[21->24]
       // fixed: B0[21->24]
       val x8 = 100 * x7
-      // return 0_0 to 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
-      // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply$mcI$sp>
+      // return 0_0 to 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+      // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply$mcI$sp>
       // need to fix block ordering for bci=4
       // old: B0[0->1],B1[4->4]
       // new: B1[4->4]
@@ -74,8 +74,8 @@ def apply(ARG: Int): Int = { object BODY {
       val x13 = CONST_1.invoke(x10.asInstanceOf[AnyRef],9.asInstanceOf[AnyRef]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp
       val x14 = x13.asInstanceOf[Int]
       val x15 = x14 + x12
-      // return 2_0 to 8:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$5$1.apply><(Ljava/lang/Object;)Ljava/lang/Object;> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
-      // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$5$1.apply>
+      // return 2_0 to 8:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$7$1.apply><(Ljava/lang/Object;)Ljava/lang/Object;> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+      // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$7$1.apply>
       val x16 = x15.asInstanceOf[Integer]
       (RES = x16) // return to root
       // (no return?)
@@ -83,10 +83,10 @@ def apply(ARG: Int): Int = { object BODY {
     }
     //end shift
     val x18 = x17.asInstanceOf[Int]
-    // return 1_0 to 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
-    // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$5>
-    // return 1_0 to 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
-    // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5$$anonfun$apply$mcII$sp$1.apply$mcI$sp>
+    // return 1_0 to 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+    // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$7>
+    // return 1_0 to 4:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply><()I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+    // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7$$anonfun$apply$mcII$sp$1.apply$mcI$sp>
     (RES = x18) // return to root
     // (no return?)
     RES.asInstanceOf[Int]
@@ -94,8 +94,8 @@ def apply(ARG: Int): Int = { object BODY {
   //end reset
   val x20 = x19.asInstanceOf[Int]
   val x21 = x20.asInstanceOf[Int]
-  // return 3_0 to 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
-  // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$5.apply$mcII$sp>
+  // return 3_0 to 5:<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+  // ret single HotSpotMethod<TestInterpreter5$$anonfun$testCps1$1$$anonfun$7.apply$mcII$sp>
   (RES = x21) // return to root
   // (no return?)
 }; BODY.RES }
