@@ -546,8 +546,21 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       }
 
       // initial block -- do we ever need to lub here?
-      assert(getPreds(b.blockID) == List(-1))
-      reflect(Patch("",blockInfoOut(b.blockID).code))
+      //assert(getPreds(b.blockID) == List(-1))
+      //reflect(Patch("",blockInfoOut(b.blockID).code))
+
+      if (shouldInline(b.blockID)) {
+        reflect(Patch("",blockInfoOut(b.blockID).code))
+      } else {
+        emitString("// should not inline start block "+b.blockID)
+        val s0 = blockInfo(b.blockID).inEdges.find(_._1 == -1).get._2
+        val s1 = blockInfo(b.blockID).inState
+        val fields = getFields(s1)
+        val (key,keyid) = contextKeyId(getFrame(s1))
+        val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
+        reflect[Unit](Patch("",head))
+        genBlockCall(keyid, fields)
+      }
 
       // emit all non-inlined blocks
       for (b <- graalBlocks.blocks if blockInfo.contains(b.blockID)) {
