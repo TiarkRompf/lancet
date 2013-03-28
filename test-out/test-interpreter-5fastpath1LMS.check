@@ -1,0 +1,165 @@
+  /*****************************************
+  Emitting Generated Code
+  *******************************************/
+  class Generated(pConst_0:Object,pConst_1:Object,pConst_2:Object,pConst_3:Object,pConst_4:Object,pConst_5:Object,pConst_6:Object,pConst_7:Object) extends ((Int)=>(Int)) {
+    def apply(x0:Int): Int = {
+      import sun.misc.Unsafe;
+      val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
+      type char = Char;
+      def WARN = assert(false, "WARN");
+      def ERROR = assert(false, "ERROR");
+      var RES = null.asInstanceOf[Int];
+      val x7 = x0.asInstanceOf[Int];
+      var vPHI_2_5 = null.asInstanceOf[Int];
+      // Sym(99);
+      var vx7 = null.asInstanceOf[Int];
+      // Sym(101);
+      ;{;
+        val PHI_3_5 = 0 // LUBC(DynExp(PHI_3_5):Int,Const(0):Int);
+        BLOCK_2(PHI_3_5,x7);
+      };
+      def BLOCK_2(PHI_3_5:Int,x7:Int): Unit = {
+        val x34 = x7 <= PHI_3_5;
+        if (x34) {
+          val PHI_2_5 = PHI_3_5 // LUBC(Sym(56):Int,DynExp(PHI_3_5):Int);
+          vPHI_2_5 = PHI_2_5;
+          vx7 = x7;
+        } else {
+          val x42 = 50 != PHI_3_5;
+          if (x42) {
+            val x68 = 1 + PHI_3_5;
+            ;{;
+              val PHI_3_5 = x68 // LUBC(DynExp(PHI_3_5):Int,Sym(68):Int);
+              BLOCK_2(PHI_3_5,x7);
+            };
+          } else {
+            val x49: Object = pConst_0.asInstanceOf[lancet.api.DefaultMacrosLMS].mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],pConst_0.asInstanceOf[AnyRef],pConst_1.asInstanceOf[AnyRef],pConst_2.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), -1,6,pConst_3.asInstanceOf[com.oracle.graal.api.meta.ResolvedJavaMethod],null);
+            val x50: Object = pConst_0.asInstanceOf[lancet.api.DefaultMacrosLMS].mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],pConst_4.asInstanceOf[AnyRef],x7.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 5,5,pConst_1.asInstanceOf[com.oracle.graal.api.meta.ResolvedJavaMethod],x49);
+            val x51: Object = pConst_0.asInstanceOf[lancet.api.DefaultMacrosLMS].mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],pConst_4.asInstanceOf[AnyRef],x7.asInstanceOf[AnyRef],PHI_3_5.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 19,6,pConst_5.asInstanceOf[com.oracle.graal.api.meta.ResolvedJavaMethod],x50);
+            val x52: Object = pConst_0.asInstanceOf[lancet.api.DefaultMacrosLMS].mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],pConst_6.asInstanceOf[AnyRef],PHI_3_5.asInstanceOf[AnyRef],pConst_0.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 12,6,pConst_7.asInstanceOf[com.oracle.graal.api.meta.ResolvedJavaMethod],x51);
+            val x53: Int = pConst_0.asInstanceOf[lancet.api.DefaultMacrosLMS].execCompiler(x52).asInstanceOf[Int] // drop into freshly compiled;
+            // old parent: 7:<TestInterpreter5$$anonfun$testFastpath1LMS$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$7>HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$DecompilerLMS;)V> // 19:<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply$mcII$sp>HotSpotSignature<(I)I> // 5:<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply>HotSpotSignature<(I)I> // 0:<BytecodeInterpreter_Exec.execute>HotSpotSignature<(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>;
+            // new parent: 5:<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply>HotSpotSignature<(I)I> // 0:<BytecodeInterpreter_Exec.execute>HotSpotSignature<(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>;
+            val x56 = x53.asInstanceOf[Int];
+            val PHI_2_5 = x56 // LUBC(DynExp(PHI_3_5):Int,Sym(56):Int);
+            vPHI_2_5 = PHI_2_5;
+            vx7 = x7;
+          }
+          // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$7>;
+        }
+      }
+      // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply$mcII$sp>;
+      ;{;
+        ;{;
+          val PHI_2_5 = vPHI_2_5;
+          val x7 = vx7;
+          (RES = PHI_2_5) // return to root;
+        };
+      };
+      // (no return?);
+      RES
+    }
+  }
+  /*****************************************
+  End of Generated Code
+  *******************************************/
+Vector((Sym(-1000),lancet.interpreter.TestInterpreter5$DecompilerLMS@66d13849), (Sym(-1001),HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply>), (Sym(-1002),[Lscala.virtualization.lms.internal.Expressions$Exp;@447750f0), (Sym(-1003),HotSpotMethod<BytecodeInterpreter_Exec.execute>), (Sym(-1004),<function1>), (Sym(-1005),HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply$mcII$sp>), (Sym(-1006),<function0>), (Sym(-1007),HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$7>))
+List((lancet.interpreter.TestInterpreter5$DecompilerLMS@66d13849,class java.lang.Object), (HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply>,class java.lang.Object), ([Lscala.virtualization.lms.internal.Expressions$Exp;@447750f0,class java.lang.Object), (HotSpotMethod<BytecodeInterpreter_Exec.execute>,class java.lang.Object), (<function1>,class java.lang.Object), (HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply$mcII$sp>,class java.lang.Object), (<function0>,class java.lang.Object), (HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$7>,class java.lang.Object))
+compilation: ok
+-- start compiling
+frame:
+HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$7>
+Const(<function0>),Const(50),Const(lancet.interpreter.TestInterpreter5$DecompilerLMS@66d13849),Const(null),Const(null)
+HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply$mcII$sp>
+Const(<function1>),Const(100),Const(50),Const(null),Const(null),Const(null)
+HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply>
+Const(<function1>),Const(100),Const(null),Const(null)
+HotSpotMethod<BytecodeInterpreter_Exec.execute>
+Const(lancet.interpreter.TestInterpreter5$DecompilerLMS@66d13849),Const(HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply>),Const([Lscala.virtualization.lms.internal.Expressions$Exp;@447750f0),Const(null),Const(null),Const(null),Const(null),Const(null),Const(null)
+root:
+HotSpotMethod<BytecodeInterpreter_Exec.execute>
+Const(lancet.interpreter.TestInterpreter5$DecompilerLMS@66d13849),Const(HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply>),Const([Lscala.virtualization.lms.internal.Expressions$Exp;@447750f0),Const(null),Const(null),Const(null),Const(null),Const(null),Const(null)
+  /*****************************************
+  Emitting Generated Code
+  *******************************************/
+  class Generated(pConst_0:Object,pConst_1:Object,pConst_2:Object,pConst_3:Object,pConst_4:Object,pConst_5:Object,pConst_6:Object,pConst_7:Object) extends ((Unit)=>(Int)) {
+    def apply(x124:Unit): Int = {
+      import sun.misc.Unsafe;
+      val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
+      type char = Char;
+      def WARN = assert(false, "WARN");
+      def ERROR = assert(false, "ERROR");
+      var RES = null.asInstanceOf[Int];
+      // need to fix block ordering for bci=12;
+      // old: B0[0->3],B1[6->7],B2[12->12];
+      // new: B2[12->12];
+      // fixed: B0[12->12];
+      // need to fix block ordering for bci=19;
+      // old: B0[0->1],B1[2->4 L],B2[7->16],B3[19->27],B4[30->31];
+      // new: B3[19->27],B1[2->4 L],B2[7->16],B4[30->31];
+      // fixed: B0[19->27],B1[2->4 L],B2[7->16],B3[30->31];
+      var vPHI_2_5 = null.asInstanceOf[Int];
+      // Sym(241);
+      // should not inline start block 0;
+      val PHI_3_5 = 50 // LUBC(DynExp(PHI_3_5):Int,Const(50):Int);
+      val PHI_3_6 = null // LUBC(DynExp(PHI_3_6):java.lang.Object,Const(null):java.lang.Object);
+      val PHI_3_7 = null // LUBC(DynExp(PHI_3_7):java.lang.Object,Const(null):java.lang.Object);
+      val PHI_3_8 = null // LUBC(DynExp(PHI_3_8):java.lang.Object,Const(null):java.lang.Object);
+      BLOCK_11(PHI_3_5,PHI_3_6,PHI_3_7,PHI_3_8);
+      def BLOCK_11(PHI_3_5:Int,PHI_3_6:Object,PHI_3_7:Object,PHI_3_8:Object): Unit = {
+        val x167 = 1 + PHI_3_5;
+        val x170 = 100 <= x167;
+        if (x170) {
+          val PHI_2_5 = x167 // LUBC(Sym(192):Int,Sym(167):Int);
+          vPHI_2_5 = PHI_2_5;
+        } else {
+          val x178 = 50 != x167;
+          if (x178) {
+            ;{;
+              val PHI_3_5 = x167 // LUBC(DynExp(PHI_3_5):Int,Sym(167):Int);
+              val PHI_3_6 = null.asInstanceOf[java.lang.Object] // LUBC(DynExp(PHI_3_6),null);
+              val PHI_3_7 = null.asInstanceOf[java.lang.Object] // LUBC(DynExp(PHI_3_7),null);
+              val PHI_3_8 = null.asInstanceOf[java.lang.Object] // LUBC(DynExp(PHI_3_8),null);
+              BLOCK_11(PHI_3_5,PHI_3_6,PHI_3_7,PHI_3_8);
+            };
+          } else {
+            val x185: Object = pConst_0.asInstanceOf[lancet.api.DefaultMacrosLMS].mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],pConst_0.asInstanceOf[AnyRef],pConst_1.asInstanceOf[AnyRef],pConst_2.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), -1,6,pConst_3.asInstanceOf[com.oracle.graal.api.meta.ResolvedJavaMethod],null);
+            val x186: Object = pConst_0.asInstanceOf[lancet.api.DefaultMacrosLMS].mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],pConst_4.asInstanceOf[AnyRef],100.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 5,5,pConst_1.asInstanceOf[com.oracle.graal.api.meta.ResolvedJavaMethod],x185);
+            val x187: Object = pConst_0.asInstanceOf[lancet.api.DefaultMacrosLMS].mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],pConst_4.asInstanceOf[AnyRef],100.asInstanceOf[AnyRef],x167.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 19,6,pConst_5.asInstanceOf[com.oracle.graal.api.meta.ResolvedJavaMethod],x186);
+            val x188: Object = pConst_0.asInstanceOf[lancet.api.DefaultMacrosLMS].mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],pConst_6.asInstanceOf[AnyRef],x167.asInstanceOf[AnyRef],pConst_0.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 12,6,pConst_7.asInstanceOf[com.oracle.graal.api.meta.ResolvedJavaMethod],x187);
+            val x189: Int = pConst_0.asInstanceOf[lancet.api.DefaultMacrosLMS].execCompiler(x188).asInstanceOf[Int] // drop into freshly compiled;
+            // old parent: 7:<TestInterpreter5$$anonfun$testFastpath1LMS$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$7>HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$DecompilerLMS;)V> // 19:<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply$mcII$sp>HotSpotSignature<(I)I> // 5:<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply>HotSpotSignature<(I)I> // -1:<BytecodeInterpreter_Exec.execute>HotSpotSignature<(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>;
+            // new parent: 5:<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply>HotSpotSignature<(I)I> // -1:<BytecodeInterpreter_Exec.execute>HotSpotSignature<(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>;
+            val x192 = x189.asInstanceOf[Int];
+            val PHI_2_5 = x192 // LUBC(Sym(167):Int,Sym(192):Int);
+            vPHI_2_5 = PHI_2_5;
+          }
+          // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$7>;
+        }
+      }
+      // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply$mcII$sp>;
+      ;{;
+        ;{;
+          val PHI_2_5 = vPHI_2_5;
+          // need to fix block ordering for bci=5;
+          // old: B0[0->2],B1[5->5];
+          // new: B1[5->5];
+          // fixed: B0[5->5];
+          (RES = PHI_2_5) // return to root;
+          // (no return?);
+        };
+      };
+      val x264: Int = {println("BOO!");666} // recompiled result -- never seen; not assigned to RES;
+      RES
+    }
+  }
+  /*****************************************
+  End of Generated Code
+  *******************************************/
+Vector((Sym(-1000),lancet.interpreter.TestInterpreter5$DecompilerLMS@66d13849), (Sym(-1001),HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply>), (Sym(-1002),[Lscala.virtualization.lms.internal.Expressions$Exp;@447750f0), (Sym(-1003),HotSpotMethod<BytecodeInterpreter_Exec.execute>), (Sym(-1004),<function1>), (Sym(-1005),HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply$mcII$sp>), (Sym(-1006),<function0>), (Sym(-1007),HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$7>))
+List((lancet.interpreter.TestInterpreter5$DecompilerLMS@66d13849,class java.lang.Object), (HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply>,class java.lang.Object), ([Lscala.virtualization.lms.internal.Expressions$Exp;@447750f0,class java.lang.Object), (HotSpotMethod<BytecodeInterpreter_Exec.execute>,class java.lang.Object), (<function1>,class java.lang.Object), (HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1$$anonfun$7.apply$mcII$sp>,class java.lang.Object), (<function0>,class java.lang.Object), (HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1LMS$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$7>,class java.lang.Object))
+compilation: ok
+-- compiled
+BOO!
+result: 100
+100
