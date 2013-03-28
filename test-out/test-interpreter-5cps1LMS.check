@@ -1,0 +1,74 @@
+  /*****************************************
+  Emitting Generated Code
+  *******************************************/
+  class Generated(pConst_0:Object,pConst_1:java.lang.reflect.Method) extends ((Int)=>(Int)) {
+    def apply(x0:Int): Int = {
+      import sun.misc.Unsafe;
+      val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
+      type char = Char;
+      def WARN = assert(false, "WARN");
+      def ERROR = assert(false, "ERROR");
+      var RES = null.asInstanceOf[Int];
+      val x7 = x0.asInstanceOf[Int];
+      val x10: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$testCps1LMS$1$$anonfun$9$$anonfun$apply$mcII$sp$2"));
+      unsafe.putObject(x10,24L, pConst_0);
+      if (x10 ne null) unsafe.putInt(x10,16L, x7) else println("BUG: putInt"+x10);;
+      //begin reset;
+      val x180: Int = {
+        var RES = null.asInstanceOf[Int];
+        val x69: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$testCps1LMS$1$$anonfun$lancet$interpreter$TestInterpreter5$$anonfun$$compute$9$1"));
+        //begin shift;
+        def fx99(x99:Int): Int = {
+          var RES = null.asInstanceOf[Int];
+          val x101 = x99.asInstanceOf[Int];
+          // need to fix block ordering for bci=14;
+          // old: B0[0->6],B1[9->9],B2[14->14],B3[17->17];
+          // new: B2[14->14],B3[17->17];
+          // fixed: B0[14->14],B1[17->17];
+          val x107 = x101.asInstanceOf[Int];
+          // need to fix block ordering for bci=21;
+          // old: B0[0->4],B1[7->18],B2[21->24];
+          // new: B2[21->24];
+          // fixed: B0[21->24];
+          val x118 = 100 * x107;
+          // need to fix block ordering for bci=4;
+          // old: B0[0->1],B1[4->4];
+          // new: B1[4->4];
+          // fixed: B0[4->4];
+          (RES = x118) // return to root;
+          // (no return?);
+          RES.asInstanceOf[Int]
+        };
+        val x135: scala.Function1[Int, Int] = fx99 _;
+        val x162: Int = {
+          var RES = null.asInstanceOf[Int];
+          val x138: Object = x135.asInstanceOf[scala.Function1[_,_]] // checkCast;
+          val x140: Int = pConst_1.invoke(x138.asInstanceOf[Object],7.asInstanceOf[Object]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp;
+          val x141 = x140.asInstanceOf[Int];
+          val x144: Int = pConst_1.invoke(x138.asInstanceOf[Object],9.asInstanceOf[Object]).asInstanceOf[Int] // scala.Function1.apply$mcII$sp;
+          val x145 = x144.asInstanceOf[Int];
+          val x148 = x145 + x141;
+          (RES = x148) // return to root;
+          // (no return?);
+          RES.asInstanceOf[Int]
+        };
+        //end shift;
+        val x164 = x162.asInstanceOf[Int];
+        (RES = x164) // return to root;
+        // (no return?);
+        RES.asInstanceOf[Int]
+      };
+      //end reset;
+      val x184 = x180.asInstanceOf[Int];
+      (RES = x184) // return to root;
+      // (no return?);
+      RES
+    }
+  }
+  /*****************************************
+  End of Generated Code
+  *******************************************/
+Vector((Sym(-1000),<function1>), (Sym(-1001),public abstract int scala.Function1.apply$mcII$sp(int)))
+List((<function1>,class java.lang.Object), (public abstract int scala.Function1.apply$mcII$sp(int),class java.lang.reflect.Method))
+compilation: ok
+1600
