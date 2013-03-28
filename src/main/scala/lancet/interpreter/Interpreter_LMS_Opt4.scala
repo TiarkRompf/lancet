@@ -490,7 +490,10 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
 
       // *** compute fixpoint ***
+      
+      genGoto("HEAD_"+mkeyid)
 
+      //val block = reify {
       //gotoBlock(mframe) // alternative; just do it ourselves ...
       val s = getState(mframe)
       val b = getGraalBlock(mframe)
@@ -575,6 +578,8 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
           genBlockDef(key, keyid, fields, code)
         }
       }
+      //liftConst(())
+      //}
 
       // *** reset state
 
@@ -610,7 +615,8 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
           emitString(";{")
 
-          for (v <- fields) genVarDef(v)
+          val head = reify { for (v <- fields) { var w = genVarDef(v); emitString("// "+w) } }
+          genGotoDef("HEAD_"+mkeyid, head)
 
           for ((k,go) <- (returns.map(_._1)) zip gos) {
             val block = reify[Unit]{ reflect[Unit](Patch("",go)); fields.map(genVarWrite); liftConst(()) }
@@ -618,6 +624,8 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
             //reflect[Unit]("def "+k.substring(6)+": Unit = {", go, assign,"};") // substr prevents further matches
           }
           
+          // TODO: should emitAll(block) here!
+
           emitString(";{")
           if (debugReturns) emitString("// ret multi "+method)
 
