@@ -915,20 +915,20 @@ trait DefaultMacrosLMS extends BytecodeInterpreter_LMS_Opt { self =>
             /*
             shift { k => val k1 = interpreted(k); k1() }
             */
-            val self = liftConst(this)(mtr)
-            implicit val mif = TypeRep[InterpreterFrame]("XX")
-            implicit val mjm = TypeRep[ResolvedJavaMethod]("XX")
+            val self = liftConst[Object](this)(mtr)
+            implicit val mif = TypeRep[Object]("InterpreterFrame").asInstanceOf[TypeRep[InterpreterFrame]]
+            implicit val mjm = TypeRep[Object]("ResolvedJavaMethod").asInstanceOf[TypeRep[ResolvedJavaMethod]]
             // get caller frame from compiler ('parent')
             // emit code to construct interpreter state
-            def mkInterpreterFrameR(locals: Array[Rep[Object]], bci: Rep[Int], tos: Rep[Int], method: Rep[ResolvedJavaMethod], parent: Rep[InterpreterFrame]): Rep[InterpreterFrame] =
-{
+            def mkInterpreterFrameR(locals: Array[Rep[Object]], bci: Rep[Int], tos: Rep[Int], method: Rep[ResolvedJavaMethod], parent: Rep[InterpreterFrame]): Rep[InterpreterFrame] = {
+              val xs = locals.flatMap(x=>List(x,".asInstanceOf[AnyRef]",",")).dropRight(1)
+              val args = Seq(self,".asInstanceOf[lancet.api.DefaultMacrosLMS].mkInterpreterFrame(Array[Object](") ++ xs ++ 
+                         Seq("), ",bci,",",tos,",",method,".asInstanceOf[com.oracle.graal.api.meta.ResolvedJavaMethod],",parent,")")
+              reflect[InterpreterFrame](args:_*)
+            }
 
-                reflect[InterpreterFrame](self,".mkInterpreterFrame(Array[Object]("+
-                locals.map(x=>x+".asInstanceOf[AnyRef]").mkString(",")+"), "+ // cast is not nice
-                bci+", "+tos+", "+method+", "+parent+")")
-}
             def execInterpreterR[B:TypeRep](frame: Rep[InterpreterFrame]) = 
-              reflect[B](self,".execInterpreter("+frame+").asInstanceOf["+typeRep[B]+"] // drop into interpreter")
+              reflect[B](self,".asInstanceOf[lancet.api.DefaultMacrosLMS].execInterpreter(",frame,").asInstanceOf["+typeRep[B]+"] // drop into interpreter")
 
             def rec(frame: InterpreterFrame): Rep[InterpreterFrame] = if (frame == null) unit(null) else {
               val p = rec(frame.getParentFrame)
