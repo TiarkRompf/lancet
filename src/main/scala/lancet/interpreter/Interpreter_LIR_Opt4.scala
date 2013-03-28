@@ -404,13 +404,13 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
       emitString("*/")
 */
 
-      val (mkey,mkeyid) = contextKeyId(mframe)
-
       val saveHandler = handler
       val saveDepth = getContext(mframe).length
 
       if (debugMethods) emitString("// << " + method)
       
+      val (mkey,mkeyid) = contextKeyId(mframe)
+
       case class BlockInfo(inEdges: List[(Int,State)], inState: State)
       case class BlockInfoOut(returns: List[State], gotos: List[State], code: Block[Unit])
 
