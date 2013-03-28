@@ -105,6 +105,7 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
       val additionalStackSpace = locals.length - (method.getMaxLocals() + method.getMaxStackSize() + BASE_LENGTH)
       val frame = new it.InterpreterFrame_Exec(method, parent.asInstanceOf[it.InterpreterFrame_Exec], additionalStackSpace);
       frame.setBCI(bci)
+      frame.setNextBCI(bci)
       frame.setStackTop(tos)
       assert(locals.length == frame.locals.length)
       // 0-2 are reserved for parent link, bci etc. don't overwrite
@@ -118,6 +119,7 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
       val additionalStackSpace = locals.length - (method.getMaxLocals() + method.getMaxStackSize() + BASE_LENGTH)
       val frame = new InterpreterFrame_Str(method, parent.asInstanceOf[InterpreterFrame_Str], additionalStackSpace);
       frame.setBCI(bci)
+      frame.setNextBCI(bci)
       frame.setStackTop(tos)
       assert(locals.length == frame.locals.length)
       val liftedLocals = locals.map {
@@ -429,7 +431,7 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
             def rec(frame: InterpreterFrame): Rep[InterpreterFrame] = if (frame == null) liftConst(null) else {
               val p = rec(frame.getParentFrame)
               val frame1 = frame.asInstanceOf[InterpreterFrame_Str]
-              val bci = if (frame1.nextBci < 0) 0 else frame1.nextBci
+              val bci = /*if (frame1.nextBci < 0) 0 else*/ frame1.nextBci
               mkInterpreterFrameR(frame1.locals,bci,frame1.getStackTop(),liftConst(frame1.getMethod), p)
             }
 
@@ -468,7 +470,7 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
             def rec(frame: InterpreterFrame): Rep[InterpreterFrame] = if (frame == null) liftConst(null) else {
               val p = rec(frame.getParentFrame)
               val frame1 = frame.asInstanceOf[InterpreterFrame_Str]
-              val bci = if (frame1.nextBci < 0) 0 else frame1.nextBci
+              val bci = /*if (frame1.nextBci < 0) 0 else*/ frame1.nextBci
               mkCompilerFrameR(frame1.locals,bci,frame1.getStackTop(),liftConst(frame1.getMethod), p)
             }
 
