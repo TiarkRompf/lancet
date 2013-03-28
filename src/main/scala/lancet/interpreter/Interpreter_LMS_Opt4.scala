@@ -447,6 +447,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
         else if (d < saveDepth) { 
           val s = getState(blockFrame)
           val out = blockInfoOut(curBlock)
+          if (debugReturns) emitString("// return "+curBlock+"_"+(out.returns.length)+" to "+contextKey(blockFrame))
           genGoto("RETURN_"+mkeyid+"_"+curBlock+"_"+(out.returns.length))
           blockInfoOut(curBlock) = out.copy(returns = out.returns :+ s)
           //returns = returns :+ (freshFrameSimple(blockFrame), store)
@@ -513,7 +514,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       def getPreds(i: Int) = blockInfo(i).inEdges.map(_._1)
       def shouldInline(i: Int) = getPreds(i).length < 2
-      assert(getPreds(b.blockID) == List(-1))
+      //assert(getPreds(b.blockID) == List(-1))
 
       // fix jumps inside blocks: either call or inline
       for (b <- graalBlocks.blocks.reverse if blockInfo.contains(b.blockID)) {
