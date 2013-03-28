@@ -263,11 +263,37 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
     // global internal data structures
 
     val graalBlockMapping = new mutable.HashMap[ResolvedJavaMethod, BciBlockMapping] // map key to store
-    def getGraalBlocks(method: ResolvedJavaMethod) = graalBlockMapping.getOrElseUpdate(method, {
+    def getGraalBlocks(method: ResolvedJavaMethod, bci: Int) = if (bci == 0) graalBlockMapping.getOrElseUpdate(method, {
       val map = new BciBlockMapping(method);
       map.build();
       map
-    })
+    }) else { // OSR
+      assert(bci >= 0,"bci: "+bci)
+      import scala.collection.JavaConversions._
+      val map = new BciBlockMapping(method);
+      map.build();
+      emitString("// need to fix block ordering for bci="+bci)
+      emitString("// old: " + map.blocks.mkString(","))
+
+      val start = map.blocks.find(_.startBci == bci).get
+      var reach = List[BciBlockMapping.Block]()
+      var seen = Set[BciBlockMapping.Block]()
+      def rec(block: BciBlockMapping.Block) {
+        if (!seen(block)) {
+          seen += block
+          block.successors.foreach(rec)
+          reach = block::reach
+        }
+      }
+      rec(start)
+      emitString("// new: " + reach.mkString(","))
+      map.blocks.clear
+      map.blocks.addAll(reach)
+      // do we really need to rename them??
+      for ((b,i) <- reach.zipWithIndex) b.blockID = i
+      emitString("// fixed: " + map.blocks.mkString(","))
+      map
+    }
 
     val stats = new mutable.HashMap[String, Int] // map key to id
 
@@ -384,7 +410,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       // obtain block mapping that will tell us about dominance relations
       val method = mframe.getMethod()
-      val graalBlocks = getGraalBlocks(method)
+      val graalBlocks = getGraalBlocks(method,mframe.getBCI)
       def getGraalBlock(fr: InterpreterFrame) = graalBlocks.blocks.find(_.startBci == fr.getBCI).get
 
 /*
