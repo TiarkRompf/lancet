@@ -193,6 +193,7 @@ trait Base_LMS0 extends Base_LMS1 {
 
   def quote(x:Any): String = x match {
     case Const(c:AnyRef) => VConstToString(c)(typeRep[AnyRef]) //hack?
+    case Const(null) => VConstToString[AnyRef](null)(typeRep[AnyRef]) //hack?
     case Dyn(s) => s // x99
     case DynExp(x) => x
     case _ => x.toString
@@ -255,7 +256,8 @@ trait Base_LMS0 extends Base_LMS1 {
     if (Modifier.isPublic(cls.getModifiers)) (x,cls) else (x,classOf[Object])
     // for now, just fix to Object (hack?)
     if (cls == classOf[java.lang.reflect.Method]) (x,cls)
-    else (x,classOf[Object])
+    else 
+    (x,classOf[Object])
   }
 
   def isPrimitive[T:TypeRep](x: T) = x match {
