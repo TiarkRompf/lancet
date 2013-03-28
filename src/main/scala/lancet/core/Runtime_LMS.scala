@@ -166,16 +166,17 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
 
         val static = Modifier.isStatic(method.getModifiers)
 
-        val mtyp = TypeRep[Object](method.getSignature.getReturnKind.toString match {  //TODO: cleanup
-            case "void" => "Unit"
-            case "char" => "Char"
-            case "int" => "Int"
-            case "long" => "Long"
-            case "float" => "Float"
-            case "double" => "Double"
-            case "boolean" => "Boolean"
-            case _ => "Object"
-        })
+        val mtyp = (method.getSignature.getReturnKind match {  //TODO: cleanup
+            case Kind.Boolean => typeRep[Boolean]
+            case Kind.Byte    => typeRep[Byte]
+            case Kind.Char    => typeRep[Char]
+            case Kind.Short   => typeRep[Short]
+            case Kind.Int     => typeRep[Int]
+            case Kind.Double  => typeRep[Double]
+            case Kind.Float   => typeRep[Float]
+            case Kind.Long    => typeRep[Long]
+            case Kind.Object  => typeRep[Object]
+        }).asInstanceOf[TypeRep[Object]]
 
         // don't just quote -- need deps!!!!
         // TODO: fix for static methods, too, and for LIR
