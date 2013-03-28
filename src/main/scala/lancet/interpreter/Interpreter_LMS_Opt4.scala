@@ -582,45 +582,61 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       // *** backpatch returns and continue ***
 
-
-      if (debugMethods) emitString("// >> " + method)
-
       val returns = blockInfoOut.toList flatMap { case (i, out) =>
         out.returns.zipWithIndex.map { case (st, j) => ("RETURN_"+mkeyid+"_"+i+"_"+j,st) }
       }
+
+      // need to split between different return targets!!!
+      // do we need to consider more cases than just discarding stuff?
+
+      val retframes = returns.groupBy(r => contextKey(getFrame(r._2)))
 
       if (returns.length == 0) {
         emitString("// (no return?)")
       } else if (returns.length == 1) {  // TODO
         val (k,s) = returns(0)
         val ret = reify {
-          //emitString("// ret single "+method)
+          if (debugReturns) emitString("// ret single "+method)
+          if (debugMethods) emitString("// >> " + method)
           withState(s)(exec)
         }
         genGotoDef(k, ret)
       } else {
-        //emitString("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
+        emitString("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
 
-        val (ss, gos) = allLubs(returns.map(_._2))
-        val fields = getFields(ss)
+        if (retframes.size == 1) { // just 1 target
+          val (ss, gos) = allLubs(returns.map(_._2))
+          val fields = getFields(ss)
 
-        emitString(";{")
+          emitString(";{")
 
-        for (v <- fields) genVarDef(v)
+          for (v <- fields) genVarDef(v)
 
-        for ((k,go) <- (returns.map(_._1)) zip gos) {
-          val block = reify[Unit]{ reflect[Unit](Patch("",go)); fields.map(genVarWrite); liftConst(()) }
-          genGotoDef(k, block)
-          //reflect[Unit]("def "+k.substring(6)+": Unit = {", go, assign,"};") // substr prevents further matches
+          for ((k,go) <- (returns.map(_._1)) zip gos) {
+            val block = reify[Unit]{ reflect[Unit](Patch("",go)); fields.map(genVarWrite); liftConst(()) }
+            genGotoDef(k, block)
+            //reflect[Unit]("def "+k.substring(6)+": Unit = {", go, assign,"};") // substr prevents further matches
+          }
+          
+          emitString(";{")
+          if (debugReturns) emitString("// ret multi "+method)
+
+          for (v <- fields) genVarRead(v)
+          withState(ss)(exec)
+          emitString("}")
+          emitString("}")
+        } else {
+          // multiple targets!
+          for ((target, returns) <- retframes) {
+            assert(returns.length == 1) // not handling multiple calls to multiple targets...
+            val (k,s) = returns(0)
+            val ret = reify {
+              if (debugMethods) emitString("// >> " + method)
+              withState(s)(exec)
+            }
+            genGotoDef(k, ret)
+          }
         }
-        
-        emitString(";{")
-        if (debugReturns) emitString("// ret multi "+method)
-
-        for (v <- fields) genVarRead(v)
-        withState(ss)(exec)
-        emitString("}")
-        emitString("}")
       }
       liftConst(())
     }
