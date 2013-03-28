@@ -943,8 +943,8 @@ trait DefaultMacrosLMS extends BytecodeInterpreter_LMS_Opt { self =>
 
             shiftR[Unit,Int] { k =>
 
-              val k1 = k//interpreted(k)
-              val res = liftConst(1)//k1(liftConst())
+              val k1 = interpreted(k)
+              val res = k1(liftConst())
 
               emitString("// old parent: " + contextKey(parent))
               emitString("// new parent: " + contextKey(continuation))
