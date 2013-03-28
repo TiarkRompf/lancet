@@ -90,12 +90,47 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
     def createCodegen(): GEN_Scala_LMS { val IR: self.type } = 
       new GEN_Scala_LMS { val IR: self.type = self }
 
-    def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
+
+    abstract class Fun[A,B] extends (A=>B) {
+      def code: String
+      def compiled: Fun[A,B]
+      def interpreted: Fun[A,B]
+      def inline: Fun[A,B]
+      def printcode = println(code)
+    }
+
+    var lastcode: String = "(empty)"
+
+    def fun[B:Manifest](f: =>B): Fun[Unit,B] = fun[Object,B]{ x => f }.asInstanceOf[Fun[Unit,B]]
+
+    def fun[A:Manifest,B:Manifest](f: A=>B): Fun[A,B] = {
+      lms0[A,B] { arg =>
+
+        execute(
+          f.getClass.getMethod("apply", manifest[A].erasure), 
+          Array[Rep[Object]](unit(f),arg.asInstanceOf[Rep[Object]])(repManifest[Object])
+        ).asInstanceOf[Rep[B]]
+
+
+      }
+    }
+
+    def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = fun(f)
+
+
+    def lms[A:Manifest,B:Manifest](f: Rep[A]=>Rep[B]): Fun[A,B] = {
+      lms0[A,B] { arg =>
+        val res = f(arg)
+        reflect[B]("RES = ",res)(mtr)
+      }
+    }
+
+    def lms0[A:Manifest,B:Manifest](f: Rep[A]=>Rep[B]): Fun[A,B] = {
 
       implicit val tp = manifestToTypeRep(manifest[B])
       val (maStr, mbStr) = (manifestStr(manifest[A]), manifestStr(manifest[B]))
 
-      val arg = fresh[Int]
+      val arg = fresh[A]
       val y = reify {
 
         emitString("import sun.misc.Unsafe")
@@ -107,7 +142,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
         emitString("  var RES = null.asInstanceOf["+mbStr+"]")
 
 
-        execute(f.getClass.getMethod("apply", manifest[A].erasure), Array[Rep[Object]](unit(f),arg.asInstanceOf[Rep[Object]])(repManifest[Object]))        
+        f(arg)
 
         DynExp[B]("RES")
       }
@@ -142,9 +177,19 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       }
 
 
-      val f2 = ScalaCompile.compile[A,B](source, "Generated", cst.map(x=>specCls(x._2)).toList)
+      println(cst)
+      println(cst.map(x=>specCls(x._2)).toList)
 
-      f2
+      val comp = ScalaCompile.compile[A,B](source, "Generated", cst.map(x=>specCls(x._2)).toList)
+
+      val fun: Fun[A,B] = new Fun[A,B] {
+        def code = source
+        def compiled = this
+        def interpreted = ???
+        def inline = ???
+        def apply(x:A): B = comp(x)
+      }
+      fun
     }
 
     //@Override
