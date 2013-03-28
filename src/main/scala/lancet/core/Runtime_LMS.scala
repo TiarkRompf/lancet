@@ -176,6 +176,7 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
             case Kind.Float   => typeRep[Float]
             case Kind.Long    => typeRep[Long]
             case Kind.Object  => typeRep[Object]
+            case Kind.Void    => typeRep[Unit]
         }).asInstanceOf[TypeRep[Object]]
 
         // don't just quote -- need deps!!!!

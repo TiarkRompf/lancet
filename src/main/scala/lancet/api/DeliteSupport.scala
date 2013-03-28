@@ -201,9 +201,14 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
   //  = this.asInstanceOf[VectorOperatorsRunnerC].ifThenElse(x,y,z,false)  // DeliteIfThenElse ...
 
 
+  def lastFrame: InterpreterFrame
+
   override def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] = eval(x) match {
     case VConst(x) => if (x) y else z
     case _ => 
+
+    Console.println("IFXX "+ lastFrame.getMethod)
+    Console.println(x+"="+Def.unapply(x))
 
     //val save = exprs
     // TODO: state lub; reset exprs for both branches!
@@ -345,6 +350,11 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
         val U = this.asInstanceOf[Variables { type Rep[T] = Exp[T]; type Var[T] = Variable[T] }]
         val RES = U.var_new[B](Dyn[B]("null.asInstanceOf["+remap(typeRep[B])+"]"))
         returnHandler = p => U.var_assign(RES,p)
+
+        val m = cls.getMethod("apply", Class.forName("java.lang.Object"))
+        emitString("XXXXX "+m)
+
+
         execute(cls.getMethod("apply", Class.forName("java.lang.Object")), Array[Rep[Object]](f,arg.asInstanceOf[Rep[Object]])(repManifest[Object]))
         val res = U.readVar(RES)
         //killObject(RES.e)
@@ -405,8 +415,30 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
       case "scala.runtime.ScalaRunTime$.array_update" => handle {
         case self::a::b::c::Nil => reflect[Object](self,".array_update(",a,",",b,",",c,")")
       }
+      case "scala.runtime.ScalaRunTime$.array_length" => handle {
+        case self::a::Nil => reflect[Object](self,".array_length(",a,")")
+      }      
       case "scala.collection.immutable.Range.foreach$mVc$sp" => handle {
-        case self::a::Nil => reflect[Object](self,".foreach(",a,")")
+        case self::(a:Rep[Int=>Object])::Nil => 
+
+          val f = decompileFun[Int,Object](a)
+          val x = fresh[Int]
+          val y = reify(f(x))
+
+          reflect[Object](self,".foreach(",x,"=>",y,")")
+      }
+TODO:
+scala.collection.parallel.ParIterableLike.foreach
+scala.reflect.ClassManifest.newArray
+
+      case "scala.collection.immutable.Range$.apply" => handle {
+        case self::a::b::Nil => reflect[Object](self,".apply(",a,b,")")
+      }
+      case "scala.collection.immutable.Range.length" => handle {
+        case self::Nil => reflect[Object](self,".length()")
+      }
+      case "scala.collection.immutable.Range.par" => handle {
+        case self::Nil => self //reflect[Object](self,".length()"
       }
       case "scala.reflect.Manifest$.classType" => handle {
         case self::a::b::c::Nil => reflect[Object](self,".classType(",a,",",b,",",c,")")
@@ -423,7 +455,9 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
       case "java.util.Arrays.copyOfRange" => handle {
         case self::a::Nil => reflect[Object](self,".copyOfRange(",a,")")
       }
-
+      case "sun.misc.VM.isBooted" => handle {
+        case Nil => unit(true).asInstanceOf[Rep[Object]]//reflect[java.lang.Boolean](r,".asInstanceOf[java.lang.Boolean]")(mtr[java.lang.Boolean])
+      }
       case "scala.runtime.BoxesRunTime.boxToBoolean" => handle {
         case r::Nil => r.asInstanceOf[Rep[Object]]//reflect[java.lang.Boolean](r,".asInstanceOf[java.lang.Boolean]")(mtr[java.lang.Boolean])
       }
@@ -446,6 +480,9 @@ trait LancetImpl extends BytecodeInterpreter_LMS_Opt {
       java.lang.Boolean.valueOf ?
       java.lang.Integer.valueOf ?
 */          
+      case "scala.Predef$.print" => handle {
+        case self::r::Nil => reflect[Unit]("print(",r,")").asInstanceOf[Rep[Object]]
+      }
       case "scala.Predef$.println" => handle {
         case self::r::Nil => reflect[Unit]("println(",r,")").asInstanceOf[Rep[Object]]
       }

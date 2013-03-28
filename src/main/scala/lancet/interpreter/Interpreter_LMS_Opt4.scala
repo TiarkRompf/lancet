@@ -324,8 +324,12 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
     // exec loop
 
+    var lastFrame: InterpreterFrame = _
+
     def exec(frame: InterpreterFrame): Rep[Unit] = { // called internally to initiate control transfer
       
+      lastFrame = frame
+
       if (budget <= 0) {
         emitString("// *** BUDGET EXCEEDED ***")
         return unit(().asInstanceOf[Object]).asInstanceOf[Rep[Unit]]
@@ -642,9 +646,14 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       def gotoBlock(blockFrame: InterpreterFrame): Rep[Unit] = {
         // make sure we're still in the same method! --> catch external calls that don't reset handler
+
+        //emitString(""+blockFrame.getMethod)
+
+        // WHY FAIL?
+
         //assert(mframe.getMethod == blockFrame.getMethod, {"\n" +
-        //        mframe.getMethod + "\n" +
-        //        blockFrame.getMethod})
+        //        getContext(mframe).map(_.getMethod).mkString(",") + "\n" +
+        //        getContext(blockFrame).map(_.getMethod).mkString(",")})
 
         // TODO: do not exec past control flow joins (only up to post-dom frontier)
 

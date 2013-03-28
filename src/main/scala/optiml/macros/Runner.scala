@@ -18,10 +18,13 @@ object OptiMLLancetRunner {
   OptiMLRunner.emitCheckCast = false
   
   // add macros
-  OptiMLRunner.install(OptiMLMacros)  
-  OptiMLRunner.install(DenseVectorMacros)
-  OptiMLRunner.install(DenseMatrixMacros)
-  OptiMLRunner.install(IndexVectorMacros)
+  //OptiMLRunner.install(OptiMLMacros)  
+  //OptiMLRunner.install(DenseVectorMacros)
+  //OptiMLRunner.install(DenseMatrixMacros)
+  //OptiMLRunner.install(IndexVectorMacros)
+
+  //OptiMLRunner.install(LowLevelMacros)
+
   
   def infix_run(runner: LancetDeliteRunner) = {
     // now run stuff....
@@ -29,7 +32,7 @@ object OptiMLLancetRunner {
     
     runner.VConstantPool = scala.collection.immutable.Vector.empty    
     // Config.cacheSyms = false
-    // runner.generateScalaSource("Generated", new java.io.PrintWriter(System.out))
+     runner.generateScalaSource("Generated", new java.io.PrintWriter(System.out))
     // runner.globalDefs.foreach(println)    
     // sys.exit(0)
     val cst = runner.VConstantPool

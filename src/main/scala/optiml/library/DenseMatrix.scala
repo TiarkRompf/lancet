@@ -69,7 +69,7 @@ class DenseMatrix[T:Manifest](__numRows: Int, __numCols: Int) {
   
   protected def realloc(minLen: Int) {
     var n = Math.max(4, _data.length * 2)
-    while (n < minLen) n = n*2
+    //TRwhile (n < minLen) n = n*2
     val d = new Array[T](n)
     System.arraycopy(_data, 0, d, 0, size)
     _data = d

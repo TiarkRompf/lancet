@@ -278,6 +278,7 @@ trait Core_LMS extends Base_LMS {
     //val save = exprs
     // TODO: state lub; reset exprs for both branches!
     // TODO: LMS effects
+
     var r = reflect[T](IfElse(x,reify(y),reify(z)))
     //exprs = save
     r

@@ -72,7 +72,7 @@ class OptiMLCompanion {
    def index_new(start: Int, end: Int): IndexVectorRange = new IndexVectorRange(start,end)
    def indexvector_hashreduce(x: IndexVectorRange, f: Int => Int, map: Int => DenseVector[Double], reduce: (DenseVector[Double],DenseVector[Double]) => DenseVector[Double]): DenseVector[DenseVector[Double]] = {
      /* sequential */
-     /*
+     
      val out = new DenseVector[DenseVector[Double]](x._end-x._start,true) // every index is a group
      for (i <- x._start until x._end) {
        val grp = f(i)
@@ -80,8 +80,9 @@ class OptiMLCompanion {
        if (out(grp) == null) out(grp) = elem
        else out(grp) = reduce(out(grp),elem)
      }
-     */
      
+     
+/*
      /* parallel */     
      val grps = new java.util.concurrent.ConcurrentHashMap[Int,DenseVector[Double]]
      for (i <- (x._start until x._end).par) {
@@ -99,20 +100,22 @@ class OptiMLCompanion {
      for (i <- 0 until out.length) {
        out(i) = grps.get(i)
      }
-     out
+*/     out
    }
    
    def indexvector_hashreduce2(x: IndexVectorRange, f: Int => Int, map: Int => Int, reduce: (Int,Int) => Int): DenseVector[Int] = {
      /* sequential */
-     /*
+
      val out = new DenseVector[Int](x._end-x._start,true) // every index is a group
      for (i <- x._start until x._end) {
        val grp = f(i)
        val elem = map(i)
        out(grp) = reduce(out(grp),elem)
      }
-     */
+     
 
+
+/*
      /* parallel */     
      val grps = new java.util.concurrent.ConcurrentHashMap[Int,Int]
      for (i <- (x._start until x._end).par) {
@@ -131,6 +134,8 @@ class OptiMLCompanion {
      for (i <- 0 until out.length) {
        out(i) = grps.get(i)
      }
+*/
+
      out 
    }   
    
@@ -142,7 +147,7 @@ class OptiMLCompanion {
      var iter = 0
      var last = x
      var converged = false
-     while (iter < maxIter && !converged) {
+     ;{//while (iter < maxIter && !converged) {
        val next = block(last)
        if (dist3(next,last).asInstanceOf[Double] < tol) {  // hack
          converged = true
@@ -158,7 +163,7 @@ class OptiMLCompanion {
      var iter = 0
      var last = x
      var converged = false
-     while (iter < maxIter && !converged) {
+     ;{//while (iter < maxIter && !converged) {
        val next = block(last)
        if (dist2(next,last).asInstanceOf[Double] < tol) {  // hack
          converged = true

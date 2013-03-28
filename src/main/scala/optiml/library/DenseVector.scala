@@ -184,7 +184,7 @@ class DenseVector[T:Manifest](__length: Int, __isRow: Boolean) {
 
   protected def realloc(minLen: Int) {  
     var n = Math.max(4, _data.length * 2)
-    while (n < minLen) n = n*2
+    //TRwhile (n < minLen) n = n*2
     val d = new Array[T](n)
     System.arraycopy(_data, 0, d, 0, length)
     _data = d
