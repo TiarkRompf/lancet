@@ -71,6 +71,8 @@ class OptiMLCompanion {
    // }  
    def index_new(start: Int, end: Int): IndexVectorRange = new IndexVectorRange(start,end)
    def indexvector_hashreduce(x: IndexVectorRange, f: Int => Int, map: Int => DenseVector[Double], reduce: (DenseVector[Double],DenseVector[Double]) => DenseVector[Double]): DenseVector[DenseVector[Double]] = {
+     /* sequential */
+     /*
      val out = new DenseVector[DenseVector[Double]](x._end-x._start,true) // every index is a group
      for (i <- x._start until x._end) {
        val grp = f(i)
@@ -78,19 +80,59 @@ class OptiMLCompanion {
        if (out(grp) == null) out(grp) = elem
        else out(grp) = reduce(out(grp),elem)
      }
+     */
+     
+     /* parallel */     
+     val grps = new java.util.concurrent.ConcurrentHashMap[Int,DenseVector[Double]]
+     for (i <- (x._start until x._end).par) {
+       val key = f(i)
+       val e = grps.putIfAbsent(key, map(i))
+       if (e != null) {
+         var newElem = grps.get(key)
+         while (!grps.replace(key, newElem, reduce(newElem, map(i)))) {
+           newElem = grps.get(key)
+         }
+       }
+     }
+
+     val out = new DenseVector[DenseVector[Double]](x._end-x._start,true) // every index is a group
+     for (i <- 0 until out.length) {
+       out(i) = grps.get(i)
+     }
      out
    }
    
    def indexvector_hashreduce2(x: IndexVectorRange, f: Int => Int, map: Int => Int, reduce: (Int,Int) => Int): DenseVector[Int] = {
+     /* sequential */
+     /*
      val out = new DenseVector[Int](x._end-x._start,true) // every index is a group
      for (i <- x._start until x._end) {
        val grp = f(i)
        val elem = map(i)
        out(grp) = reduce(out(grp),elem)
      }
-     out
-   }
-   
+     */
+
+     /* parallel */     
+     val grps = new java.util.concurrent.ConcurrentHashMap[Int,Int]
+     for (i <- (x._start until x._end).par) {
+       val key = f(i)
+       val v = map(i)
+       val e = grps.putIfAbsent(key, v)
+       if ((e == 0 && v != 0) || (e != 0)) {
+         var newElem = grps.get(key)
+         while (!grps.replace(key, newElem, reduce(newElem, v))) {
+           newElem = grps.get(key)
+         }
+       }
+     }
+
+     val out = new DenseVector[Int](x._end-x._start,true) // every index is a group
+     for (i <- 0 until out.length) {
+       out(i) = grps.get(i)
+     }
+     out 
+   }   
    
    /**
     * untilconverged
@@ -173,10 +215,15 @@ class OptiMLCompanion {
      }
      ans.asInstanceOf[T]
    }   
-   
-   /**
-    * profiling
-    */
+ 
+ /**
+  * math
+  */
+ def exp(x: Double): Double = Math.exp(x)
+
+ /**
+  * profiling
+  */
   var profileTime: Long = _
   def tic[T](arg1: T, arg2: T): Unit = {
     profileTime = System.currentTimeMillis()

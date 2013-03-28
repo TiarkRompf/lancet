@@ -10,7 +10,7 @@ class IndexVectorRange(val _start: Int, val _end: Int) {
   def construct[T](f: Int => T): DenseVector[T] = {
     assert(_start == 0)
     val out = (new DenseVector[Int](_end-_start,true)).asInstanceOf[DenseVector[T]]
-    for (i <- 0 until _end) {
+    for (i <- (0 until _end).par) {
       out(i) = f(i)
     }
     out        
@@ -19,7 +19,7 @@ class IndexVectorRange(val _start: Int, val _end: Int) {
   def construct2[T](f: Int => T): DenseVector[T] = {
     assert(_start == 0)
     val out = (new DenseVector[DenseVector[Double]](_end-_start,true)).asInstanceOf[DenseVector[T]]
-    for (i <- 0 until _end) {
+    for (i <- (0 until _end).par) {
       out(i) = f(i)
     }
     out        

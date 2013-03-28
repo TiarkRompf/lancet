@@ -181,6 +181,7 @@ trait CudaCodegen extends OptiMLCodeGenCuda {
     case PrimMinus(x, y)                  => emitValDef(sym, quote(x)+" - "+quote(y))
     case PrimTimes(x, y)                  => emitValDef(sym, quote(x)+" * "+quote(y))
     case PrimDiv(x, y)                    => emitValDef(sym, quote(x)+" / "+quote(y))
+    case PrimNegate(x)                    => emitValDef(sym, "-1*"+quote(x))
     case _ => super.emitNode(sym,rhs)
   }
 }

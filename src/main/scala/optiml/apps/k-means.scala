@@ -65,6 +65,7 @@ object kmeans {
     OptiMLRunner.run()
     
     // pure
+    // collection.parallel.ForkJoinTasks.defaultForkJoinPool.setParallelism(1)
     // for (i <- 0 until 10) {
     //   // prog(x,mu)
     //   prog(args(0),args(1))

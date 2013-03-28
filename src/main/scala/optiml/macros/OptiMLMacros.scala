@@ -78,6 +78,11 @@ object OptiMLMacros extends OptiMLRunner.ClassMacros {
     }
   }  
   
+  def exp(self: Rep[OptiMLCompanion], x: Rep[Double]): Rep[Double] = {
+    Console.println("catch exp")
+    OptiMLRunner.math_exp(x)
+  }
+
   def dist[T](self: Rep[OptiMLCompanion], x: Rep[DenseVectorView[T]], y: Rep[DenseVectorView[T]]): Rep[T] = {
     Console.println("catch dist")
     implicit val mf = manifest[Double].asInstanceOf[Manifest[T]] //FIXME: generic types

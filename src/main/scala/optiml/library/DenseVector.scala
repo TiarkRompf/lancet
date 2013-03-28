@@ -95,11 +95,17 @@ class DenseVector[T:Manifest](__length: Int, __isRow: Boolean) {
 
   def sum: T = {
     // hack, assume DenseVector[Double]
-    val acc = new DenseVector[Double](this(0).asInstanceOf[DenseVector[Double]].length, true)
-    for (i <- 0 until length) {
-      acc += this(i).asInstanceOf[DenseVector[Double]]
-    }
-    acc.asInstanceOf[T]
+
+    // sequential
+    //val acc = new DenseVector[Double](this(0).asInstanceOf[DenseVector[Double]].length, true)
+    //for (i <- 0 until length) {
+    //  acc += this(i).asInstanceOf[DenseVector[Double]]
+    //}
+    //acc.asInstanceOf[T]
+
+    // parallel
+    val acc = _data.par.reduce((a,b) => (a.asInstanceOf[DenseVector[Double]]+b.asInstanceOf[DenseVector[Double]]).asInstanceOf[T])
+    acc
   }
   
   def Clone: DenseVector[T] = {
