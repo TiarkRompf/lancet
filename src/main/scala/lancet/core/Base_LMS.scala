@@ -254,7 +254,8 @@ trait Base_LMS0 extends Base_LMS1 {
     val cls = x.getClass
     if (Modifier.isPublic(cls.getModifiers)) (x,cls) else (x,classOf[Object])
     // for now, just fix to Object (hack?)
-    (x,classOf[Object])
+    if (cls == classOf[java.lang.reflect.Method]) (x,cls)
+    else (x,classOf[Object])
   }
 
   def isPrimitive[T:TypeRep](x: T) = x match {
