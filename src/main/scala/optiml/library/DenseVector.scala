@@ -27,8 +27,12 @@ class DenseVectorView[T:Manifest](val _data: Array[T], val _start: Int, val _str
   def times2(b: T): DenseVector[T] = {
     // hack, assume Double
     val out = new DenseVector(_length, _isRow)
+    val thisDbl = this.asInstanceOf[DenseVectorView[Double]]
+    val outDbl = out.asInstanceOf[DenseVector[Double]]
+    val bDbl = b.asInstanceOf[Double]
     for (i <- 0 until _length) {
-      out(i) = (this.apply4(i).asInstanceOf[Double] * b.asInstanceOf[Double]).asInstanceOf[T]
+      //out(i) = (this.apply4(i).asInstanceOf[Double] * b.asInstanceOf[Double]).asInstanceOf[T]
+      outDbl(i) = thisDbl.apply4(i) * bDbl 
     }
     out
   }  
@@ -84,9 +88,10 @@ class DenseVector[T:Manifest](__length: Int, __isRow: Boolean) {
     // hack: assume T is Double    
     var min = Double.MaxValue
     var minIndex = -1
+    val thisDbl = this.asInstanceOf[DenseVector[Double]]
     for (i <- 0 until length) {
-      if (this(i).asInstanceOf[Double] < min) {
-        min = this(i).asInstanceOf[Double]
+      if (thisDbl(i) < min) {
+        min = thisDbl(i)
         minIndex = i
       }
     }
@@ -118,49 +123,65 @@ class DenseVector[T:Manifest](__length: Int, __isRow: Boolean) {
   
   def *:*(y: DenseVectorView[T]) = {
     // hack, assumeDouble
+    val thisDbl = this.asInstanceOf[DenseVector[Double]]
+    val yDbl = y.asInstanceOf[DenseVectorView[Double]]
     var acc = 0.0
     for (i <- 0 until length) {
-      acc += this(i).asInstanceOf[Double]*y.apply4(i).asInstanceOf[Double]
+      acc += thisDbl(i)*yDbl.apply4(i)
     }
     acc.asInstanceOf[T]
   }
   
   def /(b: T): DenseVector[T] = {
     // hack, assume Double
+    val thisDbl = this.asInstanceOf[DenseVector[Double]]
+    val bDbl = b.asInstanceOf[Double]
     val out = new DenseVector(length, isRow)
+    val outDbl = out.asInstanceOf[DenseVector[Double]]
     for (i <- 0 until length) {
-      out(i) = (this(i).asInstanceOf[Double] / b.asInstanceOf[Double]).asInstanceOf[T]
+      outDbl(i) = (thisDbl(i) / bDbl)
     }
     out
   }
   def -(b: T): DenseVector[T] = {
     // hack, assume Double
+    val thisDbl = this.asInstanceOf[DenseVector[Double]]
+    val bDbl = b.asInstanceOf[Double]
     val out = new DenseVector(length, isRow)
+    val outDbl = out.asInstanceOf[DenseVector[Double]]
     for (i <- 0 until length) {
-      out(i) = (this(i).asInstanceOf[Double] - b.asInstanceOf[Double]).asInstanceOf[T]
+      outDbl(i) = (thisDbl(i) - bDbl)
     }
     out
   }  
   def +(b: DenseVector[T]): DenseVector[T] = {
     // hack, assume Double
+    val thisDbl = this.asInstanceOf[DenseVector[Double]]
+    val bDbl = b.asInstanceOf[DenseVector[Double]]
     val out = new DenseVector(length, isRow)
+    val outDbl = out.asInstanceOf[DenseVector[Double]]
     for (i <- 0 until length) {
-      out(i) = (this(i).asInstanceOf[Double] + b(i).asInstanceOf[Double]).asInstanceOf[T]
+      outDbl(i) = (thisDbl(i) + bDbl(i))
     }
     out    
   } 
   def *(b: T): DenseVector[T] = {
     // hack, assume Double
+    val thisDbl = this.asInstanceOf[DenseVector[Double]]
+    val bDbl = b.asInstanceOf[Double]
     val out = new DenseVector(length, isRow)
+    val outDbl = out.asInstanceOf[DenseVector[Double]]
     for (i <- 0 until length) {
-      out(i) = (this(i).asInstanceOf[Double] * b.asInstanceOf[Double]).asInstanceOf[T]
+      outDbl(i) = (thisDbl(i) * bDbl)
     }
     out
   }    
   def +=(b: DenseVector[T]): Unit = {
     // hack, assume Double
+    val thisDbl = this.asInstanceOf[DenseVector[Double]]
+    val bDbl = b.asInstanceOf[DenseVector[Double]]
     for (i <- 0 until length) {
-      this(i) = (this(i).asInstanceOf[Double] + b(i).asInstanceOf[Double]).asInstanceOf[T]
+      thisDbl(i) = (thisDbl(i) + bDbl(i))
     }
   }   
   

@@ -58,15 +58,15 @@ object logreg {
     // macros
     // just crashes somewhere, whether macros are installed or not
     // OptiMLRunner.program = z => prog(x,y)
-     OptiMLRunner.program = z => prog(args(0),args(1))
-     OptiMLRunner.run()
+    //OptiMLRunner.program = z => prog(args(0),args(1))
+    // OptiMLRunner.run()
     
     // pure
-    // collection.parallel.ForkJoinTasks.defaultForkJoinPool.setParallelism(8)
-    // for (i <- 0 until 10) {
+     collection.parallel.ForkJoinTasks.defaultForkJoinPool.setParallelism(1)
+    for (i <- 0 until 10) {
        // prog(x,y)
-    //   prog(args(0),args(1))
-    // }
+       prog(args(0),args(1))
+     }
     ()
   }
 }

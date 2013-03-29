@@ -188,8 +188,10 @@ class OptiMLCompanion {
      // hack: assume T is double
      // use sum of squares
      var ans = 0.0
+     val aDbl = a.asInstanceOf[DenseVectorView[Double]]
+     val bDbl = b.asInstanceOf[DenseVectorView[Double]]
      for (i <- 0 until a._length) {
-       ans += (a.apply4(i).asInstanceOf[Double]-b.apply4(i).asInstanceOf[Double])*(a.apply4(i).asInstanceOf[Double]-b.apply4(i).asInstanceOf[Double])
+       ans += (aDbl.apply4(i)-bDbl.apply4(i))*(aDbl.apply4(i)-bDbl.apply4(i))
      }
      ans.asInstanceOf[T]
    }
@@ -198,8 +200,10 @@ class OptiMLCompanion {
      // hack: assume T is double
      // use sum of squares
      var ans = 0.0
+     val aDbl = a.asInstanceOf[DenseVector[Double]]
+     val bDbl = b.asInstanceOf[DenseVector[Double]]
      for (i <- 0 until a.length) {
-       ans += (a(i).asInstanceOf[Double]-b(i).asInstanceOf[Double])*(a(i).asInstanceOf[Double]-b(i).asInstanceOf[Double])
+       ans += (aDbl(i)-bDbl(i))*(aDbl(i)-bDbl(i))
      }
      ans.asInstanceOf[T]
    }
@@ -208,9 +212,11 @@ class OptiMLCompanion {
      // hack: assume T is double
      // use sum of squares
      var ans = 0.0
+     val aDbl = a.asInstanceOf[DenseMatrix[Double]]
+     val bDbl = b.asInstanceOf[DenseMatrix[Double]]
      for (i <- 0 until a.numRows) {
        for (j <- 0 until a.numCols) {
-         ans += (a(i,j).asInstanceOf[Double]-b(i,j).asInstanceOf[Double])*(a(i,j).asInstanceOf[Double]-b(i,j).asInstanceOf[Double])
+         ans += (aDbl(i,j)-bDbl(i,j))*(aDbl(i,j)-bDbl(i,j))
        }       
      }
      ans.asInstanceOf[T]

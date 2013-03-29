@@ -14,6 +14,7 @@ class ScalaCompanion {
   def sort(x: Array[String]) = {
     val z = new Array[String](x.length)
     System.arraycopy(x,0,z,0,x.length)
+    //java.util.Arrays.sort(z.asInstanceOf[Array[Object]])
     scala.util.Sorting.quickSort(z)
     z
   }
@@ -28,9 +29,14 @@ class ScalaCompanion {
   def zipWithIndex(a: Array[String]): Array[(String,Int)] = a.zipWithIndex
   
   def map(a: Array[String], f: String => String): Array[String] = a.map(f)
-  def map2(a: Array[(String,Int)], f: ((String,Int)) => Int): Array[Int] = a.map(f)
+  def map2(a: Array[(String,Int)], f: ((String,Int)) => Int): Array[Int] = {
+    val out = new Array[Int](a.length)
+    for (i <- (0 until a.length).par) out(i) = f(a(i))
+    out
+    //a.par.map(f).seq
+  }
   def map3(a: String, f: Char => Int): Array[Int] = a.map(f).toArray
   
   def reduce(a: Array[Int], f: (Int,Int) => Int): Int = a.reduce(f)
-  def reduce2(a: Array[Int], f: (Int,Int) => Int): Int = a.reduce(f)
+  def reduce2(a: Array[Int], f: (Int,Int) => Int): Int = a.par.reduce(f)
 }

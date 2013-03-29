@@ -27,9 +27,9 @@ object NameScore {
     
     val namesSanitized = sc.map(names,n => n.substring(1,n.length-1)) // remove quotes
     // sort around 1.5s on names-large.txt
-    // OptiML.tic(nameStr,names)
+    //OptiML.tic(namesSanitized,namesSanitized)
     val sortedNames = sc.sort(namesSanitized) 
-    // OptiML.toc(sortedNames)
+    //OptiML.toc(sortedNames)
     
     OptiML.tic(sortedNames,sortedNames)    
     // Longs seem to be bad news in terms of bytecode complexity
@@ -76,11 +76,11 @@ object NameScore {
         
     // macros
     // just crashes somewhere, whether macros are installed or not
-    // OptiMLRunner.program = z => prog(args(0))
-    // OptiMLRunner.run()
+    //OptiMLRunner.program = z => prog(args(0))
+    //OptiMLRunner.run()
     
     // pure
-    // collection.parallel.ForkJoinTasks.defaultForkJoinPool.setParallelism(1)
+    collection.parallel.ForkJoinTasks.defaultForkJoinPool.setParallelism(8)
     for (i <- 0 until 10) {
       prog(args(0))
     }
