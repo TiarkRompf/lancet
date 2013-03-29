@@ -151,6 +151,84 @@ class TestInterpreter5 extends FileDiffSuite {
   }
 
 
+  def test11 = withOutFileChecked(prefix+"language11") {
+    val it = new Decompiler
+    it.emitCheckCast = false
+    it.emitRecursive = true
+    it.debugReturns = false
+
+    class Tree {
+      var _key: Int = 0
+      var _value: Double = 0
+      var _left: Tree = null
+      var _right: Tree = null
+
+      def key = it.freezeInt(_key)
+      def value = it.freezeInt(_key) // type!
+      def left = it.freeze(_left)
+      def right = it.freeze(_right)
+
+      def put(key: Int, value: Double): Unit = {
+
+        val l = left
+        val r = right
+
+        println("left")
+        println(l)
+
+        println("right")
+        println(r)
+
+        // TODO
+
+        if (l != null) l.put(key,value)
+        if (r != null) r.put(key,value)
+      }
+
+      def get(key: Int): Double = {
+        val l = left
+        val r = right
+        val k = this.key
+
+        if (key == k) this.value
+        else if (key < k) {
+          if (l == null) -1d
+          else l.get(key)
+        } else {//if (key > this.key) {
+          if (r == null) -1d
+          else r.get(key)
+        }
+      }
+
+    }
+
+
+    val t1 = new Tree
+    t1._key = 5
+    t1._value = 5.0
+    t1._left = new Tree
+    t1._left._key = 2
+    t1._left._value = 2.0
+    t1._right = new Tree
+    t1._right._key = 7
+    t1._right._value = 7.0
+
+
+    val f = it.compile { x: Int =>
+      var i = 0
+      while (i < 10) {
+        //t1.put(i,1.0)
+        println(t1.get(i))
+        i += 1
+      }
+
+
+      9
+    }
+    f(0)
+  }
+
+
 
   def xxtest10 = withOutFileChecked(prefix+"language10") {
     assert(false)
