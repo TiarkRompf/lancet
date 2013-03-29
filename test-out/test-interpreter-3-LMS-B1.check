@@ -10,11 +10,11 @@
       def ERROR = assert(false, "ERROR");
       var RES = null.asInstanceOf[Int];
       val x7 = x0.asInstanceOf[Int];
-      val x8 = 0 >= x7;
-      if (x8) {
+      val x10 = 0 >= x7;
+      if (x10) {
         ;{;
-          val x42: Int = unsafe.getInt(pConst_0,16L);
-          val LUB_pConst_1_intField = x42; // XXX LUBC(Some(DynExp(LUB_pConst_1_intField)),None);
+          val x46: Int = unsafe.getInt(pConst_0,16L);
+          val LUB_pConst_1_intField = x46; // XXX LUBC(Some(DynExp(LUB_pConst_1_intField)),None);
           BLOCK_4(LUB_pConst_1_intField,x7);
         };
       } else {
@@ -34,5 +34,7 @@
   /*****************************************
   End of Generated Code
   *******************************************/
+Vector((Sym(-1000),lancet.interpreter.BaseTestInterpreter3$Bar@778a32b7))
+List((lancet.interpreter.BaseTestInterpreter3$Bar@778a32b7,class java.lang.Object))
 compilation: ok
 9

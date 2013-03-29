@@ -10,40 +10,40 @@
       def ERROR = assert(false, "ERROR");
       var RES = null.asInstanceOf[Int];
       val x7 = x0.asInstanceOf[Int];
-      val x8: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
-      if (x8 ne null) unsafe.putInt(x8,16L, 7) else println("BUG: putInt"+x8);;
-      val x34 = 0 >= x7;
-      if (x34) {
+      val x10: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
+      if (x10 ne null) unsafe.putInt(x10,16L, 7) else println("BUG: putInt"+x10);;
+      val x40 = 0 >= x7;
+      if (x40) {
         ;{;
-          val LUB_x8_intField = 7; // Alias(Some(DynExp(LUB_x8_intField)),Some(Const(7)));
-          BLOCK_12(LUB_x8_intField,x7,x8);
+          val LUB_x10_intField = 7; // Alias(Some(DynExp(LUB_x10_intField)),Some(Const(7)));
+          BLOCK_12(LUB_x10_intField,x10,x7);
         };
       } else {
-        if (x8 ne null) unsafe.putInt(x8,16L, 9) else println("BUG: putInt"+x8);;
+        if (x10 ne null) unsafe.putInt(x10,16L, 9) else println("BUG: putInt"+x10);;
         ;{;
-          val LUB_x8_intField = 9; // Alias(Some(DynExp(LUB_x8_intField)),Some(Const(9)));
-          BLOCK_12(LUB_x8_intField,x7,x8);
+          val LUB_x10_intField = 9; // Alias(Some(DynExp(LUB_x10_intField)),Some(Const(9)));
+          BLOCK_12(LUB_x10_intField,x10,x7);
         };
       }
-      def BLOCK_12(LUB_x8_intField:Int,x7:Int,x8:Object): Unit = {
+      def BLOCK_12(LUB_x10_intField:Int,x10:Object,x7:Int): Unit = {
         ;{;
           val PHI_3_6 = 0 // LUBC(DynExp(PHI_3_6):Int,Const(0):Int);
-          BLOCK_13(LUB_x8_intField,PHI_3_6,x7,x8);
+          BLOCK_13(LUB_x10_intField,PHI_3_6,x10,x7);
         };
       }
-      def BLOCK_13(LUB_x8_intField:Int,PHI_3_6:Int,x7:Int,x8:Object): Unit = {
-        val x8: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
-        val x94 = 0 >= LUB_x8_intField;
-        if (x94) {
+      def BLOCK_13(LUB_x10_intField:Int,PHI_3_6:Int,x10:Object,x7:Int): Unit = {
+        val x10: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
+        val x105 = 0 >= LUB_x10_intField;
+        if (x105) {
           (RES = PHI_3_6) // return to root;
         } else {
-          val x107 = -1 + LUB_x8_intField;
-          if (x8 ne null) unsafe.putInt(x8,16L, x107) else println("BUG: putInt"+x8);;
-          val x115 = 1 + PHI_3_6;
+          val x119 = -1 + LUB_x10_intField;
+          if (x10 ne null) unsafe.putInt(x10,16L, x119) else println("BUG: putInt"+x10);;
+          val x128 = 1 + PHI_3_6;
           ;{;
-            val PHI_3_6 = x115 // LUBC(DynExp(PHI_3_6):Int,Sym(115):Int);
-            val LUB_x8_intField = x107; // Alias(Some(DynExp(LUB_x8_intField)),Some(Sym(107)));
-            BLOCK_13(LUB_x8_intField,PHI_3_6,x7,x8);
+            val PHI_3_6 = x128 // LUBC(DynExp(PHI_3_6):Int,Sym(128):Int);
+            val LUB_x10_intField = x119; // Alias(Some(DynExp(LUB_x10_intField)),Some(Sym(119)));
+            BLOCK_13(LUB_x10_intField,PHI_3_6,x10,x7);
           };
         }
       }
@@ -54,5 +54,7 @@
   /*****************************************
   End of Generated Code
   *******************************************/
+Vector()
+List()
 compilation: ok
 9

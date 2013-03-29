@@ -45,7 +45,7 @@ class TestInterpreter6 extends FileDiffSuite {
     printcheck(f(100), 100)
   }
 
-  def test2 = withOutFileChecked(prefix+"stable2") {
+  /*def test2 = withOutFileChecked(prefix+"stable2") {
     val it = new Decompiler
 
     class Holder {
@@ -64,7 +64,7 @@ class TestInterpreter6 extends FileDiffSuite {
       i
     }
     printcheck(f(100), 100)
-  }
+  }*/
 
 
 

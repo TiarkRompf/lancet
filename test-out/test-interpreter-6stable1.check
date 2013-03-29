@@ -1,4 +1,4 @@
-// constants: <function1>,99,lancet.interpreter.TestInterpreter6$Decompiler@3babbd0e,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1.lancet$interpreter$TestInterpreter6$$anonfun$$compute$1>
+// constants: <function1>,99,lancet.interpreter.TestInterpreter6$Decompiler@62949ee1,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1.lancet$interpreter$TestInterpreter6$$anonfun$$compute$1>
 class Generated0(CONST_0: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$2,CONST_1: scala.runtime.IntRef,CONST_2: lancet.interpreter.TestInterpreter6$Decompiler,CONST_3: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_4: Array[lancet.core.Base_LIR$Rep],CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_7: lancet.interpreter.TestInterpreter6$$anonfun$test1$1,CONST_8: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -50,7 +50,7 @@ def apply(ARG: Int): Int = { object BODY {
         // ret single HotSpotMethod<AbstractFunction0$mcI$sp.<init>>
         // return 1_0 to 10:<TestInterpreter6$$anonfun$test1$1.lancet$interpreter$TestInterpreter6$$anonfun$$compute$1><(ILlancet/interpreter/TestInterpreter6$Decompiler;Lscala/runtime/IntRef;)I> // 23:<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply$mcII$sp><(I)I> // 5:<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
         // ret single HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$1.<init>>
-        val x18 = 99.asInstanceOf[Int]
+        val x18 = 99.asInstanceOf[Object]/*const-widen*/.asInstanceOf[Int]
         val x19 = x18.asInstanceOf[Int]
         val x20 = LUB_CONST_1_elem == x19
         if (x20) {
@@ -129,7 +129,7 @@ CONST_2,CONST_3,CONST_4,null,null,null,null,null,null
 root:
 HotSpotMethod<BytecodeInterpreter_Exec.execute>
 CONST_2,CONST_3,CONST_4,null,null,null,null,null,null
-// constants: 0,<function1>,lancet.interpreter.TestInterpreter6$Decompiler@3babbd0e,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply>,Array(CONST_1, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1.lancet$interpreter$TestInterpreter6$$anonfun$$compute$1>
+// constants: 0,<function1>,lancet.interpreter.TestInterpreter6$Decompiler@62949ee1,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply>,Array(CONST_1, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1.lancet$interpreter$TestInterpreter6$$anonfun$$compute$1>
 class Generated1(CONST_0: scala.runtime.IntRef,CONST_1: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$2,CONST_2: lancet.interpreter.TestInterpreter6$Decompiler,CONST_3: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_4: Array[lancet.core.Base_LIR$Rep],CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_7: lancet.interpreter.TestInterpreter6$$anonfun$test1$1,CONST_8: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (Unit=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -206,7 +206,7 @@ def apply(ARG: Unit): Int = { object BODY {
         // ret single HotSpotMethod<AbstractFunction0$mcI$sp.<init>>
         // return 1_0 to 10:<TestInterpreter6$$anonfun$test1$1.lancet$interpreter$TestInterpreter6$$anonfun$$compute$1><(ILlancet/interpreter/TestInterpreter6$Decompiler;Lscala/runtime/IntRef;)I> // 23:<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply$mcII$sp><(I)I> // 5:<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply><(I)I> // -1:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
         // ret single HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$1.<init>>
-        val x66 = 0.asInstanceOf[Int]
+        val x66 = 0.asInstanceOf[Object]/*const-widen*/.asInstanceOf[Int]
         val x67 = x66.asInstanceOf[Int]
         val x68 = LUB_CONST_0_elem == x67
         if (x68) {
@@ -399,7 +399,7 @@ CONST_2,CONST_3,CONST_4,null,null,null,null,null,null
 root:
 HotSpotMethod<BytecodeInterpreter_Exec.execute>
 CONST_2,CONST_3,CONST_4,null,null,null,null,null,null
-// constants: 1,<function1>,lancet.interpreter.TestInterpreter6$Decompiler@3babbd0e,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply>,Array(CONST_1, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1.lancet$interpreter$TestInterpreter6$$anonfun$$compute$1>
+// constants: 1,<function1>,lancet.interpreter.TestInterpreter6$Decompiler@62949ee1,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply>,Array(CONST_1, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter6$$anonfun$test1$1.lancet$interpreter$TestInterpreter6$$anonfun$$compute$1>
 class Generated2(CONST_0: scala.runtime.IntRef,CONST_1: lancet.interpreter.TestInterpreter6$$anonfun$test1$1$$anonfun$2,CONST_2: lancet.interpreter.TestInterpreter6$Decompiler,CONST_3: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_4: Array[lancet.core.Base_LIR$Rep],CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_7: lancet.interpreter.TestInterpreter6$$anonfun$test1$1,CONST_8: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (Unit=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -476,7 +476,7 @@ def apply(ARG: Unit): Int = { object BODY {
         // ret single HotSpotMethod<AbstractFunction0$mcI$sp.<init>>
         // return 1_0 to 10:<TestInterpreter6$$anonfun$test1$1.lancet$interpreter$TestInterpreter6$$anonfun$$compute$1><(ILlancet/interpreter/TestInterpreter6$Decompiler;Lscala/runtime/IntRef;)I> // 23:<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply$mcII$sp><(I)I> // 5:<TestInterpreter6$$anonfun$test1$1$$anonfun$2.apply><(I)I> // -1:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
         // ret single HotSpotMethod<TestInterpreter6$$anonfun$test1$1$$anonfun$1.<init>>
-        val x112 = 1.asInstanceOf[Int]
+        val x112 = 1.asInstanceOf[Object]/*const-widen*/.asInstanceOf[Int]
         val x113 = x112.asInstanceOf[Int]
         val x114 = LUB_CONST_0_elem == x113
         if (x114) {
