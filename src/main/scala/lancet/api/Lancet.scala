@@ -72,6 +72,7 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
     def unquote[A](f: => Rep[A]): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
 
+    def freezeInt(f: => Int): Int = ??? //unquote(liftConst(f)) // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
     def freeze[A](f: => A): A = ??? //unquote(liftConst(f)) // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
 
     def frozen[A](f: A): A = ??? // assert(false, "needs to be compiled with LancetJIT") should add macro in interpreter as well
@@ -491,11 +492,18 @@ trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
 
         
         case "lancet.api.DefaultMacros.freeze" => handle {
-          case r::(f:Rep[()=>Int])::Nil => 
+          case r::(f:Rep[()=>Object])::Nil => 
             //println("freeze")
             val obj = evalM(f)
             val block = obj.apply()
             liftConst(block).asInstanceOf[Rep[Object]]
+        }
+        case "lancet.api.DefaultMacros.freezeInt" => handle {
+          case r::(f:Rep[()=>Int])::Nil => 
+            //println("freeze")
+            val obj = evalM(f)
+            val block = obj.apply()
+            liftConst[Int] (block).asInstanceOf[Rep[Object]]
         }
 
         case "lancet.api.DefaultMacros.unquote" => handle {
