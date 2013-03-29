@@ -409,6 +409,14 @@ trait Core_LMS_Opt extends Base_LMS_Opt with Core_LMS {
     case (Partial(fs), VConst(null)) => true
     case _ => super.objectNotEqual(x,y)
   }
+  override def objectAsInstanceOf[T:TypeRep](x: Rep[Object]): Rep[T] = eval(x) match {
+    case VConst(x) => liftConst(x.asInstanceOf[T])
+    case _ => super.objectAsInstanceOf[T](x)
+  }
+  override def objectIsInstanceOf[T:TypeRep](x: Rep[Object]): Rep[Boolean] = eval(x) match {
+    //case VConst(x) => liftConst(x.isInstanceOf[T]) // FIXME: eliminated by erasure !!
+    case _ => super.objectIsInstanceOf[T](x)
+  }
 
   override def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] = eval(x) match {
     case VConst(x) => if (x) y else z
