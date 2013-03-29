@@ -15,6 +15,11 @@ integrated with the running program itself. This will enable more
 deterministic performance and easy extensibility -- for example allowing
 library developers to supply domain-specific compiler optimizations.
 
+A draft paper with more information and experimental results
+is available here: 
+
+- [Project Lancet: Surgical Precision JIT Compilers](http://lamp.epfl.ch/~rompf/lancet_130329.pdf)
+
 
 Examples
 --------
