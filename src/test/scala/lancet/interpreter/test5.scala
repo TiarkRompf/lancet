@@ -151,7 +151,7 @@ class TestInterpreter5 extends FileDiffSuite {
   }
 
 
-  def test11 = withOutFileChecked(prefix+"language11") {
+  def test11 = withOutFileChecked(prefix+"tree11") {
     val it = new Decompiler
     it.emitCheckCast = false
     it.emitRecursive = true
