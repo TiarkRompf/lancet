@@ -409,6 +409,15 @@ trait Core_LIR_Opt extends Base_LIR_Opt with Core_LIR {
     case (Partial(fs), Const(null)) => true
     case _ => super.objectNotEqual(x,y)
   }
+  override def objectAsInstanceOf[T:TypeRep](x: Rep[Object]): Rep[T] = eval(x) match {
+    case Const(x) => liftConst(x.asInstanceOf[T])
+    case _ => super.objectAsInstanceOf[T](x)
+  }
+  override def objectIsInstanceOf[T:TypeRep](x: Rep[Object]): Rep[Boolean] = eval(x) match {
+    //case Const(x) => liftConst(x.isInstanceOf[T]) // FIXME: eliminated by erasure !!
+    case _ => super.objectIsInstanceOf[T](x)
+  }
+
 
   override def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] = eval(x) match {
     case Const(x) => if (x) y else z
