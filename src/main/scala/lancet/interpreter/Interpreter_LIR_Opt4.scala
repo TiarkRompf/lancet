@@ -46,6 +46,20 @@ trait AbstractInterpreter_LIR extends AbstractInterpreterIntf_LIR with BytecodeI
       }        
     }
 
+
+
+    // TODO: externalize
+    // side-effect: may create definition phi_str = b
+    def phi(str: String, a: Rep[Object], b: Rep[Object]) = if (a == b) b else {
+      if (b == null)
+        emitString("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
+      else if (b.toString != str)
+        emitString("val "+str+" = " + b + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
+      val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
+      Dyn[AnyRef](str)(tp)
+    }
+
+
     object FrameLattice {
       type Elem = InterpreterFrame
 
@@ -66,20 +80,12 @@ trait AbstractInterpreter_LIR extends AbstractInterpreterIntf_LIR with BytecodeI
 
         assert(x.getMethod == y.getMethod)
 
-        def phi(i: Int, a: Rep[Object], b: Rep[Object]) = if (a == b) b else {
-          val str = "PHI_"+x.depth+"_"+i
-          if (b == null)
-            emitString("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
-          else if (b.toString != str)
-            emitString("val "+str+" = " + b + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
-          val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
-          Dyn[AnyRef](str)(tp)
-        }
 
         for (i <- 0 until y.locals.length) {
           val a = x.locals(i)
           val b = y.locals(i)
-          y.locals(i) = phi(i,a,b)
+          val str = "PHI_"+x.depth+"_"+i
+          y.locals(i) = phi(str,a,b)
         }
 
         lub(x.getParentFrame, y.getParentFrame)
