@@ -217,7 +217,7 @@ class TestInterpreter5 extends FileDiffSuite {
     val f = it.compile { x: Int =>
       var i = 0
       while (i < 10) {
-        //t1.put(i,1.0)
+        t1.put(i,1.0)
         println(t1.get(i))
         i += 1
       }
