@@ -169,20 +169,28 @@ class TestInterpreter5 extends FileDiffSuite {
       def right = it.freeze(_right)
 
       def put(key: Int, value: Double): Unit = {
-
         val l = left
         val r = right
+        val k = this.key
 
-        println("left")
-        println(l)
-
-        println("right")
-        println(r)
-
-        // TODO
-
-        if (l != null) l.put(key,value)
-        if (r != null) r.put(key,value)
+        if (key == k) this._value += value // invalidate?
+        else if (key < k) {
+          if (l == null) {
+            val t = new Tree
+            t._key = key
+            t._value = value
+            _left = t // invalidate?
+          }
+          else l.put(key,value)
+        } else {//if (key > this.key) {
+          if (r == null) {
+            val t = new Tree
+            t._key = key
+            t._value = value
+            _right = t // invalidate?
+          }
+          else r.put(key,value)
+        }
       }
 
       def get(key: Int): Double = {
