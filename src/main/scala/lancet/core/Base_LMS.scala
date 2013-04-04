@@ -299,6 +299,7 @@ trait Base_LMS_Abs extends Base {
   abstract class Val[+T]
   case class VConst[+T](x: T) extends Val[T] { override def toString = ("VConst("+x+")").replace("\n","\\n") }
   case class Partial[+T](fields: Map[String, Rep[Any]]) extends Val[T]
+  case class VPhi[+T](c: Rep[Boolean], a: Rep[T], b: Rep[T]) extends Val[T]
   case object Top extends Val[Nothing]
 
   def eval[T](x: Rep[T]): Val[T]
