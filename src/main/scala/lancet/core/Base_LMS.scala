@@ -331,6 +331,15 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
     }
   }
 
+  var conds: CondLattice.Elem = Map.empty
+
+  object CondLattice {
+    type Elem = Set[Rep[Boolean]]
+    def lub(x: Elem, y: Elem): Elem = {
+      x ++ y // may/must ?
+    }
+  }
+
 
   var store: StoreLattice.Elem = Map.empty
 
