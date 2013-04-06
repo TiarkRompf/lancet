@@ -92,7 +92,7 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
     }
 
     // calc lubs and backpatch info for jumps
-    type IState = (InterpreterFrame, StoreLattice.Elem, ExprLattice.Elem)
+    type IState = (InterpreterFrame, StoreLattice.Elem, ExprLattice.Elem, CondLattice.Elem)
 
     def allLubs(states: List[IState]): (IState,List[Block[Unit]]) = {
       if (states.length == 1) return (states.head, List(reify[Unit](liftConst(())))) // fast path
@@ -142,15 +142,15 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
       frame2
     }
 
-    var exprs: ExprLattice.Elem = ExprLattice.bottom
+    var exprs: ExprLattice.Elem = ExprLattice.bottom // move somewhere else?
 
     def getAllArgs(frame: InterpreterFrame) = frame.getReturnValue()::getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
 
-    def getState(frame: InterpreterFrame) = (freshFrameSimple(frame), store, exprs)
-    def withState[A](state: IState)(f: InterpreterFrame => A): A = { store = state._2; exprs = state._3; f(state._1) }
+    def getState(frame: InterpreterFrame) = (freshFrameSimple(frame), store, exprs, conds)
+    def withState[A](state: IState)(f: InterpreterFrame => A): A = { store = state._2; exprs = state._3; ; conds = state._4; f(state._1) }
 
-    def getState0 = (null, store, exprs) // TODO: cleanup
-    def setState0(state: IState): Unit = { store = state._2; exprs = state._3 }
+    def getState0 = (null, store, exprs, conds) // TODO: cleanup
+    def setState0(state: IState): Unit = { store = state._2; exprs = state._3; conds = state._4 }
 
 
 }
