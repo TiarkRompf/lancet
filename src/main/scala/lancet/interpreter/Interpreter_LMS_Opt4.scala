@@ -97,31 +97,33 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
     def allLubs(states: List[IState]): (IState,List[Block[Unit]]) = {
       if (states.length == 1) return (states.head, List(reify[Unit](liftConst(())))) // fast path
       // backpatch info: foreach state, commands needed to initialize lub vars
-      val gos = states map { case (frameX,storeX,exprX) =>
+      val gos = states map { case (frameX,storeX,exprX,condX) =>
         val frameY = freshFrameSimple(frameX)
         var storeY = storeX
         var exprY = exprX
+        var condY = condX
         val go = reify { // start with 'this' state, make it match all others
-          states foreach { case (f,s,e) => 
+          states foreach { case (f,s,e,c) => 
             FrameLattice.lub(f, frameY) 
             storeY = StoreLattice.lub(s,storeY)
             exprY = ExprLattice.lub(e,exprY)
+            condY = CondLattice.lub(c,condY)
           }
           //val locals = FrameLattice.getFields(frameY).filter(_.toString.startsWith("PHI"))
           //val fields = StoreLattice.getFields(storeY).filter(_.toString.startsWith("LUB"))
           //for (v <- locals ++ fields) emitString("v"+v+" = "+v)
           liftConst(())
         }
-        (go,frameY,storeY,exprY)
+        (go,frameY,storeY,exprY,condY)
       }
-      val (_,f02,s02,e02) = gos(0)
-      for ((_,fx,sx,ex) <- gos) { // sanity check
+      val (_,f02,s02,e02,c02) = gos(0)
+      for ((_,fx,sx,ex,cx) <- gos) { // sanity check
         assert(contextKey(f02) == contextKey(fx))
         assert(getAllArgs(f02) == getAllArgs(fx))
         assert(s02 == sx, s02+"!=="+sx)
         assert(e02 == ex, e02+"!=="+ex)
       }
-      ((f02,s02,e02),gos.map(_._1))
+      ((f02,s02,e02,c02),gos.map(_._1))
     }
 
     def getFrame(s: IState) = s._1
