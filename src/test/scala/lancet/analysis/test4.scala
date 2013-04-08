@@ -519,6 +519,23 @@ TODO:
       }
 
       override def fun(f: String, x: String, y: From) = y match {
+        // f(x) = if (0 < x) f(x-1) + d else z    --->    f(x) = x * d + z
+        // f(x) = if (0 < x) f(x-1)     else z    --->    f(x) = z
+        // TODO:
+        // 
+        // (1)
+        // f(x) = if (0 < x) 
+        //            if (f(x-1) < u) f(x-1) + d else f(x-1)
+        //        else z                          --->    ?
+        // (tricky because of recursion in condition: first
+        // transform to non-recursive condition using monotonicity)
+        // 
+        // (2)
+        // f(x) = if (0 < x) 
+        //            f(x-1) + x - d
+        //        else z                          --->    ?
+        // summing the loop variable
+        // (extension: e.g.  f(x-1) + k * x  )
         case Def(DIf(zc @ Def(DLess(GConst(0),GRef(`x`))),
             incRes, zeroRes)) =>
 
