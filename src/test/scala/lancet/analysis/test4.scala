@@ -519,9 +519,9 @@ TODO:
       }
 
       override def fun(f: String, x: String, y: From) = y match {
+        // (0)
         // f(x) = if (0 < x) f(x-1) + d else z    --->    f(x) = x * d + z
         // f(x) = if (0 < x) f(x-1)     else z    --->    f(x) = z
-        // TODO:
         // 
         // (1)
         // f(x) = if (0 < x) 
@@ -530,6 +530,7 @@ TODO:
         // (tricky because of recursion in condition: first
         // transform to non-recursive condition using monotonicity)
         // 
+        // TODO:
         // (2)
         // f(x) = if (0 < x) 
         //            f(x-1) + x - d
@@ -544,19 +545,34 @@ TODO:
           val prevRes = call(GRef(f),prevx)
 
           incRes match {
+            case `prevRes` =>
+              fun(f,x,zeroRes)
+
             case Def(DPlus(`prevRes`, d)) if !dependsOn(d,GRef(x)) => 
               println(s"invariant stride $d")
               println(s"result = $zeroRes + $x * $d")
+              // Q: do we ever access non-zero values? would need a condition?
               val y1 = plus(times(GRef(x),d), zeroRes)
               println("sym " +y1)
               fun(f,x,y1)
+            
             case d @ GConst(_) if !dependsOn(d,GRef(x)) =>  // error in iterateAll if not a const ??
+              // Q: do we need this case ?? it doesn't seem to do anything
               println(s"invariant res $d")
               println(s"result = $d")
               val y1 = iff(zc,d,zeroRes)
               fun(f,x,y1)
-            case `prevRes` =>
-              fun(f,x,zeroRes)
+
+            case Def(DIf(Def(DLess(`prevRes`, uprBound)), // (1)
+              Def(DPlus(`prevRes`, GConst(1))),  // TODO: non-unit stride
+              `prevRes`)) =>
+              println(s"upper bounded result")
+              println(s"result = $uprBound")
+              val y0 = plus(times(GRef(x),const(1)), zeroRes)
+              val y1 = iff(less(GRef(x),uprBound), y0, uprBound)
+              // Q: do we ever access non-zero values? need > 0 condition?
+              val y2 = iff(zc, y1, zeroRes)
+              fun(f,x,y2)
             case _ =>
               dreflect(f,next.fun(f,x,pre(y)))            
           }
