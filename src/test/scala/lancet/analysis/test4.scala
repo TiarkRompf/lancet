@@ -436,11 +436,12 @@ TODO:
         // random simplifications ...
         case (GConst(c),b) => plus(b,const(c))
         case (Def(DPlus(a,b)),_) => plus(a,plus(b,y))
-        case (Def(DTimes(a,GConst(-1))),GConst(c:Int)) => plus(a,GConst(-c))
+        //case (Def(DTimes(a,GConst(-1))),GConst(c:Int)) => plus(a,GConst(-c)) //(-a+c)=-(-c+a)
         case _ => super.plus(x,y)
       }
       override def times(x: From, y: From)            = (x,y) match {
         case (GConst(x:Int),GConst(y:Int)) => GConst(x*y)
+        case (GConst(x:Int),GConst(y:Double)) => GConst((x*y).toInt) // hacky...
         case (GConst(0),_) => GConst(0)
         case (_,GConst(0)) => GConst(0)
         case (GConst(1),_) => y
@@ -458,6 +459,8 @@ TODO:
         case (Def(DIf(c,x,z)),_) => iff(c,less(x,y),less(z,y))
         // random simplifications ...
         case (GConst(0),Def(DPlus(a,GConst(b:Int)))) if b < 0 =>  less(a,const(-b))
+        // 0 < -a + b  -->  a < b
+        case (GConst(0),Def(DPlus(Def(DTimes(a,GConst(-1))),GConst(b:Int)))) =>  less(a,const(b))
         case (Def(DPlus(a,GConst(b:Int))),c) =>  less(a,plus(c,const(-b)))
         case _ if x == y => const(0)
         // case (GConst(0),Def(DPlus())) => y
@@ -528,12 +531,12 @@ TODO:
         //            if (f(x-1) < u) f(x-1) + d else f(x-1)
         //        else z                          --->    ?
         // (tricky because of recursion in condition: first
-        // transform to non-recursive condition using monotonicity)
+        // transform to non-recursive condition using monotonicity?)
         // 
         // TODO:
         // (2)
         // f(x) = if (0 < x) 
-        //            f(x-1) + x - d
+        //            f(x-1) + x * c + d
         //        else z                          --->    ?
         // summing the loop variable
         // (extension: e.g.  f(x-1) + k * x  )
@@ -551,7 +554,7 @@ TODO:
             case Def(DPlus(`prevRes`, d)) if !dependsOn(d,GRef(x)) => 
               println(s"invariant stride $d")
               println(s"result = $zeroRes + $x * $d")
-              // Q: do we ever access non-zero values? would need a condition?
+              // Q: do we ever access non-zero values? need > 0 condition?
               val y1 = plus(times(GRef(x),d), zeroRes)
               println("sym " +y1)
               fun(f,x,y1)
@@ -573,6 +576,17 @@ TODO:
               // Q: do we ever access non-zero values? need > 0 condition?
               val y2 = iff(zc, y1, zeroRes)
               fun(f,x,y2)
+
+            case Def(DPlus(`prevRes`,  // (2)
+              Def(DPlus(Def(DTimes(GRef(`x`), GConst(-1))), GConst(d))))) => 
+              println(s"summing the loop var: -$x+$d")
+              println(s"result = - $x * ($x + 1)/2 + $x*$d")
+              // (0 to n).sum = n*(n+1)/2
+              val xx = GRef(x)
+              val y0 = times(times(xx,plus(xx,const(1))),const(-0.5))
+              val y2 = plus(y0, times(xx,const(d)))
+              fun(f,x,y2)
+              // test case: 405450  -- we're off by one!! (getting 405000)
             case _ =>
               dreflect(f,next.fun(f,x,pre(y)))            
           }
