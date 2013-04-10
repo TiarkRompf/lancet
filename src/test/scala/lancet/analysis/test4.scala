@@ -389,7 +389,15 @@ TODO:
         case Def(DPair(x,y))     => pair(subst(x,a,b),subst(y,a,b))
         case Def(DPlus(x,y))     => plus(subst(x,a,b),subst(y,a,b))
         case Def(DTimes(x,y))    => times(subst(x,a,b),subst(y,a,b))
-        case Def(DLess(x,y))     => less(subst(x,a,b),subst(y,a,b))
+        case Def(o@DLess(u,v))     => 
+
+          a match { 
+            case Def(p@DLess(`u`,s)) =>
+              //if (v == s || less(s,v) == const(1)) return const(1)
+            case _ =>
+          }
+
+          less(subst(u,a,b),subst(v,a,b))
         case Def(DCall(f,y))     => call(subst(f,a,b),subst(y,a,b))
         case Def(DFun(f,x1,y))   => x//subst(y,a,b); x // binding??
         case Def(DFixIndex(x,y)) => fixindex(x,subst(y,a,b))
