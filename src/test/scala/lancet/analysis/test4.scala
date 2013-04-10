@@ -465,6 +465,7 @@ TODO:
       override def less(x: From, y: From)            = (x,y) match {
         case (GConst(x:Int),GConst(y:Int)) => GConst(if (x < y) 1 else 0)
         case (Def(DIf(c,x,z)),_) => iff(c,less(x,y),less(z,y))
+        case (_,Def(DIf(c,y,z))) => iff(c,less(x,y),less(x,z))
         // random simplifications ...
         case (GConst(0),Def(DPlus(a,GConst(b:Int)))) if b < 0 =>  less(a,const(-b))
         // 0 < -a + b  -->  a < b
