@@ -349,7 +349,7 @@ TODO:
           a match { 
             case Def(p@DLess(`u`,s)) =>
               // evaluate u < v  given that u < s or ¬(u < s)
-              println(s"another < flying by: $o, $p -> $b")
+              //println(s"another < flying by: $o, $p -> $b")
               // look for: a < x && !(a < x-1) ---> x == 1
               if (s == plus(v,const(-1))) { // other constants?
                 if (b == const(1)) {
