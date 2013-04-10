@@ -573,12 +573,12 @@ TODO:
             case `prevRes` =>
               fun(f,x,zeroRes)
 
-            case Def(DPlus(`prevRes`, d)) if !dependsOn(d,GRef(x)) => 
+            case Def(DPlus(`prevRes`, d)) if true && !dependsOn(d,GRef(x)) => 
               println(s"invariant stride $d")
               println(s"result = $zeroRes + $x * $d")
-              // Q: do we ever access non-zero values? need > 0 condition?
-              val y1 = plus(times(GRef(x),d), zeroRes)
-              println("sym " +y1)
+              val y0 = plus(times(GRef(x),d), zeroRes)
+              // Q: do we ever access below-zero values? need > 0 condition?
+              val y1 = iff(zc, y0, zeroRes) // CAREFUL!!
               fun(f,x,y1)
             
             case d @ GConst(_) if !dependsOn(d,GRef(x)) =>  // error in iterateAll if not a const ??
