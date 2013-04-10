@@ -595,20 +595,21 @@ TODO:
               println(s"result = $uprBound")
               val y0 = plus(times(GRef(x),const(1)), zeroRes)
               val y1 = iff(less(GRef(x),uprBound), y0, uprBound)
-              // Q: do we ever access non-zero values? need > 0 condition?
+              // Q: do we ever access below-zero values? need > 0 condition?
               val y2 = iff(zc, y1, zeroRes)
               fun(f,x,y2)
 
             case Def(DPlus(`prevRes`,  // (2)
-              Def(DPlus(Def(DTimes(GRef(`x`), GConst(-1))), GConst(d))))) => 
+              Def(DPlus(Def(DTimes(GRef(`x`), GConst(-1))), GConst(d))))) if true => 
               println(s"summing the loop var: -$x+$d")
               println(s"result = - $x * ($x + 1)/2 + $x*$d")
               // (0 to n).sum = n*(n+1)/2
               val xx = GRef(x)
               val y0 = times(times(xx,plus(xx,const(1))),const(-0.5))
-              val y2 = plus(y0, times(xx,const(d)))
+              val y1 = plus(y0, times(xx,const(d)))
+              val y2 = iff(zc, y1, zeroRes)
               fun(f,x,y2)
-              // test case: 405450  -- we're off by one!! (getting 405000)
+              // test case result: 405450
             case _ =>
               dreflect(f,next.fun(f,x,pre(y)))            
           }
