@@ -481,6 +481,16 @@ TODO:
         case GConst(_) => x
         case Def(DIf(c1,x1,y1)) => iff(c1,iff(x1,x,y),iff(y1,x,y))
         case _ if x == y => x
+        // TODO: if (1 < x6) x6 < 100 else true = x6 < 100
+        // Taking the else branch: x6 <= 1 implies x6 < 100, so both branches 
+        // would return true, ergo condition is redundant.
+        // This is a bit of a hack:
+        case Def(DLess(GConst(a:Int),xx)) if { x match { 
+          case Def(DLess(`xx`, GConst(b:Int))) => a<b && y == const(1) case _ => false }} => x
+        // Another, similar case: if (1<x6) u-x6 else u-1 = 
+        // Here we extend to if (0<x6) u-x6 else u-1 in the hope that the condition
+        // becomes redundant later
+        case Def(DLess(GConst(1),xx)) if subst(x,xx,const(1)) == y => iff(less(const(0),xx),x,y)
         case _ => 
           (x,y) match {
             case (Def(DMap(m1)), Def(DMap(m2))) => 
