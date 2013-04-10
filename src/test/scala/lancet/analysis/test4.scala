@@ -467,7 +467,7 @@ TODO:
         case (Def(DIf(c,x,z)),_) => iff(c,less(x,y),less(z,y))
         case (_,Def(DIf(c,y,z))) => iff(c,less(x,y),less(x,z))
         // random simplifications ...
-        case (GConst(0),Def(DPlus(a,GConst(b:Int)))) if b < 0 =>  less(a,const(-b))
+        case (GConst(0),Def(DPlus(a,GConst(b:Int)))) if b < 0 =>  less(const(-b),a)
         // 0 < -a + b  -->  a < b
         case (GConst(0),Def(DPlus(Def(DTimes(a,GConst(-1))),GConst(b:Int)))) =>  less(a,const(b))
         case (Def(DPlus(a,GConst(b:Int))),c) =>  less(a,plus(c,const(-b)))
