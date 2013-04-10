@@ -525,10 +525,11 @@ TODO:
       }
 
       override def fixindex(x: String, c: From)       = c match {
-        //case Def(DLess(GConst(0), Def(GTimes, GPlus(u)))) => plus(u,const(+1))
+        // Q: why exactly are we subtracting 1 ?
+        // it doesn't seem quite right but appears necessary
         case Def(DLess(GRef(`x`),u)) => plus(u,const(-1))
         case _ =>
-          super.fixindex(x,subst(c,less(const(0),GRef(x)),const(1))) // GConst(99999)
+          super.fixindex(x,subst(c,less(const(0),GRef(x)),const(1)))
       }
 
       override def call(f: From, x: From)            = f match {
