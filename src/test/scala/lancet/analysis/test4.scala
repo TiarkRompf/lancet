@@ -536,7 +536,9 @@ TODO:
         // inline calls to non-recursive functions
         case Def(DFun(f1,x1,y1)) if !dependsOn(y1,f) =>
           //println(s"*** will inline call $f($x1) = $y1 / $x1 -> $x")
-          subst(y1,GRef(x1),x)
+          val res = subst(y1,GRef(x1),x)
+          //println(s"**** inlined $f($x1)=$y1 --> $f($x)=$res")
+          res
         case _ =>
           super.call(f,x)
       }
