@@ -734,9 +734,11 @@ TODO:
         val loop = GRef(freshVar)
         val n0 = GRef(freshVar)
 
+        val before = store
+
         itvec = pair(itvec,n0)
 
-        store = iff(less(const(0), n0), call(loop,plus(n0,const(-1))), store)
+        store = iff(less(const(0), n0), call(loop,plus(n0,const(-1))), before)
 
         val cv = eval(c)
 
@@ -745,14 +747,24 @@ TODO:
         store = subst(afterC,cv,const(1)) // assertTrue
         eval(b)
 
+        // store at this point describes result *after* iteration i
+        //  1 + (if (0<x) f(x-1) else 0)  =   if (0<x) f(x-1) + 1 else 1
+        // but what we want for the function body:
+        //  if (0<x) f(x-1) + 1 else 0
+        // we rely on propagation of conditions to get there:
+
+        store = iff(less(const(0), n0), store, before)
+
+        // TODO: need to iterate?
+
         fun(loop.toString, n0.toString, store)
 
-        val nX = fixindex(n0.toString, cv)
+        val nX = fixindex(n0.toString, cv) // TODO: check this ...
         store = call(loop,nX)
         val cv1 = eval(c)
         store = subst(store,cv1,const(0)) // assertFalse
 
-        itvec = saveit         
+        itvec = saveit
 
 /*
 
