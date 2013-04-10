@@ -581,12 +581,12 @@ TODO:
               val y1 = iff(zc, y0, zeroRes) // CAREFUL!!
               fun(f,x,y1)
             
-            case d @ GConst(_) if !dependsOn(d,GRef(x)) =>  // error in iterateAll if not a const ??
+            /*case d @ GConst(_) if !dependsOn(d,GRef(x)) =>  // error in iterateAll if not a const ??
               // Q: do we need this case ?? it doesn't seem to do anything
               println(s"invariant res $d")
               println(s"result = $d")
               val y1 = iff(zc,d,zeroRes)
-              fun(f,x,y1)
+              fun(f,x,y1)*/
 
             case Def(DIf(Def(DLess(`prevRes`, uprBound)), // (1)
               Def(DPlus(`prevRes`, GConst(1))),  // TODO: non-unit stride
