@@ -747,6 +747,16 @@ TODO:
         store = subst(afterC,cv,const(1)) // assertTrue
         eval(b)
 
+
+        // TODO: clarify intended semantics!
+        // Is elem 0 the value after 0 iterations,
+        // or the value computed in iteration 0?
+        // The analogy of modeling values computed in
+        // loops as arrays indexed by iteration would
+        // suggest the meaning 'computed in iteration i'.
+        // But then the value before the loop has index -1.
+        // Need to investigate whether this is a problem.
+
         // store at this point describes result *after* iteration i
         //  1 + (if (0<x) f(x-1) else 0)  =   if (0<x) f(x-1) + 1 else 1
         // but what we want for the function body:
