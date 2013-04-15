@@ -413,7 +413,7 @@ TODO:
       }
 
 
-      override def update(x: From, f: From, y: From) = x match {
+      override def update(x: From, f: From, y: From): From = x match {
         case GConst("undefined") => x
         case GConst(m:Map[_,_]) if m.isEmpty => map(Map(f -> y))
         case Def(DMap(m)) => 
@@ -422,24 +422,42 @@ TODO:
             case GConst(_) => map(m + (f -> y)) // TODO: y = DIf ??
             case Def(DIf(c,u,v)) => iff(c,update(x,u,y),update(x,v,y))
             case _ => 
+              return super.update(x,f,y)
+
+              // need to traverse all keys and compare? what if no key matches?
+              /*for ((k,v) <- m) {
+                if (k == f) v else 
+              }*/
+
               //if (y != GConst("undefined"))
                 map(m + (f -> y))//super.update(x,f,y)
               //else
                 //x//super.update(x,f,y) // OK??
           }
+        // TODO: DUpdate
+        // case Def(DUpdate(x2,f2,y2)) => if (f2 == f) y2 else select(x2,f)
         case Def(DIf(c,u,v)) => iff(c,update(u,f,y),update(v,f,y))
         case _ => super.update(x,f,y)
       }
-      override def select(x: From, f: From)          = x match {
+      override def select(x: From, f: From): From          = x match {
         //case GConst(m:Map[From,From]) => GConst(m.getOrElse(f,GConst("nil"))) // f must be const!
         case Def(DMap(m)) => 
           // TODO
           f match {
             case GConst(_) => m.getOrElse(f, GConst("undefined")) // f const?
             case Def(DIf(c,u,v)) => iff(c,select(x,u),select(x,v))
-            case _ => m.getOrElse(f, GConst("undefined"))
+            case _ => 
+              var res: GVal = const("undefined")
+              for ((k,v) <- m) {
+                res = iff(equal(k,f), v, res)
+              }
+              return res
+              //return super.select(x,f)
+              //m.getOrElse(f, GConst("undefined"))
           }
-        case Def(DUpdate(x2,f2,y2)) => if (f2 == f) y2 else select(x2,f)
+        // TODO: DUpdate: need iff?
+        case Def(DUpdate(x2,f2,y2)) => iff(equal(f2,f), y2, select(x2,f))
+        //case Def(DUpdate(x2,f2,y2)) => if (f2 == f) y2 else select(x2,f)
         case Def(DIf(c,x,y)) => iff(c,select(x,f),select(y,f))
         case _ => super.select(x,f)
       }
