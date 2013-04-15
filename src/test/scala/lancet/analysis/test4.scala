@@ -273,6 +273,18 @@ TODO:
 
         println("zeros: "+zeros.toMap)
 
+        // TODO:
+        // It seems like we need to do something more involved if the
+        // address written to depends on the loop index. The zero iteration
+        // will produce something like this, with f0 being f(i) evaluated
+        // at i = 0:
+        //   Map(f0 -> ...)
+        // However, this does not tell us anything about field f(i) in general.
+        // Specializing the general case for f0 will not help.
+        //
+        // For allocations in loops, the key does not even exist before
+        // the loop. Thus it will not be part of the map!
+
         // induction case: if zero iteration evaluates to a map, split function
         def mkey(f: String, x: GVal) = x match {
           case GConst(s) => f+"_"+s
@@ -284,6 +296,8 @@ TODO:
           case (a,DCall(f,z)) =>
             zeros.toMap.apply(f.toString) match {
               case Def(DMap(m)) =>
+                println("specializing for fields " + m.keys)
+
                 def func(k: GVal) = GRef(mkey(f.toString,k))
                 def arg(k: GVal) = z match {
                   case Def(DFixIndex(x,`f`)) => fixindex(x, func(k)) // OLD
