@@ -500,7 +500,21 @@ TODO:
         // case (GConst(0),Def(DPlus())) => y
         case _ => super.less(x,y)
       }
-      override def pair(x: From, y: From)            = super.pair(x,y)
+      override def equal(x: From, y: From)           = (x,y) match {
+        case (GConst(x),GConst(y)) => GConst(if (x == y) 1 else 0)
+        case (GConst(x:Int),Def(DPair(_,_))) => const(0)
+        case (GConst(x:String),Def(DPair(_,_))) => const(0)
+        case (Def(DPair(_,_)),GConst(x:Int)) => const(0)
+        case (Def(DPair(_,_)),GConst(x:String)) => const(0)
+        case (Def(DIf(c,x,z)),_) => iff(c,equal(x,y),equal(z,y))
+        case (_,Def(DIf(c,y,z))) => iff(c,equal(x,y),equal(x,z))
+        case _ if x == y => const(1)
+        case _ => super.equal(x,y)
+      }
+      override def pair(x: From, y: From)            = (x,y) match {
+        case (GConst(x),GConst(y)) => const((x,y))
+        case _ => super.pair(x,y)
+      }
       override def iff(c: From, x: From, y: From):GVal    = c match {
         case GConst(0) => y
         case GConst(_) => x
