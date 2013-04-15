@@ -1029,10 +1029,10 @@ TODO:
 
   def testB = withOutFileChecked(prefix+"B") {
     Test1.run(Test1.testProg3)
-    Test1.run(Test1.testProg4) // 3 and 4 should be different: alloc within the loop vs before
-    Test1.run(Test1.testProg5)
+//    Test1.run(Test1.testProg4) // 3 and 4 should be different: alloc within the loop vs before
+//    Test1.run(Test1.testProg5)
   }
-  def testC = withOutFileChecked(prefix+"C") {
+  /*def testC = withOutFileChecked(prefix+"C") {
     Test1.run(Test1.testProg6)
   }
   def testD = withOutFileChecked(prefix+"D") {
@@ -1041,7 +1041,7 @@ TODO:
   }
   def testE = withOutFileChecked(prefix+"E") {
     Test1.run(Test1.testProg9)
-  }
+  }*/
 
 
 
