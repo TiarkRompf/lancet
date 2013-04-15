@@ -260,7 +260,9 @@ TODO:
 
         val subst = funs map {
           case (a,DFun(f,x,z)) =>
-            GRef(x) -> GConst(0)
+            GRef(x) -> GConst(0) 
+            // if we try 1 instead, result will not be a map, but a sequence of
+            // update ops extending f(0)
         }
 
         println("subst: "+subst.toMap)
