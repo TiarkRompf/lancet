@@ -711,15 +711,15 @@ TODO:
     def vref(x: String): Val = IR.const(x)
 
     abstract class Exp
-    case class Const(x: Int) extends Exp
+    case class Const(x: Any) extends Exp
     case class Direct(x: Val) extends Exp
     case class Ref(x: Var) extends Exp
     case class Assign(x: Var, y: Exp) extends Exp
     case class Plus(x: Exp, y: Exp) extends Exp
     case class Less(x: Exp, y: Exp) extends Exp
     case class New(x: Alloc) extends Exp
-    case class Get(x: Exp, f: Field) extends Exp
-    case class Put(x: Exp, f: Field, y: Exp) extends Exp
+    case class Get(x: Exp, f: Exp) extends Exp
+    case class Put(x: Exp, f: Exp, y: Exp) extends Exp
     case class If(c: Exp, a: Exp, b: Exp) extends Exp
     case class While(c: Exp, b: Exp) extends Exp
     case class Block(xs: List[Exp]) extends Exp {
