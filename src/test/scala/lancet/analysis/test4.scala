@@ -950,8 +950,8 @@ TODO:
       Assign("x", Ref("z")),
       While(Less(Ref("i"),Const(100)), Block(List(
         Assign("y", New("B")),
-        Put(Ref("y"), "head", Ref("i")),
-        Put(Ref("y"), "tail", Ref("x")),
+        Put(Ref("y"), Const("head"), Ref("i")),
+        Put(Ref("y"), Const("tail"), Ref("x")),
         Assign("x", Ref("y")),
         Assign("i", Plus(Ref("i"), Const(1)))
       )))
@@ -963,8 +963,8 @@ TODO:
       Assign("x", Ref("z")),
       Assign("y", New("B")),
       While(Less(Ref("i"),Const(100)), Block(List(
-        Put(Ref("y"), "head", Ref("i")),
-        Put(Ref("y"), "tail", Ref("x")),
+        Put(Ref("y"), Const("head"), Ref("i")),
+        Put(Ref("y"), Const("tail"), Ref("x")),
         Assign("x", Ref("y")),
         Assign("i", Plus(Ref("i"), Const(1)))
       )))
@@ -975,7 +975,7 @@ TODO:
       Assign("z", New("A")),
       Assign("x", Ref("z")),
       While(Less(Ref("i"),Const(100)), Block(List(
-        Put(Ref("x"), "head", Ref("i")),
+        Put(Ref("x"), Const("head"), Ref("i")),
         Assign("i", Plus(Ref("i"), Const(1)))
       )))
     ))
@@ -988,13 +988,13 @@ TODO:
       Assign("x", Ref("z")),
       Assign("y", New("B")),
       While(Less(Ref("i"),Const(100)), Block(List(
-        Put(Ref("y"), "head", Ref("i")),
-        Put(Ref("y"), "tail", Ref("x")),
+        Put(Ref("y"), Const("head"), Ref("i")),
+        Put(Ref("y"), Const("tail"), Ref("x")),
         Assign("x", Ref("y")),
         Assign("i", Plus(Ref("i"), Const(1)))
       ))),
-      Put(Ref("y"), "tail", Ref("z")),
-      Put(Ref("y"), "head", Const(7))
+      Put(Ref("y"), Const("tail"), Ref("z")),
+      Put(Ref("y"), Const("head"), Const(7))
     ))
 
     // strong update for if
@@ -1003,50 +1003,50 @@ TODO:
       Assign("x", New("A")),
       If(Direct(vref("input")),
         Block(List(
-          Put(Ref("x"), "a", New("B")),
-          Put(Get(Ref("x"), "a"), "foo", Const(5))
+          Put(Ref("x"), Const("a"), New("B")),
+          Put(Get(Ref("x"), Const("a")), Const("foo"), Const(5))
         )),
         Block(List(
-          Put(Ref("x"), "a", New("C")),
-          Put(Get(Ref("x"), "a"), "bar", Const(5))
+          Put(Ref("x"), Const("a"), New("C")),
+          Put(Get(Ref("x"), Const("a")), Const("bar"), Const(5))
         ))
       ),
-      Assign("foo", Get(Get(Ref("x"), "a"), "foo")),
-      Assign("bar", Get(Get(Ref("x"), "a"), "bar"))
+      Assign("foo", Get(Get(Ref("x"), Const("a")), Const("foo"))),
+      Assign("bar", Get(Get(Ref("x"), Const("a")), Const("bar")))
     ))
 
     val testProg8 = Block(List(
       Assign("x", New("A")),
-      Put(Ref("x"), "a", New("A2")),
-      Put(Get(Ref("x"), "a"), "baz", Const(3)),
+      Put(Ref("x"), Const("a"), New("A2")),
+      Put(Get(Ref("x"), Const("a")), Const("baz"), Const(3)),
       If(Direct(vref("input")),
         Block(List(
-          Put(Ref("x"), "a", New("B")), // strong update, overwrite
-          Put(Get(Ref("x"), "a"), "foo", Const(5))
+          Put(Ref("x"), Const("a"), New("B")), // strong update, overwrite
+          Put(Get(Ref("x"), Const("a")), Const("foo"), Const(5))
         )),
         Block(List(
-          Put(Ref("x"), "a", New("C")), // strong update, overwrite
-          Put(Get(Ref("x"), "a"), "bar", Const(5))
+          Put(Ref("x"), Const("a"), New("C")), // strong update, overwrite
+          Put(Get(Ref("x"), Const("a")), Const("bar"), Const(5))
         ))
       ),
-      Put(Get(Ref("x"), "a"), "bar", Const(7)), // this is not a strong update, because 1.a may be one of two allocs
-      Assign("xbar", Get(Get(Ref("x"), "a"), "bar")) // should still yield 7!
+      Put(Get(Ref("x"), Const("a")), Const("bar"), Const(7)), // this is not a strong update, because 1.a may be one of two allocs
+      Assign("xbar", Get(Get(Ref("x"), Const("a")), Const("bar"))) // should still yield 7!
     ))
 
     // update stuff allocated in a loop
 
     val testProg9 = Block(List(
       Assign("x", New("X")),
-      Put(Ref("x"), "a", New("A")),
-      Put(Get(Ref("x"), "a"), "baz", Const(3)),
+      Put(Ref("x"), Const("a"), New("A")),
+      Put(Get(Ref("x"), Const("a")), Const("baz"), Const(3)),
       While(Direct(vref("input")),
         Block(List(
-          Put(Ref("x"), "a", New("B")), // strong update, overwrite
-          Put(Get(Ref("x"), "a"), "foo", Const(5))
+          Put(Ref("x"), Const("a"), New("B")), // strong update, overwrite
+          Put(Get(Ref("x"), Const("a")), Const("foo"), Const(5))
         ))
       ),
-      Put(Get(Ref("x"), "a"), "bar", Const(7)), // this is not a strong update, because 1.a may be one of two allocs
-      Assign("xbar", Get(Get(Ref("x"), "a"), "bar")) // should still yield 7!
+      Put(Get(Ref("x"), Const("a")), Const("bar"), Const(7)), // this is not a strong update, because 1.a may be one of two allocs
+      Assign("xbar", Get(Get(Ref("x"), Const("a")), Const("bar"))) // should still yield 7!
     ))
 
   }
