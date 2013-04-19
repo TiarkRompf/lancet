@@ -748,11 +748,11 @@ TODO:
         store = IR.update(store, a, IR.const(Map()))
         a
       case Get(x, f) => 
-        IR.select(IR.select(store, eval(x)), IR.const(f))
+        IR.select(IR.select(store, eval(x)), eval(f))
       case Put(x, f, y) => 
         val a = eval(x)
         val old = IR.select(store, a)
-        store = IR.update(store, a, IR.update(old, IR.const(f), eval(y)))
+        store = IR.update(store, a, IR.update(old, eval(f), eval(y)))
         IR.const(())
       case If(c,a,b) => 
         val c1 = eval(c)
