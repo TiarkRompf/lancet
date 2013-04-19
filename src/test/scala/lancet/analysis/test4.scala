@@ -929,6 +929,19 @@ TODO:
       Assign("r", Ref("x"))
     ))
 
+    // test arrays / computed index access
+
+    val testProg1b = Block(List(
+      Assign("x", Const(0)), // input
+      Assign("y", New("A")),
+      Assign("z", Const(0)),
+      While(Less(Ref("x"),Const(100)), Block(List(
+        Put(Ref("z"), Ref("x"), Ref("x")),
+        Assign("x", Plus(Ref("x"), Const(-1)))
+      ))),
+      Assign("r", Ref("x"))
+    ))
+
     // test store logic
 
     val testProg3 = Block(List(
@@ -1042,6 +1055,11 @@ TODO:
     Test1.run(Test1.testProg1)
     Test1.run(Test1.testProg2)
   }
+
+  def testA2 = withOutFileChecked(prefix+"A2") {
+    Test1.run(Test1.testProg1b)
+  }
+
 
   def testB = withOutFileChecked(prefix+"B") {
     Test1.run(Test1.testProg3)
