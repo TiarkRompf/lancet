@@ -176,6 +176,19 @@ TODO:
       def post(x: String): String = reflect(x)
       override def fun(f: String, x: String, y: From) = reflect(f,next.fun(f,x,pre(y)))
     }
+    object IRS_Term extends DXForm {
+      type From = GVal
+      type To = String
+      val next = DString
+      def const(x: Any) = s"$x"
+      def pre(x: GVal) = findDefinition(x.toString).map(d=>mirrorDef(d,this)).getOrElse(x.toString)
+      def post(x: String): String = x
+      var rec: List[String] = Nil
+      def reset = rec = Nil // HACK
+      override def fun(f: String, x: String, y: From) = if (rec contains f) f else {
+        rec ::= f; reflect(f,next.fun(f,x,pre(y)))
+      }
+    }
 
     object IRD extends DXForm {
       type From = GVal
@@ -214,6 +227,10 @@ TODO:
       }
 
       def printStm(p: (String,Def)) = println(s"val ${p._1} = ${p._2}")
+      def printTerm(p: GVal) = {
+        IRS_Term.reset
+        println(mirrorDef(findDefinition(p.toString).get,IRS_Term))
+      }
 
       def dependsOn(a: GVal, b: GVal) = schedule(a).exists(p => GRef(p._1) == b || syms(p._2).contains(b.toString))
 
@@ -893,6 +910,8 @@ TODO:
       val sched = IR.schedule(store2)
       println("sched:")
       sched.foreach(IR.printStm)
+      println("term:")
+      IR.printTerm(store2)
 
       //store.printBounds
       println("----")
