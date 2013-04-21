@@ -474,11 +474,9 @@ TODO:
         case _ => super.update(x,f,y)
       }
       override def select(x: From, f: From): From          = x match {
-        //case GConst(m:Map[From,From]) => GConst(m.getOrElse(f,GConst("nil"))) // f must be const!
         case Def(DMap(m)) => 
-          // TODO
           f match {
-            case GConst(_) => m.getOrElse(f, GConst("undefined")) // f const?
+            case GConst(_) => m.getOrElse(f, GConst("undefined"))
             case Def(DIf(c,u,v)) => iff(c,select(x,u),select(x,v))
             case _ => 
               var res: GVal = const("undefined")
@@ -489,9 +487,7 @@ TODO:
               //return super.select(x,f)
               //m.getOrElse(f, GConst("undefined"))
           }
-        // TODO: DUpdate: need iff?
         case Def(DUpdate(x2,f2,y2)) => iff(equal(f2,f), y2, select(x2,f))
-        //case Def(DUpdate(x2,f2,y2)) => if (f2 == f) y2 else select(x2,f)
         case Def(DIf(c,x,y)) => iff(c,select(x,f),select(y,f))
         case _ => super.select(x,f)
       }
