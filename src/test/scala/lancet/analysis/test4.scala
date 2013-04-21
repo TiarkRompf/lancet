@@ -456,22 +456,17 @@ TODO:
         case GConst("undefined") => x
         case GConst(m:Map[_,_]) if m.isEmpty => map(Map(f -> y))
         case Def(DMap(m)) => 
-          // TODO
           f match {
             case GConst(_) => map(m + (f -> y)) // TODO: y = DIf ??
             case Def(DIf(c,u,v)) => iff(c,update(x,u,y),update(x,v,y))
             case _ => 
-              return super.update(x,f,y)
-
-              // need to traverse all keys and compare? what if no key matches?
-              /*for ((k,v) <- m) {
-                if (k == f) v else 
-              }*/
-
-              //if (y != GConst("undefined"))
-                map(m + (f -> y))//super.update(x,f,y)
-              //else
-                //x//super.update(x,f,y) // OK??
+              // It would be nice to use f as a key even if it
+              // is not a constant:
+              //    map(m + (f -> y))
+              // At present it is not quite clear under what conditions
+              // this would work. Clearly, all keys in the map must
+              // be statically known to be definitely different.
+              super.update(x,f,y)
           }
         // TODO: DUpdate
         // case Def(DUpdate(x2,f2,y2)) => if (f2 == f) y2 else select(x2,f)
@@ -490,7 +485,7 @@ TODO:
               for ((k,v) <- m) {
                 res = iff(equal(k,f), v, res)
               }
-              return res
+              res
               //return super.select(x,f)
               //m.getOrElse(f, GConst("undefined"))
           }
