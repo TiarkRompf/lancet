@@ -119,7 +119,7 @@ TODO:
       def plus(x: From, y: From)            = s"$x + $y"
       def times(x: From, y: From)           = s"$x * $y"
       def less(x: From, y: From)            = s"$x < $y"
-      def equal(x: From, y: From)           = s"$x = $y"
+      def equal(x: From, y: From)           = s"$x == $y"
       def pair(x: From, y: From)            = s"($x,$y)"
       def iff(c: From, x: From, y: From)    = s"if ($c) $x else $y"
       def fixindex(x: String, c: From)      = s"fixindex($x => $c)"
