@@ -481,7 +481,7 @@ TODO:
             case _ => 
               var res: GVal = const("undefined")
               for ((k,v) <- m) {
-                res = iff(equal(k,f), v, res)
+                res = iff(equal(f,k), v, res)
               }
               res
               //return super.select(x,f)
