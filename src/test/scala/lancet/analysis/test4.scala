@@ -834,6 +834,8 @@ TODO:
         // suggest the meaning 'computed in iteration i'.
         // But then the value before the loop has index -1.
         // Need to investigate whether this is a problem.
+        // It seems like we can avoid referring to -1
+        // by proper index handling after the loop.
 
         // store at this point describes result *after* iteration i
         //  1 + (if (0<x) f(x-1) else 0)  =   if (0<x) f(x-1) + 1 else 1
@@ -842,6 +844,16 @@ TODO:
         // we rely on propagation of conditions to get there:
 
         store = iff(less(const(0), n0), store, before)
+
+        // The alternative would be to make f(i) denote
+        // the computed element in iteration i, and then pick
+        // element n-1 after the loop.
+        // It may seem unintuitive that f(i) = i+1 for a
+        // simple counting loop and we might want to fix
+        // it up with rewriting.
+        // On the other hand, for dynamic allocations, 
+        // we get f(i) = new A_i, which makes a lot of
+        // sense.
 
         // TODO: need to iterate?
 
