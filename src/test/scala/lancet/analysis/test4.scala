@@ -182,12 +182,18 @@ TODO:
       val next = DString
       def const(x: Any) = s"$x"
       def pre(x: GVal) = findDefinition(x.toString).map(d=>mirrorDef(d,this)).getOrElse(x.toString)
+      def preBlock(x: GVal) = {
+        val s = pre(x)
+        if (s startsWith "if") s"{\n  ${s.replace("\n","\n  ")}\n}"
+        else s
+      }
       def post(x: String): String = x
       var rec: List[String] = Nil
       def reset = rec = Nil // HACK
       override def fun(f: String, x: String, y: From) = if (rec contains f) f else {
         rec ::= f; reflect(f,next.fun(f,x,pre(y)))
       }
+      override def iff(c: From, x: From, y: From) = post(next.iff(pre(c),preBlock(x),preBlock(y)))
     }
 
     object IRD extends DXForm {
