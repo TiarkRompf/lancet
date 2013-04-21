@@ -961,13 +961,12 @@ TODO:
 
     val testProg1b = Block(List(
       Assign("x", Const(0)), // input
-      Assign("y", New("A")),
-      Assign("z", Const(0)),
+      Assign("a", New("A")),
       While(Less(Ref("x"),Const(100)), Block(List(
-        Put(Ref("z"), Ref("x"), Ref("x")),
+        Put(Ref("a"), Ref("x"), Ref("x")),
         Assign("x", Plus(Ref("x"), Const(-1)))
       ))),
-      Assign("r", Ref("x"))
+      Assign("r", Ref("a"))
     ))
 
     // test store logic
