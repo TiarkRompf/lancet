@@ -94,6 +94,12 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
     case _ => super.emitNode(sym,rhs)
   }
 
+  override def remap[A](m: Manifest[A]): String = m match {
+    case null => "NULL"
+    case _ => super.remap(m)
+  }
+
+
   override def quote(e: Exp[Any]) = e match {
     case DynExp(a) => a.toString
     case Const(a) => VConstToString(a)(e.typ)
@@ -249,7 +255,11 @@ trait Base_LMS0 extends Base_LMS1 {
       else s + "[" + params.map(x=>"_").mkString(",") + "]"
   }
 
-  def manifestStr(x: Manifest[_]) = classStr(x.erasure)
+  def manifestStr(x: Manifest[_]) = {
+    val s = "" + x
+    //println(s)
+    classStr(x.erasure)
+  }
 
   def specCls(x: AnyRef): (AnyRef,Class[_]) = {
     val cls = x.getClass
