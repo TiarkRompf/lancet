@@ -388,6 +388,23 @@ TODO:
           // TODO: what if stuff is substituted to the same key??
           map(m.map(kv => subst(kv._1,a,b) -> subst(kv._2,a,b)))
 
+        case Def(dd@DIf(c@Def(o@DEqual(u,v)),x,y)) => 
+          // in general, if a implies c we can take branch x; if a refutes c, y.
+          // if a & c implies that something is a constant, propagate that
+          a match { 
+            case Def(p@DEqual(`u`,s)) =>
+              println(s"another == flying by: $o, $p -> $b")
+              if (b == const(1)) {
+                // if s definitely == v, take then branch
+                // XXX
+                // if s definitely != v, for example
+                // if s=const != v=const 
+                // then take else branch
+                // XXX
+              }
+            case _ =>
+          }
+          iff(subst(c,a,b),subst(x,a,b),subst(y,a,b))
         case Def(dd@DIf(c@Def(o@DLess(u,v)),x,y)) => 
           // in general, if a implies c we can take branch x; if a refutes c, y.
           // if a & c implies that something is a constant, propagate that
