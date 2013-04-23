@@ -256,7 +256,7 @@ trait Base_LMS0 extends Base_LMS1 {
   }
 
   def manifestStr(x: Manifest[_]) = {
-    val s = "" + x
+    val s = "" + x // NOTE: strangly, NPEs crop up if this line is removed?
     //println(s)
     classStr(x.erasure)
   }
