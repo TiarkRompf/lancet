@@ -752,6 +752,7 @@ TODO:
     case class Ref(x: Var) extends Exp
     case class Assign(x: Var, y: Exp) extends Exp
     case class Plus(x: Exp, y: Exp) extends Exp
+    case class Times(x: Exp, y: Exp) extends Exp
     case class Less(x: Exp, y: Exp) extends Exp
     case class New(x: Alloc) extends Exp
     case class Get(x: Exp, f: Exp) extends Exp
@@ -778,6 +779,7 @@ TODO:
         store = IR.update(store, IR.const("&"+x), IR.update(IR.const(Map()), IR.const("val"), eval(y)))
         IR.const(())
       case Plus(x,y)   => IR.plus(eval(x),eval(y))
+      case Times(x,y)  => IR.times(eval(x),eval(y))
       case Less(x,y)   => IR.less(eval(x),eval(y))
       case New(x) => 
         val a = IR.pair(IR.const(x),itvec)
