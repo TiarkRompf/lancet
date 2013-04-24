@@ -459,13 +459,11 @@ TODO:
         case Def(DPlus(x,y))     => plus(subst(x,a,b),subst(y,a,b))
         case Def(DTimes(x,y))    => times(subst(x,a,b),subst(y,a,b))
         case Def(o@DLess(u,v))     => 
-
-          a match { 
+          a match { // TODO
             case Def(p@DLess(`u`,s)) =>
               //if (v == s || less(s,v) == const(1)) return const(1)
             case _ =>
           }
-
           less(subst(u,a,b),subst(v,a,b))
         case Def(DEqual(x,y))    => equal(subst(x,a,b),subst(y,a,b))
         case Def(DCall(f,y))     => call(subst(f,a,b),subst(y,a,b))
