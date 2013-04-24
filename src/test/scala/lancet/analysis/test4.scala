@@ -987,7 +987,7 @@ TODO:
       Assign("x", Const(0)), // input
       Assign("a", New("A")),
       While(Less(Ref("x"),Const(100)), Block(List(
-        Put(Ref("a"), Ref("x"), Ref("x")),
+        Put(Ref("a"), Ref("x"), Times(Ref("x"),Const(2))),
         Assign("x", Plus(Ref("x"), Const(-1)))
       ))),
       Assign("r", Ref("a"))
