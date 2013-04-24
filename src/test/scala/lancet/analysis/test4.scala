@@ -10,7 +10,7 @@ class TestAnalysis4 extends FileDiffSuite {
   an infinite number of memory addresses
   (allocation site indexed by loop iteration)
 
-  TODO -- UNFINISHED
+  TODO -- WORK IN PROGRESS
 */
 
 /*
@@ -309,6 +309,9 @@ TODO:
         //
         // For allocations in loops, the key does not even exist before
         // the loop. Thus it will not be part of the map!
+        //
+        // A possible solution is to really take i=0 as the value after
+        // the first iterations.
 
         // induction case: if zero iteration evaluates to a map, split function
         def mkey(f: String, x: GVal) = x match {
