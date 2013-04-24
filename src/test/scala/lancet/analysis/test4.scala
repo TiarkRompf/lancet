@@ -393,14 +393,18 @@ TODO:
           // if a & c implies that something is a constant, propagate that
           a match { 
             case Def(p@DEqual(`u`,s)) =>
-              println(s"another == flying by: $o, $p -> $b")
-              if (b == const(1)) {
-                // if s definitely == v, take then branch
-                // XXX
-                // if s definitely != v, for example
-                // if s=const != v=const 
-                // then take else branch
-                // XXX
+              //println(s"another == flying by: $o, $p -> $b")
+              if (b == const(1)) { // u == s
+                if (equal(s,v) == const(1))      // u == s && s == v --> u == v:
+                  return subst(x,c,const(1))
+                else if (equal(s,v) == const(0)) // u == s && s != v --> u != v:
+                  return subst(y,c,const(0))
+              }
+              if (b == const(0)) { // u != s
+                if (equal(s,v) == const(1))      // u != s && s == v --> u != v:
+                  return subst(y,c,const(0))
+                else if (equal(s,v) == const(0)) // u != s && s != v --> u == v:
+                  return subst(x,c,const(1))
               }
             case _ =>
           }
