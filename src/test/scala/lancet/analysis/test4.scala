@@ -406,8 +406,8 @@ TODO:
               if (b == const(0)) { // u != s
                 if (equal(s,v) == const(1))      // u != s && s == v --> u != v:
                   return subst(y,c,const(0))
-                else if (equal(s,v) == const(0)) // u != s && s != v --> u == v:
-                  return subst(x,c,const(1))
+                //else if (equal(s,v) == const(0)) // u != s && s != v --> u == v:
+                //  return subst(x,c,const(1))
               }
             case _ =>
           }
