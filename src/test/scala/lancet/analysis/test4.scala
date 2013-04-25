@@ -476,7 +476,7 @@ TODO:
 
       override def update(x: From, f: From, y: From): From = x match {
         case GConst("undefined") => x
-        case GConst(m:Map[_,_]) if m.isEmpty => map(Map(f -> y))
+        case GConst(m:Map[_,_]) if m.isEmpty => update(dreflect(DMap(Map())),f,y) // f may be non-const
         case Def(DMap(m)) => 
           f match {
             case GConst(_) => map(m + (f -> y)) // TODO: y = DIf ??
