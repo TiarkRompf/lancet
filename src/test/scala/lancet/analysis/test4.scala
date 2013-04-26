@@ -231,7 +231,7 @@ TODO:
       }
       def boundSyms(d: Def): List[String] = d match { case DFun(f,x,y) => List(f,x) case _ => Nil }
       def deps(st: List[String]): List[(String,Def)] =
-        globalDefs.filter(p=>st contains p._1)
+        globalDefs.filter(p=>st contains p._1) // TODO: opt
       def schedule(x: GVal) = {
         val start = x match { case GRef(s) => List(s) case _ => Nil }
         val xx = scala.virtualization.lms.util.GraphUtil.stronglyConnectedComponents[(String,Def)](deps(start), t => deps(syms(t._2)))
@@ -726,6 +726,9 @@ TODO:
     val globalDefs0 = Nil 
     var globalDefs: List[(String,Def)] = globalDefs0
 
+    var globalDefsRhs: Map[String,Def] = Map()
+    var globalDefsLhs: Map[Def,String] = Map()
+
     def freshVar = { varCount += 1; "x"+(varCount - 1) }
 
     def reflect(x: String, s: String): String = { println(s"val $x = $s"); x }
@@ -733,10 +736,19 @@ TODO:
     def reflect(s: String): String = { val x = freshVar; println(s"val $x = $s"); x }
     def reify(x: => String): String = captureOutputResult(x)._1
 
-    def findDefinition(s: String): Option[Def] = globalDefs.reverse.collectFirst { case (`s`,d) => d }
+    def findDefinition(s: String): Option[Def] = globalDefsRhs.get(s)
+      //globalDefs.reverse.collectFirst { case (`s`,d) => d }
 
-    def dreflect(x0: => String, s: Def): GVal = globalDefs.collect { case (k,`s`) => GRef(k) }.headOption getOrElse { 
-      val x = x0; globalDefs = globalDefs :+ (x->s); println(s"val $x = $s"); GRef(x) }
+    def dreflect(x0: => String, s: Def): GVal = globalDefsLhs.get(s).map(GRef).getOrElse {
+      val x = x0; 
+      globalDefs = (x->s)::globalDefs
+      globalDefsRhs = globalDefsRhs + (x->s)
+      globalDefsLhs = globalDefsLhs + (s->x)
+      println(s"val $x = $s")
+      GRef(x)
+    }
+      //globalDefs.collect { case (k,`s`) => GRef(k) }.headOption getOrElse { 
+      //val x = x0; globalDefs = globalDefs :+ (x->s); println(s"val $x = $s"); GRef(x) }
     def dreflect(s: Def): GVal = dreflect(freshVar,s)
 
 
