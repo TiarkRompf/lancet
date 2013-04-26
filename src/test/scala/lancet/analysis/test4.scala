@@ -208,10 +208,7 @@ TODO:
       object Def {
         def unapply(x:GVal): Option[Def] = x match {
           case GConst(_) => None
-          case GRef(s) => 
-            //println("--- unapply "+x.getClass + " "+System.identityHashCode(x))
-            //println("    unapply "+x.toString)
-            findDefinition(s)
+          case GRef(s)   => findDefinition(s)
         }
       }
 
