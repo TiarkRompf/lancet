@@ -357,6 +357,7 @@ TODO:
                 if (xformSubst.contains(z)) {
                   // HACK -- unsafe???
                   globalDefs = globalDefs.filterNot(_._1 == f)
+                  rebuildGlobalDefsCache()
                   fun(f,x,xformSubst(z))
                   println(s"### fun has been xformed: $a = $x => $z / ${xformSubst(z)}")
                 }
@@ -729,6 +730,8 @@ TODO:
     var globalDefsRhs: Map[String,Def] = Map()
     var globalDefsLhs: Map[Def,String] = Map()
 
+    def rebuildGlobalDefsCache() = { globalDefsRhs = globalDefs.reverse.toMap; globalDefsLhs = globalDefs.reverse.map(kv => (kv._2,kv._1)).toMap }
+
     def freshVar = { varCount += 1; "x"+(varCount - 1) }
 
     def reflect(x: String, s: String): String = { println(s"val $x = $s"); x }
@@ -953,6 +956,7 @@ TODO:
       itvec = itvec0
       varCount = varCount0
       globalDefs = globalDefs0
+      rebuildGlobalDefsCache()
       val res = eval(testProg)
       println("res: " + res)
       println("store: " + store)
