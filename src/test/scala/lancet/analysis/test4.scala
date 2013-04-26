@@ -15,8 +15,8 @@ class TestAnalysis4 extends FileDiffSuite {
 
 /*
 TODO: 
-- switch to optimistic
-- make sense of inequalities/recurrences
+- switch to optimistic? (can we even talk about opt/pess here?)
+- make sense of inequalities/recurrences (partially done)
 */
 
   object Test1 {
@@ -959,7 +959,7 @@ TODO:
       While(Less(Ref("i"),Const(100)), Block(List(
         Assign("x", Const(7)),
         Assign("x", Plus(Ref("x"), Const(1))),
-        Assign("y", Plus(Ref("y"), Const(1))), // TOOD: how to relate to loop var??
+        Assign("y", Plus(Ref("y"), Const(1))),
         Assign("i", Plus(Ref("i"), Const(1)))
       )))
     ))
