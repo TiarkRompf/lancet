@@ -524,7 +524,7 @@ TODO:
         case (_,GConst(0)) => x
         case (Def(DIf(c,x,z)),_) => iff(c,plus(x,y),plus(z,y))
         // random simplifications ...
-        case (GConst(c),b) => plus(b,const(c))
+        case (GConst(c),b:GRef) => plus(b,const(c)) // CAVE: non-int consts!
         case (Def(DPlus(a,b)),_) => plus(a,plus(b,y))
         //case (Def(DTimes(a,GConst(-1))),GConst(c:Int)) => plus(a,GConst(-c)) //(-a+c)=-(-c+a)
         case _ => super.plus(x,y)
@@ -538,7 +538,7 @@ TODO:
         case (_,GConst(1)) => x
         case (Def(DIf(c,x,z)),_) => iff(c,times(x,y),times(z,y))
         // random simplifications ...
-        case (GConst(c),b) => times(b,const(c))
+        case (GConst(c),b:GRef) => times(b,const(c)) // CAVE: non-int consts!
         case (Def(DTimes(a,b)),_) => times(a,times(b,y))
         case (Def(DPlus(a,b)),c) => plus(times(a,c), times(b,c))
         case (a,Def(DPlus(b,c))) => plus(times(a,b), times(a,c))
