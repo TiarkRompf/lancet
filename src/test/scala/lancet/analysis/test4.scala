@@ -1003,12 +1003,28 @@ TODO:
 
     // test arrays / computed index access
 
-    val testProg1b = Block(List(
-      Assign("x", Const(0)), // input
+    val testProgUnit1 = Block(List(
+      Assign("x", Const(0)), // "input"
       Assign("a", New("A")),
+      Put(Ref("a"), Const("field"), Times(Ref("x"),Const(2))),
+      Assign("r", Ref("a"))
+    ))
+
+    val testProgUnit2 = Block(List(
+      Assign("x", Const(0)), // "input"
+      Assign("a", New("A")),
+      Put(Ref("a"), Ref("x"), Times(Ref("x"),Const(2))),
+      Assign("r", Ref("a"))
+    ))
+
+    val testProg1b = Block(List(
+      Assign("x", Const(0)),
+      Assign("a", New("A")),
+      Put(Ref("a"), Const("field"), Const(7)),
       While(Less(Ref("x"),Const(100)), Block(List(
-        Put(Ref("a"), Ref("x"), Times(Ref("x"),Const(2))),
-        Assign("x", Plus(Ref("x"), Const(-1)))
+        //Put(Ref("a"), Ref("x"), Times(Ref("x"),Const(2))),
+        Put(Ref("a"), Const("field"), Const(7)),
+        Assign("x", Plus(Ref("x"), Const(1)))
       ))),
       Assign("r", Ref("a"))
     ))
@@ -1128,6 +1144,11 @@ TODO:
   }
 
   def testA2 = withOutFileChecked(prefix+"A2") {
+    Test1.run(Test1.testProgUnit1)
+    Test1.run(Test1.testProgUnit2)
+  }
+
+  def testA3 = withOutFileChecked(prefix+"A3") {
     Test1.run(Test1.testProg1b)
   }
 
