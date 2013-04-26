@@ -35,7 +35,7 @@ class TestAnalysis6 extends FileDiffSuite {
             rec(b)(f)
           case And(a,b) =>
             rec(a) { () =>
-              if (simplify())
+              if (propagate())
                 rec(b)(f)
             }
           case Yes => f()
@@ -45,7 +45,7 @@ class TestAnalysis6 extends FileDiffSuite {
         r
       }
 
-      def simplify(): Boolean = { // propagate constraints and look for contradictions
+      def propagate(): Boolean = { // propagate constraints and look for contradictions
         //printd("simplify")
         val cnew = cstore flatMap { c1 => cstore flatMap { c2 => (c1,c2) match {
           case (IsEqual(Exp(a),Exp(b)), IsTerm(a1, key, args)) if a == a1 => 
@@ -62,7 +62,7 @@ class TestAnalysis6 extends FileDiffSuite {
 
         val cstore0 = cstore
         cstore = (cstore ++ cnew).distinct.sortBy(_.toString)
-        (cstore == cstore0) || simplify() // until converged
+        (cstore == cstore0) || propagate() // until converged
       }
 
       def extract(x: Exp[Any]): String = cstore collectFirst { // extract term
@@ -80,7 +80,7 @@ class TestAnalysis6 extends FileDiffSuite {
 
       val q = fresh[T]
       rec(() => f(q)){() => 
-        if (simplify()) {
+        if (propagate()) {
           //printd("success!")
           //printd(eval(q))
           //cstore foreach { c => printd("    "+c)}
