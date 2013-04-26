@@ -257,7 +257,7 @@ TODO:
             GRef(f) // don't transform fundef
           }
         }
-        for ((e,d) <- globalDefs) {
+        for ((e,d) <- globalDefs.reverse) {
           val e2 = mirrorDef(d,XXO)
           //println(s"$e -> $e2 = $d")
           if (e2 != GRef(e))
