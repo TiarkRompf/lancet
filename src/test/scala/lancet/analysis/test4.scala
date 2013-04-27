@@ -335,6 +335,8 @@ TODO:
                   case _ => z
                 }
                 List(GRef(a) -> map(m map (kv => kv._1 -> call(func(kv._1), arg(kv._1)))))
+              case GConst(c) =>
+                List(GRef(a) -> const(c)) // see if we get the same constant ...
               case _ => Nil
             }
         }
@@ -350,6 +352,9 @@ TODO:
                 def func(k: GVal) = GRef(mkey(f.toString,k))
                 def body(k: GVal) = select(xformSubst.getOrElse(z,z),k)
                 m foreach (kv => kv._1 -> fun(func(kv._1).toString,x,body(kv._1)))
+              case GConst(c) =>
+                if (xformSubst.getOrElse(z,z) == const(c)) // loop invariant constant
+                  fun(f,x,const(c))
               case _ =>
                 if (xformSubst.contains(z)) {
                   // HACK -- unsafe???
