@@ -269,10 +269,11 @@ TODO:
 
       // perform iterative optimizations
       def iterateAll(res: GVal): GVal = {
-        iterateSplitFunctions(res)
+        // need multiple passes? atm no
+        val res1 = iterateSplitFunctions(res)
+        iterateLoopInv(res1)
       }
 
-      var mode = 0
       def iterateSplitFunctions(res: GVal): GVal = {
         println("*** begin iterate split funcs: "+res)
 
@@ -331,7 +332,7 @@ TODO:
         val xform = calls flatMap {
           case (a,DCall(f,z)) =>
             zeros.toMap.apply(f.toString) match {
-              case Def(DMap(m)) if mode == 0 =>
+              case Def(DMap(m)) =>
                 println("specializing for fields " + m.keys)
 
                 def func(k: GVal) = GRef(mkey(f.toString,k))
@@ -340,9 +341,6 @@ TODO:
                   case _ => z
                 }
                 List(GRef(a) -> map(m map (kv => kv._1 -> call(func(kv._1), arg(kv._1)))))
-              case GConst(c) if mode == 1 =>
-                List(GRef(a) -> const(c)) // see if we get the same constant ...
-                                          // speculate and rollback.
               case _ => Nil
             }
         }
@@ -358,13 +356,6 @@ TODO:
                 def func(k: GVal) = GRef(mkey(f.toString,k))
                 def body(k: GVal) = select(xformSubst.getOrElse(z,z),k)
                 m foreach (kv => kv._1 -> fun(func(kv._1).toString,x,body(kv._1)))
-              case GConst(c) =>
-                if (xformSubst.getOrElse(z,z) == const(c)) {// loop invariant constant
-                  println(s"## inductive const prop: $f($x) = $z --> $c")
-                  globalDefs = globalDefs.filterNot(_._1 == f) // NEEDED??
-                  rebuildGlobalDefsCache()
-                  fun(f,x,const(c))
-                }
               case _ =>
                 if (xformSubst.contains(z)) {
                   // HACK -- unsafe???
@@ -396,17 +387,90 @@ TODO:
           }
         }*/
 
-        // mode 1 means speculate/don't use latest result
-        val res1 = if (mode == 1) res else xformSubst.getOrElse(res,res)
+        val res1 = xformSubst.getOrElse(res,res)
         println("*** done iterate split funcs: "+res1)
-        if (res1 != res) iterateSplitFunctions(res1) else {
-          // current mode converged, try next
-          mode = (mode + 1) % 2
-          if (mode == 0) res
-          else iterateSplitFunctions(res1)
-        }
+        if (res1 != res) iterateSplitFunctions(res1) else res
       }
 
+      def iterateLoopInv(res: GVal): GVal = {
+
+        println("*** begin iterate loop inv: "+res)
+
+        val sched = schedule(res)
+
+        val funs = sched collect { case p@(a,DFun(f,x,z)) => p }
+        val calls = sched collect { case p@(a,DCall(f,y)) => p }
+
+        println("funs:")
+        funs foreach printStm
+
+        println("calls:")
+        calls foreach printStm
+
+        // base case: eval function bodies for i = 0
+
+        val subst = funs map {
+          case (a,DFun(f,x,z)) =>
+            GRef(x) -> GConst(0) 
+        }
+
+        println("subst: "+subst.toMap)
+        val zeroSubst = substTrans(subst.toMap)
+
+        val zeros = funs map {
+          case (a,DFun(f,x,z)) =>
+            a -> zeroSubst.getOrElse(z,z) // alt: this.subst(z,GRef(x),GConst(0))
+        }
+
+        println("zeros: "+zeros.toMap)
+
+        var recFuns = Set[String]() // known to remain recursive. initially empty.
+        def iter: GVal = {
+          // speculative transformation:
+          // assume optimistically that all functions f are constant, and
+          // f(i) = f(0) for all i.
+
+          // speculatively replace calls. TODO: handle isolated fixindex nodes?
+          val xform = calls flatMap {
+            case (a,DCall(f,z)) if !recFuns.contains(f.toString) =>
+              List(GRef(a) -> zeros.toMap.apply(f.toString))
+            case _ => Nil
+          }
+
+          println("xform: "+xform.toMap)
+          val xformSubst = substTrans(xform.toMap)
+
+          // find conflicts: f(i) != f(0)
+          val confl = funs flatMap {
+            case (a,DFun(f,x,z)) =>
+              if (xformSubst.getOrElse(z,z) != zeros.toMap.apply(f.toString)) List(f) else Nil
+          }
+
+          if (confl.toSet != recFuns) { recFuns = confl.toSet; iter } else {
+            // converged, update fundefs
+            funs foreach {
+              case (a,DFun(f,x,z)) => 
+                if (xformSubst.contains(z)) {
+                  val z1 = xformSubst(z) 
+                  val zval = zeros.toMap.apply(f.toString)
+                  println(s"## inductive prop: $f($x) = $z --> $z1")
+                  println(s"f($x)=$z f(0)=$zval f'($x)=$z1")
+                  // is this safe???
+                  globalDefs = globalDefs.filterNot(_._1 == f)
+                  rebuildGlobalDefsCache()
+                  fun(f,x,z1)
+                  println(s"### fun has been xformed: $a = $x => $z / $z1")
+                }
+            }
+
+            xformSubst.getOrElse(res,res)
+          }
+        }
+
+        val res1 = iter
+        println("*** done iterate loop inv: "+res1)
+        res1
+      }
 
 
       def subst(x: GVal, a: GVal, b: GVal): GVal = x match {
