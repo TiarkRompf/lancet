@@ -268,6 +268,7 @@ TODO:
       }
 
       // perform iterative optimizations
+      var mode = 0
       def iterateAll(res: GVal): GVal = {
         println("*** begin iterate: "+res)
 
@@ -326,7 +327,7 @@ TODO:
         val xform = calls flatMap {
           case (a,DCall(f,z)) =>
             zeros.toMap.apply(f.toString) match {
-              case Def(DMap(m)) =>
+              case Def(DMap(m)) if mode == 0 =>
                 println("specializing for fields " + m.keys)
 
                 def func(k: GVal) = GRef(mkey(f.toString,k))
@@ -335,8 +336,9 @@ TODO:
                   case _ => z
                 }
                 List(GRef(a) -> map(m map (kv => kv._1 -> call(func(kv._1), arg(kv._1)))))
-              case GConst(c) =>
+              case GConst(c) if mode == 1 =>
                 List(GRef(a) -> const(c)) // see if we get the same constant ...
+                                          // speculate and rollback.
               case _ => Nil
             }
         }
@@ -383,9 +385,15 @@ TODO:
           }
         }*/
 
-        val res1 = xformSubst.getOrElse(res,res)
+        // mode 1 means speculate/don't use latest result
+        val res1 = if (mode == 1) res else xformSubst.getOrElse(res,res)
         println("*** done iterate: "+res1)
-        if (res1 != res) iterateAll(res1) else res1
+        if (res1 != res) iterateAll(res1) else {
+          // current mode converged, try next
+          mode = (mode + 1) % 2
+          if (mode == 0) res
+          else iterateAll(res1)
+        }
       }
 
 
