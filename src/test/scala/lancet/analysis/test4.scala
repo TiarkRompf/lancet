@@ -355,8 +355,12 @@ TODO:
                 def body(k: GVal) = select(xformSubst.getOrElse(z,z),k)
                 m foreach (kv => kv._1 -> fun(func(kv._1).toString,x,body(kv._1)))
               case GConst(c) =>
-                if (xformSubst.getOrElse(z,z) == const(c)) // loop invariant constant
+                if (xformSubst.getOrElse(z,z) == const(c)) {// loop invariant constant
+                  println(s"## inductive const prop: $f($x) = $z --> $c")
+                  globalDefs = globalDefs.filterNot(_._1 == f) // NEEDED??
+                  rebuildGlobalDefsCache()
                   fun(f,x,const(c))
+                }
               case _ =>
                 if (xformSubst.contains(z)) {
                   // HACK -- unsafe???
@@ -367,6 +371,9 @@ TODO:
                 }
             }
         }
+
+        // FIXME: inductive const prop: calls to transformed fundef
+        // inside other fundefs don't seem to be transformed..
 
         /*
         should we always go and update all function defs?
@@ -1046,7 +1053,7 @@ TODO:
     val testProg1c = Block(List(
       Assign("x", Const(0)),
       Assign("y", Const(10)),
-      Assign("a", New("A")),
+      Assign("a", New("A")), // FIXME: writes may not be visible because A not in store at iteration 0
       While(Less(Ref("x"),Const(100)), Block(List(
         Put(Ref("a"), Ref("x"), Times(Ref("x"),Const(2))),
         Assign("x", Plus(Ref("x"), Const(1))),
