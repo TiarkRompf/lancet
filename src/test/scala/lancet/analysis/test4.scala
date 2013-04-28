@@ -427,8 +427,9 @@ TODO:
         var recFuns = Set[String]() // known to remain recursive. initially empty.
         def iter: GVal = {
           // speculative transformation:
-          // assume optimistically that all functions f are constant, and
+          // assume optimistically that all functions f are constant:
           // f(i) = f(0) for all i.
+          println("exclude: "+recFuns)
 
           // speculatively replace calls. TODO: handle isolated fixindex nodes?
           val xform = calls flatMap {
@@ -446,6 +447,7 @@ TODO:
               if (xformSubst.getOrElse(z,z) != zeros.toMap.apply(f.toString)) List(f) else Nil
           }
 
+          // if there are more conflicts than expected we need to start over
           if (confl.toSet != recFuns) { recFuns = confl.toSet; iter } else {
             // converged, update fundefs
             funs foreach {
@@ -454,12 +456,11 @@ TODO:
                   val z1 = xformSubst(z) 
                   val zval = zeros.toMap.apply(f.toString)
                   println(s"## inductive prop: $f($x) = $z --> $z1")
-                  println(s"f($x)=$z f(0)=$zval f'($x)=$z1")
                   // is this safe???
                   globalDefs = globalDefs.filterNot(_._1 == f)
                   rebuildGlobalDefsCache()
                   fun(f,x,z1)
-                  println(s"### fun has been xformed: $a = $x => $z / $z1")
+                  println(s"## $f($x)=$z $f(0)=$zval $f'($x)=$z1")
                 }
             }
 
