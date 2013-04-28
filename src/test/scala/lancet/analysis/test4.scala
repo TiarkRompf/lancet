@@ -465,9 +465,9 @@ TODO:
             }
 
             // changed fun defs; need to mirror everything to catch
-            // smart constructor rewrites (TODO)
-
-            xformSubst.getOrElse(res,res)
+            // smart constructor rewrites
+            val xformSubst1 = substTrans(xform.toMap)
+            xformSubst1.getOrElse(res,res)
           }
         }
 
