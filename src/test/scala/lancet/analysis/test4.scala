@@ -268,9 +268,13 @@ TODO:
       }
 
       // perform iterative optimizations
-      var mode = 0
       def iterateAll(res: GVal): GVal = {
-        println("*** begin iterate: "+res)
+        iterateSplitFunctions(res)
+      }
+
+      var mode = 0
+      def iterateSplitFunctions(res: GVal): GVal = {
+        println("*** begin iterate split funcs: "+res)
 
         val sched = schedule(res)
 
@@ -394,12 +398,12 @@ TODO:
 
         // mode 1 means speculate/don't use latest result
         val res1 = if (mode == 1) res else xformSubst.getOrElse(res,res)
-        println("*** done iterate: "+res1)
-        if (res1 != res) iterateAll(res1) else {
+        println("*** done iterate split funcs: "+res1)
+        if (res1 != res) iterateSplitFunctions(res1) else {
           // current mode converged, try next
           mode = (mode + 1) % 2
           if (mode == 0) res
-          else iterateAll(res1)
+          else iterateSplitFunctions(res1)
         }
       }
 
