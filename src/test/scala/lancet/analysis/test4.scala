@@ -348,6 +348,22 @@ TODO:
         println("xform: "+xform.toMap)
         val xformSubst = substTrans(xform.toMap)
 
+        // find conflicts: f(i).fields != f(0).fields
+        val confl = funs flatMap {
+          case (a,DFun(f,x,z)) =>
+            zeros.toMap.apply(f.toString) match {
+              case Def(DMap(m)) =>
+                // we need to see if f's body is a map, too (and check the set of fields)
+                xformSubst.getOrElse(z,z) match {
+                  case Def(DMap(mz)) if m.keys == mz.keys => Nil // ok
+                  case Def(DMap(mz)) => println(s"XX map keys don't match: $m $mz"); List(f)
+                  case Def(z1)       => println(s"XX not a map: $m $z1 "); List(f)
+                  case z1            => println(s"XX not a map: $m $z1 "); List(f)
+                }
+              case _ => Nil
+            }          
+        }
+
         // generate new fundefs
         funs foreach {
           case (a,DFun(f,x,z)) => 
