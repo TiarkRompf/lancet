@@ -463,6 +463,9 @@ TODO:
                 }
             }
 
+            // changed fun defs; need to mirror everything to catch
+            // smart constructor rewrites (TODO)
+
             xformSubst.getOrElse(res,res)
           }
         }
