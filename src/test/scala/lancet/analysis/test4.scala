@@ -307,81 +307,96 @@ TODO:
 
         println("zeros: "+zeros.toMap)
 
-        // TODO:
-        // It seems like we need to do something more involved if the
-        // address written to depends on the loop index. The zero iteration
-        // will produce something like this, with f0 being f(i) evaluated
-        // at i = 0:
-        //   Map(f0 -> ...)
-        // However, this does not tell us anything about field f(i) in general.
-        // Specializing the general case for f0 will not help.
-        //
-        // For allocations in loops, the key does not even exist before
-        // the loop. Thus it will not be part of the map!
-        //
-        // A possible solution is to really take i=0 as the value after
-        // the first iterations.
+        var recFuns = Set[String]() // known to remain recursive. initially empty.
+        def iter: GVal = {
+          // TODO:
+          // It seems like we need to do something more involved if the
+          // address written to depends on the loop index. The zero iteration
+          // will produce something like this, with f0 being f(i) evaluated
+          // at i = 0:
+          //   Map(f0 -> ...)
+          // However, this does not tell us anything about field f(i) in general.
+          // Specializing the general case for f0 will not help.
+          //
+          // For allocations in loops, the key does not even exist before
+          // the loop. Thus it will not be part of the map!
+          //
+          // A possible solution is to really take i=0 as the value after
+          // the first iterations.
 
-        // induction case: if zero iteration evaluates to a map, split function
-        def mkey(f: String, x: GVal) = x match {
-          case GConst(s) => f+"_"+s
-          case GRef(s) => f+"_"+s
-        }
+          // induction case: if zero iteration evaluates to a map, split function
+          def mkey(f: String, x: GVal) = x match {
+            case GConst(s) => f+"_"+s
+            case GRef(s) => f+"_"+s
+          }
 
-        // replace all calls. TODO: handle isolated fixindex nodes?
-        val xform = calls flatMap {
-          case (a,DCall(f,z)) =>
-            zeros.toMap.apply(f.toString) match {
-              case Def(DMap(m)) =>
-                println("specializing for fields " + m.keys)
+          // replace all calls. TODO: handle isolated fixindex nodes?
+          val xform = calls flatMap {
+            case (a,DCall(f,z)) if !recFuns.contains(f.toString) =>
+              zeros.toMap.apply(f.toString) match {
+                case Def(DMap(m)) =>
+                  println("specializing for fields " + m.keys)
 
-                def func(k: GVal) = GRef(mkey(f.toString,k))
-                def arg(k: GVal) = z match {
-                  case Def(DFixIndex(x,`f`)) => fixindex(x, func(k)) // OLD
-                  case _ => z
+                  def func(k: GVal) = GRef(mkey(f.toString,k))
+                  def arg(k: GVal) = z match {
+                    case Def(DFixIndex(x,`f`)) => fixindex(x, func(k)) // OLD
+                    case _ => z
+                  }
+                  List(GRef(a) -> map(m map (kv => kv._1 -> call(func(kv._1), arg(kv._1)))))
+                case _ => Nil
+              }
+            case _ => Nil
+          }
+
+          println("xform: "+xform.toMap)
+          val xformSubst = substTrans(xform.toMap)
+
+          // find conflicts: f(i).fields != f(0).fields
+          val confl = funs flatMap {
+            case (a,DFun(f,x,z)) =>
+              zeros.toMap.apply(f.toString) match {
+                case Def(DMap(m)) =>
+                  // we need to see if f's body is a map, too (and check the set of fields)
+                  xformSubst.getOrElse(z,z) match {
+                    case Def(DMap(mz)) if m.keys == mz.keys => Nil // ok
+                    case Def(DMap(mz)) => println(s"XX map keys don't match: $m $mz"); List(f)
+                    case Def(z1)       => println(s"XX not a map: $m $z1 "); List(f)
+                    case z1            => println(s"XX not a map: $m $z1 "); List(f)
+                  }
+                case _ => Nil
+              }          
+          }
+
+          // if there are more conflicts than expected we need to start over
+          if (confl.toSet != recFuns) { recFuns = confl.toSet; iter } else {
+
+            // generate new fundefs
+            funs foreach {
+              case (a,DFun(f,x,z)) => 
+                zeros.toMap.apply(f.toString) match {
+                  case Def(DMap(m)) =>
+                    def func(k: GVal) = GRef(mkey(f.toString,k))
+                    def body(k: GVal) = select(xformSubst.getOrElse(z,z),k)
+                    m foreach (kv => kv._1 -> fun(func(kv._1).toString,x,body(kv._1)))
+                  case _ =>
+                    if (xformSubst.contains(z)) {
+                      // HACK -- unsafe???
+                      globalDefs = globalDefs.filterNot(_._1 == f)
+                      rebuildGlobalDefsCache()
+                      fun(f,x,xformSubst(z))
+                      println(s"### fun has been xformed: $a = $x => $z / ${xformSubst(z)}")
+                    }
                 }
-                List(GRef(a) -> map(m map (kv => kv._1 -> call(func(kv._1), arg(kv._1)))))
-              case _ => Nil
             }
-        }
 
-        println("xform: "+xform.toMap)
-        val xformSubst = substTrans(xform.toMap)
-
-        // find conflicts: f(i).fields != f(0).fields
-        val confl = funs flatMap {
-          case (a,DFun(f,x,z)) =>
-            zeros.toMap.apply(f.toString) match {
-              case Def(DMap(m)) =>
-                // we need to see if f's body is a map, too (and check the set of fields)
-                xformSubst.getOrElse(z,z) match {
-                  case Def(DMap(mz)) if m.keys == mz.keys => Nil // ok
-                  case Def(DMap(mz)) => println(s"XX map keys don't match: $m $mz"); List(f)
-                  case Def(z1)       => println(s"XX not a map: $m $z1 "); List(f)
-                  case z1            => println(s"XX not a map: $m $z1 "); List(f)
-                }
-              case _ => Nil
-            }          
+            // changed fun defs; need to mirror everything to catch
+            // smart constructor rewrites
+            //val xformSubst1 = substTrans(xform.toMap)
+            //xformSubst1.getOrElse(res,res)
+            xformSubst.getOrElse(res,res)
+          }
         }
-
-        // generate new fundefs
-        funs foreach {
-          case (a,DFun(f,x,z)) => 
-            zeros.toMap.apply(f.toString) match {
-              case Def(DMap(m)) =>
-                def func(k: GVal) = GRef(mkey(f.toString,k))
-                def body(k: GVal) = select(xformSubst.getOrElse(z,z),k)
-                m foreach (kv => kv._1 -> fun(func(kv._1).toString,x,body(kv._1)))
-              case _ =>
-                if (xformSubst.contains(z)) {
-                  // HACK -- unsafe???
-                  globalDefs = globalDefs.filterNot(_._1 == f)
-                  rebuildGlobalDefsCache()
-                  fun(f,x,xformSubst(z))
-                  println(s"### fun has been xformed: $a = $x => $z / ${xformSubst(z)}")
-                }
-            }
-        }
+        val res1 = iter
 
         // FIXME: inductive const prop: calls to transformed fundef
         // inside other fundefs don't seem to be transformed..
@@ -403,7 +418,6 @@ TODO:
           }
         }*/
 
-        val res1 = xformSubst.getOrElse(res,res)
         println("*** done iterate split funcs: "+res1)
         if (res1 != res) iterateSplitFunctions(res1) else res
       }
