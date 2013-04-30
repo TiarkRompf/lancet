@@ -1097,7 +1097,7 @@ TODO:
       val res = eval(testProg)
       println("res: " + res)
       println("store: " + store)
-      val store2 = IR.iterateAll(store)
+      val store2 = store//IR.iterateAll(store)
       println("transformed: " + store2)
       val sched = IR.schedule(store2)
       println("sched:")
