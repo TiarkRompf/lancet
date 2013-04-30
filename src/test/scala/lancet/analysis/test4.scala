@@ -364,7 +364,7 @@ TODO:
                     case z1            => println(s"XX not a map: $m $z1 "); List(f)
                   }
                 case _ => Nil
-              }          
+              }
           }
 
           // if there are more conflicts than expected we need to start over
@@ -470,6 +470,7 @@ TODO:
 
           println("xform: "+xform.toMap)
           val xformSubst = substTrans(xform.toMap)
+          println("xform done: "+xform.toMap)  // XXX doesn't seem to terminate...
 
           // find conflicts: f(i) != f(0)
           val confl = funs flatMap {
@@ -1023,7 +1024,7 @@ TODO:
         itvec = saveit
 
 /*
-
+        VERSION (1) BELOW
 
           val savevc = varCount
           val savest = store
@@ -1057,10 +1058,7 @@ TODO:
 
         eval(c) // once more (this one will fail)
 */
-
-
-        // TODO: fixpoint
-
+        
         IR.const(())
 
       case Block(Nil) => IR.const(())
