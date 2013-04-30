@@ -993,7 +993,7 @@ TODO:
 
         val afterB = store
 
-        val gen = lub(before, afterB)(const("ø"))
+        val gen = lub(before, afterB)(loop)
 
         println(s"lub($before, $afterB) = $gen")
         if (init != gen) { init = gen; iter } else {
