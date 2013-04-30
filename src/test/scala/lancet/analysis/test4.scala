@@ -973,6 +973,15 @@ TODO:
 
         itvec = pair(itvec,n0)
 
+
+      var init = before
+      def iter: GVal = {
+
+        def lub(a: GVal, b: GVal)(ploop: GVal) = (a,b) match {
+          case (a,b) if a == b => a
+          case _ => iff(less(const(0), n0), call(ploop,plus(n0,const(-1))), a)
+        }
+
         store = iff(less(const(0), n0), call(loop,plus(n0,const(-1))), before)
 
         val cv = eval(c)
@@ -982,6 +991,12 @@ TODO:
         store = subst(afterC,cv,const(1)) // assertTrue
         eval(b)
 
+        val afterB = store
+
+        val gen = lub(before, afterB)(const("ø"))
+
+        println(s"lub($before, $afterB) = $gen")
+        if (init != gen) { init = gen; iter } else {
 
         // TODO: clarify intended semantics!
         // Is elem 0 the value after 0 iterations,
@@ -1012,7 +1027,11 @@ TODO:
         // we get f(i) = new A_i, which makes a lot of
         // sense.
 
-        // TODO: need to iterate?
+        cv
+        }
+      }
+
+        val cv = iter
 
         fun(loop.toString, n0.toString, store)
 
