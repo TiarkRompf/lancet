@@ -976,6 +976,7 @@ TODO:
 
       var init = before
       def iter: GVal = {
+        println(s"starting spec loop with $init")
 
         def lub(a: GVal, b: GVal)(ploop: GVal): GVal = (a,b) match {
           case (a,b) if a == b => a
@@ -988,7 +989,8 @@ TODO:
             iff(less(const(0), n0), call(ploop,plus(n0,const(-1))), a)
         }
 
-        store = iff(less(const(0), n0), call(loop,plus(n0,const(-1))), before)
+        //store = iff(less(const(0), n0), call(loop,plus(n0,const(-1))), before)
+        store = init
 
         val cv = eval(c)
 
@@ -1021,7 +1023,7 @@ TODO:
         //  if (0<x) f(x-1) + 1 else 0
         // we rely on propagation of conditions to get there:
 
-        store = iff(less(const(0), n0), store, before)
+        //store = iff(less(const(0), n0), store, before)
 
         // The alternative would be to make f(i) denote
         // the computed element in iteration i, and then pick
@@ -1032,7 +1034,7 @@ TODO:
         // On the other hand, for dynamic allocations, 
         // we get f(i) = new A_i, which makes a lot of
         // sense.
-
+        store = init
         cv
         }
       }
