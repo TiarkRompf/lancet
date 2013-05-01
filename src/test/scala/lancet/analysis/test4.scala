@@ -977,9 +977,15 @@ TODO:
       var init = before
       def iter: GVal = {
 
-        def lub(a: GVal, b: GVal)(ploop: GVal) = (a,b) match {
+        def lub(a: GVal, b: GVal)(ploop: GVal): GVal = (a,b) match {
           case (a,b) if a == b => a
-          case _ => iff(less(const(0), n0), call(ploop,plus(n0,const(-1))), a)
+          case (Def(DMap(m1)), Def(DMap(m2))) => 
+            val m = (m1.keys ++ m2.keys) map { k => (k, lub(select(a,k),select(b,k))(GRef(ploop+"_"+k))) }
+            println(m)
+            map(m.toMap)
+          case _ => 
+            //fun(ploop.toString, n0.toString, b)
+            iff(less(const(0), n0), call(ploop,plus(n0,const(-1))), a)
         }
 
         store = iff(less(const(0), n0), call(loop,plus(n0,const(-1))), before)
