@@ -985,8 +985,12 @@ TODO:
             println(m)
             map(m.toMap)
           case _ => 
-            //fun(ploop.toString, n0.toString, b)
-            iff(less(const(0), n0), call(ploop,plus(n0,const(-1))), a)
+            globalDefs = globalDefs filterNot (_._1 == ploop.toString)
+            rebuildGlobalDefsCache()
+            val rhs = iff(less(const(0), n0), call(ploop,plus(n0,const(-1))), a)
+            fun(ploop.toString, n0.toString, iff(less(const(0), n0), b, a))
+            // TODO: not quite right ...
+            rhs
         }
 
         //store = iff(less(const(0), n0), call(loop,plus(n0,const(-1))), before)
