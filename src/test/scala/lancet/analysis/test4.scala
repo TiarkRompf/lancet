@@ -980,8 +980,13 @@ TODO:
                        = if (0 < i) { if (0 < 0) 0-1 else 0+1 } else 0
                        = if (0 < i) 1 else 0
                 Detect conflict: ŷ(i) = 0 can't be true
-                Generalize
-            (1) Naively setting ŷ(i) = if (0 < i) 1 else 0
+                Generalize!
+
+            (1) Naive iteration: ŷ(i) = if (0 < i) 1 else 0
+                This won't terminate because we'll end up with:
+                ŷ(i) = if (0 < i) if (0 < i-1) 2 else 1 else 0
+
+            (2) Generalize: ŷ(i) = if (0 < i) i else 0
         */
 
         import IR._
