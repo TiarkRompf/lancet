@@ -963,6 +963,27 @@ TODO:
         itvec = saveit
         val n = reflect(s"loop($store,0)._2 // count")}*/
 
+
+        /* Example:
+            var y = 0
+            while (y < 100) {
+              if (y < 0)
+                y -= 1
+              else
+                y += 1
+            }
+          Note that the behavior crucially depends on the initial condition.
+
+            (0) Assume ŷ(i) = 0
+                Evaluate loop body
+                  z(i) = if (0 < i) { if (ŷ(i-1) < 0) ŷ(i-1)-1 else ŷ(i-1)+1 } else 0
+                       = if (0 < i) { if (0 < 0) 0-1 else 0+1 } else 0
+                       = if (0 < i) 1 else 0
+                Detect conflict: ŷ(i) = 0 can't be true
+                Generalize
+            (1) Naively setting ŷ(i) = if (0 < i) 1 else 0
+        */
+
         import IR._
         val saveit = itvec
 
@@ -977,6 +998,11 @@ TODO:
       var init = before
       def iter: GVal = {
         println(s"starting spec loop with $init")
+
+        globalDefs = globalDefs filterNot (_._1 == loop.toString)
+        rebuildGlobalDefsCache()
+
+        fun(loop.toString, n0.toString, init)
 
         def lub(a: GVal, b: GVal)(ploop: GVal): GVal = (a,b) match {
           case (a,b) if a == b => a
@@ -993,8 +1019,9 @@ TODO:
             rhs
         }
 
-        //store = iff(less(const(0), n0), call(loop,plus(n0,const(-1))), before)
-        store = init
+        // state at beginning of loop: before U loop*
+        store = iff(less(const(0), n0), call(loop,plus(n0,const(-1))), before)
+        //store = init
 
         val cv = eval(c)
 
@@ -1038,7 +1065,7 @@ TODO:
         // On the other hand, for dynamic allocations, 
         // we get f(i) = new A_i, which makes a lot of
         // sense.
-        store = init
+        //store = init
         cv
         }
       }
