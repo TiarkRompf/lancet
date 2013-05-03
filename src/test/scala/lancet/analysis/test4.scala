@@ -1031,7 +1031,7 @@ TODO:
         }
 
         def lubfun(a: GVal, b: GVal)(fsym: GVal): Unit = (a,b) match {
-          case (a,b) if a == b => a
+          case (a,b) if a == b => 
           case (Def(DMap(m1)), Def(DMap(m2))) => 
             (m1.keys ++ m2.keys) foreach { k => lubfun(select(a,k),select(b,k))(mkey(fsym,k)) }
           case _ => 
@@ -1042,13 +1042,6 @@ TODO:
       def iter: GVal = {
         println(s"starting spec loop with $init")
 
-        //globalDefs = globalDefs filterNot (_._1 == loop.toString)
-        //rebuildGlobalDefsCache()
-
-        //fun(loop.toString, n0.toString, init)
-
-        // state at beginning of loop: before U loop*
-        //store = iff(less(const(0), n0), call(loop,plus(n0,const(-1))), before)
         store = init
 
         val cv = eval(c)
