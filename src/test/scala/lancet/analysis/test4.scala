@@ -1027,13 +1027,6 @@ TODO:
             println(m)
             map(m.toMap)
           case _ => 
-            globalDefs = globalDefs filterNot (_._1 == fsym.toString)
-            rebuildGlobalDefsCache()
-            //val rhs = iff(less(const(0), n0), call(fsym,plus(n0,const(-1))), a)
-            //fun(fsym.toString, n0.toString, iff(less(const(0), n0), b, a))
-            //rhs
-            // can't define function, because it would be inlined!
-            // we want to produce code that contains a call of f(i-1)
             iff(less(const(0), n0), call(fsym,plus(n0,const(-1))), a)
         }
 
@@ -1042,8 +1035,6 @@ TODO:
           case (Def(DMap(m1)), Def(DMap(m2))) => 
             (m1.keys ++ m2.keys) foreach { k => lubfun(select(a,k),select(b,k))(mkey(fsym,k)) }
           case _ => 
-            globalDefs = globalDefs filterNot (_._1 == fsym.toString)
-            rebuildGlobalDefsCache()
             fun(fsym.toString, n0.toString, b)
         }
 
