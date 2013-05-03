@@ -1016,33 +1016,20 @@ TODO:
         itvec = pair(itvec,n0)
 
 
+
+
       var init = before
       def iter: GVal = {
         println(s"starting spec loop with $init")
 
-        globalDefs = globalDefs filterNot (_._1 == loop.toString)
-        rebuildGlobalDefsCache()
+        //globalDefs = globalDefs filterNot (_._1 == loop.toString)
+        //rebuildGlobalDefsCache()
 
-        fun(loop.toString, n0.toString, init)
-
-        def lub(a: GVal, b: GVal)(ploop: GVal): GVal = (a,b) match {
-          case (a,b) if a == b => a
-          case (Def(DMap(m1)), Def(DMap(m2))) => 
-            val m = (m1.keys ++ m2.keys) map { k => (k, lub(select(a,k),select(b,k))(GRef(ploop+"_"+k))) }
-            println(m)
-            map(m.toMap)
-          case _ => 
-            globalDefs = globalDefs filterNot (_._1 == ploop.toString)
-            rebuildGlobalDefsCache()
-            val rhs = iff(less(const(0), n0), call(ploop,plus(n0,const(-1))), a)
-            fun(ploop.toString, n0.toString, iff(less(const(0), n0), b, a))
-            // TODO: not quite right ...
-            rhs
-        }
+        //fun(loop.toString, n0.toString, init)
 
         // state at beginning of loop: before U loop*
-        store = iff(less(const(0), n0), call(loop,plus(n0,const(-1))), before)
-        //store = init
+        //store = iff(less(const(0), n0), call(loop,plus(n0,const(-1))), before)
+        store = init
 
         val cv = eval(c)
 
