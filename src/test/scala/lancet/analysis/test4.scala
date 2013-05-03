@@ -1027,7 +1027,14 @@ TODO:
             println(m)
             map(m.toMap)
           case _ => 
-            iff(less(const(0), n0), call(fsym,plus(n0,const(-1))), a)
+            val b0 = iff(less(const(0), n0), subst(b,n0,plus(n0,const(-1))), a) // one less ...
+            val d = plus(b,times(b0,const(-1))) // TODO: proper diff operator
+            println(s"delta $fsym: $b-$b0 = $d")
+            if (!IRD.dependsOn(d, n0)) {
+              println(s"delta invariant of $n0")
+              iff(less(const(0), n0), plus(a,times(n0,d)), a)
+            } else
+              iff(less(const(0), n0), call(fsym,plus(n0,const(-1))), a)
         }
 
         def lubfun(a: GVal, b: GVal)(fsym: GVal): Unit = (a,b) match {
@@ -1052,6 +1059,8 @@ TODO:
         eval(b)
 
         val afterB = store
+
+        println(s"lub($before, $afterB) = ?")
 
         val gen = lub(before, afterB)(loop)
 
