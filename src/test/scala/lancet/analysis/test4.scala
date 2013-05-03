@@ -1037,6 +1037,15 @@ TODO:
             iff(less(const(0), n0), call(fsym,plus(n0,const(-1))), a)
         }
 
+        def lubfun(a: GVal, b: GVal)(fsym: GVal): Unit = (a,b) match {
+          case (a,b) if a == b => a
+          case (Def(DMap(m1)), Def(DMap(m2))) => 
+            (m1.keys ++ m2.keys) foreach { k => lubfun(select(a,k),select(b,k))(mkey(fsym,k)) }
+          case _ => 
+            globalDefs = globalDefs filterNot (_._1 == fsym.toString)
+            rebuildGlobalDefsCache()
+            fun(fsym.toString, n0.toString, b)
+        }
 
       var init = before
       def iter: GVal = {
@@ -1064,6 +1073,8 @@ TODO:
 
         println(s"lub($before, $afterB) = $gen")
         if (init != gen) { init = gen; iter } else {
+
+          lubfun(before, afterB)(loop)
 
         // TODO: clarify intended semantics!
         // Is elem 0 the value after 0 iterations,
