@@ -1024,15 +1024,22 @@ TODO:
             val m = (m1.keys ++ m2.keys) map { k => (k, lub(select(a,k),select(b,k))(mkey(fsym,k))) }
             println(m)
             map(m.toMap)
-          case _ => 
-            val b0 = iff(less(const(0), n0), subst(b,n0,plus(n0,const(-1))), a) // one less ...
-            val d = plus(b,times(b0,const(-1))) // TODO: proper diff operator
-            println(s"delta $fsym: $b-$b0 = $d")
-            if (!IRD.dependsOn(d, n0)) {
-              println(s"delta invariant of $n0")
-              iff(less(const(0), n0), plus(a,times(n0,d)), a)
-            } else
+          case _ if !IRD.dependsOn(b, n0) => 
+            val d = plus(b,times(a,const(-1))) // TODO: proper diff operator
+            iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a)
+          case _ => // b depends on loop var
+            val b1 = iff(less(const(0), n0), b, a)
+            val d = const(1) //HACK: guess. TODO: diff op
+            val compare = iff(less(const(0), n0), plus(a,times(n0,d)), a)
+              IRD.printTerm(b1)
+              IRD.printTerm(compare)
+
+            if (b1 == compare) {
+              println("confirmed iterative loop")
+              iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a)
+            } else {
               iff(less(const(0), n0), call(fsym,plus(n0,const(-1))), a)
+            }
         }
 
         def lubfun(a: GVal, b: GVal)(fsym: GVal): Unit = (a,b) match {
