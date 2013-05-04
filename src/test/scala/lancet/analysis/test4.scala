@@ -190,6 +190,7 @@ TODO:
       def post(x: String): String = x
       var rec: List[String] = Nil
       def reset = rec = Nil // HACK
+      def scope[T](a: =>T): T = { reset; a }
       override def fun(f: String, x: String, y: From) = if (rec contains f) f else {
         rec ::= f; reflect(f,next.fun(f,x,pre(y)))
       }
@@ -236,10 +237,7 @@ TODO:
       }
 
       def printStm(p: (String,Def)) = println(s"val ${p._1} = ${p._2}")
-      def printTerm(p: GVal) = {
-        IRS_Term.reset
-        println(mirrorDef(findDefinition(p.toString).get,IRS_Term))
-      }
+      def printTerm(p: GVal) = println(IRS_Term.scope(IRS_Term.pre(p)))
 
       def dependsOn(a: GVal, b: GVal) = schedule(a).exists(p => GRef(p._1) == b || syms(p._2).contains(b.toString))
 
