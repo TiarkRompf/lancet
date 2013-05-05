@@ -1025,9 +1025,16 @@ TODO:
             println(m)
             map(m.toMap)
           case _ if !IRD.dependsOn(b, n0) => 
+            // value after the loop does not depend on loop index (but differ from val before loop).
+            // we're probably in the first iteration, with a and b constants.
+            // widen: assume a linear correspondence, with d = b - a
             val d = plus(b,times(a,const(-1))) // TODO: proper diff operator
             iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a)
-          case _ => // b depends on loop var
+          case _ =>
+            // value after the loop (b) does depend on loop index and differs from val before loop.
+            // look at difference. see if symbolic values before/after are generalized in a corresponding way.
+            // widen: compute new symbolic val before from symbolic val after (e.g. closed form)
+            // if that's not possible, widen to explicit recursive form.
             val b1 = iff(less(const(0), n0), b, a)
             val b0 = subst(b1,n0,plus(n0,const(-1))) // take from 'init'?
             val d1 = plus(b1,times(b0,const(-1)))
