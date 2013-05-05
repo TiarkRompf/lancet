@@ -1029,9 +1029,13 @@ TODO:
             iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a)
           case _ => // b depends on loop var
             val b1 = iff(less(const(0), n0), b, a)
+            val b0 = subst(b1,n0,plus(n0,const(-1))) // take from 'init'?
+            val d1 = plus(b1,times(b0,const(-1)))
             val d = const(1) //HACK: guess. TODO: diff op
             val compare = iff(less(const(0), n0), plus(a,times(n0,d)), a)
+              IRD.printTerm(b0)
               IRD.printTerm(b1)
+              IRD.printTerm(d1)
               IRD.printTerm(compare)
 
             if (b1 == compare) {
