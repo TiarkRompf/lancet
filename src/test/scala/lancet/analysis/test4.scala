@@ -1042,19 +1042,29 @@ TODO:
             val b1 = iff(less(const(0), n0), b, a)
             val b0 = subst(b1,n0,plus(n0,const(-1))) // take from 'init'?
             val d1 = plus(b1,times(b0,const(-1)))
-            val d = const(1) //HACK: guess. TODO: diff op
-            val compare = iff(less(const(0), n0), plus(a,times(n0,d)), a)
-              IRD.printTerm(b0)
-              IRD.printTerm(b1)
-              IRD.printTerm(d1)
-              IRD.printTerm(compare)
 
-            if (b1 == compare) {
-              println("confirmed iterative loop")
-              iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a)
-            } else {
-              iff(less(const(0), n0), call(fsym,plus(n0,const(-1))), a)
+            IRD.printTerm(b0)
+            IRD.printTerm(b1)
+            IRD.printTerm(d1)
+
+            // d1 will have form if (0 < n) d else 0
+            d1 match {
+              case Def(DIf(Def(DLess(GConst(0), n0)), d, GConst(0))) if !IRD.dependsOn(d, n0) => 
+                println(s"confirmed iterative loop, d = $d")
+                iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a)
+              case _ =>
+                println(s"giving up; recursive fun $fsym")
+                iff(less(const(0), n0), call(fsym,plus(n0,const(-1))), a)
             }
+
+
+            //val compare = iff(less(const(0), n0), plus(a,times(n0,d)), a)
+            //if (b1 == compare) {
+            //  println("confirmed iterative loop")
+            //  iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a)
+            //} else {
+            //  iff(less(const(0), n0), call(fsym,plus(n0,const(-1))), a)
+            //}
         }
 
         def lubfun(a: GVal, b: GVal)(fsym: GVal): Unit = (a,b) match {
