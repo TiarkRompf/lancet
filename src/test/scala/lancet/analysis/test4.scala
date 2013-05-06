@@ -1046,6 +1046,9 @@ TODO:
             IRD.printTerm(b0)
             IRD.printTerm(b1)
             IRD.printTerm(d1)
+            // TODO:
+            // 1) piece-wise functions: if (i < 17) f(i) else g(i)
+            // 2) degree > 1, e.g. summing the loop var
 
             // d1 will have form if (0 < n) d else 0
             d1 match {
