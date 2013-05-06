@@ -647,6 +647,8 @@ TODO:
         // random simplifications ...
         case (GConst(c),b:GRef) => plus(b,const(c)) // CAVE: non-int consts!
         case (Def(DPlus(a,b)),_) => plus(a,plus(b,y))
+        case (a,Def(DTimes(a1,GConst(-1)))) if a == a1 => const(0) // a + (a * -1) --> 0
+        case (a,Def(DPlus(Def(DTimes(a1,GConst(-1))),c))) if a == a1 => c // a + (a * -1) + c --> c
         //case (Def(DTimes(a,GConst(-1))),GConst(c:Int)) => plus(a,GConst(-c)) //(-a+c)=-(-c+a)
         case _ => super.plus(x,y)
       }
