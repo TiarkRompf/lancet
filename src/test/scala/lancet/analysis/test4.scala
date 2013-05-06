@@ -1022,14 +1022,14 @@ TODO:
           case GRef(s) => GRef(f+"_"+s)
         }
 
-        def lub(a: GVal, b: GVal)(fsym: GVal): GVal = (a,b) match {
+        def lub(a: GVal, b: GVal)(fsym: GVal): GVal = { println(s"lub_$fsym($a,$b)"); (a,b)} match {
           case (a,b) if a == b => a
           case (Def(DMap(m1)), Def(DMap(m2))) => 
             val m = (m1.keys ++ m2.keys) map { k => (k, lub(select(a,k),select(b,k))(mkey(fsym,k))) }
             println(m)
             map(m.toMap)
           case _ if !IRD.dependsOn(b, n0) => 
-            // value after the loop does not depend on loop index (but differ from val before loop).
+            // value after the loop does not depend on loop index (but differs from val before loop).
             // we're probably in the first iteration, with a and b constants.
             // widen: assume a linear correspondence, with d = b - a
             val d = plus(b,times(a,const(-1))) // TODO: proper diff operator
