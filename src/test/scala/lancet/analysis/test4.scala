@@ -1028,6 +1028,11 @@ TODO:
             val m = (m1.keys ++ m2.keys) map { k => (k, lub(select(a,k),select(b,k))(mkey(fsym,k))) }
             println(m)
             map(m.toMap)
+          case (a,Def(DIf(c,x,y))) if c != less(const(0), n0) /*if false XX*/=>
+            // loop unswitching: treat branches separately
+            // TODO: presumably the condition needs to fulfill some conditions for this to be valid - which?
+            // simplest case: c < n, n < c
+            iff(c, lub(a,x)(GRef(fsym.toString+"_+"+c)), lub(a,y)(GRef(fsym.toString+"_-"+c)))
           case _ if !IRD.dependsOn(b, n0) => 
             // value after the loop does not depend on loop index (but differs from val before loop).
             // we're probably in the first iteration, with a and b constants.
