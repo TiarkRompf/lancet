@@ -1045,7 +1045,7 @@ TODO:
             // widen: compute new symbolic val before from symbolic val after (e.g. closed form)
             // if that's not possible, widen to explicit recursive form.
             val b1 = iff(less(const(0), n0), b, a)
-            val b0 = subst(b1,n0,plus(n0,const(-1))) // take from 'init'?
+            val b0 = iff(less(const(0), n0), subst(subst(b,less(const(0),n0),const(1)),n0,plus(n0,const(-1))), a) // take from 'init'?
             val d1 = plus(b1,times(b0,const(-1)))
 
             IRD.printTerm(b0)
@@ -1064,7 +1064,6 @@ TODO:
                 println(s"giving up; recursive fun $fsym")
                 iff(less(const(0), n0), call(fsym,plus(n0,const(-1))), a)
             }
-
 
             //val compare = iff(less(const(0), n0), plus(a,times(n0,d)), a)
             //if (b1 == compare) {
