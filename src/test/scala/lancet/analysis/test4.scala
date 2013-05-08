@@ -1022,33 +1022,40 @@ TODO:
           case GRef(s) => GRef(f+"_"+s)
         }
 
-        def lub(a: GVal, b: GVal)(fsym: GVal): GVal = { println(s"lub_$fsym($a,$b)"); (a,b)} match {
-          case (a,b) if a == b => a
-          case (Def(DMap(m1)), Def(DMap(m2))) => 
-            val m = (m1.keys ++ m2.keys) map { k => (k, lub(select(a,k),select(b,k))(mkey(fsym,k))) }
+        // a: value before loop. b0: value before iteration. b1: value after iteration. 
+        // returns: new values before,after
+        def lub(a: GVal, b0: GVal, b1: GVal)(fsym: GVal): (GVal, GVal) = { println(s"lub_$fsym($a,$b0,$b1)"); (a,b0,b1) } match {
+          case (a,b0,b1) if a == b1 => (a,a)
+          case (Def(DMap(m0)), Def(DMap(m1)), Def(DMap(m2))) => 
+            val m = (m0.keys ++ m1.keys ++ m2.keys) map { k => (k, lub(select(a,k),select(b0,k),select(b1,k))(mkey(fsym,k))) }
             println(m)
-            map(m.toMap)
-          case (a,Def(DIf(c,x,y))) if c != less(const(0), n0) /*if false XX*/=>
+            (map(m.map(kv=>(kv._1,kv._2._1)).toMap), map(m.map(kv=>(kv._1,kv._2._2)).toMap))
+          case (a,Def(DIf(c0,x0,y0)),Def(DIf(c1,x1,y1))) if c1 != less(const(0), n0) /*if false XX*/=>
             // loop unswitching: treat branches separately
             // TODO: presumably the condition needs to fulfill some conditions for this to be valid - which?
             // simplest case: c < n, n < c
 
-            print(s"break down if (base $a): "); IRD.printTerm(b)
+            print(s"break down if (base $a): "); IRD.printTerm(b1)
 
-            iff(c, lub(a,x)(GRef(fsym.toString+"_+"+c)), lub(a,y)(GRef(fsym.toString+"_-"+c)))
-          case _ if !IRD.dependsOn(b, n0) => 
+            val (zx0,zx1) = lub(a,x0,x1)(GRef(fsym.toString+"_+"+c1))
+            val (zy0,zy1) = lub(a,y0,y1)(GRef(fsym.toString+"_-"+c1))
+
+            (iff(c1, zx0, zx1), iff(c1, zy0, zy1))
+          case _ if !IRD.dependsOn(b1, n0) => 
             // value after the loop does not depend on loop index (but differs from val before loop).
             // we're probably in the first iteration, with a and b constants.
             // widen: assume a linear correspondence, with d = b - a
-            val d = plus(b,times(a,const(-1))) // TODO: proper diff operator
-            iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a)
+            val d = plus(b1,times(a,const(-1))) // TODO: proper diff operator
+            println(s"try iterative loop, d = $d")
+            (iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a),
+             iff(less(const(0), n0), plus(a,times(n0,d)), a))
           case _ =>
             // value after the loop (b) does depend on loop index and differs from val before loop.
             // look at difference. see if symbolic values before/after are generalized in a corresponding way.
             // widen: compute new symbolic val before from symbolic val after (e.g. closed form)
             // if that's not possible, widen to explicit recursive form.
-            val b0 = iff(less(const(0), n0), subst(subst(b,less(const(0),n0),const(1)),n0,plus(n0,const(-1))), a) // take from 'init'?
-            val b1 = iff(less(const(0), n0), b, a)
+            //val b0 = iff(less(const(0), n0), subst(subst(b,less(const(0),n0),const(1)),n0,plus(n0,const(-1))), a) // take from 'init'?
+            //val b1 = iff(less(const(0), n0), b, a)
             val d1 = plus(b1,times(b0,const(-1)))
 
             IRD.printTerm(b0)
@@ -1062,10 +1069,12 @@ TODO:
             d1 match {
               case Def(DIf(Def(DLess(GConst(0), n0)), d, GConst(0))) if !IRD.dependsOn(d, n0) => 
                 println(s"confirmed iterative loop, d = $d")
-                iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a)
+                (iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a),
+                 iff(less(const(0), n0), plus(a,times(n0,d)), a))
               case _ =>
                 println(s"giving up; recursive fun $fsym")
-                iff(less(const(0), n0), call(fsym,plus(n0,const(-1))), a)
+                (iff(less(const(0), n0), call(fsym,plus(n0,const(-1))), a),
+                 iff(less(const(0), n0), call(fsym,n0), a))
             }
 
             //val compare = iff(less(const(0), n0), plus(a,times(n0,d)), a)
@@ -1102,7 +1111,7 @@ TODO:
 
         println(s"lub($before, $afterB) = ?")
 
-        val gen = lub(before, afterB)(loop)
+        val (gen,next) = lub(before, init, afterB)(loop)
 
         println(s"lub($before, $afterB) = $gen")
         if (init != gen) { init = gen; iter } else {
