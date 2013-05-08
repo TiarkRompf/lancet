@@ -1071,6 +1071,17 @@ TODO:
                 println(s"confirmed iterative loop, d = $d")
                 (plus(a,times(plus(n0,const(-1)),d)),
                  plus(a,times(n0,d)))
+              // e.g. if (n < 18) 1 else 0
+              case Def(DIf(Def(DLess(`n0`, up)), dx, dy))
+                if !IRD.dependsOn(up, n0) && !IRD.dependsOn(dx, n0) && !IRD.dependsOn(dy, n0) => 
+                val (u0,u1) = 
+                (plus(a,times(plus(n0,const(-1)),dx)),
+                 plus(a,times(n0,dx)))
+                val n0minusUp = plus(n0,times(up,const(-1)))
+                val (v0,v1) = 
+                (plus(times(up,dx),times(plus(n0minusUp,const(-1)),dy)),
+                 plus(times(up,dx),times(n0minusUp,dy)))
+                (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1))
               case _ =>
                 println(s"giving up; recursive fun $fsym")
                 (call(fsym,plus(n0,const(-1))),
