@@ -1032,6 +1032,9 @@ TODO:
             // loop unswitching: treat branches separately
             // TODO: presumably the condition needs to fulfill some conditions for this to be valid - which?
             // simplest case: c < n, n < c
+
+            print(s"break down if (base $a): "); IRD.printTerm(b)
+
             iff(c, lub(a,x)(GRef(fsym.toString+"_+"+c)), lub(a,y)(GRef(fsym.toString+"_-"+c)))
           case _ if !IRD.dependsOn(b, n0) => 
             // value after the loop does not depend on loop index (but differs from val before loop).
@@ -1044,8 +1047,8 @@ TODO:
             // look at difference. see if symbolic values before/after are generalized in a corresponding way.
             // widen: compute new symbolic val before from symbolic val after (e.g. closed form)
             // if that's not possible, widen to explicit recursive form.
-            val b1 = iff(less(const(0), n0), b, a)
             val b0 = iff(less(const(0), n0), subst(subst(b,less(const(0),n0),const(1)),n0,plus(n0,const(-1))), a) // take from 'init'?
+            val b1 = iff(less(const(0), n0), b, a)
             val d1 = plus(b1,times(b0,const(-1)))
 
             IRD.printTerm(b0)
@@ -1438,3 +1441,17 @@ TODO:
 
 
 }
+
+
+
+/*
+
+McCarthy's 91 program:
+
+MC(n)= if (n>100) n-10 else MC(MC(n + 11)) // n ≤ 100
+
+equivalent to:
+
+MC(n)= (n>100) n-10 else 91
+
+*/
