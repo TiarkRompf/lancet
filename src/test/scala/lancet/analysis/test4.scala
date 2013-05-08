@@ -730,8 +730,8 @@ TODO:
                 println(s"### strange if $c $x $y")
                 return x
               }*/
-
-              super.iff(c,thenp,elsep)
+              if (thenp == elsep) thenp
+              else super.iff(c,thenp,elsep)
           }
       }
 
