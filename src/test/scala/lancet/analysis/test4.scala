@@ -1067,16 +1067,19 @@ TODO:
             // 2) degree > 1, e.g. summing the loop var
 
             // d1 will have form if (0 < n) d else 0
-            d1 match {
+            val (r0,r1) = d1 match {
               case d if !IRD.dependsOn(d, n0) => 
                 println(s"confirmed iterative loop, d = $d")
-                (iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a),
-                 iff(less(const(0), n0), plus(a,times(n0,d)), a))
+                (plus(a,times(plus(n0,const(-1)),d)),
+                 plus(a,times(n0,d)))
               case _ =>
                 println(s"giving up; recursive fun $fsym")
-                (iff(less(const(0), n0), call(fsym,plus(n0,const(-1))), a),
-                 iff(less(const(0), n0), call(fsym,n0), a))
+                (call(fsym,plus(n0,const(-1))),
+                 call(fsym,n0))
             }
+
+            def wrapZero(x: GVal): GVal = iff(less(const(0), n0), x, a)
+            (wrapZero(r0), wrapZero(r1))
 
             //val compare = iff(less(const(0), n0), plus(a,times(n0,d)), a)
             //if (b1 == compare) {
