@@ -1066,7 +1066,6 @@ TODO:
             // 1) piece-wise functions: if (i < 17) f(i) else g(i)
             // 2) degree > 1, e.g. summing the loop var
 
-            // d1 will have form if (0 < n) d else 0
             val (r0,r1) = d1 match {
               case d if !IRD.dependsOn(d, n0) => 
                 println(s"confirmed iterative loop, d = $d")
@@ -1080,14 +1079,6 @@ TODO:
 
             def wrapZero(x: GVal): GVal = iff(less(const(0), n0), x, a)
             (wrapZero(r0), wrapZero(r1))
-
-            //val compare = iff(less(const(0), n0), plus(a,times(n0,d)), a)
-            //if (b1 == compare) {
-            //  println("confirmed iterative loop")
-            //  iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a)
-            //} else {
-            //  iff(less(const(0), n0), call(fsym,plus(n0,const(-1))), a)
-            //}
         }
 
         def lubfun(a: GVal, b: GVal)(fsym: GVal): Unit = (a,b) match {
