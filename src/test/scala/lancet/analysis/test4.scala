@@ -1042,14 +1042,16 @@ TODO:
             val (zy0,zy1) = lub(a,y0,y1)(GRef(fsym.toString+"_-"+c1))
 
             (iff(c0, zx0, zy0), iff(c1, zx1, zy1))
-          case _ if !IRD.dependsOn(b1, n0) => 
+          case _ if !IRD.dependsOn(b1, n0) && false /*disable*/=> 
             // value after the loop does not depend on loop index (but differs from val before loop).
             // we're probably in the first iteration, with a and b constants.
             // widen: assume a linear correspondence, with d = b - a
-            val d = plus(b1,times(a,const(-1))) // TODO: proper diff operator
+            val d = plus(b1,times(b0,const(-1))) // TODO: proper diff operator
             println(s"try iterative loop, d = $d")
-            (iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a),
-             iff(less(const(0), n0), plus(a,times(n0,d)), a))
+            //(iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a),
+            // iff(less(const(0), n0), plus(a,times(n0,d)), a))
+            (plus(a,times(plus(n0,const(-1)),d)),
+             plus(a,times(n0,d)))
           case _ =>
             // value after the loop (b) does depend on loop index and differs from val before loop.
             // look at difference. see if symbolic values before/after are generalized in a corresponding way.
@@ -1065,6 +1067,8 @@ TODO:
             // TODO:
             // 1) piece-wise functions: if (i < 17) f(i) else g(i)
             // 2) degree > 1, e.g. summing the loop var
+
+            def wrapZero(x: GVal): GVal = iff(less(const(0), n0), x, a)
 
             val (r0,r1) = d1 match {
               case d if !IRD.dependsOn(d, n0) => 
@@ -1084,12 +1088,11 @@ TODO:
                 (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1))
               case _ =>
                 println(s"giving up; recursive fun $fsym")
-                (call(fsym,plus(n0,const(-1))),
-                 call(fsym,n0))
+                (wrapZero(call(fsym,plus(n0,const(-1)))),
+                 wrapZero(call(fsym,n0)))
             }
 
-            def wrapZero(x: GVal): GVal = iff(less(const(0), n0), x, a)
-            (wrapZero(r0), wrapZero(r1))
+            (r0,r1) //wrapZero?
         }
 
         def lubfun(a: GVal, b: GVal)(fsym: GVal): Unit = (a,b) match {
