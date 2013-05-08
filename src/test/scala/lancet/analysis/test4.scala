@@ -1030,7 +1030,7 @@ TODO:
             val m = (m0.keys ++ m1.keys ++ m2.keys) map { k => (k, lub(select(a,k),select(b0,k),select(b1,k))(mkey(fsym,k))) }
             println(m)
             (map(m.map(kv=>(kv._1,kv._2._1)).toMap), map(m.map(kv=>(kv._1,kv._2._2)).toMap))
-          case (a,Def(DIf(c0,x0,y0)),Def(DIf(c1,x1,y1))) if c0 == c1 && c1 != less(const(0), n0) /*if false XX*/=>
+          case (a,Def(DIf(c0,x0,y0)),Def(DIf(c1,x1,y1))) if c0 == c1 && false /*disable*/=>
             // loop unswitching: treat branches separately
             // TODO: presumably the condition needs to fulfill some conditions for this to be valid - which?
             // simplest case: c < n, n < c
