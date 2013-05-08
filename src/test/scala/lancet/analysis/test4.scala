@@ -1068,7 +1068,7 @@ TODO:
 
             // d1 will have form if (0 < n) d else 0
             d1 match {
-              case Def(DIf(Def(DLess(GConst(0), n0)), d, GConst(0))) if !IRD.dependsOn(d, n0) => 
+              case d if !IRD.dependsOn(d, n0) => 
                 println(s"confirmed iterative loop, d = $d")
                 (iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a),
                  iff(less(const(0), n0), plus(a,times(n0,d)), a))
