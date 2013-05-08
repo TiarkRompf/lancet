@@ -1041,7 +1041,7 @@ TODO:
             val (zx0,zx1) = lub(a,x0,x1)(GRef(fsym.toString+"_+"+c1))
             val (zy0,zy1) = lub(a,y0,y1)(GRef(fsym.toString+"_-"+c1))
 
-            (iff(c1, zx0, zx1), iff(c1, zy0, zy1))
+            (iff(c0, zx0, zy0), iff(c1, zx1, zy1))
           case _ if !IRD.dependsOn(b1, n0) => 
             // value after the loop does not depend on loop index (but differs from val before loop).
             // we're probably in the first iteration, with a and b constants.
