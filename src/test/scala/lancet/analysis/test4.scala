@@ -1150,8 +1150,11 @@ TODO:
         }
 
       var init = before
+      var path = Nil: List[GVal]
       def iter: GVal = {
         println(s"starting spec loop with $init")
+        assert(!path.contains(init), "hitting recursion: "+(init::path))
+        path = init::path
 
         store = init
 
