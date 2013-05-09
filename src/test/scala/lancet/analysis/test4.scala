@@ -201,7 +201,7 @@ TODO:
       type From = GVal
       type To = GVal
       val next = DDef
-      def const(x: Any) = GConst(x)
+      //def const(x: Any) = GConst(x)
       def pre(x: GVal) = x
       def post(x: Def): GVal = dreflect(x)
       //override def fun(f: String, x: String, y: From) = dreflect(f,next.fun(f,x,pre(y)))
@@ -598,7 +598,6 @@ TODO:
         case _                   => x // TOOD
       }
 
-
       override def update(x: From, f: From, y: From): From = x match {
         case GConst("undefined") => update(dreflect(DMap(Map())),f,y) // f may be non-const
         //case GConst("undefined") => x 
@@ -639,11 +638,15 @@ TODO:
         case Def(DIf(c,x,y)) => iff(c,select(x,f),select(y,f))
         case _ => super.select(x,f)
       }
+      def const(x: Any) = x match {
+        case x: Double if x.toInt.toDouble == x => GConst(x.toInt)
+        case _ => GConst(x)
+      }
       override def plus(x: From, y: From)            = (x,y) match {
-        case (GConst(x:Int),GConst(y:Int))       => GConst(x+y)
-        case (GConst(x:Double),GConst(y:Int))    => GConst(x+y)
-        case (GConst(x:Int),GConst(y:Double))    => GConst(x+y)
-        case (GConst(x:Double),GConst(y:Double)) => GConst(x+y)
+        case (GConst(x:Int),GConst(y:Int))       => const(x+y)
+        case (GConst(x:Double),GConst(y:Int))    => const(x+y)
+        case (GConst(x:Int),GConst(y:Double))    => const(x+y)
+        case (GConst(x:Double),GConst(y:Double)) => const(x+y)
         case (GConst(0),_) => y
         case (_,GConst(0)) => x
         case (Def(DIf(c,x,z)),_) => iff(c,plus(x,y),plus(z,y))
@@ -660,10 +663,10 @@ TODO:
         case _ => super.plus(x,y)
       }
       override def times(x: From, y: From)            = (x,y) match {
-        case (GConst(x:Int),GConst(y:Int))       => GConst(x*y)
-        case (GConst(x:Double),GConst(y:Int))    => GConst((x*y).toInt) // hacky...
-        case (GConst(x:Int),GConst(y:Double))    => GConst((x*y).toInt) // hacky...
-        case (GConst(x:Double),GConst(y:Double)) => GConst((x*y).toInt) // hacky...
+        case (GConst(x:Int),GConst(y:Int))       => const(x*y)
+        case (GConst(x:Double),GConst(y:Int))    => const(x*y)
+        case (GConst(x:Int),GConst(y:Double))    => const(x*y)
+        case (GConst(x:Double),GConst(y:Double)) => const(x*y)
         case (GConst(0),_) => GConst(0)
         case (_,GConst(0)) => GConst(0)
         case (GConst(1),_) => y
