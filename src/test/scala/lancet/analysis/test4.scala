@@ -1126,11 +1126,18 @@ TODO:
                     println(s"found deriv $c")
                     // c * n/2*(n+1)
 
+                    // TODO: include c and cst. these may be wrong in the first 
+                    // iteration, when we go from n to n*n
+
                     val r0 = times(times(plus(n0,const(-1)),n0),const(0.5))
                     val r1 = times(times(n0,plus(n0,const(1))),const(0.5))
 
+                    IRD.printTerm(r0)
+                    IRD.printTerm(r1)
+
+                    val cst = const(0)
                     (plus(a,plus(cst,r0)),
-                     plus(a,plus(cst,r1)))
+                     plus(a,plus(cst,r1))) // assert that diff is correct?
                   case xx =>
                     println(s"giving up: deriv $xx; recursive fun $fsym")
                     (wrapZero(call(fsym,plus(n0,const(-1)))),
@@ -1308,7 +1315,7 @@ TODO:
       Assign("z2", Const(0)),
       While(Less(Const(0), Ref("x")), Block(List(
         Assign("z", Plus(Ref("z"), Ref("x"))),
-        Assign("z2", Plus(Ref("z"), Plus(Times(Ref("x"),Const(2)), Const(5)))),
+        Assign("z2", Plus(Ref("z2"), Plus(Times(Ref("x"),Const(3)), Const(5)))),
         If(Less(Ref("y"),Const(17)), 
           Block(List(
             Assign("y", Plus(Ref("y"), Const(1)))
