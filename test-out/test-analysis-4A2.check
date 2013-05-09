@@ -15,21 +15,6 @@ val x7 = Map("&x" -> x1, "&a" -> x4, (A,1) -> x6)
 val x8 = Map("&x" -> x1, "&a" -> x4, (A,1) -> x6, "&r" -> x4)
 res: ()
 store: x8
-*** begin iterate split funcs: x8
-funs:
-calls:
-subst: Map()
-zeros: Map()
-xform: Map()
-*** done iterate split funcs: x8
-*** begin iterate loop inv: x8
-funs:
-calls:
-subst: Map()
-zeros: Map()
-exclude: Set()
-xform: Map()
-*** done iterate loop inv: x8
 transformed: x8
 sched:
 val x6 = Map("field" -> 0)
@@ -56,21 +41,6 @@ val x7 = Map("&x" -> x1, "&a" -> x4, (A,1) -> x6)
 val x8 = Map("&x" -> x1, "&a" -> x4, (A,1) -> x6, "&r" -> x4)
 res: ()
 store: x8
-*** begin iterate split funcs: x8
-funs:
-calls:
-subst: Map()
-zeros: Map()
-xform: Map()
-*** done iterate split funcs: x8
-*** begin iterate loop inv: x8
-funs:
-calls:
-subst: Map()
-zeros: Map()
-exclude: Set()
-xform: Map()
-*** done iterate loop inv: x8
 transformed: x8
 sched:
 val x6 = Map(0 -> 0)
