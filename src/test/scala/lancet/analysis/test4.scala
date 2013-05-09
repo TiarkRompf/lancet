@@ -1119,25 +1119,27 @@ TODO:
               // no simple structure
               case d =>
 
-                println("poly: " + poly(d1))
                 val pp = poly(d1).reverse.dropWhile(_ == const(0)).reverse // dropRightWhile
+                println("poly: " + pp)
                 pp match {
-                  case List(cst, GConst(c:Int)) =>
-                    println(s"found deriv $c")
-                    // c * n/2*(n+1)
+                  case List(coeff0, coeff1) =>
+                    println(s"found 2nd order polynomial: f'($n0)=$coeff1*$n0+$coeff0 -> f($n0)=$coeff1*$n0/2($n0+1)+$coeff0*$n0")
+                    // c1 * n/2*(n+1) + c0 * n
 
-                    // TODO: include c and cst. these may be wrong in the first 
-                    // iteration, when we go from n to n*n
+                    val r0 = plus(times(times(times(plus(n0,const(-1)),n0),const(0.5)), coeff1), times(plus(n0,const(-1)), coeff0))
+                    val r1 = plus(times(times(times(n0,plus(n0,const(1))),const(0.5)), coeff1), times(n0, coeff0))
 
-                    val r0 = times(times(plus(n0,const(-1)),n0),const(0.5))
-                    val r1 = times(times(n0,plus(n0,const(1))),const(0.5))
-
+                    // sanity check that we get the same diff
                     IRD.printTerm(r0)
                     IRD.printTerm(r1)
+                    val dd = plus(r1,times(r0, const(-1)))
+                    IRD.printTerm(dd)
+                    val pp2 = poly(dd).reverse.dropWhile(_ == const(0)).reverse // dropRightWhile
+                    println("poly2: " + pp2)
+                    assert(pp === pp2)
 
-                    val cst = const(0)
-                    (plus(a,plus(cst,r0)),
-                     plus(a,plus(cst,r1))) // assert that diff is correct?
+                    (plus(a,r0),
+                     plus(a,r1))
                   case xx =>
                     println(s"giving up: deriv $xx; recursive fun $fsym")
                     (wrapZero(call(fsym,plus(n0,const(-1)))),
