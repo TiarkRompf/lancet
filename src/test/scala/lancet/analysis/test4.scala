@@ -1115,7 +1115,7 @@ TODO:
                 val (v0,v1) = 
                 (plus(times(up,dx),times(plus(n0minusUp,const(-1)),dy)),
                  plus(times(up,dx),times(n0minusUp,dy)))
-                (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1))
+                (iff(less(plus(n0,const(-1)),up), u0, v0), iff(less(n0,up), u1, v1))
               // no simple structure
               case d =>
 
