@@ -1074,9 +1074,6 @@ TODO:
             IRD.printTerm(b0)
             IRD.printTerm(b1)
             IRD.printTerm(d1)
-            // TODO:
-            // 1) piece-wise functions: if (i < 17) f(i) else g(i)
-            // 2) degree > 1, e.g. summing the loop var
 
             def deriv(x: GVal): GVal = x match {
               case GConst(_) => const(0)
@@ -1088,13 +1085,18 @@ TODO:
 
             def poly(x: GVal): List[GVal] = x match {
               case `n0` => List(const(0),const(1))
-              case Def(DTimes(`n0`,y)) => const(0)::poly(y)
+              case Def(DTimes(`n0`,y)) => 
+                val py = poly(y)
+                if (py.isEmpty) Nil else const(0)::py
               case Def(DPlus(a,b)) => 
                 val (pa,pb) = (poly(a),poly(b))
-                val degree = pa.length max pb.length
-                (pa.padTo(degree,const(0)),pb.padTo(degree,const(0))).zipped map plus
+                if (pa.isEmpty || pb.isEmpty) Nil else {
+                  val degree = pa.length max pb.length
+                  (pa.padTo(degree,const(0)),pb.padTo(degree,const(0))).zipped.map(plus)
+                    .reverse.dropWhile(_ == const(0)).reverse // dropRightWhile
+                }
               case _ if !IRD.dependsOn(x, n0) => List(x)
-              case _ => Nil
+              case _ => Nil // marker: not a simple polynomial
             }
 
             def wrapZero(x: GVal): GVal = iff(less(const(0), n0), x, a)
@@ -1119,7 +1121,7 @@ TODO:
               // no simple structure
               case d =>
 
-                val pp = poly(d1).reverse.dropWhile(_ == const(0)).reverse // dropRightWhile
+                val pp = poly(d1)
                 println("poly: " + pp)
                 pp match {
                   case List(coeff0, coeff1) =>
@@ -1134,7 +1136,7 @@ TODO:
                     IRD.printTerm(r1)
                     val dd = plus(r1,times(r0, const(-1)))
                     IRD.printTerm(dd)
-                    val pp2 = poly(dd).reverse.dropWhile(_ == const(0)).reverse // dropRightWhile
+                    val pp2 = poly(dd)
                     println("poly2: " + pp2)
                     assert(pp === pp2)
 
