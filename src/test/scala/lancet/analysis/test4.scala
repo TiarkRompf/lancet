@@ -1081,11 +1081,12 @@ TODO:
             def wrapZero(x: GVal): GVal = iff(less(const(0), n0), x, a)
 
             val (r0,r1) = d1 match {
+              // loop invariant stride, i.e. constant delta i.e. linear in loop index
               case d if !IRD.dependsOn(d, n0) => 
                 println(s"confirmed iterative loop, d = $d")
                 (plus(a,times(plus(n0,const(-1)),d)),
                  plus(a,times(n0,d)))
-              // e.g. if (n < 18) 1 else 0
+              // piece-wise linear, e.g. if (n < 18) 1 else 0
               case Def(DIf(Def(DLess(`n0`, up)), dx, dy))
                 if !IRD.dependsOn(up, n0) && !IRD.dependsOn(dx, n0) && !IRD.dependsOn(dy, n0) => 
                 val (u0,u1) = 
