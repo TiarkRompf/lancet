@@ -1302,8 +1302,10 @@ TODO:
       Assign("x", Const(900)), // input
       Assign("y", Const(0)),
       Assign("z", Const(0)),
+      Assign("z2", Const(0)),
       While(Less(Const(0), Ref("x")), Block(List(
         Assign("z", Plus(Ref("z"), Ref("x"))),
+        Assign("z2", Plus(Ref("z"), Plus(Times(Ref("x"),Const(2)), Const(5)))),
         If(Less(Ref("y"),Const(17)), 
           Block(List(
             Assign("y", Plus(Ref("y"), Const(1)))
