@@ -1152,12 +1152,14 @@ TODO:
             (r0,r1) //wrapZero?
         }
 
-        def lubfun(a: GVal, b: GVal)(fsym: GVal): Unit = (a,b) match {
-          case (a,b) if a == b => 
+        def lubfun(a: GVal, b: GVal)(fsym: GVal): GVal = (a,b) match {
+          case (a,b) if a == b => a
           case (Def(DMap(m1)), Def(DMap(m2))) => 
-            (m1.keys ++ m2.keys) foreach { k => lubfun(select(a,k),select(b,k))(mkey(fsym,k)) }
+            val m = (m1.keys ++ m2.keys) map { k => k -> lubfun(select(a,k),select(b,k))(mkey(fsym,k)) }
+            map(m.toMap)
           case _ => 
-            fun(fsym.toString, n0.toString, b)
+            fun(fsym.toString, n0.toString, b) // insert explicit zero case here??
+            call(fsym,n0)
         }
 
       var init = before
@@ -1185,7 +1187,7 @@ TODO:
         println(s"lub($before, $afterB) = $gen")
         if (init != gen) { init = gen; iter } else {
 
-          lubfun(before, afterB)(loop)
+          store = lubfun(before, afterB)(loop)
 
         // TODO: clarify intended semantics!
         // Is elem 0 the value after 0 iterations,
@@ -1225,6 +1227,8 @@ TODO:
         fun(loop.toString, n0.toString, store)
 
         val nX = fixindex(n0.toString, cv) // TODO: check this ...
+        println(s"fixindex: $nX")
+
         store = call(loop,nX)
         val cv1 = eval(c)
         store = subst(store,cv1,const(0)) // assertFalse
