@@ -640,7 +640,10 @@ TODO:
         case _ => super.select(x,f)
       }
       override def plus(x: From, y: From)            = (x,y) match {
-        case (GConst(x:Int),GConst(y:Int)) => GConst(x+y)
+        case (GConst(x:Int),GConst(y:Int))       => GConst(x+y)
+        case (GConst(x:Double),GConst(y:Int))    => GConst(x+y)
+        case (GConst(x:Int),GConst(y:Double))    => GConst(x+y)
+        case (GConst(x:Double),GConst(y:Double)) => GConst(x+y)
         case (GConst(0),_) => y
         case (_,GConst(0)) => x
         case (Def(DIf(c,x,z)),_) => iff(c,plus(x,y),plus(z,y))
@@ -657,8 +660,10 @@ TODO:
         case _ => super.plus(x,y)
       }
       override def times(x: From, y: From)            = (x,y) match {
-        case (GConst(x:Int),GConst(y:Int)) => GConst(x*y)
-        case (GConst(x:Int),GConst(y:Double)) => GConst((x*y).toInt) // hacky...
+        case (GConst(x:Int),GConst(y:Int))       => GConst(x*y)
+        case (GConst(x:Double),GConst(y:Int))    => GConst((x*y).toInt) // hacky...
+        case (GConst(x:Int),GConst(y:Double))    => GConst((x*y).toInt) // hacky...
+        case (GConst(x:Double),GConst(y:Double)) => GConst((x*y).toInt) // hacky...
         case (GConst(0),_) => GConst(0)
         case (_,GConst(0)) => GConst(0)
         case (GConst(1),_) => y
