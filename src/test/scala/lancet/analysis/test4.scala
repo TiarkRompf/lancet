@@ -1070,6 +1070,14 @@ TODO:
             // 1) piece-wise functions: if (i < 17) f(i) else g(i)
             // 2) degree > 1, e.g. summing the loop var
 
+            def deriv(x: GVal): GVal = x match {
+              case GConst(_) => const(0)
+              case `n0` => const(1)
+              case Def(DPlus(a,b)) => plus(deriv(a),deriv(b))
+              case Def(DTimes(a,b)) => plus(times(a,deriv(b)),times(deriv(a),b)) // not accurate in discrete calculus?
+              case _ => GRef(s"d$x/d$n0")
+            }
+
             def wrapZero(x: GVal): GVal = iff(less(const(0), n0), x, a)
 
             val (r0,r1) = d1 match {
