@@ -1224,7 +1224,8 @@ TODO:
 
         val cv = iter
 
-        fun(loop.toString, n0.toString, store)
+        if (findDefinition(loop.toString) == None) // ensure we have top-level function
+          fun(loop.toString, n0.toString, store)
 
         val nX = fixindex(n0.toString, cv) // TODO: check this ...
         println(s"fixindex: $nX")
