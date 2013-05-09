@@ -1097,10 +1097,27 @@ TODO:
                 (plus(times(up,dx),times(plus(n0minusUp,const(-1)),dy)),
                  plus(times(up,dx),times(n0minusUp,dy)))
                 (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1))
-              case _ =>
-                println(s"giving up; recursive fun $fsym")
-                (wrapZero(call(fsym,plus(n0,const(-1)))),
-                 wrapZero(call(fsym,n0)))
+              // no simple structure
+              case d =>
+                deriv(d) match {
+                  case GConst(c:Int) if c != 0 =>
+                    println(s"found deriv $c")
+                    println(s"gen fun with f(0)=$a, f(1)=$b1, f'(x)=$c")
+                    // TODO: how to update function once we know we need one more power?
+                    // c * n/2*(n+1)
+                    val d2 = times(n0, const(c))
+                    val cst = plus(d, times(n0, const(-c)))
+                    //val d2 = sum 0 .. n: 
+
+                    val r = times(times(n0,plus(n0,const(1))),const(0.5))
+
+                    (plus(a,plus(r,times(d,const(-1)))),
+                     plus(a,r))
+                  case xx =>
+                    println(s"giving up: deriv $xx; recursive fun $fsym")
+                    (wrapZero(call(fsym,plus(n0,const(-1)))),
+                     wrapZero(call(fsym,n0)))
+                }
             }
 
             (r0,r1) //wrapZero?
