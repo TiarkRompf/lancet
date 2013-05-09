@@ -1083,6 +1083,17 @@ TODO:
               case _ => GRef(s"d$x/d$n0")
             }
 
+            def poly(x: GVal): List[GVal] = x match {
+              case `n0` => List(const(0),const(1))
+              case Def(DTimes(`n0`,y)) => const(0)::poly(y)
+              case Def(DPlus(a,b)) => 
+                val (pa,pb) = (poly(a),poly(b))
+                val degree = pa.length max pb.length
+                (pa.padTo(degree,const(0)),pb.padTo(degree,const(0))).zipped map plus
+              case _ if !IRD.dependsOn(x, n0) => List(x)
+              case _ => Nil
+            }
+
             def wrapZero(x: GVal): GVal = iff(less(const(0), n0), x, a)
 
             val (r0,r1) = d1 match {
@@ -1104,6 +1115,9 @@ TODO:
                 (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1))
               // no simple structure
               case d =>
+
+                println("poly: " + poly(d1))
+
                 deriv(d) match {
                   case GConst(c:Int) if c != 0 =>
                     println(s"found deriv $c")
