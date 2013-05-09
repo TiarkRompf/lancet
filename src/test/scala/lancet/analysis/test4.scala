@@ -1120,21 +1120,17 @@ TODO:
               case d =>
 
                 println("poly: " + poly(d1))
-
-                deriv(d) match {
-                  case GConst(c:Int) if c != 0 =>
+                val pp = poly(d1).reverse.dropWhile(_ == const(0)).reverse // dropRightWhile
+                pp match {
+                  case List(cst, GConst(c:Int)) =>
                     println(s"found deriv $c")
-                    println(s"gen fun with f(0)=$a, f(1)=$b1, f'(x)=$c")
-                    // TODO: how to update function once we know we need one more power?
                     // c * n/2*(n+1)
-                    val d2 = times(n0, const(c))
-                    val cst = plus(d, times(n0, const(-c)))
-                    //val d2 = sum 0 .. n: 
 
-                    val r = times(times(n0,plus(n0,const(1))),const(0.5))
+                    val r0 = times(times(plus(n0,const(-1)),n0),const(0.5))
+                    val r1 = times(times(n0,plus(n0,const(1))),const(0.5))
 
-                    (plus(a,plus(r,times(d,const(-1)))),
-                     plus(a,r))
+                    (plus(a,plus(cst,r0)),
+                     plus(a,plus(cst,r1)))
                   case xx =>
                     println(s"giving up: deriv $xx; recursive fun $fsym")
                     (wrapZero(call(fsym,plus(n0,const(-1)))),
