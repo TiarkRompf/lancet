@@ -1399,6 +1399,53 @@ class TestAnalysis4 extends FileDiffSuite {
       )))
     ))
 
+/*
+    var i = 0
+    var z = new A
+    var x = z
+    while (i < 100) {
+      var y = new B
+      y.head = i
+      y.tail = x
+      x = y
+      i = i + 1
+    }
+
+    Currently we obtain this code (4B.check):
+
+    val x7 = { x8 => 
+    if (0 < x8) 
+      x7(x8 + -1) 
+        + ("&y" -> Map("val" -> ("B",(1,x8)))) 
+        + (("B",(1,x8)) -> 
+            x7(x8 + -1)(("B",(1,x8))) 
+            + ("head" -> x7(x8 + -1)("&i")("val"))) 
+        + (("B",(1,x8)) -> 
+            x7(x8 + -1)(("B",(1,x8))) 
+            + ("head" -> x7(x8 + -1)("&i")("val")) 
+            + ("tail" -> x7(x8 + -1)("&x")("val"))) 
+        + ("&x" -> Map("val" -> ("B",(1,x8)))) 
+        + ("&i" -> Map("val" -> x7(x8 + -1)("&i")("val") + 1)) 
+    else 
+      Map("&i" -> Map("val" -> 0), "&z" -> Map("val" -> (A,1)), "&x" -> Map("val" -> (A,1)), "&y" -> Map("val" -> ("B",(1,x8)))) 
+        + (("B",(1,x8)) -> Map("head" -> 0)) 
+        + (("B",(1,x8)) -> Map("head" -> 0, "tail" -> (A,1))) 
+        + ("&x" -> Map("val" -> ("B",(1,x8)))) 
+        + ("&i" -> Map("val" -> 1)) 
+    }
+    x7(fixindex(x8 => x7(x8 + -1)("&i")("val") < 100))
+
+    The store can't be split into a Map safely because (("B",(1,x8))
+    is not a unique value. The idea is to make the store hierarchical: 
+    first address with "B", then (1,x8). Essentially this models
+    allocations inside loops as arrays, although the representation is
+    a little different from objects objects accessed as first class arrays 
+    (see testProg1c). In comparision, we remove a level of indirection (or
+    should we try to be completely uniform?). Store lookups will need to 
+    become hierarchy aware in general, too. If we do a lookup like store(x99), 
+    x99 could be either a tuple, or a flat address.
+*/
+
     val testProg4 = Block(List(
       Assign("i", Const(0)),
       Assign("z", New("A")),
