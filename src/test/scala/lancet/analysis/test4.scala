@@ -11,12 +11,19 @@ class TestAnalysis4 extends FileDiffSuite {
   (allocation site indexed by loop iteration)
 
   TODO -- WORK IN PROGRESS
-*/
 
-/*
-TODO: 
-- switch to optimistic? (can we even talk about opt/pess here?)
-- make sense of inequalities/recurrences (partially done)
+  TODO/DONE: 
+  - switch to optimistic? (done) 
+      can we even talk about opt/pess here? 
+      yes, see testProg1c: indirect store updates in
+      loops rely on the address being loop invariant
+  - make sense of inequalities/recurrences (mostly done)
+  - allocations in loops: treat as arrays
+      if we're storing the address, the loop variable
+      may escape. is that a problem? (skolemize?)
+  - towards lancet integration: unstructured control flow
+      do we need arbitrary jumps? at least loops with
+      several exits.
 */
 
   object Test1 {
