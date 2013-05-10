@@ -2,7 +2,6 @@ prog: {
   Assign(x,Const(0))
   Assign(y,Const(10))
   Assign(a,New(A))
-  Put(Ref(a),Ref(x),Times(Ref(x),Const(2)))
   While(Less(Ref(x),Const(100)),{
     Put(Ref(a),Ref(x),Times(Ref(x),Const(2)))
     Assign(x,Plus(Ref(x),Const(1)))
@@ -18,156 +17,182 @@ val x4 = Map("&x" -> x1, "&y" -> x3)
 val x5 = Map("&x" -> x1, "&y" -> x3, (A,1) -> Map())
 val x6 = Map("val" -> (A,1))
 val x7 = Map("&x" -> x1, "&y" -> x3, "&a" -> x6)
-val x8 = Map(0 -> 0)
-val x9 = Map("&x" -> x1, "&y" -> x3, "&a" -> x6, (A,1) -> x8)
-val x12 = (1,x11)
-starting spec loop with x9
+val x10 = (1,x9)
+starting spec loop with x7
+val x11 = Map(0 -> 0)
+val x12 = Map("&x" -> x1, "&y" -> x3, "&a" -> x6, (A,1) -> x11)
 val x13 = Map("val" -> 1)
-val x14 = Map("&x" -> x13, "&y" -> x3, "&a" -> x6, (A,1) -> x8)
+val x14 = Map("&x" -> x13, "&y" -> x3, "&a" -> x6, (A,1) -> x11)
 val x15 = Map("val" -> 11)
-val x16 = Map("&x" -> x13, "&y" -> x15, "&a" -> x6, (A,1) -> x8)
-lub(x9, x16) = ?
-lub_x10(x9,x9,x16)
-lub_x10_&x(x1,x1,x13)
-lub_x10_&x_val(0,0,1)
+val x16 = Map("&x" -> x13, "&y" -> x15, "&a" -> x6, (A,1) -> x11)
+lub(x7, x16) = ?
+lub_x8(x7,x7,x16)
+lub_x8_&x(x1,x1,x13)
+lub_x8_&x_val(0,0,1)
 0
 1
 1
 confirmed iterative loop, d = 1
-val x17 = x11 + -1
-Set(("val",(x17,x11)))
+val x17 = x9 + -1
+Set(("val",(x17,x9)))
 val x18 = Map("val" -> x17)
-val x19 = Map("val" -> x11)
-lub_x10_&y(x3,x3,x15)
-lub_x10_&y_val(10,10,11)
+val x19 = Map("val" -> x9)
+lub_x8_&y(x3,x3,x15)
+lub_x8_&y_val(10,10,11)
 10
 11
 1
 confirmed iterative loop, d = 1
-val x20 = x11 + 9
-val x21 = x11 + 10
+val x20 = x9 + 9
+val x21 = x9 + 10
 Set(("val",(x20,x21)))
 val x22 = Map("val" -> x20)
 val x23 = Map("val" -> x21)
-lub_x10_&a(x6,x6,x6)
-lub_x10_(A,1)(x8,x8,x8)
-Set(("&x",(x18,x19)), ("&y",(x22,x23)), ("&a",(x6,x6)), ((A,1),(x8,x8)))
-val x24 = Map("&x" -> x18, "&y" -> x22, "&a" -> x6, (A,1) -> x8)
-val x25 = Map("&x" -> x19, "&y" -> x23, "&a" -> x6, (A,1) -> x8)
-lub(x9, x16) = x24
-starting spec loop with x24
-val x26 = x11 < 101
-val x27 = x11 * 2
-val x28 = x27 + -2
-val x29 = x8 + (x17 -> x28)
-val x30 = Map("&x" -> x18, "&y" -> x22, "&a" -> x6, (A,1) -> x29)
-val x31 = Map("&x" -> x19, "&y" -> x22, "&a" -> x6, (A,1) -> x29)
-val x32 = Map("&x" -> x19, "&y" -> x23, "&a" -> x6, (A,1) -> x29)
-lub(x9, x32) = ?
-lub_x10(x9,x24,x32)
-lub_x10_&x(x1,x18,x19)
-lub_x10_&x_val(0,x17,x11)
-val x33 = x11 * -1
-val x34 = x33 + 1
-x11 + -1
-x11
-1
-confirmed iterative loop, d = 1
-Set(("val",(x17,x11)))
-lub_x10_&y(x3,x22,x23)
-lub_x10_&y_val(10,x20,x21)
-val x35 = x33 + -9
-x11 + 9
-x11 + 10
-1
-confirmed iterative loop, d = 1
-Set(("val",(x20,x21)))
-lub_x10_&a(x6,x6,x6)
-lub_x10_(A,1)(x8,x8,x29)
-val x36 = x8 * -1
-val x37 = x29 + x36
+lub_x8_&a(x6,x6,x6)
+lub_x8_(A,1)("undefined","undefined",x11)
+val x24 = "undefined" * -1
+val x25 = x11 + x24
+"undefined"
 Map(0 -> 0)
-Map(0 -> 0) + (x11 + -1 -> x11 * 2 + -2)
-Map(0 -> 0) + (x11 + -1 -> x11 * 2 + -2) + Map(0 -> 0) * -1
-poly: List()
-giving up: deriv List(); recursive fun x10_(A,1)
-val x38 = x10_(A,1)(x17)
-val x39 = 0 < x11
-val x40 = if (x39) x38 else x8
-val x41 = x10_(A,1)(x11)
-val x42 = if (x39) x41 else x8
-Set(("&x",(x18,x19)), ("&y",(x22,x23)), ("&a",(x6,x6)), ((A,1),(x40,x42)))
-val x43 = Map("&x" -> x18, "&y" -> x22, "&a" -> x6, (A,1) -> x40)
-val x44 = Map("&x" -> x19, "&y" -> x23, "&a" -> x6, (A,1) -> x42)
-lub(x9, x32) = x43
-starting spec loop with x43
-val x45 = x38 + (x17 -> x28)
-val x46 = if (x39) x45 else x29
-val x47 = Map("&x" -> x18, "&y" -> x22, "&a" -> x6, (A,1) -> x46)
-val x48 = Map("&x" -> x19, "&y" -> x22, "&a" -> x6, (A,1) -> x46)
-val x49 = Map("&x" -> x19, "&y" -> x23, "&a" -> x6, (A,1) -> x46)
-lub(x9, x49) = ?
-lub_x10(x9,x43,x49)
-lub_x10_&x(x1,x18,x19)
-lub_x10_&x_val(0,x17,x11)
-x11 + -1
-x11
+Map(0 -> 0) + "undefined" * -1
+confirmed iterative loop, d = x25
+val x26 = x9 * x11
+val x27 = x9 * x24
+val x28 = x26 + x27
+val x29 = x11 * -1
+val x30 = x29 + "undefined"
+val x31 = x27 + x30
+val x32 = x26 + x31
+val x33 = "undefined" + "undefined"
+val x34 = x29 + x33
+val x35 = x27 + x34
+val x36 = x26 + x35
+val x37 = x27 + "undefined"
+val x38 = x26 + x37
+Set(("&x",(x18,x19)), ("&y",(x22,x23)), ("&a",(x6,x6)), ((A,1),(x36,x38)))
+val x39 = Map("&x" -> x18, "&y" -> x22, "&a" -> x6, (A,1) -> x36)
+val x40 = Map("&x" -> x19, "&y" -> x23, "&a" -> x6, (A,1) -> x38)
+lub(x7, x16) = x39
+starting spec loop with x39
+val x41 = x9 < 101
+val x42 = x9 * 2
+val x43 = x42 + -2
+val x44 = x36 + (x17 -> x43)
+val x45 = Map("&x" -> x18, "&y" -> x22, "&a" -> x6, (A,1) -> x44)
+val x46 = Map("&x" -> x19, "&y" -> x22, "&a" -> x6, (A,1) -> x44)
+val x47 = Map("&x" -> x19, "&y" -> x23, "&a" -> x6, (A,1) -> x44)
+lub(x7, x47) = ?
+lub_x8(x7,x39,x47)
+lub_x8_&x(x1,x18,x19)
+lub_x8_&x_val(0,x17,x9)
+val x48 = x9 * -1
+val x49 = x48 + 1
+x9 + -1
+x9
 1
 confirmed iterative loop, d = 1
-Set(("val",(x17,x11)))
-lub_x10_&y(x3,x22,x23)
-lub_x10_&y_val(10,x20,x21)
-x11 + 9
-x11 + 10
+Set(("val",(x17,x9)))
+lub_x8_&y(x3,x22,x23)
+lub_x8_&y_val(10,x20,x21)
+val x50 = x48 + -9
+x9 + 9
+x9 + 10
 1
 confirmed iterative loop, d = 1
 Set(("val",(x20,x21)))
-lub_x10_&a(x6,x6,x6)
-lub_x10_(A,1)(x8,x40,x46)
-val x50 = x38 * -1
-val x51 = if (x39) x50 else x36
-val x52 = x45 + x51
-val x53 = x29 + x51
-val x54 = x45 + x50
-val x55 = if (x39) x54 else x37
-if (0 < x11) x10_(A,1)(x11 + -1) else Map(0 -> 0)
-if (0 < x11) x10_(A,1)(x11 + -1) + (x11 + -1 -> x11 * 2 + -2) else Map(0 -> 0) + (x11 + -1 -> x11 * 2 + -2)
-if (0 < x11) x10_(A,1)(x11 + -1) + (x11 + -1 -> x11 * 2 + -2) + x10_(A,1)(x11 + -1) * -1 else Map(0 -> 0) + (x11 + -1 -> x11 * 2 + -2) + Map(0 -> 0) * -1
+lub_x8_&a(x6,x6,x6)
+lub_x8_(A,1)("undefined",x36,x44)
+val x51 = x9 * x29
+val x52 = x9 * "undefined"
+val x53 = "undefined" * -2
+val x54 = x11 + x53
+val x55 = x52 + x54
+val x56 = x51 + x55
+val x57 = x44 + x56
+x9 * Map(0 -> 0) + x9 * "undefined" * -1 + Map(0 -> 0) * -1 + "undefined" + "undefined"
+x9 * Map(0 -> 0) + x9 * "undefined" * -1 + Map(0 -> 0) * -1 + "undefined" + "undefined" + (x9 + -1 -> x9 * 2 + -2)
+x9 * Map(0 -> 0) + x9 * "undefined" * -1 + Map(0 -> 0) * -1 + "undefined" + "undefined" + (x9 + -1 -> x9 * 2 + -2) + x9 * Map(0 -> 0) * -1 + x9 * "undefined" + Map(0 -> 0) + "undefined" * -2
 poly: List()
-giving up: deriv List(); recursive fun x10_(A,1)
-Set(("&x",(x18,x19)), ("&y",(x22,x23)), ("&a",(x6,x6)), ((A,1),(x40,x42)))
-lub(x9, x49) = x43
-val x10_&x_val = { x11 => x11 }
-val x10_&y_val = { x11 => x21 }
-val x10_(A,1) = { x11 => x46 }
-val x56 = Map("&x" -> x19, "&y" -> x23, "&a" -> x6, (A,1) -> x41)
-val x10 = { x11 => x56 }
+giving up: deriv List(); recursive fun x8_(A,1)
+val x58 = x8_(A,1)(x17)
+val x59 = 0 < x9
+val x60 = if (x59) x58 else "undefined"
+val x61 = x8_(A,1)(x9)
+val x62 = if (x59) x61 else "undefined"
+Set(("&x",(x18,x19)), ("&y",(x22,x23)), ("&a",(x6,x6)), ((A,1),(x60,x62)))
+val x63 = Map("&x" -> x18, "&y" -> x22, "&a" -> x6, (A,1) -> x60)
+val x64 = Map("&x" -> x19, "&y" -> x23, "&a" -> x6, (A,1) -> x62)
+lub(x7, x47) = x63
+starting spec loop with x63
+val x65 = x58 + (x17 -> x43)
+val x66 = x0 + (x17 -> x43)
+val x67 = if (x59) x65 else x66
+val x68 = Map("&x" -> x18, "&y" -> x22, "&a" -> x6, (A,1) -> x67)
+val x69 = Map("&x" -> x19, "&y" -> x22, "&a" -> x6, (A,1) -> x67)
+val x70 = Map("&x" -> x19, "&y" -> x23, "&a" -> x6, (A,1) -> x67)
+lub(x7, x70) = ?
+lub_x8(x7,x63,x70)
+lub_x8_&x(x1,x18,x19)
+lub_x8_&x_val(0,x17,x9)
+x9 + -1
+x9
+1
+confirmed iterative loop, d = 1
+Set(("val",(x17,x9)))
+lub_x8_&y(x3,x22,x23)
+lub_x8_&y_val(10,x20,x21)
+x9 + 9
+x9 + 10
+1
+confirmed iterative loop, d = 1
+Set(("val",(x20,x21)))
+lub_x8_&a(x6,x6,x6)
+lub_x8_(A,1)("undefined",x60,x67)
+val x71 = x58 * -1
+val x72 = if (x59) x71 else x24
+val x73 = x65 + x72
+val x74 = x66 + x72
+val x75 = x65 + x71
+val x76 = x66 + x24
+val x77 = if (x59) x75 else x76
+if (0 < x9) x8_(A,1)(x9 + -1) else "undefined"
+if (0 < x9) x8_(A,1)(x9 + -1) + (x9 + -1 -> x9 * 2 + -2) else Map() + (x9 + -1 -> x9 * 2 + -2)
+if (0 < x9) x8_(A,1)(x9 + -1) + (x9 + -1 -> x9 * 2 + -2) + x8_(A,1)(x9 + -1) * -1 else Map() + (x9 + -1 -> x9 * 2 + -2) + "undefined" * -1
+poly: List()
+giving up: deriv List(); recursive fun x8_(A,1)
+Set(("&x",(x18,x19)), ("&y",(x22,x23)), ("&a",(x6,x6)), ((A,1),(x60,x62)))
+lub(x7, x70) = x63
+val x8_&x_val = { x9 => x9 }
+val x8_&y_val = { x9 => x21 }
+val x8_(A,1) = { x9 => x67 }
+val x78 = Map("&x" -> x19, "&y" -> x23, "&a" -> x6, (A,1) -> x61)
+val x8 = { x9 => x78 }
 fixindex: 100
-val x57 = Map("val" -> 100)
-val x58 = Map("val" -> 110)
-val x59 = x10_(A,1)(100)
-val x60 = Map("&x" -> x57, "&y" -> x58, "&a" -> x6, (A,1) -> x59)
-val x61 = Map("&x" -> x57, "&y" -> x58, "&a" -> x6, "&r" -> x6, (A,1) -> x59)
+val x79 = Map("val" -> 100)
+val x80 = Map("val" -> 110)
+val x81 = x8_(A,1)(100)
+val x82 = Map("&x" -> x79, "&y" -> x80, "&a" -> x6, (A,1) -> x81)
+val x83 = Map("&x" -> x79, "&y" -> x80, "&a" -> x6, "&r" -> x6, (A,1) -> x81)
 res: ()
-store: x61
-transformed: x61
+store: x83
+transformed: x83
 sched:
-val x17 = x11 + -1
-val x27 = x11 * 2
-val x28 = x27 + -2
-val x39 = 0 < x11
-val x8 = Map(0 -> 0)
-val x29 = x8 + (x17 -> x28)
-val x38 = x10_(A,1)(x17)
-val x45 = x38 + (x17 -> x28)
-val x46 = if (x39) x45 else x29
-val x10_(A,1) = { x11 => x46 }
-val x59 = x10_(A,1)(100)
-val x58 = Map("val" -> 110)
-val x57 = Map("val" -> 100)
+val x42 = x9 * 2
+val x43 = x42 + -2
+val x17 = x9 + -1
+val x0 = Map()
+val x66 = x0 + (x17 -> x43)
+val x59 = 0 < x9
+val x58 = x8_(A,1)(x17)
+val x65 = x58 + (x17 -> x43)
+val x67 = if (x59) x65 else x66
+val x8_(A,1) = { x9 => x67 }
+val x81 = x8_(A,1)(100)
+val x80 = Map("val" -> 110)
+val x79 = Map("val" -> 100)
 val x6 = Map("val" -> (A,1))
-val x61 = Map("&x" -> x57, "&y" -> x58, "&a" -> x6, "&r" -> x6, (A,1) -> x59)
+val x83 = Map("&x" -> x79, "&y" -> x80, "&a" -> x6, "&r" -> x6, (A,1) -> x81)
 term:
-val x10_(A,1) = { x11 => if (0 < x11) x10_(A,1)(x11 + -1) + (x11 + -1 -> x11 * 2 + -2) else Map(0 -> 0) + (x11 + -1 -> x11 * 2 + -2) }
-Map("&a" -> Map("val" -> (A,1)), "&x" -> Map("val" -> 100), "&y" -> Map("val" -> 110), "&r" -> Map("val" -> (A,1)), (A,1) -> x10_(A,1)(100))
+val x8_(A,1) = { x9 => if (0 < x9) x8_(A,1)(x9 + -1) + (x9 + -1 -> x9 * 2 + -2) else Map() + (x9 + -1 -> x9 * 2 + -2) }
+Map("&a" -> Map("val" -> (A,1)), "&x" -> Map("val" -> 100), "&y" -> Map("val" -> 110), "&r" -> Map("val" -> (A,1)), (A,1) -> x8_(A,1)(100))
 ----
