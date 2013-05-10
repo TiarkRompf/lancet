@@ -1435,11 +1435,11 @@ class TestAnalysis4 extends FileDiffSuite {
     }
     x7(fixindex(x8 => x7(x8 + -1)("&i")("val") < 100))
 
-    The store can't be split into a Map safely because (("B",(1,x8))
+    The store can't be safely split into a Map because (("B",(1,x8))
     is not a unique value. The idea is to make the store hierarchical: 
     first address with "B", then (1,x8). Essentially this models
     allocations inside loops as arrays, although the representation is
-    a little different from objects objects accessed as first class arrays 
+    a little different from objects accessed as first class arrays 
     (see testProg1c). In comparision, we remove a level of indirection (or
     should we try to be completely uniform?). Store lookups will need to 
     become hierarchy aware in general, too. If we do a lookup like store(x99), 
