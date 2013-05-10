@@ -1369,8 +1369,6 @@ TODO:
       Assign("x", Const(0)),
       Assign("y", Const(10)),
       Assign("a", New("A")), 
-      // writes may not be visible if A is not in store at iteration 0
-      Put(Ref("a"), Ref("x"), Times(Ref("x"),Const(2))),
       While(Less(Ref("x"),Const(100)), Block(List(
         Put(Ref("a"), Ref("x"), Times(Ref("x"),Const(2))),
         Assign("x", Plus(Ref("x"), Const(1))),
