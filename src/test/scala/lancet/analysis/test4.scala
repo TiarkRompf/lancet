@@ -614,6 +614,7 @@ class TestAnalysis4 extends FileDiffSuite {
           f match {
             case GConst(_) => map(m + (f -> y)) // TODO: y = DIf ??
             case Def(DIf(c,u,v)) => iff(c,update(x,u,y),update(x,v,y))
+            case Def(DPair(u,v)) => update(x,u,update(select(x,u),v,y))
             case _ => 
               // It would be nice to use f as a key even if it
               // is not a constant:
@@ -626,6 +627,7 @@ class TestAnalysis4 extends FileDiffSuite {
         // TODO: DUpdate
         // case Def(DUpdate(x2,f2,y2)) => if (f2 == f) y2 else select(x2,f)
         case Def(DIf(c,u,v)) => iff(c,update(u,f,y),update(v,f,y))
+        case Def(DPair(u,v)) => update(x,u,update(select(x,u),v,y))
         case _ => super.update(x,f,y)
       }
       override def select(x: From, f: From): From          = x match {
@@ -633,6 +635,7 @@ class TestAnalysis4 extends FileDiffSuite {
           f match {
             case GConst(_) => m.getOrElse(f, GConst("undefined"))
             case Def(DIf(c,u,v)) => iff(c,select(x,u),select(x,v))
+            case Def(DPair(u,v)) => select(select(x,u),v)
             case _ => 
               var res: GVal = const("undefined")
               for ((k,v) <- m) {
@@ -644,6 +647,7 @@ class TestAnalysis4 extends FileDiffSuite {
           }
         case Def(DUpdate(x2,f2,y2)) => iff(equal(f2,f), y2, select(x2,f))
         case Def(DIf(c,x,y)) => iff(c,select(x,f),select(y,f))
+        case Def(DPair(u,v)) => select(select(x,u),v)
         case _ => super.select(x,f)
       }
       def const(x: Any) = x match {
