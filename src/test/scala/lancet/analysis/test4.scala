@@ -23,7 +23,8 @@ class TestAnalysis4 extends FileDiffSuite {
       may escape. is that a problem? (skolemize?)
   - towards lancet integration: unstructured control flow
       do we need arbitrary jumps? at least loops with
-      several exits.
+      several exits (no problem: just take fixindex
+      of a different condition / cf. gated ssa).
 */
 
   object Test1 {
