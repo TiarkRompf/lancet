@@ -1074,6 +1074,14 @@ class TestAnalysis4 extends FileDiffSuite {
             // iff(less(const(0), n0), plus(a,times(n0,d)), a))
             (plus(a,times(plus(n0,const(-1)),d)),
              plus(a,times(n0,d)))
+          case (a/*@Def(DPair(a1,a2))*/,b0/*@Def(DPair(b01,b02))*/,b1@Def(DPair(b11,b12))) =>
+            // example: (A,1), (B,(1,i)) TODO: safe??
+            IRD.printTerm(a)
+            IRD.printTerm(b0)
+            IRD.printTerm(b1)
+            println(s"hit pair -- assume only 0 case differs (loop peeling)")
+            val b0X = subst(b1,n0,plus(n0,const(-1)))
+            (iff(less(const(0),n0),b0X,a), iff(less(const(0),n0),b1,a))
           case _ =>
             // value after the loop (b) does depend on loop index and differs from val before loop.
 
