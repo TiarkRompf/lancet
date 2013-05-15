@@ -1076,6 +1076,9 @@ class TestAnalysis4 extends FileDiffSuite {
              plus(a,times(n0,d)))
           case _ =>
             // value after the loop (b) does depend on loop index and differs from val before loop.
+
+            // TODO: case for alloc in loop -- x(0)=(A,1), x(i>0)=(B,(1,i))
+
             // look at difference. see if symbolic values before/after are generalized in a corresponding way.
             // widen: compute new symbolic val before from symbolic val after (e.g. closed form)
             // if that's not possible, widen to explicit recursive form.
@@ -1462,7 +1465,7 @@ class TestAnalysis4 extends FileDiffSuite {
           + ((1,x8) -> 
               x7_B(x8 + -1)((1,x8)) 
               + ("head" -> x8 + -1) 
-              + ("tail" -> x7_&x_val(x8 + -1)))   <--- why not inlined?
+              + ("tail" -> x7_&x_val(x8 + -1)))   <--- why not inlined? (call doesn't see rhs -- still in iteration mode)
       else 
         Map(1 ->
           Map() 
