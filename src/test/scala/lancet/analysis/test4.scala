@@ -1495,6 +1495,34 @@ class TestAnalysis4 extends FileDiffSuite {
 
     This looks about right... any caveats apart from the "undefined"?
 
+    Update: XXX
+    
+    val x7_B = { x8 => 
+      if (0 < x8) 
+        x7_B(x8 + -1) 
+          + ((1,x8) -> 
+              x7_B(x8 + -1)((1,x8)) 
+              + ("head" -> x8 + -1)) 
+          + ((1,x8) -> 
+              x7_B(x8 + -1)((1,x8)) 
+              + ("head" -> x8 + -1) 
+              + ("tail" -> ("B",(1,x8 + -1)))) 
+      else 
+        Map(1 -> 
+          Map() 
+          + (x8 -> 
+              "undefined"((1,x8)) 
+              + ("head" -> x8 + -1)) 
+          + (x8 -> 
+              "undefined"((1,x8)) 
+              + ("head" -> x8 + -1) 
+              + ("tail" -> (A,1)))) 
+    }
+
+    Map("&i" -> Map("val" -> 100), "B" -> x7_B(100), "&x" -> Map("val" -> (B,(1,100))), "&z" -> Map("val" -> (A,1)), "&y" -> Map("val" -> (B,(1,100))))
+
+
+
 */
 
     val testProg4 = Block(List(
