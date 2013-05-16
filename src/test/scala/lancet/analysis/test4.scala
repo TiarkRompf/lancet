@@ -626,6 +626,7 @@ class TestAnalysis4 extends FileDiffSuite {
           }
         // TODO: DUpdate
         // case Def(DUpdate(x2,f2,y2)) => if (f2 == f) y2 else select(x2,f)
+        case Def(DUpdate(x2,f2,y2)) if f2 == f => update(x2,f,y) // this one is conservative: m + (f -> y1) + (f -> y2)   --->  m + (f -> y2)  TODO: more aggressive, e.g. remove f in m, too?
         case Def(DIf(c,u,v)) => iff(c,update(u,f,y),update(v,f,y))
         case Def(DPair(u,v)) => update(x,u,update(select(x,u),v,y))
         case _ => super.update(x,f,y)
@@ -1502,9 +1503,6 @@ class TestAnalysis4 extends FileDiffSuite {
         x7_B(x8 + -1) 
           + ((1,x8) -> 
               x7_B(x8 + -1)((1,x8)) 
-              + ("head" -> x8 + -1)) 
-          + ((1,x8) -> 
-              x7_B(x8 + -1)((1,x8)) 
               + ("head" -> x8 + -1) 
               + ("tail" -> ("B",(1,x8 + -1)))) 
       else 
@@ -1512,14 +1510,17 @@ class TestAnalysis4 extends FileDiffSuite {
           Map() 
           + (x8 -> 
               "undefined"((1,x8)) 
-              + ("head" -> x8 + -1)) 
-          + (x8 -> 
-              "undefined"((1,x8)) 
               + ("head" -> x8 + -1) 
               + ("tail" -> (A,1)))) 
     }
 
-    Map("&i" -> Map("val" -> 100), "B" -> x7_B(100), "&x" -> Map("val" -> (B,(1,100))), "&z" -> Map("val" -> (A,1)), "&y" -> Map("val" -> (B,(1,100))))
+    Map(
+      "&i" -> Map("val" -> 100), 
+      "B" -> x7_B(100), 
+      "&x" -> Map("val" -> (B,(1,100))), 
+      "&z" -> Map("val" -> (A,1)), 
+      "&y" -> Map("val" -> (B,(1,100)))
+    )
 
 
 
