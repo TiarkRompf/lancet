@@ -1075,7 +1075,7 @@ class TestAnalysis4 extends FileDiffSuite {
             // iff(less(const(0), n0), plus(a,times(n0,d)), a))
             (plus(a,times(plus(n0,const(-1)),d)),
              plus(a,times(n0,d)))
-          case (a/*@Def(DPair(a1,a2))*/,b0/*@Def(DPair(b01,b02))*/,b1@Def(DPair(b11,b12))) =>
+          case (a/*@Def(DPair(a1,a2))*/,b0/*@Def(DPair(b01,b02))*/,Def(DPair(_,_)) | GConst(_: Tuple2[_,_])) =>
             // example: (A,1), (B,(1,i)) TODO: safe??
             IRD.printTerm(a)
             IRD.printTerm(b0)
