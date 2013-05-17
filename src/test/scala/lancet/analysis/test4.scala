@@ -1428,7 +1428,7 @@ class TestAnalysis4 extends FileDiffSuite {
       i = i + 1
     }
 
-    Currently we obtain this code (4B.check):
+    Version 1: Optimistic rewriting, but flat stores. We obtain this code:
 
     val x7 = { x8 => 
     if (0 < x8) 
@@ -1462,7 +1462,7 @@ class TestAnalysis4 extends FileDiffSuite {
     become hierarchy aware in general, too. If we do a lookup like store(x99), 
     x99 could be either a tuple, or a flat address.
 
-    Update: with our preliminary support for nested stores we obtain:
+    Version 2: Preliminary support for nested stores. We obtain:
 
     val x7_&x_val = { x8 => ("B",(1,x8)) }
     val x7_B = { x8 => 
@@ -1494,9 +1494,9 @@ class TestAnalysis4 extends FileDiffSuite {
       "&z" -> Map("val" -> (A,1)), 
       "&y" -> Map("val" -> (B,(1,100))))
 
-    This looks about right... any caveats apart from the "undefined"?
 
-    Update: XXX
+    Version 3: Tweak it! Speculative loop peeling for tuple addresses 
+    removes x7_&x_val fundef; rewriting on 'update' ops removes dead stores. 
     
     val x7_B = { x8 => 
       if (0 < x8) 
@@ -1522,7 +1522,8 @@ class TestAnalysis4 extends FileDiffSuite {
       "&y" -> Map("val" -> (B,(1,100)))
     )
 
-
+    TODO: fix the 'undefined' access.
+    this looks like an off-by-one in the 0 base case.
 
 */
 
