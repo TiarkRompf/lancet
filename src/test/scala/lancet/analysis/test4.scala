@@ -1182,7 +1182,7 @@ class TestAnalysis4 extends FileDiffSuite {
             val m = (m1.keys ++ m2.keys) map { k => k -> lubfun(select(a,k),select(b,k))(mkey(fsym,k)) }
             map(m.toMap)
           case _ => 
-            val b1 = iff(less(const(0),n0), b, a) // explicit zero case needed here??
+            val b1 = iff(less(const(0),n0), b, a) // explicit zero case. needed??
             fun(fsym.toString, n0.toString, b1) 
             call(fsym,n0)
         }
@@ -1523,8 +1523,26 @@ class TestAnalysis4 extends FileDiffSuite {
       "&y" -> Map("val" -> (B,(1,100)))
     )
 
-    TODO: fix the 'undefined' access.
-    this looks like an off-by-one in the 0 base case.
+    Version 4: fix 'undefined' access'; explicit 0 case in fundef
+
+    val x7_B = { x8 => 
+      if (0 < x8) 
+        x7_B(x8 + -1) 
+          + ((1,x8) -> 
+              x7_B(x8 + -1)((1,x8)) 
+              + ("head" -> x8 + -1) 
+              + ("tail" -> ("B",(1,x8 + -1)))) 
+      else "undefined" }
+
+      Map(
+        "&i" -> Map("val" -> 100), 
+        "B" -> x7_B(100), 
+        "&x" -> Map("val" -> (B,(1,100))), 
+        "&z" -> Map("val" -> (A,1)), 
+        "&y" -> Map("val" -> (B,(1,100)))
+      )
+
+      FIXME: base case at index 0 should have 'tail' pointing to (A,1)
 
 */
 
