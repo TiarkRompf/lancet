@@ -1523,7 +1523,7 @@ class TestAnalysis4 extends FileDiffSuite {
       "&y" -> Map("val" -> (B,(1,100)))
     )
 
-    Version 4: fix 'undefined' access'; explicit 0 case in fundef
+    Version 4: fix 'undefined' access; explicit 0 case in fundef
 
     val x7_B = { x8 => 
       if (0 < x8) 
@@ -1543,6 +1543,7 @@ class TestAnalysis4 extends FileDiffSuite {
       )
 
       FIXME: base case at index 0 should have 'tail' pointing to (A,1)
+      (question about base index again: value before or after iteration i?)
 
 */
 
