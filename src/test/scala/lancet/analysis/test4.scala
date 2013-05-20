@@ -1182,7 +1182,7 @@ class TestAnalysis4 extends FileDiffSuite {
             val m = (m1.keys ++ m2.keys) map { k => k -> lubfun(select(a,k),select(b,k))(mkey(fsym,k)) }
             map(m.toMap)
           case _ => 
-            val b1 = iff(less(const(0),n0), b, a) // explicit zero case. needed??
+            val b1 = b // iff(less(const(0),n0), b, a) // explicit zero case. needed??
             fun(fsym.toString, n0.toString, b1) 
             call(fsym,n0)
         }
