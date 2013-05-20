@@ -1523,7 +1523,8 @@ class TestAnalysis4 extends FileDiffSuite {
       "&y" -> Map("val" -> (B,(1,100)))
     )
 
-    Version 4: fix 'undefined' access; explicit 0 case in fundef
+    Version 4: (XXX tentative; rolled back for the time being)
+    fix 'undefined' access; explicit 0 case in fundef
 
     val x7_B = { x8 => 
       if (0 < x8) 
@@ -1544,6 +1545,12 @@ class TestAnalysis4 extends FileDiffSuite {
 
       FIXME: base case at index 0 should have 'tail' pointing to (A,1)
       (question about base index again: value before or after iteration i?)
+
+      TODO: recursive reference to previous value in 
+        x7_B(x8 + -1)((1,x8)) + ("head" -> ...) + ("tail" -> ...)
+      is not necessary. first, we know that x7_B only ever contains head 
+      and tail fields, which would be overridden here. second, we
+      know 
 
 */
 
