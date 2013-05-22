@@ -737,7 +737,7 @@ class TestAnalysis4 extends FileDiffSuite {
         case (GConst(x),GConst(y)) => const((x,y))
         case _ => super.pair(x,y)
       }
-      override def iff(c: From, x: From, y: From):GVal    = c match {
+      override def iff(c: From, x: From, y: From):GVal = c match {
         case GConst(0) => y
         case GConst(_) => x
         case Def(DIf(c1,x1,y1)) => iff(c1,iff(x1,x,y),iff(y1,x,y))
