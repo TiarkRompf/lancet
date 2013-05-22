@@ -77,6 +77,7 @@ class TestAnalysis4 extends FileDiffSuite {
     case class DTimes(x: GVal, y: GVal) extends Def
     case class DLess(x: GVal, y: GVal) extends Def
     case class DEqual(x: GVal, y: GVal) extends Def
+    case class DNotEqual(x: GVal, y: GVal) extends Def
     case class DPair(x: GVal, y: GVal) extends Def
     case class DIf(c: GVal, x: GVal, y: GVal) extends Def
     case class DFixIndex(x: String, c: GVal) extends Def
@@ -92,6 +93,7 @@ class TestAnalysis4 extends FileDiffSuite {
       case DTimes(x: GVal, y: GVal)           => dst.times(x,y)
       case DLess(x: GVal, y: GVal)            => dst.less(x,y)
       case DEqual(x: GVal, y: GVal)           => dst.equal(x,y)
+      case DNotEqual(x: GVal, y: GVal)        => dst.notequal(x,y)
       case DPair(x: GVal, y: GVal)            => dst.pair(x,y)
       case DIf(c: GVal, x: GVal, y: GVal)     => dst.iff(c,x,y)
       case DFixIndex(x: String, c: GVal)      => dst.fixindex(x,c)
@@ -110,6 +112,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def times(x: From, y: From): To
       def less(x: From, y: From): To
       def equal(x: From, y: From): To
+      def notequal(x: From, y: From): To
       def pair(x: From, y: From): To
       def iff(c: From, x: From, y: From): To
       def fixindex(x: String, c: From): To
@@ -128,6 +131,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def times(x: From, y: From)           = s"$x * $y"
       def less(x: From, y: From)            = s"$x < $y"
       def equal(x: From, y: From)           = s"$x == $y"
+      def notequal(x: From, y: From)        = s"$x != $y"
       def pair(x: From, y: From)            = s"($x,$y)"
       def iff(c: From, x: From, y: From)    = s"if ($c) $x else $y"
       def fixindex(x: String, c: From)      = s"fixindex($x => $c)"
@@ -146,6 +150,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def times(x: From, y: From)           = DTimes(x,y)
       def less(x: From, y: From)            = DLess(x,y)
       def equal(x: From, y: From)           = DEqual(x,y)
+      def notequal(x: From, y: From)        = DNotEqual(x,y)
       def pair(x: From, y: From)            = DPair(x,y)
       def iff(c: From, x: From, y: From)    = DIf(c,x,y)
       def fixindex(x: String, c: From)      = DFixIndex(x,c)
@@ -167,6 +172,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def times(x: From, y: From)           = post(next.times(pre(x),pre(y)))
       def less(x: From, y: From)            = post(next.less(pre(x),pre(y)))
       def equal(x: From, y: From)           = post(next.equal(pre(x),pre(y)))
+      def notequal(x: From, y: From)        = post(next.notequal(pre(x),pre(y)))
       def pair(x: From, y: From)            = post(next.pair(pre(x),pre(y)))
       def iff(c: From, x: From, y: From)    = post(next.iff(pre(c),pre(x),pre(y)))
       def fixindex(x: String, c: From)      = post(next.fixindex(x,pre(c)))
