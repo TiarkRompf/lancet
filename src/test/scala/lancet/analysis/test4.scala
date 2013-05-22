@@ -1249,7 +1249,7 @@ class TestAnalysis4 extends FileDiffSuite {
 
         val cv = iter
 
-        if (findDefinition(loop.toString) == None) // ensure we have top-level function
+        if (findDefinition(loop.toString) == None) // ensure we have a top-level function
           fun(loop.toString, n0.toString, store)
 
         val nX = fixindex(n0.toString, cv) // TODO: check this ...
@@ -1550,7 +1550,7 @@ class TestAnalysis4 extends FileDiffSuite {
         x7_B(x8 + -1)((1,x8)) + ("head" -> ...) + ("tail" -> ...)
       is not necessary. first, we know that x7_B only ever contains head 
       and tail fields, which would be overridden here. second, we
-      know 
+      know that key (1,x8) is undefined at index x8-1.
 
 */
 
