@@ -938,6 +938,8 @@ class TestAnalysis4 extends FileDiffSuite {
     case class Plus(x: Exp, y: Exp) extends Exp
     case class Times(x: Exp, y: Exp) extends Exp
     case class Less(x: Exp, y: Exp) extends Exp
+    case class Equal(x: Exp, y: Exp) extends Exp
+    case class NotEqual(x: Exp, y: Exp) extends Exp
     case class New(x: Alloc) extends Exp
     case class Get(x: Exp, f: Exp) extends Exp
     case class Put(x: Exp, f: Exp, y: Exp) extends Exp
@@ -962,9 +964,11 @@ class TestAnalysis4 extends FileDiffSuite {
       case Assign(x,y) => 
         store = IR.update(store, IR.const("&"+x), IR.update(IR.const(Map()), IR.const("val"), eval(y)))
         IR.const(())
-      case Plus(x,y)   => IR.plus(eval(x),eval(y))
-      case Times(x,y)  => IR.times(eval(x),eval(y))
-      case Less(x,y)   => IR.less(eval(x),eval(y))
+      case Plus(x,y)      => IR.plus(eval(x),eval(y))
+      case Times(x,y)     => IR.times(eval(x),eval(y))
+      case Less(x,y)      => IR.less(eval(x),eval(y))
+      case Equal(x,y)     => IR.equal(eval(x),eval(y))
+      case NotEqual(x,y)  => IR.notequal(eval(x),eval(y))
       case New(x) => 
         val a = IR.pair(IR.const(x),itvec)
         store = IR.update(store, a, IR.const(Map()))
@@ -1419,7 +1423,7 @@ class TestAnalysis4 extends FileDiffSuite {
       Assign("r", Ref("a"))
     ))
 
-    // test store logic
+    // test store logic (1): build a linked list
 
     val testProg3 = Block(List(
       Assign("i", Const(0)),
@@ -1571,6 +1575,33 @@ class TestAnalysis4 extends FileDiffSuite {
 
 */
 
+    // test store logic (2): build and traverse a linked list
+
+    val testProg3b = Block(List(
+      Assign("i", Const(0)),
+      Assign("z", New("A")),
+      Assign("x", Ref("z")),
+      While(Less(Ref("i"),Const(100)), Block(List(
+        Assign("y", New("B")),
+        Put(Ref("y"), Const("head"), Ref("i")),
+        Put(Ref("y"), Const("tail"), Ref("x")),
+        Assign("x", Ref("y")),
+        Assign("i", Plus(Ref("i"), Const(1)))
+      ))),
+      Assign("s", Const(0)),
+      While(NotEqual(Ref("x"),Ref("x")), Block(List(
+        Assign("y", Get(Ref("x"), Const("tail"))),
+        Assign("i", Get(Ref("x"), Const("head"))),
+        Put(Ref("x"), Const("tail"), Ref("y"))
+      )))
+    ))
+
+    // (to try: fac, first as while loop, then as recursive
+    // function with defunctionalized continuations in store)
+
+
+    // back to simpler tests (compare to test3)
+
     val testProg4 = Block(List(
       Assign("i", Const(0)),
       Assign("z", New("A")),
@@ -1689,6 +1720,12 @@ class TestAnalysis4 extends FileDiffSuite {
     Test1.run(Test1.testProg4) // 3 and 4 should be different: alloc within the loop vs before
     Test1.run(Test1.testProg5)
   }
+
+  def testB2 = withOutFileChecked(prefix+"B2") {
+    Test1.run(Test1.testProg3b)
+  }
+
+
   def testC = withOutFileChecked(prefix+"C") {
     Test1.run(Test1.testProg6)
   }
