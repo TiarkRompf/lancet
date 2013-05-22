@@ -194,6 +194,22 @@ class BytecodeInterpreter_LIR_Opt4 extends AbstractInterpreter_LIR with Bytecode
       }
     }
 
+    /*def genGoto(key: String) = {
+      reflect[Unit](Patch(key, Block(Const(()))))
+    }
+    def genGotoDef(key: String, rhs: Block[Unit]) = {
+      var hit = false
+      globalDefs.foreach {
+        case d@TP(s,Reflect(g @ Patch(`key`, _), u, es)) => 
+          //println("FOUND "+d);Patch          
+          hit = true
+          g.block = rhs
+        case d => d
+      }
+      assert(hit)
+    }*/
+
+
     def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = "BLOCK_"+keyid+"("+fields.mkString(",")+")"
 
     def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]): Block[Unit] = reify {
