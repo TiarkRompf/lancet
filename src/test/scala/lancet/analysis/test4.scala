@@ -722,6 +722,17 @@ class TestAnalysis4 extends FileDiffSuite {
         case _ if x == y => const(1)
         case _ => super.equal(x,y)
       }
+      override def notequal(x: From, y: From)         = (x,y) match {
+        case (GConst(x),GConst(y)) => GConst(if (x == y) 0 else 1)
+        case (GConst(x:Int),Def(DPair(_,_))) => const(1)
+        case (GConst(x:String),Def(DPair(_,_))) => const(1)
+        case (Def(DPair(_,_)),GConst(x:Int)) => const(1)
+        case (Def(DPair(_,_)),GConst(x:String)) => const(1)
+        case (Def(DIf(c,x,z)),_) => iff(c,notequal(x,y),notequal(z,y))
+        case (_,Def(DIf(c,y,z))) => iff(c,notequal(x,y),notequal(x,z))
+        case _ if x == y => const(0)
+        case _ => super.notequal(x,y)
+      }
       override def pair(x: From, y: From)            = (x,y) match {
         case (GConst(x),GConst(y)) => const((x,y))
         case _ => super.pair(x,y)
