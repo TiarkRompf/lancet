@@ -1597,6 +1597,48 @@ class TestAnalysis4 extends FileDiffSuite {
       )))
     ))
 
+/* result:
+
+    val x102_(B,(1,100)) = { x103 => 
+      if (1 < x103) 
+        x102_(B,(1,100))(x103 + -1) 
+        + ("tail" -> x102_(B,(1,100))(x103 + -1)("tail")) 
+      else 
+        Map("tail" -> "undefined"("tail")) 
+    }
+    
+    val x102_&s_val = { x103 => 
+      if (1 < x103) 
+        x102_&s_val(x103 + -1) 
+        + x102_(B,(1,100))(x103 + -1)("head") 
+      else "undefined"("head") + 1 
+    }
+    
+    val x7_B = { x8 => 
+      if (0 < x8) 
+        x7_B(x8 + -1) 
+        + ((1,x8) -> 
+            x7_B(x8 + -1)((1,x8)) 
+            + ("head" -> x8 + -1) 
+            + ("tail" -> ("B",(1,x8 + -1)))) 
+      else 
+        Map(1 -> 
+          Map() + (x8 -> 
+            "undefined"((1,x8)) + ("head" -> x8 + -1) + ("tail" -> (A,1)))) 
+    }
+    
+    Map(
+      "&i" -> Map("val" -> if (1 < fixindex(x103 => 0)) x102_(B,(1,100))(fixindex(x103 => 0) + -1)("head") else "undefined"("head")), 
+      "B" -> x7_B(100), 
+      "&s" -> Map("val" -> x102_&s_val(fixindex(x103 => 0))), 
+      "&x" -> Map("val" -> (B,(1,100))), 
+      "&z" -> Map("val" -> (A,1)), 
+      "&y" -> Map("val" -> if (1 < fixindex(x103 => 0)) x102_(B,(1,100))(fixindex(x103 => 0) + -1)("tail") else "undefined"("tail")), 
+      (B,(1,100)) -> x102_(B,(1,100))(fixindex(x103 => 0))
+    )
+*/
+
+
     // (to try: fac, first as while loop, then as recursive
     // function with defunctionalized continuations in store)
 
