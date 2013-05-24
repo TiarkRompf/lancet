@@ -1598,43 +1598,64 @@ class TestAnalysis4 extends FileDiffSuite {
 
 /* result:
 
-    val x102_(B,(1,100)) = { x103 => 
-      if (1 < x103) 
-        x102_(B,(1,100))(x103 + -1) 
-        + ("tail" -> x102_(B,(1,100))(x103 + -1)("tail")) 
-      else 
-        Map("tail" -> "undefined"("tail")) 
+TODO: we need to figure out that inside the second loop, x only ever points to B!
+      (and to A afterwards)
+
+val x7_B = { x8 => if (0 < x8) 
+  x7_B(x8 + -1) + ((1,x8) -> 
+    x7_B(x8 + -1)((1,x8)) + ("head" -> x8 + -1) + ("tail" -> ("B",(1,x8 + -1)))) else Map(1 -> Map() + (x8 -> "undefined"((1,x8)) + ("head" -> x8 + -1) + ("tail" -> (A,1)))) }
+
+val x102_&x_val = { x103 => if (0 < x103) {
+  if (x102_&x_val(x103 + -1) == "&i") "undefined" else {
+    if (x102_&x_val(x103 + -1) == "&z") "undefined" else {
+      if (x102_&x_val(x103 + -1) == "B") x7_B(100)("tail") else {
+        if (x102_&x_val(x103 + -1) == "&y") "undefined" else {
+          if (x102_&x_val(x103 + -1) == "&s") "undefined" else {
+            if (x102_&x_val(x103 + -1) == "&x") "undefined" else 
+              "undefined"("tail")
+          }
+        }
+      }
     }
-    
-    val x102_&s_val = { x103 => 
-      if (1 < x103) 
-        x102_&s_val(x103 + -1) 
-        + x102_(B,(1,100))(x103 + -1)("head") 
-      else "undefined"("head") + 1 
+  }
+} else "undefined"("tail") }
+val x102_&s_val = { x103 => 
+  if (0 < x103) 
+    x102_&s_val(x103 + -1) + if (x102_&x_val(x103 + -1) == "&i") "undefined" 
+  else {
+  if (x102_&x_val(x103 + -1) == "&z") "undefined" else {
+    if (x102_&x_val(x103 + -1) == "B") x7_B(100)("head") else {
+      if (x102_&x_val(x103 + -1) == "&y") "undefined" else {
+        if (x102_&x_val(x103 + -1) == "&s") "undefined" else {
+          if (x102_&x_val(x103 + -1) == "&x") "undefined" else 
+            "undefined"("head")
+        }
+      }
     }
-    
-    val x7_B = { x8 => 
-      if (0 < x8) 
-        x7_B(x8 + -1) 
-        + ((1,x8) -> 
-            x7_B(x8 + -1)((1,x8)) 
-            + ("head" -> x8 + -1) 
-            + ("tail" -> ("B",(1,x8 + -1)))) 
-      else 
-        Map(1 -> 
-          Map() + (x8 -> 
-            "undefined"((1,x8)) + ("head" -> x8 + -1) + ("tail" -> (A,1)))) 
+  }
+} else "undefined"("head") }
+Map("&i" -> Map("val" -> if (0 < fixindex(x103 => x102_&x_val(x103 + -1) != (A,1))) {
+  if (x102_&x_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)) + -1) == "&i") "undefined" else {
+    if (x102_&x_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)) + -1) == "&z") "undefined" else {
+      if (x102_&x_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)) + -1) == "B") x7_B(100)("head") else {
+        if (x102_&x_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)) + -1) == "&y") "undefined" else {
+          if (x102_&x_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)) + -1) == "&s") "undefined" else {
+            if (x102_&x_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)) + -1) == "&x") "undefined" else 
+              "undefined"("head")
+          }
+        }
+      }
     }
-    
-    Map(
-      "&i" -> Map("val" -> if (1 < fixindex(x103 => 0)) x102_(B,(1,100))(fixindex(x103 => 0) + -1)("head") else "undefined"("head")), 
-      "B" -> x7_B(100), 
-      "&s" -> Map("val" -> x102_&s_val(fixindex(x103 => 0))), 
-      "&x" -> Map("val" -> (B,(1,100))), 
-      "&z" -> Map("val" -> (A,1)), 
-      "&y" -> Map("val" -> if (1 < fixindex(x103 => 0)) x102_(B,(1,100))(fixindex(x103 => 0) + -1)("tail") else "undefined"("tail")), 
-      (B,(1,100)) -> x102_(B,(1,100))(fixindex(x103 => 0))
-    )
+  }
+} else "undefined"("head")), 
+"B" -> x7_B(100), 
+"&s" -> Map(
+  "val" -> x102_&s_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)))), 
+  "&x" -> Map("val" -> x102_&x_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)))), 
+  "&z" -> Map("val" -> (A,1)), 
+  "&y" -> Map("val" -> (B,(1,100)))
+)
+
 */
 
 
