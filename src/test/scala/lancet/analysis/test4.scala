@@ -1320,6 +1320,8 @@ class TestAnalysis4 extends FileDiffSuite {
         eval(c) // once more (this one will fail)
 */
         
+        println(s"*** after loop $store ***")
+
         IR.const(())
 
       case Block(Nil) => IR.const(())
