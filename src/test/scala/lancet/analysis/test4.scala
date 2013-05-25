@@ -1596,8 +1596,30 @@ class TestAnalysis4 extends FileDiffSuite {
 
 /* result:
 
-val x7_B = { x8 => if (0 < x8) x7_B(x8 + -1) + ((1,x8) -> x7_B(x8 + -1)((1,x8)) + ("head" -> x8 + -1) + ("tail" -> ("B",(1,x8 + -1)))) else Map(1 -> Map() + (x8 -> "undefined"((1,x8)) + ("head" -> x8 + -1) + ("tail" -> (A,1)))) }
-Map("&i" -> Map("val" -> "undefined"("head")), "B" -> x7_B(100), "&s" -> Map("val" -> "undefined"("head")), "&x" -> Map("val" -> "undefined"("tail")), "&z" -> Map("val" -> (A,1)), "&y" -> Map("val" -> (B,(1,100))))
+val x7_B = { x8 => 
+  if (0 < x8) 
+    x7_B(x8 + -1) 
+    + ((1,x8) -> 
+        x7_B(x8 + -1)((1,x8)) 
+        + ("head" -> x8 + -1) 
+        + ("tail" -> ("B",(1,x8 + -1)))) 
+  else 
+    Map(1 -> 
+      Map() 
+      + (x8 -> 
+          "undefined"((1,x8)) 
+          + ("head" -> x8 + -1) 
+          + ("tail" -> (A,1)))) 
+  }
+
+Map(
+  "&i" -> Map("val" -> "undefined"("head")), 
+  "B" -> x7_B(100), 
+  "&s" -> Map("val" -> "undefined"("head")), 
+  "&x" -> Map("val" -> "undefined"("tail")), 
+  "&z" -> Map("val" -> (A,1)), 
+  "&y" -> Map("val" -> (B,(1,100)))
+)
 
 */
 
