@@ -618,6 +618,7 @@ class TestAnalysis4 extends FileDiffSuite {
         case GConst(m:Map[_,_]) if m.isEmpty => update(dreflect(DMap(Map())),f,y) // f may be non-const
         case Def(DMap(m)) => 
           f match {
+            case GConst((u,v)) => update(x,const(u),update(select(x,const(u)),const(v),y))
             case GConst(_) => map(m + (f -> y)) // TODO: y = DIf ??
             case Def(DIf(c,u,v)) => iff(c,update(x,u,y),update(x,v,y))
             case Def(DPair(u,v)) => update(x,u,update(select(x,u),v,y))
@@ -640,6 +641,7 @@ class TestAnalysis4 extends FileDiffSuite {
       override def select(x: From, f: From): From          = x match {
         case Def(DMap(m)) => 
           f match {
+            case GConst((u,v)) => select(select(x,const(u)),const(v))
             case GConst(_) => m.getOrElse(f, GConst("undefined"))
             case Def(DIf(c,u,v)) => iff(c,select(x,u),select(x,v))
             case Def(DPair(u,v)) => select(select(x,u),v)
