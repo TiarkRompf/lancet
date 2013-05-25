@@ -1577,6 +1577,24 @@ class TestAnalysis4 extends FileDiffSuite {
 
     // test store logic (2): build and traverse a linked list
 
+    val testProg3a = Block(List(
+      Assign("i", Const(0)),
+      Assign("z", New("A")),
+      Assign("x", Ref("z")),
+      While(Less(Ref("i"),Const(100)), Block(List(
+        Assign("y", New("B")),
+        Put(Ref("y"), Const("head"), Ref("i")),
+        Put(Ref("y"), Const("tail"), Ref("x")),
+        Assign("x", Ref("y")),
+        Assign("i", Plus(Ref("i"), Const(1)))
+      ))),
+      Assign("s", Const(0)),
+      Assign("i", Get(Ref("x"), Const("head"))),
+      Assign("x", Get(Ref("x"), Const("tail"))),
+      Assign("s", Plus(Ref("s"), Ref("i")))
+    ))
+
+
     val testProg3b = Block(List(
       Assign("i", Const(0)),
       Assign("z", New("A")),
@@ -1782,6 +1800,10 @@ Map("&i" -> Map("val" -> if (0 < fixindex(x103 => x102_&x_val(x103 + -1) != (A,1
     Test1.run(Test1.testProg3)
     Test1.run(Test1.testProg4) // 3 and 4 should be different: alloc within the loop vs before
     Test1.run(Test1.testProg5)
+  }
+
+  def testB1 = withOutFileChecked(prefix+"B1") {
+    Test1.run(Test1.testProg3a)
   }
 
   def testB2 = withOutFileChecked(prefix+"B2") {
