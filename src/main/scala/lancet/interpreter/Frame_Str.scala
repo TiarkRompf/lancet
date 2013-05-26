@@ -37,7 +37,7 @@ import com.oracle.graal.bytecode._;
 trait InterpreterUniverse_LMS extends RuntimeUniverse_LMS with InterpreterUniverse_Staged {
 }
 
-trait InterpreterUniverse_LIR extends RuntimeUniverse_LIR with InterpreterUniverse_Staged {
+trait InterpreterUniverse_TIR extends RuntimeUniverse_TIR with InterpreterUniverse_Staged {
 }
 
 

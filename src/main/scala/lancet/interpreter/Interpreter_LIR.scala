@@ -35,11 +35,11 @@ import com.oracle.graal.bytecode._;
 
 
 //@SuppressWarnings("static-method")
-trait BytecodeInterpreter_LIR extends InterpreterUniverse_LIR with BytecodeInterpreter_Common_Compile {
+trait BytecodeInterpreter_TIR extends InterpreterUniverse_TIR with BytecodeInterpreter_Common_Compile {
 
     import BytecodeInterpreter._
 
-    def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_LIR(m)
+    def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_TIR(m)
 
     override def trace(level: Int, message: String)  = super.trace(level, "// " + message)
 

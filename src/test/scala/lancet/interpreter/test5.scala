@@ -317,7 +317,7 @@ class TestInterpreter5 extends FileDiffSuite {
 
   }
 
-  class Decompiler extends BytecodeInterpreter_LIR_Opt with DefaultMacros {
+  class Decompiler extends BytecodeInterpreter_TIR_Opt with DefaultMacros {
 
     initialize()
     emitUniqueOpt = true

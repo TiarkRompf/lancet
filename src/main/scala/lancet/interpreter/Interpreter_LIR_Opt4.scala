@@ -14,13 +14,13 @@ import scala.collection.{mutable,immutable}
 // (todo) cse --> elim redundant checks
 
 
-class BytecodeInterpreter_LIR_Opt extends BytecodeInterpreter_LIR_Opt4
+class BytecodeInterpreter_TIR_Opt extends BytecodeInterpreter_TIR_Opt4
 
 
 // version 4 -- reverse engineer more of the program block structure (if, loop)
 
 
-trait AbstractInterpreter_LIR extends AbstractInterpreterIntf_LIR with BytecodeInterpreter_LIR with RuntimeUniverse_LIR_Opt {
+trait AbstractInterpreter_TIR extends AbstractInterpreterIntf_TIR with BytecodeInterpreter_TIR with RuntimeUniverse_TIR_Opt {
 
     // hack: base_opt doesn't have access to runtime
     override def getFieldForLub[T:TypeRep](base: Rep[Object], cls: Class[_], k: String): Rep[T] = {
@@ -158,7 +158,7 @@ trait AbstractInterpreter_LIR extends AbstractInterpreterIntf_LIR with BytecodeI
 
 
 
-trait AbstractInterpreterIntf_LIR extends BytecodeInterpreter_LIR with Core_LIR {
+trait AbstractInterpreterIntf_TIR extends BytecodeInterpreter_TIR with Core_TIR {
 
     type State
 
@@ -182,7 +182,7 @@ trait AbstractInterpreterIntf_LIR extends BytecodeInterpreter_LIR with Core_LIR 
 
 
 
-class BytecodeInterpreter_LIR_Opt4 extends AbstractInterpreter_LIR with BytecodeInterpreter_LIR_Opt4Engine with BytecodeInterpreter_LIR with RuntimeUniverse_LIR_Opt {
+class BytecodeInterpreter_TIR_Opt4 extends AbstractInterpreter_TIR with BytecodeInterpreter_TIR_Opt4Engine with BytecodeInterpreter_TIR with RuntimeUniverse_TIR_Opt {
     override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m)
 
     override def withScope[A](body: =>A): A = { // TODO: put somewhere else
@@ -249,7 +249,7 @@ class BytecodeInterpreter_LIR_Opt4 extends AbstractInterpreter_LIR with Bytecode
 }
 
 
-trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR with BytecodeInterpreter_LIR with Core_LIR {
+trait BytecodeInterpreter_TIR_Opt4Engine extends AbstractInterpreterIntf_TIR with BytecodeInterpreter_TIR with Core_TIR {
 
     // config options
 

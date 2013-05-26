@@ -3,7 +3,7 @@ package lancet.core
 
 
 
-trait Core_LIR extends Base_LIR {
+trait Core_TIR extends Base_TIR {
 
   implicit def unit(x: Boolean): Rep[Boolean] = liftConst(x)
   implicit def unit(x: Byte): Rep[Byte] = liftConst(x)

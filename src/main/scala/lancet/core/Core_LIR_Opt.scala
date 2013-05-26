@@ -1,7 +1,7 @@
 package lancet.core
 
 
-trait Core_LIR_Opt extends Base_LIR_Opt with Core_LIR {
+trait Core_TIR_Opt extends Base_TIR_Opt with Core_TIR {
 
   def liftConst[T:TypeRep](x:T): Rep[T] = Static(x)
 

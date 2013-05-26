@@ -246,7 +246,7 @@ compilation: ok
 20
 ==== speculate/slowpath
 // constants: <function1>,<function0>,10,lancet.api.Lancet$$anon$1@683286bf,public abstract int scala.Function1.apply$mcII$sp(int),HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>,Array(x41, x48),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>
-class Generated7(CONST_0: lancet.interpreter.BytecodeInterpreter_LIR$$anonfun$fun$1,CONST_1: lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$4,CONST_2: scala.runtime.IntRef,CONST_3: lancet.api.Lancet$$anon$1,CONST_4: java.lang.reflect.Method,CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: Array[lancet.core.Base_LIR$Rep],CONST_7: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_8: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (java.lang.Object=>Int){
+class Generated7(CONST_0: lancet.interpreter.BytecodeInterpreter_TIR$$anonfun$fun$1,CONST_1: lancet.interpreter.TestInterpreterX$$anonfun$test1$1$$anonfun$4,CONST_2: scala.runtime.IntRef,CONST_3: lancet.api.Lancet$$anon$1,CONST_4: java.lang.reflect.Method,CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: Array[lancet.core.Base_TIR$Rep],CONST_7: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_8: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (java.lang.Object=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -366,10 +366,10 @@ HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$Test
 HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>
 <function1>,<function1>,null,null
 HotSpotMethod<BytecodeInterpreter_Exec.execute>
-lancet.api.Lancet$$anon$1@683286bf,HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@1c298e28,null,null,null,null,null,null
+lancet.api.Lancet$$anon$1@683286bf,HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_TIR$Rep;@1c298e28,null,null,null,null,null,null
 root:
 HotSpotMethod<BytecodeInterpreter_Exec.execute>
-lancet.api.Lancet$$anon$1@683286bf,HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@1c298e28,null,null,null,null,null,null
+lancet.api.Lancet$$anon$1@683286bf,HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_TIR$Rep;@1c298e28,null,null,null,null,null,null
       RootCall HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply> - HotSpotSignature<(Lscala/Function1;)I>
       33: aload_1
       34: aload_0
@@ -506,6 +506,6 @@ HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$Test
 null,null,null,null
 root:
 HotSpotMethod<BytecodeInterpreter_Exec.execute>
-lancet.api.Lancet$$anon$1@683286bf,HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_LIR$Rep;@1c298e28,200,null,null,null,null,null
+lancet.api.Lancet$$anon$1@683286bf,HotSpotMethod<TestInterpreterX$$anonfun$test1$1$$anonfun$lancet$interpreter$TestInterpreterX$$anonfun$$speculate$1$1.apply>,[Llancet.core.Base_TIR$Rep;@1c298e28,200,null,null,null,null,null
 result: 200
 200

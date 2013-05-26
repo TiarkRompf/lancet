@@ -33,16 +33,16 @@ import com.oracle.graal.hotspot.meta._;
 import com.oracle.graal.bytecode._;
 
 
-trait RuntimeUniverse_LIR extends Core_LIR with RuntimeUniverse {
+trait RuntimeUniverse_TIR extends Core_TIR with RuntimeUniverse {
 
 var emitNullChecks = false
 var emitArrayChecks = false
 var emitMonitors = false
 var emitVolatile = false
 
-def unsafe: Unsafe_LIR
+def unsafe: Unsafe_TIR
 
-trait Unsafe_LIR {
+trait Unsafe_TIR {
 
   def monitorEnter(value: Rep[Object]): Rep[Unit] = 
     if (emitMonitors) reflect[Unit]("unsafe.monitorEnter(",value,")") else liftConst(())
@@ -147,7 +147,7 @@ trait Unsafe_LIR {
 }
 
 
-class Runtime_LIR(metaProvider: MetaAccessProvider) extends Runtime {
+class Runtime_TIR(metaProvider: MetaAccessProvider) extends Runtime {
 
     val toJavaM = classOf[HotSpotResolvedJavaMethod].getDeclaredMethod("toJava")
     toJavaM.setAccessible(true)

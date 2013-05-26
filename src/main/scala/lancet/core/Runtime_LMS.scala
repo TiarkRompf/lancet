@@ -179,7 +179,7 @@ class Runtime_LMS(metaProvider: MetaAccessProvider) extends Runtime {
         }).asInstanceOf[TypeRep[Object]]
 
         // don't just quote -- need deps!!!!
-        // TODO: fix for static methods, too, and for LIR
+        // TODO: fix for static methods, too, and for TIR
         // TODO: if method is accessible, call directly
         if (!static) {
             if (args.length > 1) {

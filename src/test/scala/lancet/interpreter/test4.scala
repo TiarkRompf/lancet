@@ -73,7 +73,7 @@ class TestInterpreter4 extends FileDiffSuite {
 
   class Marker
 
-  class Decompiler extends BytecodeInterpreter_LIR_Opt {
+  class Decompiler extends BytecodeInterpreter_TIR_Opt {
 
     def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[Object]): (Rep[Object],Block[Object]) = {
       val arg = Dyn[Object](fresh)

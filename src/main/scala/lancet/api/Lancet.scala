@@ -31,7 +31,7 @@ object Lancet {
 */
 
   def newCompilerOpt = { 
-    val it = new BytecodeInterpreter_LIR_Opt with DefaultMacros
+    val it = new BytecodeInterpreter_TIR_Opt with DefaultMacros
     it.initialize
     it
   }
@@ -63,7 +63,7 @@ import com.oracle.graal.hotspot.meta._  // HotSpotRuntime
 
 
 
-trait DefaultMacros extends BytecodeInterpreter_LIR_Opt { self =>
+trait DefaultMacros extends BytecodeInterpreter_TIR_Opt { self =>
 
     // *** macro interface
 
