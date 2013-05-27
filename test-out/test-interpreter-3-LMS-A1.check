@@ -2,6 +2,7 @@
   Emitting Generated Code
   *******************************************/
   class Generated extends ((Int)=>(Int)) {
+<<<<<<< HEAD
     def apply(x88:Int): Int = {
       val x0 = x88;
       val x90: Int = {
@@ -34,10 +35,42 @@
         RES0
       };
       x90
+=======
+    def apply(x0:Int): Int = {
+      import sun.misc.Unsafe;
+      val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
+      type char = Char;
+      def WARN = assert(false, "WARN");
+      def ERROR = assert(false, "ERROR");
+      var RES = null.asInstanceOf[Int];
+      val x7 = x0.asInstanceOf[Int];
+      val x10: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
+      if (x10 ne null) unsafe.putInt(x10,16L, 7) else println("BUG: putInt"+x10);;
+      val x40 = 0 >= x7;
+      if (x40) {
+        ;{;
+          val LUB_x10_intField = 7; // Alias(Some(DynExp(LUB_x10_intField)),Some(Const(7)));
+          BLOCK_12(LUB_x10_intField,x10,x7);
+        };
+      } else {
+        if (x10 ne null) unsafe.putInt(x10,16L, 9) else println("BUG: putInt"+x10);;
+        ;{;
+          val LUB_x10_intField = 9; // Alias(Some(DynExp(LUB_x10_intField)),Some(Const(9)));
+          BLOCK_12(LUB_x10_intField,x10,x7);
+        };
+      }
+      def BLOCK_12(LUB_x10_intField:Int,x10:Object,x7:Int): Unit = {
+        (RES = LUB_x10_intField) // return to root;
+      }
+      // (no return?);
+      RES
+>>>>>>> 5928874f8b91b6165b6d0637e8c9fee727876d17
     }
   }
   /*****************************************
   End of Generated Code
   *******************************************/
+Vector()
+List()
 compilation: ok
 9

@@ -2,6 +2,7 @@
   Emitting Generated Code
   *******************************************/
   class Generated extends ((Int)=>(Int)) {
+<<<<<<< HEAD
     def apply(x133:Int): Int = {
       val x0 = x133;
       val x135: Int = {
@@ -34,6 +35,37 @@
               BLOCK_10(LUB_x8_intField,PHI_3_6,x7,x8);
             };
           }
+=======
+    def apply(x0:Int): Int = {
+      import sun.misc.Unsafe;
+      val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
+      type char = Char;
+      def WARN = assert(false, "WARN");
+      def ERROR = assert(false, "ERROR");
+      var RES = null.asInstanceOf[Int];
+      val x7 = x0.asInstanceOf[Int];
+      val x10: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
+      if (x10 ne null) unsafe.putInt(x10,16L, 7) else println("BUG: putInt"+x10);;
+      ;{;
+        val PHI_3_6 = x7 // LUBC(DynExp(PHI_3_6):Int,Sym(7):Int);
+        val LUB_x10_intField = 7; // Alias(Some(DynExp(LUB_x10_intField)),Some(Const(7)));
+        BLOCK_10(LUB_x10_intField,PHI_3_6,x10,x7);
+      };
+      def BLOCK_10(LUB_x10_intField:Int,PHI_3_6:Int,x10:Object,x7:Int): Unit = {
+        val x73 = 0 >= PHI_3_6;
+        val x10: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
+        if (x73) {
+          (RES = LUB_x10_intField) // return to root;
+        } else {
+          val x87 = 1 + LUB_x10_intField;
+          if (x10 ne null) unsafe.putInt(x10,16L, x87) else println("BUG: putInt"+x10);;
+          val x96 = -1 + PHI_3_6;
+          ;{;
+            val PHI_3_6 = x96 // LUBC(DynExp(PHI_3_6):Int,Sym(96):Int);
+            val LUB_x10_intField = x87; // Alias(Some(DynExp(LUB_x10_intField)),Some(Sym(87)));
+            BLOCK_10(LUB_x10_intField,PHI_3_6,x10,x7);
+          };
+>>>>>>> 5928874f8b91b6165b6d0637e8c9fee727876d17
         }
         // (no return?);
         RES0
@@ -44,5 +76,7 @@
   /*****************************************
   End of Generated Code
   *******************************************/
+Vector()
+List()
 compilation: ok
 14

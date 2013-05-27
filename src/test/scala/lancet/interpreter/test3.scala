@@ -5,7 +5,7 @@ import lancet.api._
 
 class TestInterpreter3 extends BaseTestInterpreter3 {
   val prefix = "test-out/test-interpreter-3"
-  def newCompiler = new BytecodeInterpreter_LIR_Opt with Compiler {
+  def newCompiler = new BytecodeInterpreter_TIR_Opt with Compiler {
     initialize()
     debugBlockKeys = false
   }

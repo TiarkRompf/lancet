@@ -98,7 +98,7 @@ class TestInterpreter2 extends FileDiffSuite {
   }
 
 
-  class BytecodeInterpreter_JS extends BytecodeInterpreter_LIR_Opt {
+  class BytecodeInterpreter_JS extends BytecodeInterpreter_TIR_Opt {
     override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m) {
       override def isVolatile(field: ResolvedJavaField) = false // don't honor volatile
     }
@@ -152,7 +152,7 @@ class TestInterpreter2 extends FileDiffSuite {
 </html>"""
 
 
-  class BytecodeInterpreter_JS2 extends BytecodeInterpreter_LIR_Opt {
+  class BytecodeInterpreter_JS2 extends BytecodeInterpreter_TIR_Opt {
     override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m) {
       override def isVolatile(field: ResolvedJavaField) = false // don't honor volatile
     }

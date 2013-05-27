@@ -107,6 +107,12 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
     case _ => super.emitNode(sym,rhs)
   }
 
+  override def remap[A](m: Manifest[A]): String = m match {
+    case null => "NULL"
+    case _ => super.remap(m)
+  }
+
+
   override def quote(e: Exp[Any]) = e match {
     case DynExp(a) => a.toString
     case Const(a) => VConstToString(a)(e.typ)
@@ -206,8 +212,8 @@ trait Base_LMS0 extends Base_LMS1 {
 
   def quote(x:Any): String = x match {
     case Const(c:AnyRef) => VConstToString(c)(typeRep[AnyRef]) //hack?
-    //case Dyn(s: String) => s // x99   XX OLD SCALA
-    case Sym(n) => "x"+n
+    case Const(null) => VConstToString[AnyRef](null)(typeRep[AnyRef]) //hack?
+    case Dyn(s) => s // x99
     case DynExp(x) => x
     case _ => x.toString
   }
@@ -262,12 +268,18 @@ trait Base_LMS0 extends Base_LMS1 {
       else s + "[" + params.map(x=>"_").mkString(",") + "]"
   }
 
-  def manifestStr(x: Manifest[_]) = classStr(x.erasure)
+  def manifestStr(x: Manifest[_]) = {
+    val s = "" + x // NOTE: strangly, NPEs crop up if this line is removed?
+    //println(s)
+    classStr(x.erasure)
+  }
 
   def specCls(x: AnyRef): (AnyRef,Class[_]) = {
     val cls = x.getClass
     if (Modifier.isPublic(cls.getModifiers)) (x,cls) else (x,classOf[Object])
     // for now, just fix to Object (hack?)
+    if (cls == classOf[java.lang.reflect.Method]) (x,cls)
+    else 
     (x,classOf[Object])
   }
 
@@ -313,6 +325,7 @@ trait Base_LMS_Abs extends Base {
   abstract class Val[+T]
   case class VConst[+T](x: T) extends Val[T] { override def toString = ("VConst("+x+")").replace("\n","\\n") }
   case class Partial[+T](fields: Map[String, Rep[Any]]) extends Val[T]
+  case class VPhi[+T](c: Rep[Boolean], a: Rep[T], b: Rep[T]) extends Val[T]
   case object Top extends Val[Nothing]
 
   def eval[T](x: Rep[T]): Val[T]
@@ -341,6 +354,15 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
     }
     def getFields(x: Elem): Set[Rep[Any]] = { // only unique aliases
       x.values.toSet
+    }
+  }
+
+  var conds: CondLattice.Elem = Map.empty
+
+  object CondLattice {
+    type Elem = Map[Rep[Boolean],Boolean]
+    def lub(x: Elem, y: Elem): Elem = {
+      x ++ y // may/must ?
     }
   }
 

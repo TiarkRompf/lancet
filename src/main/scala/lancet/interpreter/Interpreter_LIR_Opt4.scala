@@ -14,13 +14,13 @@ import scala.collection.{mutable,immutable}
 // (todo) cse --> elim redundant checks
 
 
-class BytecodeInterpreter_LIR_Opt extends BytecodeInterpreter_LIR_Opt4
+class BytecodeInterpreter_TIR_Opt extends BytecodeInterpreter_TIR_Opt4
 
 
 // version 4 -- reverse engineer more of the program block structure (if, loop)
 
 
-trait AbstractInterpreter_LIR extends AbstractInterpreterIntf_LIR with BytecodeInterpreter_LIR with RuntimeUniverse_LIR_Opt {
+trait AbstractInterpreter_TIR extends AbstractInterpreterIntf_TIR with BytecodeInterpreter_TIR with RuntimeUniverse_TIR_Opt {
 
     // hack: base_opt doesn't have access to runtime
     override def getFieldForLub[T:TypeRep](base: Rep[Object], cls: Class[_], k: String): Rep[T] = {
@@ -46,6 +46,20 @@ trait AbstractInterpreter_LIR extends AbstractInterpreterIntf_LIR with BytecodeI
       }        
     }
 
+
+
+    // TODO: externalize
+    // side-effect: may create definition phi_str = b
+    def phi(str: String, a: Rep[Object], b: Rep[Object]) = if (a == b) b else {
+      if (b == null)
+        emitString("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
+      else if (b.toString != str)
+        emitString("val "+str+" = " + b + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
+      val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
+      Dyn[AnyRef](str)(tp)
+    }
+
+
     object FrameLattice {
       type Elem = InterpreterFrame
 
@@ -66,20 +80,12 @@ trait AbstractInterpreter_LIR extends AbstractInterpreterIntf_LIR with BytecodeI
 
         assert(x.getMethod == y.getMethod)
 
+
         for (i <- 0 until y.locals.length) {
           val a = x.locals(i)
           val b = y.locals(i)
-
-          if (a != b) {
-            val str = "PHI_"+x.depth+"_"+i
-            if (b == null)
-              emitString("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
-            else if (b.toString != str)
-              emitString("val "+str+" = " + b + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
-            val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
-            val phi = Dyn[AnyRef](str)(tp)
-            y.locals(i) = phi
-          }
+          val str = "PHI_"+x.depth+"_"+i
+          y.locals(i) = phi(str,a,b)
         }
 
         lub(x.getParentFrame, y.getParentFrame)
@@ -152,7 +158,7 @@ trait AbstractInterpreter_LIR extends AbstractInterpreterIntf_LIR with BytecodeI
 
 
 
-trait AbstractInterpreterIntf_LIR extends BytecodeInterpreter_LIR with Core_LIR {
+trait AbstractInterpreterIntf_TIR extends BytecodeInterpreter_TIR with Core_TIR {
 
     type State
 
@@ -176,7 +182,7 @@ trait AbstractInterpreterIntf_LIR extends BytecodeInterpreter_LIR with Core_LIR 
 
 
 
-class BytecodeInterpreter_LIR_Opt4 extends AbstractInterpreter_LIR with BytecodeInterpreter_LIR_Opt4Engine with BytecodeInterpreter_LIR with RuntimeUniverse_LIR_Opt {
+class BytecodeInterpreter_TIR_Opt4 extends AbstractInterpreter_TIR with BytecodeInterpreter_TIR_Opt4Engine with BytecodeInterpreter_TIR with RuntimeUniverse_TIR_Opt {
     override def getRuntimeInterface(m: MetaAccessProvider) = new Runtime_Opt(m)
 
     override def withScope[A](body: =>A): A = { // TODO: put somewhere else
@@ -187,6 +193,22 @@ class BytecodeInterpreter_LIR_Opt4 extends AbstractInterpreter_LIR with Bytecode
         setState0(save)
       }
     }
+
+    /*def genGoto(key: String) = {
+      reflect[Unit](Patch(key, Block(Const(()))))
+    }
+    def genGotoDef(key: String, rhs: Block[Unit]) = {
+      var hit = false
+      globalDefs.foreach {
+        case d@TP(s,Reflect(g @ Patch(`key`, _), u, es)) => 
+          //println("FOUND "+d);Patch          
+          hit = true
+          g.block = rhs
+        case d => d
+      }
+      assert(hit)
+    }*/
+
 
     def genBlockCall(keyid: Int, fields: List[Rep[Any]]) = "BLOCK_"+keyid+"("+fields.mkString(",")+")"
 
@@ -227,7 +249,7 @@ class BytecodeInterpreter_LIR_Opt4 extends AbstractInterpreter_LIR with Bytecode
 }
 
 
-trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR with BytecodeInterpreter_LIR with Core_LIR {
+trait BytecodeInterpreter_TIR_Opt4Engine extends AbstractInterpreterIntf_TIR with BytecodeInterpreter_TIR with Core_TIR {
 
     // config options
 
@@ -252,11 +274,13 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
       map.build();
       map
     }) else { // OSR
+      assert(bci >= 0,"bci: "+bci)
       import scala.collection.JavaConversions._
       val map = new BciBlockMapping(method);
       map.build();
       emitString("// need to fix block ordering for bci="+bci)
       emitString("// old: " + map.blocks.mkString(","))
+
       val start = map.blocks.find(_.startBci == bci).get
       var reach = List[BciBlockMapping.Block]()
       var seen = Set[BciBlockMapping.Block]()
@@ -402,13 +426,13 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
       emitString("*/")
 */
 
-      val (mkey,mkeyid) = contextKeyId(mframe)
-
       val saveHandler = handler
       val saveDepth = getContext(mframe).length
 
       if (debugMethods) emitString("// << " + method)
       
+      val (mkey,mkeyid) = contextKeyId(mframe)
+
       case class BlockInfo(inEdges: List[(Int,State)], inState: State)
       case class BlockInfoOut(returns: List[State], gotos: List[State], code: Block[Unit])
 
@@ -672,10 +696,14 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
           emitString("// caught " + e)
           reflect[Unit]("throw "+e.cause+".asInstanceOf[Throwable]")
         case e: Throwable =>
+          val e1 = e match {
+            case e: java.lang.reflect.InvocationTargetException => e.getCause
+            case _ => e
+          }
           emitString("ERROR /*")
           emitString(key)
-          emitString(e.toString)
-          emitString(e.getStackTrace().take(100).mkString("\n"))
+          emitString(e1.toString)
+          emitString(e1.getStackTrace().take(100).mkString("\n"))
           emitString("*/")
           liftConst(())
       }

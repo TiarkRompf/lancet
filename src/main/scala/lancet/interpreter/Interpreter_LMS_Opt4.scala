@@ -47,6 +47,18 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
       }        
     }
 
+    
+    // TODO: externalize
+    // side-effect: may create definition phi_str = b
+    def phi(str: String, a: Rep[Object], b: Rep[Object]) = if (a == b) b else {
+      if (b == null)
+        emitString("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
+      else if (quote(b) != str)
+        emitString("val "+str+" = " + quote(b) + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
+      val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
+      Dyn[AnyRef](str)(tp)        
+    }
+
     object FrameLattice {
       type Elem = InterpreterFrame
 
@@ -70,17 +82,8 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
         for (i <- 0 until y.locals.length) {
           val a = x.locals(i)
           val b = y.locals(i)
-
-          if (a != b) {
-            val str = "PHI_"+x.depth+"_"+i
-            if (b == null)
-              emitString("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
-            else if (quote(b) != str)
-              emitString("val "+str+" = " + quote(b) + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
-            val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
-            val phi = Dyn[AnyRef](str)(tp)
-            y.locals(i) = phi
-          }
+          val str = "PHI_"+x.depth+"_"+i
+          y.locals(i) = phi(str,a,b)
         }
 
         lub(x.getParentFrame, y.getParentFrame)
@@ -89,36 +92,38 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
     }
 
     // calc lubs and backpatch info for jumps
-    type IState = (InterpreterFrame, StoreLattice.Elem, ExprLattice.Elem)
+    type IState = (InterpreterFrame, StoreLattice.Elem, ExprLattice.Elem, CondLattice.Elem)
 
     def allLubs(states: List[IState]): (IState,List[Block[Unit]]) = {
       if (states.length == 1) return (states.head, List(reify[Unit](liftConst(())))) // fast path
       // backpatch info: foreach state, commands needed to initialize lub vars
-      val gos = states map { case (frameX,storeX,exprX) =>
+      val gos = states map { case (frameX,storeX,exprX,condX) =>
         val frameY = freshFrameSimple(frameX)
         var storeY = storeX
         var exprY = exprX
+        var condY = condX
         val go = reify { // start with 'this' state, make it match all others
-          states foreach { case (f,s,e) => 
+          states foreach { case (f,s,e,c) => 
             FrameLattice.lub(f, frameY) 
             storeY = StoreLattice.lub(s,storeY)
             exprY = ExprLattice.lub(e,exprY)
+            condY = CondLattice.lub(c,condY)
           }
           //val locals = FrameLattice.getFields(frameY).filter(_.toString.startsWith("PHI"))
           //val fields = StoreLattice.getFields(storeY).filter(_.toString.startsWith("LUB"))
           //for (v <- locals ++ fields) emitString("v"+v+" = "+v)
           liftConst(())
         }
-        (go,frameY,storeY,exprY)
+        (go,frameY,storeY,exprY,condY)
       }
-      val (_,f02,s02,e02) = gos(0)
-      for ((_,fx,sx,ex) <- gos) { // sanity check
+      val (_,f02,s02,e02,c02) = gos(0)
+      for ((_,fx,sx,ex,cx) <- gos) { // sanity check
         assert(contextKey(f02) == contextKey(fx))
         assert(getAllArgs(f02) == getAllArgs(fx))
         assert(s02 == sx, s02+"!=="+sx)
         assert(e02 == ex, e02+"!=="+ex)
       }
-      ((f02,s02,e02),gos.map(_._1))
+      ((f02,s02,e02,c02),gos.map(_._1))
     }
 
     def getFrame(s: IState) = s._1
@@ -139,15 +144,15 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
       frame2
     }
 
-    var exprs: ExprLattice.Elem = ExprLattice.bottom
+    var exprs: ExprLattice.Elem = ExprLattice.bottom // move somewhere else?
 
     def getAllArgs(frame: InterpreterFrame) = frame.getReturnValue()::getContext(frame).dropRight(1).flatMap(_.asInstanceOf[InterpreterFrame_Str].locals)
 
-    def getState(frame: InterpreterFrame) = (freshFrameSimple(frame), store, exprs)
-    def withState[A](state: IState)(f: InterpreterFrame => A): A = { store = state._2; exprs = state._3; f(state._1) }
+    def getState(frame: InterpreterFrame) = (freshFrameSimple(frame), store, exprs, conds)
+    def withState[A](state: IState)(f: InterpreterFrame => A): A = { store = state._2; exprs = state._3; ; conds = state._4; f(state._1) }
 
-    def getState0 = (null, store, exprs) // TODO: cleanup
-    def setState0(state: IState): Unit = { store = state._2; exprs = state._3 }
+    def getState0 = (null, store, exprs, conds) // TODO: cleanup
+    def setState0(state: IState): Unit = { store = state._2; exprs = state._3; conds = state._4 }
 
 
 }
@@ -263,11 +268,37 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
     // global internal data structures
 
     val graalBlockMapping = new mutable.HashMap[ResolvedJavaMethod, BciBlockMapping] // map key to store
-    def getGraalBlocks(method: ResolvedJavaMethod) = graalBlockMapping.getOrElseUpdate(method, {
+    def getGraalBlocks(method: ResolvedJavaMethod, bci: Int) = if (bci == 0) graalBlockMapping.getOrElseUpdate(method, {
       val map = new BciBlockMapping(method);
       map.build();
       map
-    })
+    }) else { // OSR
+      assert(bci >= 0,"bci: "+bci)
+      import scala.collection.JavaConversions._
+      val map = new BciBlockMapping(method);
+      map.build();
+      emitString("// need to fix block ordering for bci="+bci)
+      emitString("// old: " + map.blocks.mkString(","))
+
+      val start = map.blocks.find(_.startBci == bci).get
+      var reach = List[BciBlockMapping.Block]()
+      var seen = Set[BciBlockMapping.Block]()
+      def rec(block: BciBlockMapping.Block) {
+        if (!seen(block)) {
+          seen += block
+          block.successors.foreach(rec)
+          reach = block::reach
+        }
+      }
+      rec(start)
+      emitString("// new: " + reach.mkString(","))
+      map.blocks.clear
+      map.blocks.addAll(reach)
+      // do we really need to rename them??
+      for ((b,i) <- reach.zipWithIndex) b.blockID = i
+      emitString("// fixed: " + map.blocks.mkString(","))
+      map
+    }
 
     val stats = new mutable.HashMap[String, Int] // map key to id
 
@@ -353,7 +384,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       // obtain block mapping that will tell us about dominance relations
       val method = mframe.getMethod()
-      val graalBlocks = getGraalBlocks(method)
+      val graalBlocks = getGraalBlocks(method,mframe.getBCI)
       def getGraalBlock(fr: InterpreterFrame) = graalBlocks.blocks.find(_.startBci == fr.getBCI).get
 
 /*
@@ -390,6 +421,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
         else if (d < saveDepth) { 
           val s = getState(blockFrame)
           val out = blockInfoOut(curBlock)
+          if (debugReturns) emitString("// return "+curBlock+"_"+(out.returns.length)+" to "+contextKey(blockFrame))
           genGoto("RETURN_"+mkeyid+"_"+curBlock+"_"+(out.returns.length))
           blockInfoOut(curBlock) = out.copy(returns = out.returns :+ s)
           //returns = returns :+ (freshFrameSimple(blockFrame), store)
@@ -432,7 +464,10 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
 
       // *** compute fixpoint ***
+      
+      genGoto("HEAD_"+mkeyid)
 
+      //val block = reify {
       //gotoBlock(mframe) // alternative; just do it ourselves ...
       val s = getState(mframe)
       val b = getGraalBlock(mframe)
@@ -456,7 +491,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       def getPreds(i: Int) = blockInfo(i).inEdges.map(_._1)
       def shouldInline(i: Int) = getPreds(i).length < 2
-      assert(getPreds(b.blockID) == List(-1))
+      //assert(getPreds(b.blockID) == List(-1))
 
       // fix jumps inside blocks: either call or inline
       for (b <- graalBlocks.blocks.reverse if blockInfo.contains(b.blockID)) {
@@ -489,8 +524,21 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       }
 
       // initial block -- do we ever need to lub here?
-      assert(getPreds(b.blockID) == List(-1))
-      reflect(Patch("",blockInfoOut(b.blockID).code))
+      //assert(getPreds(b.blockID) == List(-1))
+      //reflect(Patch("",blockInfoOut(b.blockID).code))
+
+      if (shouldInline(b.blockID)) {
+        reflect(Patch("",blockInfoOut(b.blockID).code))
+      } else {
+        emitString("// should not inline start block "+b.blockID)
+        val s0 = blockInfo(b.blockID).inEdges.find(_._1 == -1).get._2
+        val s1 = blockInfo(b.blockID).inState
+        val fields = getFields(s1)
+        val (key,keyid) = contextKeyId(getFrame(s1))
+        val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
+        reflect[Unit](Patch("",head))
+        genBlockCall(keyid, fields)
+      }
 
       // emit all non-inlined blocks
       for (b <- graalBlocks.blocks if blockInfo.contains(b.blockID)) {
@@ -505,6 +553,8 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
           genBlockDef(key, keyid, fields, code)
         }
       }
+      //liftConst(())
+      //}
 
       // *** reset state
 
@@ -512,45 +562,64 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       // *** backpatch returns and continue ***
 
-
-      if (debugMethods) emitString("// >> " + method)
-
       val returns = blockInfoOut.toList flatMap { case (i, out) =>
         out.returns.zipWithIndex.map { case (st, j) => ("RETURN_"+mkeyid+"_"+i+"_"+j,st) }
       }
+
+      // need to split between different return targets!!!
+      // do we need to consider more cases than just discarding stuff?
+
+      val retframes = returns.groupBy(r => contextKey(getFrame(r._2)))
 
       if (returns.length == 0) {
         emitString("// (no return?)")
       } else if (returns.length == 1) {  // TODO
         val (k,s) = returns(0)
         val ret = reify {
-          //emitString("// ret single "+method)
+          if (debugReturns) emitString("// ret single "+method)
+          if (debugMethods) emitString("// >> " + method)
           withState(s)(exec)
         }
         genGotoDef(k, ret)
       } else {
-        //emitString("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
+        emitString("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
 
-        val (ss, gos) = allLubs(returns.map(_._2))
-        val fields = getFields(ss)
+        if (retframes.size == 1) { // just 1 target
+          val (ss, gos) = allLubs(returns.map(_._2))
+          val fields = getFields(ss)
 
-        emitString(";{")
+          emitString(";{")
 
-        for (v <- fields) genVarDef(v)
+          val head = reify { for (v <- fields) { var w = genVarDef(v); emitString("// "+w) } }
+          genGotoDef("HEAD_"+mkeyid, head)
 
-        for ((k,go) <- (returns.map(_._1)) zip gos) {
-          val block = reify[Unit]{ reflect[Unit](Patch("",go)); fields.map(genVarWrite); liftConst(()) }
-          genGotoDef(k, block)
-          //reflect[Unit]("def "+k.substring(6)+": Unit = {", go, assign,"};") // substr prevents further matches
+          for ((k,go) <- (returns.map(_._1)) zip gos) {
+            val block = reify[Unit]{ reflect[Unit](Patch("",go)); fields.map(genVarWrite); liftConst(()) }
+            genGotoDef(k, block)
+            //reflect[Unit]("def "+k.substring(6)+": Unit = {", go, assign,"};") // substr prevents further matches
+          }
+          
+          // TODO: should emitAll(block) here!
+
+          emitString(";{")
+          if (debugReturns) emitString("// ret multi "+method)
+
+          for (v <- fields) genVarRead(v)
+          withState(ss)(exec)
+          emitString("}")
+          emitString("}")
+        } else {
+          // multiple targets!
+          for ((target, returns) <- retframes) {
+            assert(returns.length == 1) // not handling multiple calls to multiple targets...
+            val (k,s) = returns(0)
+            val ret = reify {
+              if (debugMethods) emitString("// >> " + method)
+              withState(s)(exec)
+            }
+            genGotoDef(k, ret)
+          }
         }
-        
-        emitString(";{")
-        if (debugReturns) emitString("// ret multi "+method)
-
-        for (v <- fields) genVarRead(v)
-        withState(ss)(exec)
-        emitString("}")
-        emitString("}")
       }
       liftConst(())
     }
@@ -853,12 +922,16 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       val res = try { executeBlock(frame1, bs, bci) } catch {
         case e: InterpreterException =>
           emitString("// caught " + e)
-          reflect[Unit]("throw ",e.cause,".asInstanceOf[Throwable]")
+          reflect[Unit]("throw "+e.cause+".asInstanceOf[Throwable]")
         case e: Throwable =>
+          val e1 = e match {
+            case e: java.lang.reflect.InvocationTargetException => e.getCause
+            case _ => e
+          }
           emitString("ERROR /*")
           emitString(key)
-          emitString(e.toString)
-          emitString(e.getStackTrace().take(100).mkString("\n"))
+          emitString(e1.toString)
+          emitString(e1.getStackTrace().take(100).mkString("\n"))
           emitString("*/")
           liftConst(())
       }

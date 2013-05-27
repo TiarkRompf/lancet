@@ -9,364 +9,92 @@ prog: {
     Assign(i,Plus(Ref(i),Const(1)))
   })
 }
-val x0 = Map("val" -> 0)
-val x1 = Map("&i" -> x0)
-val x2 = Map("&i" -> x0, "&y" -> x0)
-val x3 = Map("val" -> 8)
-val x4 = Map("&i" -> x0, "&y" -> x0, "&x" -> x3)
-val x7 = (1,x6)
-val x8 = 0 < x6
-val x9 = x6 + -1
-val x10 = x5(x9)
-val x11 = if (x8) x10 else x4
-val x12 = x10("&i")
-val x13 = if (x8) x12 else x0
-val x14 = x12("val")
-val x15 = if (x8) x14 else 0
-val x16 = x14 < 100
-val x17 = if (x8) x16 else 1
-val x18 = Map("val" -> 7)
-val x19 = x10 + ("&x" -> x18)
-val x20 = Map("&i" -> x0, "&y" -> x0, "&x" -> x18)
-val x21 = if (x8) x19 else x20
-val x22 = x19 + ("&x" -> x3)
-val x23 = if (x8) x22 else x4
-val x24 = x10("&y")
-val x25 = if (x8) x24 else x0
-val x26 = x24("val")
-val x27 = if (x8) x26 else 0
-val x28 = x26 + 1
-val x29 = if (x8) x28 else 1
-val x30 = Map("val" -> x29)
-val x31 = x22 + ("&y" -> x30)
-val x32 = Map("&i" -> x0, "&y" -> x30, "&x" -> x3)
-another < flying by: 0 < x6, 0 < x6 -> 1
-val x33 = Map("val" -> x28)
-val x34 = x22 + ("&y" -> x33)
-another < flying by: 0 < x6, 0 < x6 -> 0
-val x35 = Map("val" -> 1)
-val x36 = Map("&i" -> x0, "&y" -> x35, "&x" -> x3)
-val x37 = if (x8) x34 else x36
-val x38 = x14 + 1
-val x39 = if (x8) x38 else 1
-val x40 = Map("val" -> x39)
-val x41 = x34 + ("&i" -> x40)
-val x42 = Map("&i" -> x40, "&y" -> x35, "&x" -> x3)
-another < flying by: 0 < x6, 0 < x6 -> 1
-val x43 = Map("val" -> x38)
-val x44 = x34 + ("&i" -> x43)
-another < flying by: 0 < x6, 0 < x6 -> 0
-val x45 = Map("&i" -> x35, "&y" -> x35, "&x" -> x3)
-val x46 = if (x8) x44 else x45
-val x5 = { x6 => x46 }
-another < flying by: 0 < x6, 0 < x6 -> 1
-val x47 = fixindex(x6 => x16)
-val x48 = x5(x47)
-val x49 = x48("&i")
-val x50 = x49("val")
-val x51 = x50 < 100
+val x0 = Map()
+val x1 = Map("val" -> 0)
+val x2 = Map("&i" -> x1)
+val x3 = Map("&i" -> x1, "&y" -> x1)
+val x4 = Map("val" -> 8)
+val x5 = Map("&i" -> x1, "&y" -> x1, "&x" -> x4)
+val x8 = (1,x7)
+starting spec loop with x5
+val x9 = Map("val" -> 7)
+val x10 = Map("&i" -> x1, "&y" -> x1, "&x" -> x9)
+val x11 = Map("val" -> 1)
+val x12 = Map("&i" -> x1, "&y" -> x11, "&x" -> x4)
+val x13 = Map("&i" -> x11, "&y" -> x11, "&x" -> x4)
+lub(x5, x13) = ?
+lub_x6(x5,x5,x13)
+lub_x6_&i(x1,x1,x11)
+lub_x6_&i_val(0,0,1)
+0
+1
+1
+confirmed iterative loop, d = 1
+val x14 = x7 + -1
+Set(("val",(x14,x7)))
+val x15 = Map("val" -> x14)
+val x16 = Map("val" -> x7)
+lub_x6_&y(x1,x1,x11)
+lub_x6_&y_val(0,0,1)
+0
+1
+1
+confirmed iterative loop, d = 1
+Set(("val",(x14,x7)))
+lub_x6_&x(x4,x4,x4)
+Set(("&i",(x15,x16)), ("&y",(x15,x16)), ("&x",(x4,x4)))
+val x17 = Map("&i" -> x15, "&y" -> x15, "&x" -> x4)
+val x18 = Map("&i" -> x16, "&y" -> x16, "&x" -> x4)
+lub(x5, x13) = x17
+starting spec loop with x17
+val x19 = x7 < 101
+val x20 = Map("&i" -> x15, "&y" -> x15, "&x" -> x9)
+val x21 = Map("&i" -> x15, "&y" -> x16, "&x" -> x4)
+lub(x5, x18) = ?
+lub_x6(x5,x17,x18)
+lub_x6_&i(x1,x15,x16)
+lub_x6_&i_val(0,x14,x7)
+val x22 = x7 * -1
+val x23 = x22 + 1
+x7 + -1
+x7
+1
+confirmed iterative loop, d = 1
+Set(("val",(x14,x7)))
+lub_x6_&y(x1,x15,x16)
+lub_x6_&y_val(0,x14,x7)
+x7 + -1
+x7
+1
+confirmed iterative loop, d = 1
+Set(("val",(x14,x7)))
+lub_x6_&x(x4,x4,x4)
+Set(("&i",(x15,x16)), ("&y",(x15,x16)), ("&x",(x4,x4)))
+lub(x5, x18) = x17
+val x6_&i_val = { x7 => x7 }
+val x6_&y_val = { x7 => x7 }
+val x6 = { x7 => x18 }
+fixindex: 100
+val x24 = Map("val" -> 100)
+val x25 = Map("&i" -> x24, "&y" -> x24, "&x" -> x4)
 res: ()
-store: x48
-*** begin iterate: x48
-funs:
-val x5 = { x6 => x46 }
-calls:
-val x10 = x5(x9)
-val x48 = x5(x47)
-subst: Map(x6 -> 0)
-val x52 = (1,0)
-val x53 = x5(-1)
-val x54 = x53("&i")
-val x55 = x54("val")
-val x56 = x55 < 100
-val x57 = x53 + ("&x" -> x18)
-val x58 = x57 + ("&x" -> x3)
-val x59 = x53("&y")
-val x60 = x59("val")
-val x61 = x60 + 1
-val x62 = x58 + ("&y" -> x35)
-val x63 = Map("val" -> x61)
-val x64 = x58 + ("&y" -> x63)
-val x65 = x55 + 1
-val x66 = x64 + ("&i" -> x35)
-val x67 = Map("val" -> x65)
-val x68 = x64 + ("&i" -> x67)
-val x69 = fixindex(x6 => x56)
-val x70 = x5(x69)
-val x71 = x70("&i")
-val x72 = x71("val")
-val x73 = x72 < 100
-zeros: Map(x5 -> x45)
-val x74 = x5_&i(x9)
-val x75 = x5_&y(x9)
-val x76 = x5_&x(x9)
-val x77 = Map("&i" -> x74, "&y" -> x75, "&x" -> x76)
-val x78 = x5_&i(x47)
-val x79 = x5_&y(x47)
-val x80 = x5_&x(x47)
-val x81 = Map("&i" -> x78, "&y" -> x79, "&x" -> x80)
-xform: Map(x10 -> x77, x48 -> x81)
-val x82 = if (x8) x74 else x0
-val x83 = if (x8) x75 else x0
-val x84 = if (x8) x76 else x3
-val x85 = Map("&i" -> x82, "&y" -> x83, "&x" -> x84)
-val x86 = x74("val")
-val x87 = if (x8) x86 else 0
-val x88 = x86 < 100
-val x89 = if (x8) x88 else 1
-val x90 = Map("&i" -> x74, "&y" -> x75, "&x" -> x18)
-val x91 = Map("&i" -> x82, "&y" -> x83, "&x" -> x18)
-val x92 = Map("&i" -> x74, "&y" -> x75, "&x" -> x3)
-val x93 = Map("&i" -> x82, "&y" -> x83, "&x" -> x3)
-val x94 = x75("val")
-val x95 = if (x8) x94 else 0
-val x96 = x94 + 1
-val x97 = if (x8) x96 else 1
-val x98 = Map("val" -> x97)
-val x99 = Map("&i" -> x74, "&y" -> x98, "&x" -> x3)
-val x100 = Map("&i" -> x0, "&y" -> x98, "&x" -> x3)
-val x101 = Map("val" -> x96)
-val x102 = Map("&i" -> x74, "&y" -> x101, "&x" -> x3)
-val x103 = Map("&i" -> x82, "&y" -> x98, "&x" -> x3)
-val x104 = x86 + 1
-val x105 = if (x8) x104 else 1
-val x106 = Map("val" -> x105)
-val x107 = Map("&i" -> x106, "&y" -> x101, "&x" -> x3)
-val x108 = Map("&i" -> x106, "&y" -> x35, "&x" -> x3)
-val x109 = Map("val" -> x104)
-val x110 = Map("&i" -> x109, "&y" -> x101, "&x" -> x3)
-val x111 = Map("&i" -> x106, "&y" -> x98, "&x" -> x3)
-val x112 = fixindex(x6 => x88)
-val x113 = x5(x112)
-val x114 = x113("&i")
-val x115 = x114("val")
-val x116 = x115 < 100
-val x117 = x5_&i(x112)
-val x118 = x5_&y(x112)
-val x119 = x5_&x(x112)
-val x120 = Map("&i" -> x117, "&y" -> x118, "&x" -> x119)
-val x5_&i = { x6 => x106 }
-val x5_&y = { x6 => x98 }
-val x5_&x = { x6 => x3 }
-*** done iterate: x113
-*** begin iterate: x113
-funs:
-val x5 = { x6 => x46 }
-val x5_&i = { x6 => x106 }
-calls:
-val x10 = x5(x9)
-val x74 = x5_&i(x9)
-val x113 = x5(x112)
-subst: Map(x6 -> 0)
-val x121 = x5_&i(-1)
-val x122 = x5_&y(-1)
-val x123 = Map("&i" -> x121, "&y" -> x122, "&x" -> x3)
-val x124 = x5_&i(x69)
-val x125 = x5_&y(x69)
-val x126 = Map("&i" -> x124, "&y" -> x125, "&x" -> x3)
-val x127 = x121("val")
-val x128 = x127 < 100
-val x129 = Map("&i" -> x121, "&y" -> x122, "&x" -> x18)
-val x130 = x122("val")
-val x131 = x130 + 1
-val x132 = Map("&i" -> x121, "&y" -> x35, "&x" -> x3)
-val x133 = Map("val" -> x131)
-val x134 = Map("&i" -> x121, "&y" -> x133, "&x" -> x3)
-val x135 = x127 + 1
-val x136 = Map("&i" -> x35, "&y" -> x133, "&x" -> x3)
-val x137 = Map("val" -> x135)
-val x138 = Map("&i" -> x137, "&y" -> x133, "&x" -> x3)
-val x139 = fixindex(x6 => x128)
-val x140 = x5(x139)
-val x141 = x140("&i")
-val x142 = x141("val")
-val x143 = x142 < 100
-val x144 = x5_&i(x139)
-val x145 = x5_&y(x139)
-val x146 = Map("&i" -> x144, "&y" -> x145, "&x" -> x3)
-zeros: Map(x5 -> x45, x5_&i -> x35)
-val x147 = x5_&i_val(x9)
-val x148 = Map("val" -> x147)
-val x149 = Map("&i" -> x117, "&y" -> x118, "&x" -> x3)
-xform: Map(x10 -> x92, x74 -> x148, x113 -> x149)
-val x150 = Map("&i" -> x148, "&y" -> x75, "&x" -> x3)
-val x151 = if (x8) x147 else 0
-val x152 = Map("val" -> x151)
-val x153 = Map("&i" -> x152, "&y" -> x83, "&x" -> x3)
-val x154 = x147 < 100
-val x155 = if (x8) x154 else 1
-val x156 = Map("&i" -> x148, "&y" -> x75, "&x" -> x18)
-val x157 = Map("&i" -> x152, "&y" -> x83, "&x" -> x18)
-val x158 = Map("&i" -> x148, "&y" -> x98, "&x" -> x3)
-val x159 = Map("&i" -> x148, "&y" -> x101, "&x" -> x3)
-val x160 = Map("&i" -> x152, "&y" -> x98, "&x" -> x3)
-val x161 = x147 + 1
-val x162 = if (x8) x161 else 1
-val x163 = Map("val" -> x162)
-val x164 = Map("&i" -> x163, "&y" -> x101, "&x" -> x3)
-val x165 = Map("&i" -> x163, "&y" -> x35, "&x" -> x3)
-val x166 = Map("val" -> x161)
-val x167 = Map("&i" -> x166, "&y" -> x101, "&x" -> x3)
-val x168 = Map("&i" -> x163, "&y" -> x98, "&x" -> x3)
-val x169 = fixindex(x6 => x154)
-val x170 = x5(x169)
-val x171 = x170("&i")
-val x172 = x171("val")
-val x173 = x172 < 100
-val x174 = x5_&i(x169)
-val x175 = x5_&y(x169)
-val x176 = Map("&i" -> x174, "&y" -> x175, "&x" -> x3)
-invariant stride 1
-result = 1 + x6 * 1
-val x177 = x6 + 1
-sym x177
-val x5_&i_val = { x6 => x177 }
-*** done iterate: x170
-*** begin iterate: x170
-funs:
-val x5 = { x6 => x46 }
-val x5_&i_val = { x6 => x177 }
-calls:
-val x10 = x5(x9)
-val x147 = x5_&i_val(x9)
-val x170 = x5(x169)
-subst: Map(x6 -> 0)
-val x178 = Map("&i" -> x0, "&y" -> x122, "&x" -> x3)
-val x179 = Map("&i" -> x0, "&y" -> x122, "&x" -> x18)
-val x180 = Map("&i" -> x0, "&y" -> x133, "&x" -> x3)
-val x181 = fixindex(x6 => 1)
-val x182 = x5(x181)
-val x183 = x182("&i")
-val x184 = x183("val")
-val x185 = x184 < 100
-val x186 = x5_&i(x181)
-val x187 = x5_&y(x181)
-val x188 = Map("&i" -> x186, "&y" -> x187, "&x" -> x3)
-zeros: Map(x5 -> x45, x5_&i_val -> 1)
-xform: Map(x10 -> x92, x170 -> x176)
-val x189 = Map("val" -> x6)
-val x190 = Map("&i" -> x189, "&y" -> x75, "&x" -> x3)
-val x191 = if (x8) x6 else 0
-val x192 = Map("val" -> x191)
-val x193 = Map("&i" -> x192, "&y" -> x83, "&x" -> x3)
-val x194 = x6 < 100
-val x195 = if (x8) x194 else 1
-val x196 = Map("&i" -> x189, "&y" -> x75, "&x" -> x18)
-val x197 = Map("&i" -> x192, "&y" -> x83, "&x" -> x18)
-val x198 = Map("&i" -> x189, "&y" -> x98, "&x" -> x3)
-val x199 = Map("&i" -> x189, "&y" -> x101, "&x" -> x3)
-val x200 = Map("&i" -> x192, "&y" -> x98, "&x" -> x3)
-val x201 = if (x8) x177 else 1
-val x202 = Map("val" -> x201)
-val x203 = Map("&i" -> x202, "&y" -> x101, "&x" -> x3)
-val x204 = Map("&i" -> x202, "&y" -> x35, "&x" -> x3)
-val x205 = Map("val" -> x177)
-val x206 = Map("&i" -> x205, "&y" -> x101, "&x" -> x3)
-val x207 = Map("&i" -> x202, "&y" -> x98, "&x" -> x3)
-val x208 = x5(99)
-val x209 = x208("&i")
-val x210 = x209("val")
-val x211 = x210 < 100
-val x212 = x5_&i(99)
-val x213 = x5_&y(99)
-val x214 = Map("&i" -> x212, "&y" -> x213, "&x" -> x3)
-*** done iterate: x208
-*** begin iterate: x208
-funs:
-val x5 = { x6 => x46 }
-calls:
-val x10 = x5(x9)
-val x208 = x5(99)
-subst: Map(x6 -> 0)
-zeros: Map(x5 -> x45)
-xform: Map(x10 -> x92, x208 -> x214)
-val x215 = x212("val")
-val x216 = x215 < 100
-*** done iterate: x214
-*** begin iterate: x214
-funs:
-val x5_&i = { x6 => x106 }
-val x5_&y = { x6 => x98 }
-calls:
-val x74 = x5_&i(x9)
-val x212 = x5_&i(99)
-val x75 = x5_&y(x9)
-val x213 = x5_&y(99)
-subst: Map(x6 -> 0)
-zeros: Map(x5_&i -> x35, x5_&y -> x35)
-val x217 = Map("val" -> 100)
-val x218 = x5_&y_val(x9)
-val x219 = Map("val" -> x218)
-val x220 = x5_&y_val(99)
-val x221 = Map("val" -> x220)
-xform: Map(x74 -> x189, x212 -> x217, x75 -> x219, x213 -> x221)
-val x222 = Map("&i" -> x189, "&y" -> x219, "&x" -> x3)
-val x223 = Map("&i" -> x78, "&y" -> x79, "&x" -> x3)
-val x224 = if (x8) x218 else 0
-val x225 = Map("val" -> x224)
-val x226 = Map("&i" -> x192, "&y" -> x225, "&x" -> x3)
-val x227 = Map("&i" -> x189, "&y" -> x219, "&x" -> x18)
-val x228 = Map("&i" -> x192, "&y" -> x225, "&x" -> x18)
-val x229 = x218 + 1
-val x230 = if (x8) x229 else 1
-val x231 = Map("val" -> x230)
-val x232 = Map("&i" -> x189, "&y" -> x231, "&x" -> x3)
-val x233 = Map("&i" -> x0, "&y" -> x231, "&x" -> x3)
-val x234 = Map("val" -> x229)
-val x235 = Map("&i" -> x189, "&y" -> x234, "&x" -> x3)
-val x236 = Map("&i" -> x192, "&y" -> x231, "&x" -> x3)
-val x237 = Map("&i" -> x202, "&y" -> x234, "&x" -> x3)
-val x238 = Map("&i" -> x205, "&y" -> x234, "&x" -> x3)
-val x239 = Map("&i" -> x202, "&y" -> x231, "&x" -> x3)
-val x240 = Map("&i" -> x217, "&y" -> x221, "&x" -> x3)
-invariant stride 1
-result = 1 + x6 * 1
-sym x177
-invariant stride 1
-result = 1 + x6 * 1
-sym x177
-val x5_&y_val = { x6 => x177 }
-*** done iterate: x240
-*** begin iterate: x240
-funs:
-val x5_&y_val = { x6 => x177 }
-calls:
-val x220 = x5_&y_val(99)
-subst: Map(x6 -> 0)
-val x241 = Map("&i" -> x217, "&y" -> x217, "&x" -> x3)
-zeros: Map(x5_&y_val -> 1)
-xform: Map()
-val x242 = Map("&i" -> x189, "&y" -> x189, "&x" -> x3)
-val x243 = Map("&i" -> x192, "&y" -> x192, "&x" -> x3)
-val x244 = Map("&i" -> x189, "&y" -> x189, "&x" -> x18)
-val x245 = Map("&i" -> x192, "&y" -> x192, "&x" -> x18)
-val x246 = Map("&i" -> x189, "&y" -> x202, "&x" -> x3)
-val x247 = Map("&i" -> x0, "&y" -> x202, "&x" -> x3)
-val x248 = Map("&i" -> x189, "&y" -> x205, "&x" -> x3)
-val x249 = Map("&i" -> x192, "&y" -> x202, "&x" -> x3)
-val x250 = Map("&i" -> x202, "&y" -> x205, "&x" -> x3)
-val x251 = Map("&i" -> x205, "&y" -> x205, "&x" -> x3)
-val x252 = Map("&i" -> x202, "&y" -> x202, "&x" -> x3)
-*** done iterate: x241
-*** begin iterate: x241
-funs:
-calls:
-subst: Map()
-zeros: Map()
-xform: Map()
-*** done iterate: x241
-transformed: x241
+store: x25
+transformed: x25
 sched:
-val x3 = Map("val" -> 8)
-val x217 = Map("val" -> 100)
-val x241 = Map("&i" -> x217, "&y" -> x217, "&x" -> x3)
+val x24 = Map("val" -> 100)
+val x4 = Map("val" -> 8)
+val x25 = Map("&i" -> x24, "&y" -> x24, "&x" -> x4)
+term:
+Map("&i" -> Map("val" -> 100), "&y" -> Map("val" -> 100), "&x" -> Map("val" -> 8))
 ----
 prog: {
   Assign(x,Const(900))
   Assign(y,Const(0))
   Assign(z,Const(0))
+  Assign(z2,Const(0))
   While(Less(Const(0),Ref(x)),{
     Assign(z,Plus(Ref(z),Ref(x)))
+    Assign(z2,Plus(Ref(z2),Plus(Times(Ref(x),Const(3)),Const(5))))
     If(Less(Ref(y),Const(17)),{
       Assign(y,Plus(Ref(y),Const(1)))
     },{
@@ -376,621 +104,283 @@ prog: {
   })
   Assign(r,Ref(x))
 }
-val x0 = Map("val" -> 900)
-val x1 = Map("&x" -> x0)
-val x2 = Map("val" -> 0)
-val x3 = Map("&x" -> x0, "&y" -> x2)
-val x4 = Map("&x" -> x0, "&y" -> x2, "&z" -> x2)
-val x7 = (1,x6)
-val x8 = 0 < x6
-val x9 = x6 + -1
-val x10 = x5(x9)
-val x11 = if (x8) x10 else x4
-val x12 = x10("&x")
-val x13 = if (x8) x12 else x0
-val x14 = x12("val")
-val x15 = if (x8) x14 else 900
-val x16 = 0 < x15
-another < flying by: 0 < x6, 0 < x15 -> 1
-val x17 = x14 + -1
-val x18 = if (x8) x17 else 899
-val x19 = x10("&z")
-val x20 = if (x8) x19 else x2
-val x21 = x19("val")
-val x22 = if (x8) x21 else 0
-val x23 = x21 + x15
-another < flying by: 0 < x6, 0 < x6 -> 1
-val x24 = x21 + x14
-another < flying by: 0 < x6, 0 < x6 -> 0
-val x25 = if (x8) x24 else 900
-val x26 = Map("val" -> x25)
-val x27 = x10 + ("&z" -> x26)
-val x28 = Map("&x" -> x0, "&y" -> x2, "&z" -> x26)
-another < flying by: 0 < x6, 0 < x6 -> 1
-val x29 = Map("val" -> x24)
-val x30 = x10 + ("&z" -> x29)
-another < flying by: 0 < x6, 0 < x6 -> 0
-val x31 = Map("&x" -> x0, "&y" -> x2, "&z" -> x0)
-val x32 = if (x8) x30 else x31
-val x33 = x10("&y")
-val x34 = if (x8) x33 else x2
-val x35 = x33("val")
-val x36 = if (x8) x35 else 0
-val x37 = x35 < 17
-val x38 = if (x8) x37 else 1
-val x39 = x35 + 1
-val x40 = if (x8) x39 else 1
-val x41 = Map("val" -> x40)
-val x42 = x30 + ("&y" -> x41)
-val x43 = Map("&x" -> x0, "&y" -> x41, "&z" -> x0)
-another < flying by: 0 < x6, 0 < x6 -> 1
-val x44 = Map("val" -> x39)
-val x45 = x30 + ("&y" -> x44)
-another < flying by: 0 < x6, 0 < x6 -> 0
-val x46 = Map("val" -> 1)
-val x47 = Map("&x" -> x0, "&y" -> x46, "&z" -> x0)
-val x48 = if (x8) x45 else x47
-val x49 = if (x37) x48 else x32
-another < flying by: 0 < x6, 0 < x6 -> 1
-another < flying by: 0 < x6, 0 < x6 -> 1
-val x50 = if (x37) x45 else x30
-another < flying by: 0 < x6, 0 < x6 -> 0
-val x51 = if (x8) x50 else x47
-val x52 = Map("val" -> x18)
-val x53 = x45 + ("&x" -> x52)
-val x54 = x30 + ("&x" -> x52)
-val x55 = if (x37) x53 else x54
-val x56 = Map("&x" -> x52, "&y" -> x46, "&z" -> x0)
-another < flying by: 0 < x6, 0 < x6 -> 1
-val x57 = Map("val" -> x17)
-val x58 = x45 + ("&x" -> x57)
-another < flying by: 0 < x6, 0 < x6 -> 1
-val x59 = x30 + ("&x" -> x57)
-val x60 = if (x37) x58 else x59
-another < flying by: 0 < x6, 0 < x6 -> 0
-val x61 = Map("val" -> 899)
-val x62 = Map("&x" -> x61, "&y" -> x46, "&z" -> x0)
-val x63 = if (x8) x60 else x62
-val x5 = { x6 => x63 }
-another < flying by: 0 < x6, 0 < x6 -> 1
-val x64 = 0 < x14
-val x65 = fixindex(x6 => x64)
-val x66 = x5(x65)
-val x67 = x66("&x")
-val x68 = x67("val")
-val x69 = 0 < x68
-val x70 = Map("val" -> x68)
-val x71 = x66 + ("&r" -> x70)
+val x0 = Map()
+val x1 = Map("val" -> 900)
+val x2 = Map("&x" -> x1)
+val x3 = Map("val" -> 0)
+val x4 = Map("&x" -> x1, "&y" -> x3)
+val x5 = Map("&x" -> x1, "&y" -> x3, "&z" -> x3)
+val x6 = Map("&x" -> x1, "&y" -> x3, "&z" -> x3, "&z2" -> x3)
+val x9 = (1,x8)
+starting spec loop with x6
+val x10 = Map("&x" -> x1, "&y" -> x3, "&z" -> x1, "&z2" -> x3)
+val x11 = Map("val" -> 2705)
+val x12 = Map("&x" -> x1, "&y" -> x3, "&z" -> x1, "&z2" -> x11)
+val x13 = Map("val" -> 1)
+val x14 = Map("&x" -> x1, "&y" -> x13, "&z" -> x1, "&z2" -> x11)
+val x15 = Map("val" -> 899)
+val x16 = Map("&x" -> x15, "&y" -> x13, "&z" -> x1, "&z2" -> x11)
+lub(x6, x16) = ?
+lub_x7(x6,x6,x16)
+lub_x7_&x(x1,x1,x15)
+lub_x7_&x_val(900,900,899)
+900
+899
+-1
+confirmed iterative loop, d = -1
+val x17 = x8 + -1
+val x18 = x8 * -1
+val x19 = x18 + 1
+val x20 = x18 + 901
+val x21 = x18 + 900
+Set(("val",(x20,x21)))
+val x22 = Map("val" -> x20)
+val x23 = Map("val" -> x21)
+lub_x7_&y(x3,x3,x13)
+lub_x7_&y_val(0,0,1)
+0
+1
+1
+confirmed iterative loop, d = 1
+Set(("val",(x17,x8)))
+val x24 = Map("val" -> x17)
+val x25 = Map("val" -> x8)
+lub_x7_&z(x3,x3,x1)
+lub_x7_&z_val(0,0,900)
+0
+900
+900
+confirmed iterative loop, d = 900
+val x26 = x8 * 900
+val x27 = x26 + -900
+Set(("val",(x27,x26)))
+val x28 = Map("val" -> x27)
+val x29 = Map("val" -> x26)
+lub_x7_&z2(x3,x3,x11)
+lub_x7_&z2_val(0,0,2705)
+0
+2705
+2705
+confirmed iterative loop, d = 2705
+val x30 = x8 * 2705
+val x31 = x30 + -2705
+Set(("val",(x31,x30)))
+val x32 = Map("val" -> x31)
+val x33 = Map("val" -> x30)
+Set(("&x",(x22,x23)), ("&y",(x24,x25)), ("&z",(x28,x29)), ("&z2",(x32,x33)))
+val x34 = Map("&x" -> x22, "&y" -> x24, "&z" -> x28, "&z2" -> x32)
+val x35 = Map("&x" -> x23, "&y" -> x25, "&z" -> x29, "&z2" -> x33)
+lub(x6, x16) = x34
+starting spec loop with x34
+val x36 = x8 < 901
+val x37 = x8 * 899
+val x38 = x37 + 1
+val x39 = Map("val" -> x38)
+val x40 = Map("&x" -> x22, "&y" -> x24, "&z" -> x39, "&z2" -> x32)
+val x41 = x8 * -3
+val x42 = x41 + 2703
+val x43 = x41 + 2708
+val x44 = x41 + 3
+val x45 = x8 * 2702
+val x46 = x45 + 3
+val x47 = Map("val" -> x46)
+val x48 = Map("&x" -> x22, "&y" -> x24, "&z" -> x39, "&z2" -> x47)
+val x49 = x8 < 18
+val x50 = Map("&x" -> x22, "&y" -> x25, "&z" -> x39, "&z2" -> x47)
+val x51 = if (x49) x8 else x17
+val x52 = Map("val" -> x51)
+val x53 = Map("&x" -> x22, "&y" -> x52, "&z" -> x39, "&z2" -> x47)
+val x54 = Map("&x" -> x23, "&y" -> x52, "&z" -> x39, "&z2" -> x47)
+lub(x6, x54) = ?
+lub_x7(x6,x34,x54)
+lub_x7_&x(x1,x22,x23)
+lub_x7_&x_val(900,x20,x21)
+val x55 = x8 + -901
+x8 * -1 + 901
+x8 * -1 + 900
+-1
+confirmed iterative loop, d = -1
+Set(("val",(x20,x21)))
+lub_x7_&y(x3,x24,x52)
+lub_x7_&y_val(0,x17,x51)
+val x56 = if (x49) 1 else 0
+x8 + -1
+if (x8 < 18) x8 else x8 + -1
+if (x8 < 18) 1 else 0
+val x57 = x8 + -18
+val x58 = x8 + -19
+val x59 = if (x49) x17 else 17
+val x60 = if (x49) x8 else 17
+Set(("val",(x59,x60)))
+val x61 = Map("val" -> x59)
+val x62 = Map("val" -> x60)
+lub_x7_&z(x3,x28,x39)
+lub_x7_&z_val(0,x27,x38)
+val x63 = x8 * -900
+val x64 = x63 + 900
+val x65 = x63 + 901
+x8 * 900 + -900
+x8 * 899 + 1
+x8 * -1 + 901
+poly: List(901, -1)
+found 2nd order polynomial: f'(x8)=-1*x8+901 -> f(x8)=-1*x8/2(x8+1)+901*x8
+val x66 = x8 * x8
+val x67 = x66 + x18
+val x68 = x8 * 0.5
+val x69 = x8 * x68
+val x70 = x8 * -0.5
+val x71 = x69 + x70
+val x72 = x8 * x70
+val x73 = x72 + x68
+val x74 = x8 * 901
+val x75 = x74 + -901
+val x76 = x68 + x75
+val x77 = x72 + x76
+val x78 = x8 + 1
+val x79 = x66 + x8
+val x80 = x69 + x68
+val x81 = x72 + x70
+val x82 = x70 + x74
+val x83 = x72 + x82
+x8 * x8 * -0.5 + x8 * 0.5 + x8 * 901 + -901
+x8 * x8 * -0.5 + x8 * -0.5 + x8 * 901
+val x84 = x8 * -901
+val x85 = x84 + 901
+val x86 = x70 + x85
+val x87 = x69 + x86
+val x88 = x74 + x87
+val x89 = x70 + x88
+val x90 = x72 + x89
+x8 * x8 * -0.5 + x8 * -0.5 + x8 * 901 + x8 * x8 * 0.5 + x8 * -0.5 + x8 * -901 + 901
+poly2: List(901, -1)
+Set(("val",(x77,x83)))
+val x91 = Map("val" -> x77)
+val x92 = Map("val" -> x83)
+lub_x7_&z2(x3,x32,x47)
+lub_x7_&z2_val(0,x31,x46)
+val x93 = x8 * -2705
+val x94 = x93 + 2705
+val x95 = x93 + 2708
+x8 * 2705 + -2705
+x8 * 2702 + 3
+x8 * -3 + 2708
+poly: List(2708, -3)
+found 2nd order polynomial: f'(x8)=-3*x8+2708 -> f(x8)=-3*x8/2(x8+1)+2708*x8
+val x96 = x8 * -1.5
+val x97 = x8 * x96
+val x98 = x8 * 1.5
+val x99 = x97 + x98
+val x100 = x8 * 2708
+val x101 = x100 + -2708
+val x102 = x98 + x101
+val x103 = x97 + x102
+val x104 = x97 + x96
+val x105 = x96 + x100
+val x106 = x97 + x105
+x8 * x8 * -1.5 + x8 * 1.5 + x8 * 2708 + -2708
+x8 * x8 * -1.5 + x8 * -1.5 + x8 * 2708
+val x107 = x8 * x98
+val x108 = x8 * -2708
+val x109 = x108 + 2708
+val x110 = x96 + x109
+val x111 = x107 + x110
+val x112 = x100 + x111
+val x113 = x96 + x112
+val x114 = x97 + x113
+x8 * x8 * -1.5 + x8 * -1.5 + x8 * 2708 + x8 * x8 * 1.5 + x8 * -1.5 + x8 * -2708 + 2708
+poly2: List(2708, -3)
+Set(("val",(x103,x106)))
+val x115 = Map("val" -> x103)
+val x116 = Map("val" -> x106)
+Set(("&x",(x22,x23)), ("&y",(x61,x62)), ("&z",(x91,x92)), ("&z2",(x115,x116)))
+val x117 = Map("&x" -> x22, "&y" -> x61, "&z" -> x91, "&z2" -> x115)
+val x118 = Map("&x" -> x23, "&y" -> x62, "&z" -> x92, "&z2" -> x116)
+lub(x6, x54) = x117
+starting spec loop with x117
+val x119 = x68 + x26
+val x120 = x72 + x119
+val x121 = Map("val" -> x120)
+val x122 = Map("&x" -> x22, "&y" -> x61, "&z" -> x121, "&z2" -> x115)
+val x123 = x98 + x30
+val x124 = x97 + x123
+val x125 = Map("val" -> x124)
+val x126 = Map("&x" -> x22, "&y" -> x61, "&z" -> x121, "&z2" -> x125)
+val x127 = if (x49) x8 else 18
+val x128 = Map("val" -> x127)
+val x129 = Map("&x" -> x22, "&y" -> x128, "&z" -> x121, "&z2" -> x125)
+val x130 = Map("&x" -> x22, "&y" -> x62, "&z" -> x121, "&z2" -> x125)
+val x131 = Map("&x" -> x23, "&y" -> x62, "&z" -> x121, "&z2" -> x125)
+lub(x6, x131) = ?
+lub_x7(x6,x117,x131)
+lub_x7_&x(x1,x22,x23)
+lub_x7_&x_val(900,x20,x21)
+x8 * -1 + 901
+x8 * -1 + 900
+-1
+confirmed iterative loop, d = -1
+Set(("val",(x20,x21)))
+lub_x7_&y(x3,x61,x62)
+lub_x7_&y_val(0,x59,x60)
+val x132 = if (x49) x19 else -17
+val x133 = x8 + x132
+val x134 = x18 + 18
+val x135 = if (x49) x134 else 0
+if (x8 < 18) x8 + -1 else 17
+if (x8 < 18) x8 else 17
+if (x8 < 18) 1 else 0
+Set(("val",(x59,x60)))
+lub_x7_&z(x3,x91,x121)
+lub_x7_&z_val(0,x77,x120)
+val x136 = x26 + x87
+val x137 = x68 + x136
+val x138 = x72 + x137
+x8 * x8 * -0.5 + x8 * 0.5 + x8 * 901 + -901
+x8 * x8 * -0.5 + x8 * 0.5 + x8 * 900
+x8 * x8 * -0.5 + x8 * 0.5 + x8 * 900 + x8 * x8 * 0.5 + x8 * -0.5 + x8 * -901 + 901
+poly: List(901, -1)
+found 2nd order polynomial: f'(x8)=-1*x8+901 -> f(x8)=-1*x8/2(x8+1)+901*x8
+x8 * x8 * -0.5 + x8 * 0.5 + x8 * 901 + -901
+x8 * x8 * -0.5 + x8 * -0.5 + x8 * 901
+x8 * x8 * -0.5 + x8 * -0.5 + x8 * 901 + x8 * x8 * 0.5 + x8 * -0.5 + x8 * -901 + 901
+poly2: List(901, -1)
+Set(("val",(x77,x83)))
+lub_x7_&z2(x3,x115,x125)
+lub_x7_&z2_val(0,x103,x124)
+val x139 = x30 + x111
+val x140 = x98 + x139
+val x141 = x97 + x140
+x8 * x8 * -1.5 + x8 * 1.5 + x8 * 2708 + -2708
+x8 * x8 * -1.5 + x8 * 1.5 + x8 * 2705
+x8 * x8 * -1.5 + x8 * 1.5 + x8 * 2705 + x8 * x8 * 1.5 + x8 * -1.5 + x8 * -2708 + 2708
+poly: List(2708, -3)
+found 2nd order polynomial: f'(x8)=-3*x8+2708 -> f(x8)=-3*x8/2(x8+1)+2708*x8
+x8 * x8 * -1.5 + x8 * 1.5 + x8 * 2708 + -2708
+x8 * x8 * -1.5 + x8 * -1.5 + x8 * 2708
+x8 * x8 * -1.5 + x8 * -1.5 + x8 * 2708 + x8 * x8 * 1.5 + x8 * -1.5 + x8 * -2708 + 2708
+poly2: List(2708, -3)
+Set(("val",(x103,x106)))
+Set(("&x",(x22,x23)), ("&y",(x61,x62)), ("&z",(x91,x92)), ("&z2",(x115,x116)))
+lub(x6, x131) = x117
+val x7_&x_val = { x8 => x21 }
+val x7_&y_val = { x8 => x60 }
+val x7_&z_val = { x8 => x120 }
+val x7_&z2_val = { x8 => x124 }
+val x7 = { x8 => x131 }
+fixindex: 900
+val x142 = Map("val" -> 17)
+val x143 = Map("val" -> 405450)
+val x144 = Map("val" -> 1220850)
+val x145 = Map("&x" -> x3, "&y" -> x142, "&z" -> x143, "&z2" -> x144)
+val x146 = Map("&x" -> x3, "&y" -> x142, "&z" -> x143, "&r" -> x3, "&z2" -> x144)
 res: ()
-store: x71
-*** begin iterate: x71
-funs:
-val x5 = { x6 => x63 }
-calls:
-val x10 = x5(x9)
-val x66 = x5(x65)
-subst: Map(x6 -> 0)
-val x72 = (1,0)
-val x73 = x5(-1)
-val x74 = x73("&x")
-val x75 = x74("val")
-val x76 = x75 + -1
-val x77 = x73("&z")
-val x78 = x77("val")
-val x79 = x78 + 900
-val x80 = x78 + x75
-val x81 = x73 + ("&z" -> x0)
-val x82 = Map("val" -> x80)
-val x83 = x73 + ("&z" -> x82)
-val x84 = x73("&y")
-val x85 = x84("val")
-val x86 = x85 < 17
-val x87 = x85 + 1
-val x88 = x83 + ("&y" -> x46)
-val x89 = Map("val" -> x87)
-val x90 = x83 + ("&y" -> x89)
-val x91 = if (x86) 1 else 0
-val x92 = Map("val" -> x91)
-val x93 = Map("&x" -> x0, "&y" -> x92, "&z" -> x0)
-val x94 = if (x86) x90 else x83
-val x95 = x90 + ("&x" -> x61)
-val x96 = x83 + ("&x" -> x61)
-val x97 = if (x86) x95 else x96
-val x98 = Map("val" -> x76)
-val x99 = x90 + ("&x" -> x98)
-val x100 = x83 + ("&x" -> x98)
-val x101 = if (x86) x99 else x100
-val x102 = 0 < x75
-val x103 = fixindex(x6 => x102)
-val x104 = x5(x103)
-val x105 = x104("&x")
-val x106 = x105("val")
-val x107 = 0 < x106
-val x108 = Map("val" -> x106)
-val x109 = x104 + ("&r" -> x108)
-zeros: Map(x5 -> x62)
-val x110 = x5_&x(x9)
-val x111 = x5_&y(x9)
-val x112 = x5_&z(x9)
-val x113 = Map("&x" -> x110, "&y" -> x111, "&z" -> x112)
-val x114 = x5_&x(x65)
-val x115 = x5_&y(x65)
-val x116 = x5_&z(x65)
-val x117 = Map("&x" -> x114, "&y" -> x115, "&z" -> x116)
-xform: Map(x10 -> x113, x66 -> x117)
-val x118 = if (x8) x110 else x0
-val x119 = if (x8) x111 else x2
-val x120 = if (x8) x112 else x2
-val x121 = Map("&x" -> x118, "&y" -> x119, "&z" -> x120)
-val x122 = x110("val")
-val x123 = if (x8) x122 else 900
-val x124 = 0 < x123
-val x125 = x122 + -1
-val x126 = if (x8) x125 else 899
-val x127 = x112("val")
-val x128 = if (x8) x127 else 0
-val x129 = x127 + x123
-val x130 = x127 + x122
-val x131 = if (x8) x130 else 900
-val x132 = Map("val" -> x131)
-val x133 = Map("&x" -> x110, "&y" -> x111, "&z" -> x132)
-val x134 = Map("&x" -> x0, "&y" -> x2, "&z" -> x132)
-val x135 = Map("val" -> x130)
-val x136 = Map("&x" -> x110, "&y" -> x111, "&z" -> x135)
-val x137 = Map("&x" -> x118, "&y" -> x119, "&z" -> x132)
-val x138 = x111("val")
-val x139 = if (x8) x138 else 0
-val x140 = x138 < 17
-val x141 = if (x8) x140 else 1
-val x142 = x138 + 1
-val x143 = if (x8) x142 else 1
-val x144 = Map("val" -> x143)
-val x145 = Map("&x" -> x110, "&y" -> x144, "&z" -> x135)
-val x146 = Map("&x" -> x0, "&y" -> x144, "&z" -> x0)
-val x147 = Map("val" -> x142)
-val x148 = Map("&x" -> x110, "&y" -> x147, "&z" -> x135)
-val x149 = Map("&x" -> x118, "&y" -> x144, "&z" -> x132)
-val x150 = if (x140) x144 else x119
-val x151 = Map("&x" -> x118, "&y" -> x150, "&z" -> x132)
-val x152 = if (x140) x147 else x111
-val x153 = Map("&x" -> x110, "&y" -> x152, "&z" -> x135)
-val x154 = if (x8) x152 else x46
-val x155 = Map("&x" -> x118, "&y" -> x154, "&z" -> x132)
-val x156 = Map("val" -> x126)
-val x157 = Map("&x" -> x156, "&y" -> x147, "&z" -> x135)
-val x158 = Map("&x" -> x156, "&y" -> x111, "&z" -> x135)
-val x159 = Map("&x" -> x156, "&y" -> x152, "&z" -> x135)
-val x160 = Map("&x" -> x156, "&y" -> x46, "&z" -> x0)
-val x161 = Map("val" -> x125)
-val x162 = Map("&x" -> x161, "&y" -> x147, "&z" -> x135)
-val x163 = Map("&x" -> x161, "&y" -> x111, "&z" -> x135)
-val x164 = Map("&x" -> x161, "&y" -> x152, "&z" -> x135)
-val x165 = Map("&x" -> x156, "&y" -> x154, "&z" -> x132)
-val x166 = 0 < x122
-val x167 = fixindex(x6 => x166)
-val x168 = x5(x167)
-val x169 = x168("&x")
-val x170 = x169("val")
-val x171 = 0 < x170
-val x172 = Map("val" -> x170)
-val x173 = x168 + ("&r" -> x172)
-val x174 = x5_&x(x167)
-val x175 = x5_&y(x167)
-val x176 = x5_&z(x167)
-val x177 = Map("&x" -> x174, "&y" -> x175, "&z" -> x176)
-val x5_&x = { x6 => x156 }
-val x5_&y = { x6 => x154 }
-val x5_&z = { x6 => x132 }
-*** done iterate: x173
-*** begin iterate: x173
-funs:
-val x5 = { x6 => x63 }
-val x5_&x = { x6 => x156 }
-calls:
-val x10 = x5(x9)
-val x110 = x5_&x(x9)
-val x168 = x5(x167)
-subst: Map(x6 -> 0)
-val x178 = x5_&x(-1)
-val x179 = x5_&y(-1)
-val x180 = x5_&z(-1)
-val x181 = Map("&x" -> x178, "&y" -> x179, "&z" -> x180)
-val x182 = x5_&x(x103)
-val x183 = x5_&y(x103)
-val x184 = x5_&z(x103)
-val x185 = Map("&x" -> x182, "&y" -> x183, "&z" -> x184)
-val x186 = x178("val")
-val x187 = x186 + -1
-val x188 = x180("val")
-val x189 = x188 + 900
-val x190 = x188 + x186
-val x191 = Map("&x" -> x178, "&y" -> x179, "&z" -> x0)
-val x192 = Map("val" -> x190)
-val x193 = Map("&x" -> x178, "&y" -> x179, "&z" -> x192)
-val x194 = x179("val")
-val x195 = x194 < 17
-val x196 = x194 + 1
-val x197 = Map("&x" -> x178, "&y" -> x46, "&z" -> x192)
-val x198 = Map("val" -> x196)
-val x199 = Map("&x" -> x178, "&y" -> x198, "&z" -> x192)
-val x200 = if (x195) 1 else 0
-val x201 = Map("val" -> x200)
-val x202 = Map("&x" -> x0, "&y" -> x201, "&z" -> x0)
-val x203 = if (x195) x198 else x179
-val x204 = Map("&x" -> x178, "&y" -> x203, "&z" -> x192)
-val x205 = Map("&x" -> x61, "&y" -> x198, "&z" -> x192)
-val x206 = Map("&x" -> x61, "&y" -> x179, "&z" -> x192)
-val x207 = Map("&x" -> x61, "&y" -> x203, "&z" -> x192)
-val x208 = Map("val" -> x187)
-val x209 = Map("&x" -> x208, "&y" -> x198, "&z" -> x192)
-val x210 = Map("&x" -> x208, "&y" -> x179, "&z" -> x192)
-val x211 = Map("&x" -> x208, "&y" -> x203, "&z" -> x192)
-val x212 = 0 < x186
-val x213 = fixindex(x6 => x212)
-val x214 = x5(x213)
-val x215 = x214("&x")
-val x216 = x215("val")
-val x217 = 0 < x216
-val x218 = Map("val" -> x216)
-val x219 = x214 + ("&r" -> x218)
-val x220 = x5_&x(x213)
-val x221 = x5_&y(x213)
-val x222 = x5_&z(x213)
-val x223 = Map("&x" -> x220, "&y" -> x221, "&z" -> x222)
-zeros: Map(x5 -> x62, x5_&x -> x61)
-val x224 = x5_&x_val(x9)
-val x225 = Map("val" -> x224)
-xform: Map(x10 -> x113, x110 -> x225, x168 -> x177)
-val x226 = Map("&x" -> x225, "&y" -> x111, "&z" -> x112)
-val x227 = if (x8) x224 else 900
-val x228 = Map("val" -> x227)
-val x229 = Map("&x" -> x228, "&y" -> x119, "&z" -> x120)
-val x230 = 0 < x227
-val x231 = x224 + -1
-val x232 = if (x8) x231 else 899
-val x233 = x127 + x227
-val x234 = x127 + x224
-val x235 = if (x8) x234 else 900
-val x236 = Map("val" -> x235)
-val x237 = Map("&x" -> x225, "&y" -> x111, "&z" -> x236)
-val x238 = Map("&x" -> x0, "&y" -> x2, "&z" -> x236)
-val x239 = Map("val" -> x234)
-val x240 = Map("&x" -> x225, "&y" -> x111, "&z" -> x239)
-val x241 = Map("&x" -> x228, "&y" -> x119, "&z" -> x236)
-val x242 = Map("&x" -> x225, "&y" -> x144, "&z" -> x239)
-val x243 = Map("&x" -> x225, "&y" -> x147, "&z" -> x239)
-val x244 = Map("&x" -> x228, "&y" -> x144, "&z" -> x236)
-val x245 = Map("&x" -> x228, "&y" -> x150, "&z" -> x236)
-val x246 = Map("&x" -> x225, "&y" -> x152, "&z" -> x239)
-val x247 = Map("&x" -> x228, "&y" -> x154, "&z" -> x236)
-val x248 = Map("val" -> x232)
-val x249 = Map("&x" -> x248, "&y" -> x147, "&z" -> x239)
-val x250 = Map("&x" -> x248, "&y" -> x111, "&z" -> x239)
-val x251 = Map("&x" -> x248, "&y" -> x152, "&z" -> x239)
-val x252 = Map("&x" -> x248, "&y" -> x46, "&z" -> x0)
-val x253 = Map("val" -> x231)
-val x254 = Map("&x" -> x253, "&y" -> x147, "&z" -> x239)
-val x255 = Map("&x" -> x253, "&y" -> x111, "&z" -> x239)
-val x256 = Map("&x" -> x253, "&y" -> x152, "&z" -> x239)
-val x257 = Map("&x" -> x248, "&y" -> x154, "&z" -> x236)
-val x258 = 0 < x224
-val x259 = fixindex(x6 => x258)
-val x260 = x5(x259)
-val x261 = x260("&x")
-val x262 = x261("val")
-val x263 = 0 < x262
-val x264 = Map("val" -> x262)
-val x265 = x260 + ("&r" -> x264)
-val x266 = x5_&x(x259)
-val x267 = x5_&y(x259)
-val x268 = x5_&z(x259)
-val x269 = Map("&x" -> x266, "&y" -> x267, "&z" -> x268)
-invariant stride -1
-result = 899 + x6 * -1
-val x270 = x6 * -1
-val x271 = x6 + -899
-sym x271
-val x5_&x_val = { x6 => x271 }
-*** done iterate: x265
-*** begin iterate: x265
-funs:
-val x5 = { x6 => x63 }
-val x5_&x_val = { x6 => x271 }
-calls:
-val x10 = x5(x9)
-val x224 = x5_&x_val(x9)
-val x260 = x5(x259)
-subst: Map(x6 -> 0)
-val x272 = Map("val" -> -900)
-val x273 = Map("&x" -> x272, "&y" -> x179, "&z" -> x180)
-val x274 = x188 + -900
-val x275 = Map("&x" -> x272, "&y" -> x179, "&z" -> x0)
-val x276 = Map("val" -> x274)
-val x277 = Map("&x" -> x272, "&y" -> x179, "&z" -> x276)
-val x278 = Map("&x" -> x272, "&y" -> x46, "&z" -> x276)
-val x279 = Map("&x" -> x272, "&y" -> x198, "&z" -> x276)
-val x280 = Map("&x" -> x272, "&y" -> x203, "&z" -> x276)
-val x281 = Map("&x" -> x61, "&y" -> x198, "&z" -> x276)
-val x282 = Map("&x" -> x61, "&y" -> x179, "&z" -> x276)
-val x283 = Map("&x" -> x61, "&y" -> x203, "&z" -> x276)
-val x284 = Map("val" -> -901)
-val x285 = Map("&x" -> x284, "&y" -> x198, "&z" -> x276)
-val x286 = Map("&x" -> x284, "&y" -> x179, "&z" -> x276)
-val x287 = Map("&x" -> x284, "&y" -> x203, "&z" -> x276)
-val x288 = fixindex(x6 => 0)
-val x289 = x5(x288)
-val x290 = x289("&x")
-val x291 = x290("val")
-val x292 = 0 < x291
-val x293 = Map("val" -> x291)
-val x294 = x289 + ("&r" -> x293)
-val x295 = x5_&x(x288)
-val x296 = x5_&y(x288)
-val x297 = x5_&z(x288)
-val x298 = Map("&x" -> x295, "&y" -> x296, "&z" -> x297)
-zeros: Map(x5 -> x62, x5_&x_val -> -899)
-xform: Map(x10 -> x113, x260 -> x269)
-val x299 = x6 + -900
-val x300 = Map("val" -> x299)
-val x301 = Map("&x" -> x300, "&y" -> x111, "&z" -> x112)
-val x302 = if (x8) x299 else 900
-val x303 = Map("val" -> x302)
-val x304 = Map("&x" -> x303, "&y" -> x119, "&z" -> x120)
-val x305 = 0 < x302
-val x306 = x6 + -901
-val x307 = if (x8) x306 else 899
-val x308 = x127 + x302
-val x309 = x127 + x299
-val x310 = if (x8) x309 else 900
-val x311 = Map("val" -> x310)
-val x312 = Map("&x" -> x300, "&y" -> x111, "&z" -> x311)
-val x313 = Map("&x" -> x0, "&y" -> x2, "&z" -> x311)
-val x314 = Map("val" -> x309)
-val x315 = Map("&x" -> x300, "&y" -> x111, "&z" -> x314)
-val x316 = Map("&x" -> x303, "&y" -> x119, "&z" -> x311)
-val x317 = Map("&x" -> x300, "&y" -> x144, "&z" -> x314)
-val x318 = Map("&x" -> x300, "&y" -> x147, "&z" -> x314)
-val x319 = Map("&x" -> x303, "&y" -> x144, "&z" -> x311)
-val x320 = Map("&x" -> x303, "&y" -> x150, "&z" -> x311)
-val x321 = Map("&x" -> x300, "&y" -> x152, "&z" -> x314)
-val x322 = Map("&x" -> x303, "&y" -> x154, "&z" -> x311)
-val x323 = Map("val" -> x307)
-val x324 = Map("&x" -> x323, "&y" -> x147, "&z" -> x314)
-val x325 = Map("&x" -> x323, "&y" -> x111, "&z" -> x314)
-val x326 = Map("&x" -> x323, "&y" -> x152, "&z" -> x314)
-val x327 = Map("&x" -> x323, "&y" -> x46, "&z" -> x0)
-val x328 = Map("val" -> x306)
-val x329 = Map("&x" -> x328, "&y" -> x147, "&z" -> x314)
-val x330 = Map("&x" -> x328, "&y" -> x111, "&z" -> x314)
-val x331 = Map("&x" -> x328, "&y" -> x152, "&z" -> x314)
-val x332 = Map("&x" -> x323, "&y" -> x154, "&z" -> x311)
-val x333 = x6 < 900
-val x334 = x5(899)
-val x335 = x334("&x")
-val x336 = x335("val")
-val x337 = 0 < x336
-val x338 = Map("val" -> x336)
-val x339 = x334 + ("&r" -> x338)
-val x340 = x5_&x(899)
-val x341 = x5_&y(899)
-val x342 = x5_&z(899)
-val x343 = Map("&x" -> x340, "&y" -> x341, "&z" -> x342)
-*** done iterate: x339
-*** begin iterate: x339
-funs:
-val x5 = { x6 => x63 }
-calls:
-val x10 = x5(x9)
-val x334 = x5(899)
-subst: Map(x6 -> 0)
-zeros: Map(x5 -> x62)
-xform: Map(x10 -> x113, x334 -> x343)
-val x344 = x340("val")
-val x345 = 0 < x344
-val x346 = Map("val" -> x344)
-val x347 = Map("&x" -> x340, "&y" -> x341, "&z" -> x342, "&r" -> x346)
-*** done iterate: x347
-*** begin iterate: x347
-funs:
-val x5_&x = { x6 => x156 }
-val x5_&y = { x6 => x154 }
-val x5_&z = { x6 => x132 }
-calls:
-val x110 = x5_&x(x9)
-val x340 = x5_&x(899)
-val x111 = x5_&y(x9)
-val x341 = x5_&y(899)
-val x112 = x5_&z(x9)
-val x342 = x5_&z(899)
-subst: Map(x6 -> 0)
-zeros: Map(x5_&x -> x61, x5_&y -> x46, x5_&z -> x0)
-val x348 = x5_&y_val(x9)
-val x349 = Map("val" -> x348)
-val x350 = x5_&y_val(899)
-val x351 = Map("val" -> x350)
-val x352 = x5_&z_val(x9)
-val x353 = Map("val" -> x352)
-val x354 = x5_&z_val(899)
-val x355 = Map("val" -> x354)
-xform: Map(x342 -> x355, x340 -> x2, x110 -> x300, x112 -> x353, x341 -> x351, x111 -> x349)
-val x356 = Map("&x" -> x300, "&y" -> x349, "&z" -> x353)
-val x357 = if (x8) x348 else 0
-val x358 = Map("val" -> x357)
-val x359 = if (x8) x352 else 0
-val x360 = Map("val" -> x359)
-val x361 = Map("&x" -> x303, "&y" -> x358, "&z" -> x360)
-val x362 = x352 + x302
-val x363 = x352 + x299
-val x364 = if (x8) x363 else 900
-val x365 = Map("val" -> x364)
-val x366 = Map("&x" -> x300, "&y" -> x349, "&z" -> x365)
-val x367 = Map("&x" -> x0, "&y" -> x2, "&z" -> x365)
-val x368 = Map("val" -> x363)
-val x369 = Map("&x" -> x300, "&y" -> x349, "&z" -> x368)
-val x370 = Map("&x" -> x303, "&y" -> x358, "&z" -> x365)
-val x371 = x348 < 17
-val x372 = if (x8) x371 else 1
-val x373 = x348 + 1
-val x374 = if (x8) x373 else 1
-val x375 = Map("val" -> x374)
-val x376 = Map("&x" -> x300, "&y" -> x375, "&z" -> x368)
-val x377 = Map("&x" -> x0, "&y" -> x375, "&z" -> x0)
-val x378 = Map("val" -> x373)
-val x379 = Map("&x" -> x300, "&y" -> x378, "&z" -> x368)
-val x380 = Map("&x" -> x303, "&y" -> x375, "&z" -> x365)
-val x381 = if (x371) x374 else x357
-val x382 = Map("val" -> x381)
-val x383 = Map("&x" -> x303, "&y" -> x382, "&z" -> x365)
-val x384 = if (x371) x373 else x348
-val x385 = Map("val" -> x384)
-val x386 = Map("&x" -> x300, "&y" -> x385, "&z" -> x368)
-val x387 = if (x8) x384 else 1
-val x388 = Map("val" -> x387)
-val x389 = Map("&x" -> x303, "&y" -> x388, "&z" -> x365)
-val x390 = Map("&x" -> x323, "&y" -> x378, "&z" -> x368)
-val x391 = Map("&x" -> x323, "&y" -> x349, "&z" -> x368)
-val x392 = Map("&x" -> x323, "&y" -> x385, "&z" -> x368)
-val x393 = Map("&x" -> x328, "&y" -> x378, "&z" -> x368)
-val x394 = Map("&x" -> x328, "&y" -> x349, "&z" -> x368)
-val x395 = Map("&x" -> x328, "&y" -> x385, "&z" -> x368)
-val x396 = Map("&x" -> x323, "&y" -> x388, "&z" -> x365)
-val x397 = Map("&x" -> x2, "&y" -> x351, "&z" -> x355)
-val x398 = Map("&x" -> x2, "&y" -> x351, "&z" -> x355, "&r" -> x2)
-val x5_&x_val = { x6 => x307 }
-val x5_&y_val = { x6 => x387 }
-val x5_&z_val = { x6 => x364 }
-*** done iterate: x398
-*** begin iterate: x398
-funs:
-val x5_&y_val = { x6 => x387 }
-val x5_&z_val = { x6 => x364 }
-calls:
-val x348 = x5_&y_val(x9)
-val x350 = x5_&y_val(899)
-val x352 = x5_&z_val(x9)
-val x354 = x5_&z_val(899)
-subst: Map(x6 -> 0)
-val x399 = Map("&x" -> x61, "&y" -> x179, "&z" -> x180)
-val x400 = x188 + 899
-val x401 = Map("&x" -> x61, "&y" -> x179, "&z" -> x0)
-val x402 = Map("val" -> x400)
-val x403 = Map("&x" -> x61, "&y" -> x179, "&z" -> x402)
-val x404 = Map("&x" -> x61, "&y" -> x46, "&z" -> x402)
-val x405 = Map("&x" -> x61, "&y" -> x198, "&z" -> x402)
-val x406 = Map("&x" -> x61, "&y" -> x203, "&z" -> x402)
-val x407 = Map("val" -> 898)
-val x408 = Map("&x" -> x407, "&y" -> x198, "&z" -> x402)
-val x409 = Map("&x" -> x407, "&y" -> x179, "&z" -> x402)
-val x410 = Map("&x" -> x407, "&y" -> x203, "&z" -> x402)
-val x411 = fixindex(x6 => 1)
-val x412 = x5(x411)
-val x413 = x412("&x")
-val x414 = x413("val")
-val x415 = 0 < x414
-val x416 = Map("val" -> x414)
-val x417 = x412 + ("&r" -> x416)
-val x418 = x5_&x(x411)
-val x419 = x5_&y(x411)
-val x420 = x5_&z(x411)
-val x421 = Map("&x" -> x418, "&y" -> x419, "&z" -> x420)
-val x422 = x5_&y_val(-1)
-val x423 = Map("val" -> x422)
-val x424 = x5_&z_val(-1)
-val x425 = Map("val" -> x424)
-val x426 = Map("&x" -> x272, "&y" -> x423, "&z" -> x425)
-val x427 = x424 + 900
-val x428 = x424 + -900
-val x429 = Map("&x" -> x272, "&y" -> x423, "&z" -> x0)
-val x430 = Map("val" -> x428)
-val x431 = Map("&x" -> x272, "&y" -> x423, "&z" -> x430)
-val x432 = x422 < 17
-val x433 = x422 + 1
-val x434 = Map("&x" -> x272, "&y" -> x46, "&z" -> x430)
-val x435 = Map("val" -> x433)
-val x436 = Map("&x" -> x272, "&y" -> x435, "&z" -> x430)
-val x437 = if (x432) 1 else 0
-val x438 = Map("val" -> x437)
-val x439 = Map("&x" -> x0, "&y" -> x438, "&z" -> x0)
-val x440 = if (x432) x433 else x422
-val x441 = Map("val" -> x440)
-val x442 = Map("&x" -> x272, "&y" -> x441, "&z" -> x430)
-val x443 = Map("&x" -> x61, "&y" -> x435, "&z" -> x430)
-val x444 = Map("&x" -> x61, "&y" -> x423, "&z" -> x430)
-val x445 = Map("&x" -> x61, "&y" -> x441, "&z" -> x430)
-val x446 = Map("&x" -> x284, "&y" -> x435, "&z" -> x430)
-val x447 = Map("&x" -> x284, "&y" -> x423, "&z" -> x430)
-val x448 = Map("&x" -> x284, "&y" -> x441, "&z" -> x430)
-zeros: Map(x5_&y_val -> 1, x5_&z_val -> 900)
-xform: Map()
-val x449 = x6 < 1
-val x450 = x6 + -902
-val x451 = if (x449) x450 else 899
-val x452 = Map("val" -> x451)
-val x453 = Map("&x" -> x452, "&y" -> x111, "&z" -> x112)
-val x454 = if (x8) x451 else 900
-val x455 = Map("val" -> x454)
-val x456 = Map("&x" -> x455, "&y" -> x119, "&z" -> x120)
-val x457 = 0 < x454
-val x458 = x6 + -903
-val x459 = if (x449) x458 else 898
-val x460 = if (x8) x459 else 899
-val x461 = x127 + x454
-val x462 = x127 + x451
-val x463 = if (x8) x462 else 900
-val x464 = Map("val" -> x463)
-val x465 = Map("&x" -> x452, "&y" -> x111, "&z" -> x464)
-val x466 = Map("&x" -> x0, "&y" -> x2, "&z" -> x464)
-val x467 = Map("val" -> x462)
-val x468 = Map("&x" -> x452, "&y" -> x111, "&z" -> x467)
-val x469 = Map("&x" -> x455, "&y" -> x119, "&z" -> x464)
-val x470 = Map("&x" -> x452, "&y" -> x144, "&z" -> x467)
-val x471 = Map("&x" -> x452, "&y" -> x147, "&z" -> x467)
-val x472 = Map("&x" -> x455, "&y" -> x144, "&z" -> x464)
-val x473 = Map("&x" -> x455, "&y" -> x150, "&z" -> x464)
-val x474 = Map("&x" -> x452, "&y" -> x152, "&z" -> x467)
-val x475 = Map("&x" -> x455, "&y" -> x154, "&z" -> x464)
-val x476 = Map("val" -> x460)
-val x477 = Map("&x" -> x476, "&y" -> x147, "&z" -> x467)
-val x478 = Map("&x" -> x476, "&y" -> x111, "&z" -> x467)
-val x479 = Map("&x" -> x476, "&y" -> x152, "&z" -> x467)
-val x480 = Map("&x" -> x476, "&y" -> x46, "&z" -> x0)
-val x481 = Map("val" -> x459)
-val x482 = Map("&x" -> x481, "&y" -> x147, "&z" -> x467)
-val x483 = Map("&x" -> x481, "&y" -> x111, "&z" -> x467)
-val x484 = Map("&x" -> x481, "&y" -> x152, "&z" -> x467)
-val x485 = Map("&x" -> x476, "&y" -> x154, "&z" -> x464)
-val x486 = 0 < x451
-val x487 = fixindex(x6 => x486)
-val x488 = x5(x487)
-val x489 = x488("&x")
-val x490 = x489("val")
-val x491 = 0 < x490
-val x492 = Map("val" -> x490)
-val x493 = x488 + ("&r" -> x492)
-val x494 = x5_&x(x487)
-val x495 = x5_&y(x487)
-val x496 = x5_&z(x487)
-val x497 = Map("&x" -> x494, "&y" -> x495, "&z" -> x496)
-*** done iterate: x398
-transformed: x398
+store: x146
+transformed: x146
 sched:
-val x2 = Map("val" -> 0)
-val x8 = 0 < x6
-val x9 = x6 + -1
-val x373 = x348 + 1
-val x371 = x348 < 17
-val x348 = x5_&y_val(x9)
-val x384 = if (x371) x373 else x348
-val x387 = if (x8) x384 else 1
-val x5_&y_val = { x6 => x387 }
-val x350 = x5_&y_val(899)
-val x351 = Map("val" -> x350)
-val x299 = x6 + -900
-val x352 = x5_&z_val(x9)
-val x363 = x352 + x299
-val x364 = if (x8) x363 else 900
-val x5_&z_val = { x6 => x364 }
-val x354 = x5_&z_val(899)
-val x355 = Map("val" -> x354)
-val x398 = Map("&x" -> x2, "&y" -> x351, "&z" -> x355, "&r" -> x2)
+val x144 = Map("val" -> 1220850)
+val x143 = Map("val" -> 405450)
+val x142 = Map("val" -> 17)
+val x3 = Map("val" -> 0)
+val x146 = Map("&x" -> x3, "&y" -> x142, "&z" -> x143, "&r" -> x3, "&z2" -> x144)
+term:
+Map("&x" -> Map("val" -> 0), "&z" -> Map("val" -> 405450), "&y" -> Map("val" -> 17), "&r" -> Map("val" -> 0), "&z2" -> Map("val" -> 1220850))
 ----

@@ -1,0 +1,52 @@
+prog: {
+  Assign(x,Const(0))
+  Assign(a,New(A))
+  Put(Ref(a),Const(field),Times(Ref(x),Const(2)))
+  Assign(r,Ref(a))
+}
+val x0 = Map()
+val x1 = Map("val" -> 0)
+val x2 = Map("&x" -> x1)
+val x3 = Map("&x" -> x1, (A,1) -> Map())
+val x4 = Map("val" -> (A,1))
+val x5 = Map("&x" -> x1, "&a" -> x4)
+val x6 = Map("field" -> 0)
+val x7 = Map("&x" -> x1, "&a" -> x4, (A,1) -> x6)
+val x8 = Map("&x" -> x1, "&a" -> x4, (A,1) -> x6, "&r" -> x4)
+res: ()
+store: x8
+transformed: x8
+sched:
+val x6 = Map("field" -> 0)
+val x4 = Map("val" -> (A,1))
+val x1 = Map("val" -> 0)
+val x8 = Map("&x" -> x1, "&a" -> x4, (A,1) -> x6, "&r" -> x4)
+term:
+Map("&x" -> Map("val" -> 0), "&a" -> Map("val" -> (A,1)), (A,1) -> Map("field" -> 0), "&r" -> Map("val" -> (A,1)))
+----
+prog: {
+  Assign(x,Const(0))
+  Assign(a,New(A))
+  Put(Ref(a),Ref(x),Times(Ref(x),Const(2)))
+  Assign(r,Ref(a))
+}
+val x0 = Map()
+val x1 = Map("val" -> 0)
+val x2 = Map("&x" -> x1)
+val x3 = Map("&x" -> x1, (A,1) -> Map())
+val x4 = Map("val" -> (A,1))
+val x5 = Map("&x" -> x1, "&a" -> x4)
+val x6 = Map(0 -> 0)
+val x7 = Map("&x" -> x1, "&a" -> x4, (A,1) -> x6)
+val x8 = Map("&x" -> x1, "&a" -> x4, (A,1) -> x6, "&r" -> x4)
+res: ()
+store: x8
+transformed: x8
+sched:
+val x6 = Map(0 -> 0)
+val x4 = Map("val" -> (A,1))
+val x1 = Map("val" -> 0)
+val x8 = Map("&x" -> x1, "&a" -> x4, (A,1) -> x6, "&r" -> x4)
+term:
+Map("&x" -> Map("val" -> 0), "&a" -> Map("val" -> (A,1)), (A,1) -> Map(0 -> 0), "&r" -> Map("val" -> (A,1)))
+----

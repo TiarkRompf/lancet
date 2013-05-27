@@ -3,7 +3,7 @@ package lancet.core
 import java.lang.reflect.Modifier
 
 
-trait Base_LIR0 extends Base {
+trait Base_TIR0 extends Base {
   def reflect[T:TypeRep](s: Any*): Rep[T]
   def reify[T](x: => Rep[T]): Block[T]
 
@@ -71,7 +71,7 @@ trait Base_LIR0 extends Base {
     case "double" => "Double"
     case "void" => "Unit"
     // FIXME
-    case "lancet.core.Base_LIR$Rep" => "lancet.core.Base_LIR$Rep" // scalac complains 'no type params' -- huh??
+    case "lancet.core.Base_TIR$Rep" => "lancet.core.Base_TIR$Rep" // scalac complains 'no type params' -- huh??
     case "lancet.interpreter.TestInterpreter5$Decompiler" => "lancet.interpreter.TestInterpreter5#Decompiler" // scalac crash
     //TODO/FIXME
     case s if !Modifier.isPublic(x.getModifiers) => "Object /*" + s + "*/" //s <-- class may be private...
@@ -96,7 +96,7 @@ trait Base_LIR0 extends Base {
 
 }
 
-trait Base_LIR extends Base_LIR0 {
+trait Base_TIR extends Base_TIR0 {
 
   //def constToString(x:Any): String
 
@@ -361,7 +361,7 @@ trait Base_LIR extends Base_LIR0 {
 
 
 
-trait Base_LIR_Abs extends Base {
+trait Base_TIR_Abs extends Base {
 
   abstract class Val[+T]
   case class Const[+T](x: T) extends Val[T] { override def toString = ("Const("+x+")").replace("\n","\\n") }
@@ -373,9 +373,9 @@ trait Base_LIR_Abs extends Base {
 
 }
 
-//trait Base_Opt extends Base_LIR_Opt
+//trait Base_Opt extends Base_TIR_Opt
 
-trait Base_LIR_Opt extends Base_LIR_Abs with Base_LIR {
+trait Base_TIR_Opt extends Base_TIR_Abs with Base_TIR {
 
   object ExprLattice {
     type Elem = Map[String, Rep[Any]]

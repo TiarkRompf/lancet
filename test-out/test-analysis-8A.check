@@ -1,0 +1,27 @@
+var c = Zero
+while loop has converged to state Map(c -> Zero)
+--- state after program: Map(c -> Zero)
+var c = Zero
+c = Pos
+while loop changed state from Map(c -> Zero) to Map(c -> Pos), try again
+c = Pos
+while loop has converged to state Map(c -> Pos)
+--- state after program: Map(c -> Pos)
+var c = Pos
+c = Top
+while loop changed state from Map(c -> Pos) to Map(c -> Top), try again
+c = Top
+while loop has converged to state Map(c -> Top)
+--- state after program: Map(c -> Top)
+var c = Pos
+c = Top
+while loop changed state from Map(c -> Pos) to Map(c -> Top), try again
+c = Top
+while loop has converged to state Map(c -> Top)
+var x = Zero
+x = Pos
+while loop changed state from Map(c -> Top, x -> Zero) to Map(c -> Top, x -> Top), try again
+x = Pos
+while loop has converged to state Map(c -> Top, x -> Top)
+--- state after program: Map(c -> Top, x -> Top)
+done
