@@ -131,7 +131,11 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
               }
             }
           }
+<<<<<<< HEAD
           def BLOCK_71(x0:scala.collection.Seq[_],x1:Object,x10:Object,x11:Object,x12:Object,x13:Object,x14:Boolean,x23:Object,x24:Boolean,x8:Object,x9:Object): Unit = {
+=======
+          def BLOCK_73(x0:scala.collection.Seq[_],x1:Object,x10:Object,x11:Object,x12:Object,x13:Object,x14:Boolean,x23:Object,x24:Boolean,x8:Object,x9:Object): Unit = {
+>>>>>>> 391efe3d8a4b32a77bdabe883470700835258367
             /* cse: WrappedArray(x13, .asInstanceOf[scala.runtime.MethodCache] // checkCast) = x23*/
             val x38 = CONST_2.invoke(x23.asInstanceOf[AnyRef],x11.asInstanceOf[AnyRef]).asInstanceOf[Object] // scala.runtime.MethodCache.find
             val x39 = x38 ne null
@@ -206,6 +210,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
                     }
                   }
                 }
+<<<<<<< HEAD
                 def BLOCK_87(x0:scala.collection.Seq[_],x1:Object,x10:Object,x11:Object,x12:Object,x13:Object,x14:Boolean,x23:Object,x24:Boolean,x38:Object,x39:Boolean,x40:Object,x41:Boolean,x43:Boolean,x44:Object,x8:Object,x9:Object): Unit = {
                   /* cse: WrappedArray(x13, .asInstanceOf[scala.runtime.MethodCache] // checkCast) = x23*/
                   val x53 = CONST_6.invoke(x23.asInstanceOf[AnyRef],x11.asInstanceOf[AnyRef],x40.asInstanceOf[AnyRef]).asInstanceOf[Object] // scala.runtime.MethodCache.add
@@ -219,6 +224,21 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
                   /*R_40_13_0;*/;{
                     val PHI_3_8 = x40 // LUBC(x38:Object,x40:Object)
                     vPHI_3_8 = PHI_3_8
+=======
+                def BLOCK_89(x0:scala.collection.Seq[_],x1:Object,x10:Object,x11:Object,x12:Object,x13:Object,x14:Boolean,x23:Object,x24:Boolean,x38:Object,x39:Boolean,x40:Object,x41:Object,x42:Boolean,x44:Boolean,x45:Object,x8:Object,x9:Object): Unit = {
+                  /* cse: WrappedArray(x13, .asInstanceOf[scala.runtime.MethodCache] // checkCast) = x23*/
+                  val x54 = CONST_5.invoke(x23.asInstanceOf[AnyRef],x11.asInstanceOf[AnyRef],x41.asInstanceOf[AnyRef]).asInstanceOf[Object] // scala.runtime.MethodCache.add
+                  unsafe.putObject(x45,16L, x54)
+                  val x55 = unsafe.getObject(Class.forName("java.lang.ref.ReferenceQueue"),200L)
+                  unsafe.putObject(x45,24L, x55)
+                  val x56 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),200L)
+                  val x57 = x56.toDouble
+                  unsafe.putDouble(x45,48L, x57)
+                  unsafe.putObject(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5"),208L, x45)
+                  /*R_42_13_0;*/;{
+                    val PHI_3_7 = x41 // LUBC(x38:Object,x41:Object)
+                    vPHI_3_7 = PHI_3_7
+>>>>>>> 391efe3d8a4b32a77bdabe883470700835258367
                     vx0 = x0
                     vx1 = x1
                     vx10 = x10

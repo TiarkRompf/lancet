@@ -7,6 +7,8 @@ class TestInterpreter5 extends FileDiffSuite {
 
   val prefix = "test-out/test-interpreter-5"
 
+  // TODO: delimit scope of slowpath/fastpath
+
   def test1a = withOutFileChecked(prefix+"slowpath1a") {
     val it = new Decompiler
 
@@ -56,8 +58,89 @@ class TestInterpreter5 extends FileDiffSuite {
   }
 
 
+  def testFastpath2 = withOutFileChecked(prefix+"fastpath2") {
+    val it = new Decompiler
+
+    def compute(i: Int) = if (i % 10 == 0) it.fastpath
+
+    val f = it.compile { (x:Int) => 
+      var i = 0
+      while (i < x) {
+        compute(i)
+        i += 1
+      }
+      i
+    }
+    printcheck(f(100), 100)
+  }
+
   def testCps1 = withOutFileChecked(prefix+"cps1") {
     val it = new Decompiler
+
+    def compute(i: Int) = it.shift[Int,Int](k => k(7) + k(9))
+
+    val f = it.compile { (x:Int) => 
+      it.reset[Int](compute(x) * 100)
+    }
+    printcheck(f(100), 1600)
+  }
+
+
+  def test1LMS = withOutFileChecked(prefix+"slowpath1LMS") {
+    val it = new DecompilerLMS
+
+    def compute(i: Int) = if (i == 50) it.slowpath
+
+    val f = it.compile { (x:Int) => 
+      var i = 0
+      while (i < x) {
+        compute(i)
+        i += 1
+      }
+      i
+    }
+    printcheck(f(100), 100)
+  }
+
+  def testFastpath1LMS = withOutFileChecked(prefix+"fastpath1LMS") {
+    val it = new DecompilerLMS
+
+    def compute(i: Int) = if (i == 50) it.fastpath
+
+    val f = it.compile { (x:Int) => 
+      var i = 0
+      while (i < x) {
+        compute(i)
+        i += 1
+      }
+      i
+    }
+    printcheck(f(100), 100)
+  }
+
+
+  def testFastpath2LMS = withOutFileChecked(prefix+"fastpath2LMS") {
+    val it = new DecompilerLMS
+
+    def compute(i: Int) = if (i % 10 == 0) it.fastpath
+
+    val f = it.compile { (x:Int) => 
+      var i = 0
+      while (i < x) {
+        compute(i)
+        i += 1
+      }
+      i
+    }
+    printcheck(f(100), 100)
+  }
+
+
+
+
+
+  def testCps1LMS = withOutFileChecked(prefix+"cps1LMS") {
+    val it = new DecompilerLMS
 
     def compute(i: Int) = it.shift[Int,Int](k => k(7) + k(9))
 
@@ -135,6 +218,18 @@ class TestInterpreter5 extends FileDiffSuite {
 
 
 
+  class DecompilerLMS extends BytecodeInterpreter_LMS_Opt with DefaultMacrosLMS {
+
+    //def fastpath() = {} // XXX
+
+    initialize()
+    emitUniqueOpt = true
+    debugBlockKeys = false
+    debugReadWrite = false
+    //debugMethods = false
+    //debugReturns = true
+
+  }
 
   class Decompiler extends BytecodeInterpreter_LIR_Opt with DefaultMacros {
 

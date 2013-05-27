@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // constants: <function1>,lancet.interpreter.TestInterpreter5$Decompiler@26173e22,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.compute$3>
+=======
+// constants: <function1>,lancet.interpreter.TestInterpreter5$Decompiler@50c466bc,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
+>>>>>>> 391efe3d8a4b32a77bdabe883470700835258367
 class Generated0(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3,CONST_1: lancet.interpreter.TestInterpreter5#Decompiler,CONST_2: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_3: Array[lancet.core.Base_LIR$Rep],CONST_4: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1,CONST_7: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -87,7 +91,11 @@ CONST_1,CONST_2,CONST_3,null,null,null,null,null,null
 root:
 HotSpotMethod<BytecodeInterpreter_Exec.execute>
 CONST_1,CONST_2,CONST_3,null,null,null,null,null,null
+<<<<<<< HEAD
 // constants: <function1>,lancet.interpreter.TestInterpreter5$Decompiler@26173e22,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.compute$3>
+=======
+// constants: <function1>,lancet.interpreter.TestInterpreter5$Decompiler@50c466bc,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
+>>>>>>> 391efe3d8a4b32a77bdabe883470700835258367
 class Generated1(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3,CONST_1: lancet.interpreter.TestInterpreter5#Decompiler,CONST_2: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_3: Array[lancet.core.Base_LIR$Rep],CONST_4: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1,CONST_7: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (Unit=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -145,7 +153,7 @@ def apply(ARG: Unit): Int = { object BODY {
           }
         } else {
           val x15 = CONST_1.mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_1.asInstanceOf[AnyRef],CONST_2.asInstanceOf[AnyRef],CONST_3.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), -1, 6, CONST_4, null)
-          val x16 = CONST_1.mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_0.asInstanceOf[AnyRef],100.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), -1, 5, CONST_2, x15)
+          val x16 = CONST_1.mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_0.asInstanceOf[AnyRef],100.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 5, 5, CONST_2, x15)
           val x17 = CONST_1.mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_0.asInstanceOf[AnyRef],100.asInstanceOf[AnyRef],x12.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 19, 6, CONST_5, x16)
           val x18 = CONST_1.mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_6.asInstanceOf[AnyRef],x12.asInstanceOf[AnyRef],CONST_1.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 12, 6, CONST_7, x17)
           val x19 = CONST_1.execCompiler(x18).asInstanceOf[Int] // drop into freshly compiled

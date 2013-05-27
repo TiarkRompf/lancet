@@ -252,11 +252,13 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
       map.build();
       map
     }) else { // OSR
+      assert(bci >= 0,"bci: "+bci)
       import scala.collection.JavaConversions._
       val map = new BciBlockMapping(method);
       map.build();
       emitString("// need to fix block ordering for bci="+bci)
       emitString("// old: " + map.blocks.mkString(","))
+
       val start = map.blocks.find(_.startBci == bci).get
       var reach = List[BciBlockMapping.Block]()
       var seen = Set[BciBlockMapping.Block]()
@@ -402,13 +404,13 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
       emitString("*/")
 */
 
-      val (mkey,mkeyid) = contextKeyId(mframe)
-
       val saveHandler = handler
       val saveDepth = getContext(mframe).length
 
       if (debugMethods) emitString("// << " + method)
       
+      val (mkey,mkeyid) = contextKeyId(mframe)
+
       case class BlockInfo(inEdges: List[(Int,State)], inState: State)
       case class BlockInfoOut(returns: List[State], gotos: List[State], code: Block[Unit])
 
@@ -672,10 +674,14 @@ trait BytecodeInterpreter_LIR_Opt4Engine extends AbstractInterpreterIntf_LIR wit
           emitString("// caught " + e)
           reflect[Unit]("throw "+e.cause+".asInstanceOf[Throwable]")
         case e: Throwable =>
+          val e1 = e match {
+            case e: java.lang.reflect.InvocationTargetException => e.getCause
+            case _ => e
+          }
           emitString("ERROR /*")
           emitString(key)
-          emitString(e.toString)
-          emitString(e.getStackTrace().take(100).mkString("\n"))
+          emitString(e1.toString)
+          emitString(e1.getStackTrace().take(100).mkString("\n"))
           emitString("*/")
           liftConst(())
       }
