@@ -19,6 +19,12 @@ trait IR_LMS_Base extends EffectExp {
   case class Patch(key: String, var block: Block[Unit]) extends Def[Unit]
   case class BlockDef(key: String, keyid: Int, params: List[Rep[Any]], body: Block[Unit]) extends Def[Unit]
 
+  // idea: patches should not schedule stuff inside, but in
+  // their parent scope. thus, do not override boundSyms for Patch,
+  // but override effectsSyms to include effectSyms of all
+  // patches...
+
+
   override def boundSyms(e: Any): List[Sym[Any]] = e match {
     case Unstructured(xs) => blocks(xs) flatMap effectSyms
     case Patch(key,block) => effectSyms(block)
@@ -40,6 +46,9 @@ trait IR_LMS_Base extends EffectExp {
 
 
   def reflect[A:TypeRep](s: Any*): Exp[A] = reflectEffect(Unstructured[A](s.toList))
+
+  def reflectPure[A:TypeRep](s: Any*): Exp[A] = toAtom(Unstructured[A](s.toList))
+
 
   def emitString(s: String)(implicit e:TypeRep[Unit]) = reflect[Unit](s)
   def emitAll[A:TypeRep](s: Block[A]) = reflect[A](s)
@@ -63,8 +72,8 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
   }}
 
   override def emitValDef(sym: Sym[Any], rhs: String) = 
-    if (sym.tp == manifest[Unit]) stream.println(rhs+";")
-    else super.emitValDef(sym,rhs+";")
+    /*if (sym.tp == manifest[Unit]) stream.println(rhs+";")
+    else*/ super.emitValDef(sym,rhs+";")
 
   override def emitNode(sym: Sym[Any], rhs: Def[Any]) = rhs match {
     case Unstructured(xs) =>
@@ -75,6 +84,10 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
             emitBlockFull(b)
           case b: Exp[a] => 
             stream.print(quote(b))
+/*          case b: Manifest[a] => 
+            stream.print(remap(b))
+          case b: TypeRep[a] => 
+            stream.print(remap(b.manif)) // ok?*/
           case e =>
             stream.print(e)
         }
@@ -160,9 +173,9 @@ trait Base_LMS0 extends Base_LMS1 {
 
   type Block[+T]
 
-  case class TypeRep[T:Manifest](s: String) { override def toString = s; def manif = manifest[T] }
+  case class TypeRep[T:Manifest](s: String) { override def toString = s; val manif = manifest[T] }
 
-  implicit def typeRepToManifest[T:TypeRep]: Manifest[T] = typeRep[T].manif
+  def typeRepToManifest[T:TypeRep]: Manifest[T] = typeRep[T].manif
 
   //implicit def anyType[T:Manifest] = new TypeRep[T](manifestStr(manifest[T]))
 
@@ -229,7 +242,7 @@ trait Base_LMS0 extends Base_LMS1 {
       var idx = VConstantPool.indexWhere(_._2 == x) // should use eq ??
       if (idx < 0) {
         idx = VConstantPool.size
-        VConstantPool = VConstantPool :+ ((Sym(-1000-idx)(manifest[T]),x.asInstanceOf[AnyRef]))
+        VConstantPool = VConstantPool :+ ((Sym(-1000-idx)(typeRep[T].manif),x.asInstanceOf[AnyRef]))
       }
 
       "pConst_" + idx
@@ -285,13 +298,16 @@ trait Base_LMS0 extends Base_LMS1 {
 
 trait Base_LMS extends Base_LMS0 {
 
-  def reflect[T:TypeRep](d: Def[T]): Rep[T] = reflectEffect(d)//toAtom(d)
-  def reify[T:TypeRep](x: => Rep[T]): Block[T] = reifyEffects(x)
+  def reflect[T:TypeRep](d: Def[T]): Rep[T] = reflectEffect(d)(typeRep[T].manif,implicitly[SourceContext])//toAtom(d)
+  def reify[T:TypeRep](x: => Rep[T]): Block[T] = reifyEffects(x)(typeRep[T].manif)
+
+  def reflectPure[T:TypeRep](d: Def[T]): Rep[T] = toAtom(d)(typeRep[T].manif,implicitly[SourceContext])
+
 
   def liftConst[T:TypeRep](x:T): Rep[T] = {
     //if (!isPrimitive(x))
       //VConstToString(x) // add to constant pool
-    unit(x)
+    unit(x)(typeRep[T].manif)
   }
 
   def repManifest[T:Manifest]: Manifest[Rep[T]] = manifest[Rep[T]]

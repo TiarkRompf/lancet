@@ -235,7 +235,7 @@ Get commit `7839:838293a77af7`.
 
 ```
   export JAVA_HOME="~/graal/jdk1.7.0/product/" # Graal build from step 3
-  export JAVA_OPTS="-graal" 
+  export JAVA_OPTS="-graal -Ddelite.home.dir=~/delite"  # Delite home
 ```
 
    Alternatively, modify the `gsbt` file to reflect your paths and use that

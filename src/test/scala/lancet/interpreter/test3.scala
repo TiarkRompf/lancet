@@ -5,7 +5,7 @@ import lancet.api._
 
 class TestInterpreter3 extends BaseTestInterpreter3 {
   val prefix = "test-out/test-interpreter-3"
-  def newCompiler = new BytecodeInterpreter_TIR_Opt {
+  def newCompiler = new BytecodeInterpreter_TIR_Opt with Compiler {
     initialize()
     debugBlockKeys = false
   }
@@ -13,15 +13,20 @@ class TestInterpreter3 extends BaseTestInterpreter3 {
 
 class TestInterpreter3LMS extends BaseTestInterpreter3 {
   val prefix = "test-out/test-interpreter-3-LMS-"
-  def newCompiler = new BytecodeInterpreter_LMS_Opt {
+  def newCompiler = new BytecodeInterpreter_LMS_Opt with Compiler {
     initialize()
     debugBlockKeys = false
+    def compile[A:Manifest,B:Manifest](f: A => B): A=>B = compile0(f)
   }
+}
+
+trait Compiler {
+  def compile[A:Manifest,B:Manifest](f: A => B): A=>B
 }
 
 trait BaseTestInterpreter3 extends FileDiffSuite {
 
-  def newCompiler: BytecodeInterpreter_Common_Compile
+  def newCompiler: Compiler
   val prefix: String
 
   final class Bar {

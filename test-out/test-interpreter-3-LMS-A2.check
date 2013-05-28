@@ -2,6 +2,40 @@
   Emitting Generated Code
   *******************************************/
   class Generated extends ((Int)=>(Int)) {
+<<<<<<< HEAD
+    def apply(x133:Int): Int = {
+      val x0 = x133;
+      val x135: Int = {
+        import sun.misc.Unsafe;
+        val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
+        type char = Char;
+        def WARN = assert(false, "WARN");
+        def ERROR = assert(false, "ERROR");
+        var RES0 = null.asInstanceOf[Int];
+        val x7 = x0.asInstanceOf[Int];
+        val x8: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
+        if (x8 ne null) unsafe.putInt(x8,16L, 7) else println("BUG: putInt"+x8);;
+        ;{;
+          val PHI_3_6 = x7 // LUBC(DynExp(PHI_3_6):Int,Sym(7):Int);
+          val LUB_x8_intField = 7; // Alias(Some(DynExp(LUB_x8_intField)),Some(Const(7)));
+          BLOCK_10(LUB_x8_intField,PHI_3_6,x7,x8);
+        };
+        def BLOCK_10(LUB_x8_intField:Int,PHI_3_6:Int,x7:Int,x8:Object): Unit = {
+          val x65 = 0 >= PHI_3_6;
+          val x8: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
+          if (x65) {
+            (RES0 = LUB_x8_intField) // return to root;
+          } else {
+            val x78 = 1 + LUB_x8_intField;
+            if (x8 ne null) unsafe.putInt(x8,16L, x78) else println("BUG: putInt"+x8);;
+            val x86 = -1 + PHI_3_6;
+            ;{;
+              val PHI_3_6 = x86 // LUBC(DynExp(PHI_3_6):Int,Sym(86):Int);
+              val LUB_x8_intField = x78; // Alias(Some(DynExp(LUB_x8_intField)),Some(Sym(78)));
+              BLOCK_10(LUB_x8_intField,PHI_3_6,x7,x8);
+            };
+          }
+=======
     def apply(x0:Int): Int = {
       import sun.misc.Unsafe;
       val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
@@ -31,10 +65,12 @@
             val LUB_x10_intField = x87; // Alias(Some(DynExp(LUB_x10_intField)),Some(Sym(87)));
             BLOCK_10(LUB_x10_intField,PHI_3_6,x10,x7);
           };
+>>>>>>> 5928874f8b91b6165b6d0637e8c9fee727876d17
         }
-      }
-      // (no return?);
-      RES
+        // (no return?);
+        RES0
+      };
+      x135
     }
   }
   /*****************************************

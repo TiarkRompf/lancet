@@ -3,7 +3,7 @@ package lancet.core
 
 trait Core_LMS_Opt extends Base_LMS_Opt with Core_LMS {
 
-  def liftVConst[T:TypeRep](x:T): Rep[T] = Static(x)
+  //def liftConst[T:TypeRep](x:T): Rep[T] = Static(x)(typeRep[T].manif)
 
   // byte/char/short conversion
 

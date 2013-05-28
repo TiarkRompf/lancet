@@ -1,0 +1,28 @@
+#!/bin/bash
+
+export JAVA_HOME=~/src/graal/jdk1.7.0_17/product
+
+
+if [ $# -lt 1 ]
+then
+  echo "usage:   grun <fully qualified class name>"
+  echo "example: grun optiml.apps.kmeans"
+  exit
+fi
+
+# scala
+export JAVA_CLASSPATH=$JAVA_CLASSPATH:~/.sbt/boot/scala-2.10.0-M1-virtualized/lib/*
+
+# lms, delite
+export JAVA_CLASSPATH=$JAVA_CLASSPATH:lib_managed/jars/EPFL/lms_2.10.0-M1-virtualized/*:lib_managed/jars/stanford-ppl/framework_2.10.0-M1-virtualized/*:lib_managed/jars/stanford-ppl/optila_2.10.0-M1-virtualized/*:lib_managed/jars/stanford-ppl/optiml_2.10.0-M1-virtualized/*:lib_managed/jars/stanford-ppl/runtime_2.10.0-M1-virtualized/*
+                                                                
+# cluster stuff
+export JAVA_CLASSPATH=$JAVA_CLASSPATH:lib_managed/jars/com.google.protobuf/protobuf-java/*:lib_managed/jars/org.apache.mesos/mesos/*
+
+# lancet
+export JAVA_CLASSPATH=$JAVA_CLASSPATH:target/scala-2.10/classes/
+
+export JAVA_OPTS="-Xms512M -Xmx1G -XX:+CMSClassUnloadingEnabled -Xss10m" #  -XX:-BootstrapGraal 
+export JAVA_OPTS="$JAVA_OPTS -Ddelite.home.dir=$DELITE_HOME" # -Dlms.verbosity=3"
+
+$JAVA_HOME/bin/java -graal $JAVA_OPTS -cp $JAVA_CLASSPATH "$@"

@@ -158,42 +158,52 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
                     Ret HotSpotMethod<Parallelizable$class.$init$> - HotSpotSignature<(Lscala/collection/Parallelizable;)V>
                   16: aload_0
                   17: invokestatic
+                    Call HotSpotMethod<GenTraversableLike$class.$init$> - HotSpotSignature<(Lscala/collection/GenTraversableLike;)V>
+                    0: return
+                    Ret HotSpotMethod<GenTraversableLike$class.$init$> - HotSpotSignature<(Lscala/collection/GenTraversableLike;)V>
+                  20: aload_0
+                  21: invokestatic
                     Call HotSpotMethod<TraversableLike$class.$init$> - HotSpotSignature<(Lscala/collection/TraversableLike;)V>
                     0: return
                     Ret HotSpotMethod<TraversableLike$class.$init$> - HotSpotSignature<(Lscala/collection/TraversableLike;)V>
-                  20: aload_0
-                  21: invokestatic
+                  24: aload_0
+                  25: invokestatic
                     Call HotSpotMethod<GenericTraversableTemplate$class.$init$> - HotSpotSignature<(Lscala/collection/generic/GenericTraversableTemplate;)V>
                     0: return
                     Ret HotSpotMethod<GenericTraversableTemplate$class.$init$> - HotSpotSignature<(Lscala/collection/generic/GenericTraversableTemplate;)V>
-                  24: aload_0
-                  25: invokestatic
+                  28: aload_0
+                  29: invokestatic
                     Call HotSpotMethod<GenTraversable$class.$init$> - HotSpotSignature<(Lscala/collection/GenTraversable;)V>
                     0: return
                     Ret HotSpotMethod<GenTraversable$class.$init$> - HotSpotSignature<(Lscala/collection/GenTraversable;)V>
-                  28: aload_0
-                  29: invokestatic
+                  32: aload_0
+                  33: invokestatic
                     Call HotSpotMethod<Traversable$class.$init$> - HotSpotSignature<(Lscala/collection/Traversable;)V>
                     0: return
                     Ret HotSpotMethod<Traversable$class.$init$> - HotSpotSignature<(Lscala/collection/Traversable;)V>
-                  32: return
+                  36: return
                   Ret HotSpotMethod<AbstractTraversable.<init>> - HotSpotSignature<()V>
                 4: aload_0
                 5: invokestatic
+                  Call HotSpotMethod<GenIterableLike$class.$init$> - HotSpotSignature<(Lscala/collection/GenIterableLike;)V>
+                  0: return
+                  Ret HotSpotMethod<GenIterableLike$class.$init$> - HotSpotSignature<(Lscala/collection/GenIterableLike;)V>
+                8: aload_0
+                9: invokestatic
                   Call HotSpotMethod<GenIterable$class.$init$> - HotSpotSignature<(Lscala/collection/GenIterable;)V>
                   0: return
                   Ret HotSpotMethod<GenIterable$class.$init$> - HotSpotSignature<(Lscala/collection/GenIterable;)V>
-                8: aload_0
-                9: invokestatic
+                12: aload_0
+                13: invokestatic
                   Call HotSpotMethod<IterableLike$class.$init$> - HotSpotSignature<(Lscala/collection/IterableLike;)V>
                   0: return
                   Ret HotSpotMethod<IterableLike$class.$init$> - HotSpotSignature<(Lscala/collection/IterableLike;)V>
-                12: aload_0
-                13: invokestatic
+                16: aload_0
+                17: invokestatic
                   Call HotSpotMethod<Iterable$class.$init$> - HotSpotSignature<(Lscala/collection/Iterable;)V>
                   0: return
                   Ret HotSpotMethod<Iterable$class.$init$> - HotSpotSignature<(Lscala/collection/Iterable;)V>
-                16: return
+                20: return
                 Ret HotSpotMethod<AbstractIterable.<init>> - HotSpotSignature<()V>
               4: aload_0
               5: invokestatic

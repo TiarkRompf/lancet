@@ -52,9 +52,15 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       super.initialize()
     }
 
-    var emitUniqueOpt = false
+    var emitCheckCast = true
+    var emitUniqueOpt = true
+    
     var debugGlobalDefs = false
     var debugDepGraph = false
+    
+    // for scoping "RES" vars. TODO: move?
+    var curResId = 0
+    def RES = "RES" + curResId    
 
     // ---------- high level execution loop ----------
 
@@ -90,7 +96,6 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
     def createCodegen(): GEN_Scala_LMS { val IR: self.type } = 
       new GEN_Scala_LMS { val IR: self.type = self }
 
-
     abstract class Fun[A,B] extends (A=>B) {
       def code: String
       def compiled: Fun[A,B]
@@ -115,7 +120,9 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       }
     }
 
-    def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = fun(f)
+    // XX conflict with delite method
+    def compile0[A:Manifest,B:Manifest](f: A=>B): A=>B = fun(f)
+    //def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = fun(f)
 
 
     def lms[A:Manifest,B:Manifest](f: Rep[A]=>Rep[B]): Fun[A,B] = {
@@ -139,12 +146,12 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
         emitString("def WARN = assert(false, \"WARN\")")
         emitString("def ERROR = assert(false, \"ERROR\")")
 
-        emitString("  var RES = null.asInstanceOf["+mbStr+"]")
+        emitString("  var "+RES+" = null.asInstanceOf["+mbStr+"]")
 
 
         f(arg)
 
-        DynExp[B]("RES")
+        DynExp[B](RES)
       }
 
       val codegen = createCodegen()
@@ -153,14 +160,18 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
       // dry run to hash out constant pool ... HACK
       codegen.withStream(new PrintWriter(new StringWriter)) {
-        codegen.emitSource(List(arg),y,"Generated",codegen.stream)
+//        codegen.emitSource({ x:Rep[A] => reflect[Unit]("val "+arg+" = "+x); reflect[B](y) },"Generated",codegen.stream)
+// XX OLD LMS
+        codegen.emitSource({ x:Rep[A] => reflect[Unit]("val "+quote(arg)+" = ",x); reflect[B](y) },"Generated",codegen.stream)
       }
 
       val cst = VConstantPool
     
       val stream = new StringWriter
       codegen.withStream(new PrintWriter(stream)) {
-        codegen.emitSource(List(arg),y,"Generated",codegen.stream)
+//        codegen.emitSource(List(arg),y,"Generated",codegen.stream)
+// XX OLD LMS
+        codegen.emitSource({ x:Rep[A] => reflect[Unit]("val "+quote(arg)+" = ",x); reflect[B](y) },"Generated",codegen.stream)
       }
 
 
@@ -372,7 +383,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
 
     def checkCastInternal(typ: ResolvedJavaType, value: Rep[Object]): Rep[Object] = {
-
+      if (!emitCheckCast) return value
       val cls = typ.toJava
       val params = cls.getTypeParameters
       val name = if (params.length == 0) cls.getName

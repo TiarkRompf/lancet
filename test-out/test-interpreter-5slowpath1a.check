@@ -15,12 +15,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -37,12 +37,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -59,12 +59,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -81,12 +81,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -103,12 +103,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -125,12 +125,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -147,12 +147,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -169,12 +169,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -191,12 +191,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -213,12 +213,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -235,12 +235,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -257,12 +257,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -279,12 +279,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -301,12 +301,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -323,12 +323,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -345,12 +345,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -367,12 +367,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -389,12 +389,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -411,12 +411,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -433,12 +433,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -455,12 +455,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -477,12 +477,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -499,12 +499,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -521,12 +521,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -543,12 +543,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -565,12 +565,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -587,12 +587,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -609,12 +609,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -631,12 +631,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -653,12 +653,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -675,12 +675,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -697,12 +697,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -719,12 +719,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -741,12 +741,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -763,12 +763,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -785,12 +785,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -807,12 +807,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -829,12 +829,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -851,12 +851,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -873,12 +873,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -895,12 +895,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -917,12 +917,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -939,12 +939,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -961,12 +961,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -983,12 +983,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1005,12 +1005,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1027,12 +1027,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1049,12 +1049,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1071,12 +1071,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1093,12 +1093,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1115,7 +1115,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
@@ -1130,7 +1130,7 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
           4: return
           Ret HotSpotMethod<TestInterpreter5$Decompiler.slowpath> - HotSpotSignature<()V>
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1147,12 +1147,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1169,12 +1169,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1191,12 +1191,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1213,12 +1213,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1235,12 +1235,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1257,12 +1257,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1279,12 +1279,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1301,12 +1301,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1323,12 +1323,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1345,12 +1345,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1367,12 +1367,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1389,12 +1389,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1411,12 +1411,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1433,12 +1433,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1455,12 +1455,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1477,12 +1477,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1499,12 +1499,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1521,12 +1521,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1543,12 +1543,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1565,12 +1565,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1587,12 +1587,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1609,12 +1609,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1631,12 +1631,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1653,12 +1653,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1675,12 +1675,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1697,12 +1697,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1719,12 +1719,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1741,12 +1741,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1763,12 +1763,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1785,12 +1785,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1807,12 +1807,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1829,12 +1829,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1851,12 +1851,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1873,12 +1873,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1895,12 +1895,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1917,12 +1917,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1939,12 +1939,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1961,12 +1961,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -1983,12 +1983,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -2005,12 +2005,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -2027,12 +2027,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -2049,12 +2049,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -2071,12 +2071,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -2093,12 +2093,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -2115,12 +2115,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -2137,12 +2137,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -2159,12 +2159,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -2181,12 +2181,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd
@@ -2203,12 +2203,12 @@ Executing root method HotSpotMethod<TestInterpreter5$$anonfun$test1a$1$$anonfun$
       12: aload_0
       13: getfield
       16: invokevirtual
-        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Call HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
         0: iload_1
         1: bipush
         3: if_icmpne
         12: return
-        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
+        Ret HotSpotMethod<TestInterpreter5$$anonfun$test1a$1.compute$1> - HotSpotSignature<(ILlancet/interpreter/TestInterpreter5$Decompiler;)V>
       19: iload_2
       20: iconst_1
       21: iadd

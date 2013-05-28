@@ -229,7 +229,7 @@ class BytecodeInterpreter_LMS_Opt4 extends AbstractInterpreter_LMS with Bytecode
     }
 
     // print stats after compiling
-    override def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
+    /*override def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = {
       val f1 = try super.compile(f) finally if (debugStats) {
         emitString("--- stats ---")
         val stats1 = stats.toList.map { case (k,v) => 
@@ -243,7 +243,7 @@ class BytecodeInterpreter_LMS_Opt4 extends AbstractInterpreter_LMS with Bytecode
         emitString("total: " + stats.map(_._2).sum)
       }
       f1
-    }
+    }*/
 
 
 }
@@ -264,7 +264,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
     var emitRecursive = false
 
     var budget = 200000
-
+    
     // global internal data structures
 
     val graalBlockMapping = new mutable.HashMap[ResolvedJavaMethod, BciBlockMapping] // map key to store
@@ -312,19 +312,32 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
     // dynamically scoped internal data structures
 
-    var handler: (InterpreterFrame => Rep[Unit]) = execMethod
+    def defaultReturnHandler: (Rep[Object] => Rep[Unit]) = { p =>
+      reflect[Unit]("("+RES+" = ",quote(p),") // return to root")
+    }
+
+    def defaultHandler: (InterpreterFrame => Rep[Unit]) = execMethod
+
+    var handler: (InterpreterFrame => Rep[Unit]) = defaultHandler
+    var returnHandler: (Rep[Object] => Rep[Unit]) = defaultReturnHandler
     var depth = 0
 
     def withScope[A](body: =>A): A = { // reset scope, e.g. for nested calls
       val saveHandler = handler
+      val saveReturnHandler = returnHandler
       val saveDepth = depth
+      val saveResId = curResId
       try {
-        handler = execMethod
+        handler = defaultHandler
+        returnHandler = defaultReturnHandler
         depth = 0
+        curResId += 1 //still needed?
         body
       } finally {
         handler = saveHandler
+        returnHandler = saveReturnHandler
         depth = saveDepth
+        curResId = saveResId
       }
     }
 
@@ -338,50 +351,6 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
     def genVarWrite(v: Rep[Any]): Rep[Unit]
     def genVarRead(v: Rep[Any]): Rep[Unit]
 
-    // TODO: proper subst transformer
-
-    def infix_replace[A,B](a: Block[A], key: String, b: Block[B]): Block[A] = {
-      ???
-    }/*{
-      var found = 0
-      val t = new StructuralTransformer {
-        override def transformStm(s: Stm): List[Stm] = s match {
-          case Unstructured(`key`) => 
-            found += 1
-            // not replacing a valdef so we can discard result
-            b.stms
-          case Unstructured(k) => 
-            //System.out.println("no match "+k)
-            super.transformStm(s)
-          case _ => super.transformStm(s)
-        }
-      }
-      val r = t.transformBlock(a)
-      if (found == 0) System.out.println("not found: "+key)
-      r
-    }*/
-
-
-    // helpers
-
-    def postDominators(blocks: List[BciBlockMapping.Block]) = {
-      import scala.collection.JavaConversions._
-      var PostDom: Map[BciBlockMapping.Block,Set[BciBlockMapping.Block]] = Map()
-      val (exit,internal) = blocks.partition(_.successors.length == 0)
-      for (n <- exit)
-        PostDom += (n -> Set(n))
-      for (n <- internal)
-        PostDom += (n -> blocks.toSet)
-      var p0 = PostDom
-      do {
-        p0 = PostDom
-        for (n <- internal) {
-          val x = (blocks.toSet /: n.successors) ((a:Set[BciBlockMapping.Block],b:BciBlockMapping.Block) => a intersect PostDom(b))
-          PostDom += (n -> (Set(n) ++ x))
-        }
-      } while (PostDom != p0)
-      PostDom
-    }
 
 
     // exec loop
@@ -395,7 +364,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       if (frame.getParentFrame == null) { // TODO: cleanup?
         val p = popAsObject(frame, frame.getMethod.getSignature.getReturnKind())
-        return reflect[Unit]("(RES = "+quote(p)+") // return to root")
+        return returnHandler(p)
       }
 
       val method = frame.getMethod()
@@ -535,6 +504,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
           val s1 = blockInfo(bid).inState
           val rhs = if (shouldInline(bid)) {
             assert(!statesDiffer(s0,s1))
+            // TODO: when inlining in multiple places states may differ; do lub assignments
             blockInfoOut(bid).code
           } else { // emit call
             val fields = getFields(s1)
@@ -653,6 +623,264 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       }
       liftConst(())
     }
+
+
+
+    // alternative version that always execs up to the dominance frontier
+
+    def postDominators(blocks: List[BciBlockMapping.Block]) = {
+      import scala.collection.JavaConversions._
+      var PostDom: Map[BciBlockMapping.Block,Set[BciBlockMapping.Block]] = Map()
+      val (exit,internal) = blocks.partition(_.successors.length == 0)
+      for (n <- exit)
+        PostDom += (n -> Set(n))
+      for (n <- internal)
+        PostDom += (n -> blocks.toSet)
+      var p0 = PostDom
+      do {
+        p0 = PostDom
+        for (n <- internal) {
+          val x = (blocks.toSet /: n.successors) ((a:Set[BciBlockMapping.Block],b:BciBlockMapping.Block) => a intersect PostDom(b))
+          PostDom += (n -> (Set(n) ++ x))
+        }
+      } while (PostDom != p0)
+      PostDom
+    }
+
+
+
+    def execMethodPostDom(mframe: InterpreterFrame): Rep[Unit] = {
+      import scala.collection.JavaConversions._
+
+      // obtain block mapping that will tell us about dominance relations
+      val method = mframe.getMethod()
+      val graalBlocks = getGraalBlocks(method, 0)
+      def getGraalBlock(fr: InterpreterFrame) = graalBlocks.blocks.find(_.startBci == fr.getBCI).get
+
+      //emitString("/*")
+      val postDom = postDominators(graalBlocks.blocks.toList)
+      for (b <- graalBlocks.blocks) {
+          //emitString(b + " succ [" + postDom(b).map("B"+_.blockID).mkString(",") + "]")
+      }
+      //emitString("*/")
+
+      val saveHandler = handler
+      val saveDepth = getContext(mframe).length
+
+      //if (debugMethods) 
+      //emitString("// << " + method)
+
+      val (mkey,mkeyid) = contextKeyId(mframe)
+
+      case class BlockInfo(inEdges: List[(Int,IState)], inState: IState)
+      case class BlockInfoOut(returns: List[IState], gotos: List[IState], code: Block[Unit])
+
+      val blockInfo: mutable.Map[Int, BlockInfo] = new mutable.HashMap
+      val blockInfoOut: mutable.Map[Int, BlockInfoOut] = new mutable.HashMap
+
+      var worklist: List[Int] = Nil
+
+      var curBlock = -1
+
+      // *** entry point: main control transfer handler ***
+      handler = { blockFrame =>
+        val d = getContext(blockFrame).length
+
+        if (d > saveDepth) execMethodPostDom(blockFrame)
+        else if (d < saveDepth) { 
+          handler = saveHandler
+
+          //emitString("// >> " + method)
+
+          exec(blockFrame)
+
+          // TODO: is it safe to return here or should we do it
+          // on exit from this method?
+
+          /*val s = getState(blockFrame)
+          val out = blockInfoOut(curBlock)
+          genGoto("RETURN_"+mkeyid+"_"+curBlock+"_"+(out.returns.length))
+          blockInfoOut(curBlock) = out.copy(returns = out.returns :+ s)*/
+          //returns = returns :+ (freshFrameSimple(blockFrame), store)
+          //println("RETURN_"+(returns.length-1)+";")
+          liftConst(())
+        } else {
+          gotoBlock(blockFrame)
+        }
+      }
+
+      def gotoBlock(blockFrame: InterpreterFrame): Rep[Unit] = {
+        // make sure we're still in the same method! --> catch external calls that don't reset handler
+        //assert(mframe.getMethod == blockFrame.getMethod, {"\n" +
+        //        mframe.getMethod + "\n" +
+        //        blockFrame.getMethod})
+
+        // TODO: do not exec past control flow joins (only up to post-dom frontier)
+
+        //println(">> "+contextKey(blockFrame))
+        //val b = getGraalBlock(blockFrame)
+        //println(b + " --> " + postDom(b))
+
+        execFoReal(blockFrame);
+
+        //println("<< "+contextKey(blockFrame))
+
+        /*val s = getState(blockFrame)
+        val b = getGraalBlock(blockFrame)
+        blockInfo.get(b.blockID) match {
+          case Some(BlockInfo(edges,state)) => 
+            // CAVEAT: can only have one edge per block pair (unchecked!)
+            val edges2 = edges.filterNot(_._1 == curBlock) :+ (curBlock,s) //update with s at curBlock!
+            // alternative: don't compute lub here, just test prev with new state per edge
+            val (state2,_) = allLubs(edges2.map(_._2))
+            blockInfo(b.blockID) = BlockInfo(edges2,state2)
+            if (!worklist.contains(b.blockID) && statesDiffer(state,state2)) {
+              worklist = (b.blockID::worklist).sorted
+            }
+            // if (state != state2) worklist += b.blockID
+          case None => 
+            blockInfo(b.blockID) = BlockInfo(List((curBlock,s)),s)
+            worklist = (b.blockID::worklist).sorted
+        }
+
+        val out = blockInfoOut(curBlock)
+        genGoto("GOTO_"+mkeyid+"_"+curBlock+"_"+(out.gotos.length))
+        blockInfoOut(curBlock) = out.copy(gotos = out.gotos :+ s)
+        liftConst(())*/
+      }
+
+      gotoBlock(mframe)
+
+      // *** compute fixpoint ***
+/*
+      //gotoBlock(mframe) // alternative; just do it ourselves ...
+      val s = getState(mframe)
+      val b = getGraalBlock(mframe)
+      blockInfo(b.blockID) = BlockInfo(List((-1,s)),s)
+      worklist = List(b.blockID)
+
+      while (worklist.nonEmpty) {
+        val i = worklist.head
+        worklist = worklist.tail
+        assert(blockInfo.contains(i))
+        curBlock = i
+        blockInfoOut(i) = BlockInfoOut(Nil,Nil,Block(liftConst(()))) // reset gotos
+        val BlockInfo(edges,s) = blockInfo(i)
+        val src = reify {
+          withState(s)(execFoReal)
+        }
+        blockInfoOut(i) = blockInfoOut(i).copy(code=src)
+      }
+
+      // reached fixpoint, now use acquired info to emit code
+
+      def getPreds(i: Int) = blockInfo(i).inEdges.map(_._1)
+      def shouldInline(i: Int) = getPreds(i).length < 2
+      assert(getPreds(b.blockID) == List(-1))
+
+      // fix jumps inside blocks: either call or inline
+      for (b <- graalBlocks.blocks.reverse if blockInfo.contains(b.blockID)) {
+        val i = b.blockID
+        val BlockInfo(edges, stateBeforeBlock) = blockInfo(i)
+        val BlockInfoOut(returns, gotos, code) = blockInfoOut(i)
+
+        for ((s0,i) <- gotos.zipWithIndex) {
+          val bid = getGraalBlock(getFrame(s0)).blockID
+          val s1 = blockInfo(bid).inState
+          val rhs = if (shouldInline(bid)) {
+            assert(!statesDiffer(s0,s1))
+            // TODO: when inlining in multiple places states may differ; do lub assignments
+            blockInfoOut(bid).code
+          } else { // emit call
+            val fields = getFields(s1)
+            val (key,keyid) = contextKeyId(getFrame(s1))
+            val (_,_::head::Nil) = allLubs(List(s1,s0)) // could do just lub? yes, with captureOutput...
+            reify { 
+              emitString(";{")
+              reflect[Unit](Patch("",head))
+              genBlockCall(keyid, fields) 
+              emitString("}")
+            }
+          }
+          genGotoDef("GOTO_"+mkeyid+"_"+b.blockID+"_"+i, rhs)
+          //src = src.replace("GOTO_"+i+";", rhs)
+        }
+        //blockInfoOut(i) = BlockInfoOut(returns, gotos, code) // update body src
+      }
+
+      // initial block -- do we ever need to lub here?
+      assert(getPreds(b.blockID) == List(-1))
+      reflect(Patch("",blockInfoOut(b.blockID).code))
+
+      // emit all non-inlined blocks
+      for (b <- graalBlocks.blocks if blockInfo.contains(b.blockID)) {
+        val i = b.blockID
+        if (!shouldInline(i)) {
+          val BlockInfo(edges, stateBeforeBlock) = blockInfo(i)
+          val BlockInfoOut(returns, gotos, code) = blockInfoOut(i)
+
+          val fields = getFields(stateBeforeBlock)
+          val (key,keyid) = contextKeyId(getFrame(stateBeforeBlock))
+
+          genBlockDef(key, keyid, fields, code)
+        }
+      }*/
+
+      // *** reset state
+
+//      handler = saveHandler
+
+//      emitString("// >> " + method)
+
+      // *** backpatch returns and continue ***
+
+/*
+      if (debugMethods) emitString("// >> " + method)
+
+      val returns = blockInfoOut.toList flatMap { case (i, out) =>
+        out.returns.zipWithIndex.map { case (st, j) => ("RETURN_"+mkeyid+"_"+i+"_"+j,st) }
+      }
+
+      if (returns.length == 0) {
+        emitString("// (no return?)")
+      } else if (returns.length == 1) {  // TODO
+        val (k,s) = returns(0)
+        val ret = reify {
+          //emitString("// ret single "+method)
+          withState(s)(exec)
+        }
+        genGotoDef(k, ret)
+      } else {
+        //emitString("// WARNING: multiple returns ("+returns.length+") in " + mframe.getMethod)
+
+        val (ss, gos) = allLubs(returns.map(_._2))
+        val fields = getFields(ss)
+
+        emitString(";{")
+
+        for (v <- fields) genVarDef(v)
+
+        for ((k,go) <- (returns.map(_._1)) zip gos) {
+          val block = reify[Unit]{ reflect[Unit](Patch("",go)); fields.map(genVarWrite); liftConst(()) }
+          genGotoDef(k, block)
+          //reflect[Unit]("def "+k.substring(6)+": Unit = {", go, assign,"};") // substr prevents further matches
+        }
+        
+        emitString(";{")
+        if (debugReturns) emitString("// ret multi "+method)
+
+        for (v <- fields) genVarRead(v)
+        withState(ss)(exec)
+        emitString("}")
+        emitString("}")
+      }
+*/
+
+      liftConst(())
+    }
+
+
+
 
 
     // halt on basic block boundaries: do not silently skip into the next block

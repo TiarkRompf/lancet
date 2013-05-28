@@ -91,7 +91,7 @@ class TestInterpreter5 extends FileDiffSuite {
 
     def compute(i: Int) = if (i == 50) it.slowpath
 
-    val f = it.compile { (x:Int) => 
+    val f = it.compile0 { (x:Int) => 
       var i = 0
       while (i < x) {
         compute(i)
@@ -107,7 +107,7 @@ class TestInterpreter5 extends FileDiffSuite {
 
     def compute(i: Int) = if (i == 50) it.fastpath
 
-    val f = it.compile { (x:Int) => 
+    val f = it.compile0 { (x:Int) => 
       var i = 0
       while (i < x) {
         compute(i)
@@ -124,7 +124,7 @@ class TestInterpreter5 extends FileDiffSuite {
 
     def compute(i: Int) = if (i % 10 == 0) it.fastpath
 
-    val f = it.compile { (x:Int) => 
+    val f = it.compile0 { (x:Int) => 
       var i = 0
       while (i < x) {
         compute(i)
@@ -144,7 +144,7 @@ class TestInterpreter5 extends FileDiffSuite {
 
     def compute(i: Int) = it.shift[Int,Int](k => k(7) + k(9))
 
-    val f = it.compile { (x:Int) => 
+    val f = it.compile0 { (x:Int) => 
       it.reset[Int](compute(x) * 100)
     }
     printcheck(f(100), 1600)

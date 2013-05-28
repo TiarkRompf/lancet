@@ -2,6 +2,37 @@
   Emitting Generated Code
   *******************************************/
   class Generated extends ((Int)=>(Int)) {
+<<<<<<< HEAD
+    def apply(x169:Int): Int = {
+      val x0 = x169;
+      val x171: Int = {
+        import sun.misc.Unsafe;
+        val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
+        type char = Char;
+        def WARN = assert(false, "WARN");
+        def ERROR = assert(false, "ERROR");
+        var RES0 = null.asInstanceOf[Int];
+        val x7 = x0.asInstanceOf[Int];
+        val x8: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
+        if (x8 ne null) unsafe.putInt(x8,16L, 7) else println("BUG: putInt"+x8);;
+        val x34 = 0 >= x7;
+        if (x34) {
+          ;{;
+            val LUB_x8_intField = 7; // Alias(Some(DynExp(LUB_x8_intField)),Some(Const(7)));
+            BLOCK_12(LUB_x8_intField,x7,x8);
+          };
+        } else {
+          if (x8 ne null) unsafe.putInt(x8,16L, 9) else println("BUG: putInt"+x8);;
+          ;{;
+            val LUB_x8_intField = 9; // Alias(Some(DynExp(LUB_x8_intField)),Some(Const(9)));
+            BLOCK_12(LUB_x8_intField,x7,x8);
+          };
+        }
+        def BLOCK_12(LUB_x8_intField:Int,x7:Int,x8:Object): Unit = {
+          ;{;
+            val PHI_3_6 = 0 // LUBC(DynExp(PHI_3_6):Int,Const(0):Int);
+            BLOCK_13(LUB_x8_intField,PHI_3_6,x7,x8);
+=======
     def apply(x0:Int): Int = {
       import sun.misc.Unsafe;
       val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
@@ -44,11 +75,29 @@
             val PHI_3_6 = x128 // LUBC(DynExp(PHI_3_6):Int,Sym(128):Int);
             val LUB_x10_intField = x119; // Alias(Some(DynExp(LUB_x10_intField)),Some(Sym(119)));
             BLOCK_13(LUB_x10_intField,PHI_3_6,x10,x7);
+>>>>>>> 5928874f8b91b6165b6d0637e8c9fee727876d17
           };
         }
-      }
-      // (no return?);
-      RES
+        def BLOCK_13(LUB_x8_intField:Int,PHI_3_6:Int,x7:Int,x8:Object): Unit = {
+          val x8: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
+          val x94 = 0 >= LUB_x8_intField;
+          if (x94) {
+            (RES0 = PHI_3_6) // return to root;
+          } else {
+            val x107 = -1 + LUB_x8_intField;
+            if (x8 ne null) unsafe.putInt(x8,16L, x107) else println("BUG: putInt"+x8);;
+            val x115 = 1 + PHI_3_6;
+            ;{;
+              val PHI_3_6 = x115 // LUBC(DynExp(PHI_3_6):Int,Sym(115):Int);
+              val LUB_x8_intField = x107; // Alias(Some(DynExp(LUB_x8_intField)),Some(Sym(107)));
+              BLOCK_13(LUB_x8_intField,PHI_3_6,x7,x8);
+            };
+          }
+        }
+        // (no return?);
+        RES0
+      };
+      x171
     }
   }
   /*****************************************
