@@ -62,7 +62,7 @@ object logreg {
     // OptiMLRunner.run()
     
     // pure
-     collection.parallel.ForkJoinTasks.defaultForkJoinPool.setParallelism(1)
+    //collection.parallel.ForkJoinTasks.defaultForkJoinPool.setParallelism(1)
     for (i <- 0 until 10) {
        // prog(x,y)
        prog(args(0),args(1))

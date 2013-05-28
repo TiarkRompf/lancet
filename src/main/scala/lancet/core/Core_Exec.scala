@@ -6,7 +6,8 @@ trait Core_Exec extends Base_Exec with Core {
   implicit def anyType[T:Manifest]: TypeRep[T] = manifest[T]
   implicit def booleanType = manifest[Boolean]
   implicit def intType = manifest[Int]
-  implicit val unitType = manifest[Unit] // stack overflow in test5 if it's a def (?)
+  implicit val unitType: Manifest[Unit] = manifest[Unit] // stack overflow in test5 if it's a def (?)
+  // TODO: hmmmm, this stuff is recursive...
 
 
   implicit def unit(x: Boolean): Boolean = x

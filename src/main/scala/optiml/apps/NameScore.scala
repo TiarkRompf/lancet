@@ -80,7 +80,7 @@ object NameScore {
     //OptiMLRunner.run()
     
     // pure
-    collection.parallel.ForkJoinTasks.defaultForkJoinPool.setParallelism(8)
+    //collection.parallel.ForkJoinTasks.defaultForkJoinPool.setParallelism(8)
     for (i <- 0 until 10) {
       prog(args(0))
     }

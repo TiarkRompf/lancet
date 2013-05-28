@@ -5,7 +5,8 @@ import lancet.api._
 import lancet.interpreter._
 import lancet.core._
 
-import ppl.dsl.optiml.{Vector,DenseVector,RangeVector,IndexVectorRange}
+//import ppl.dsl.optila.{Vector,DenseVector,RangeVector}
+//import ppl.dsl.optiml.{IndexVectorRange}
 import ppl.dsl.optiml.{OptiMLApplication, OptiMLApplicationRunner}
 
 import ppl.delite.framework.DeliteApplication
@@ -95,7 +96,7 @@ class TestDelite2 extends FileDiffSuite {
     object Macros extends VectorOperatorsRunner.ClassMacros {
       val targets = List(classOf[VectorCompanion],classOf[Vector[_]])
       //type Rep[T] = VectorOperatorsRunner.Rep[T]
-      import VectorOperatorsRunner.{Rep,reflect,mtr,infix_relax,eval,VConst,Def}
+      import VectorOperatorsRunner._ //{Rep,reflect,mtr,infix_relax,eval,VConst,Def}
       def rand(self: Rep[VectorCompanion], n: Rep[Int]): Rep[DenseVector[Double]] = {
         Console.println("catch vector_rand")
         VectorOperatorsRunner.densevector_obj_rand(n)
@@ -105,7 +106,8 @@ class TestDelite2 extends FileDiffSuite {
         implicit val mfT = eval(mf) match {
           case VConst(mf: Manifest[T]) => mf
           case _ => 
-            Console.println("ERROR: non-constant manifest in vector_apply: "+mf+"="+Def.unapply(mf)+" -- assuming Double")
+            //Console.println("ERROR: non-constant manifest in vector_apply: "+mf+"="+Def.unapply(mf)+" -- assuming Double")
+            Console.println("ERROR: non-constant manifest in vector_apply -- assuming Double")
             manifest[Double].asInstanceOf[Manifest[T]]
         }
 

@@ -122,7 +122,7 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
 
     // XX conflict with delite method
     def compile0[A:Manifest,B:Manifest](f: A=>B): A=>B = fun(f)
-    def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = fun(f)
+    //def compile[A:Manifest,B:Manifest](f: A=>B): A=>B = fun(f)
 
 
     def lms[A:Manifest,B:Manifest](f: Rep[A]=>Rep[B]): Fun[A,B] = {

@@ -26,7 +26,7 @@ object BenchmarkAccelerationMacros extends OptiMLRunner.ClassMacros {
   
   def longString(self: Rep[ScalaCompanion], l: Rep[Int]): Rep[String] = {
     Console.println("catch long_tostring")
-    OptiMLRunner.object_toString(l)
+    OptiMLRunner.object_tostring(l)
   }
   
   def println(self: Rep[ScalaCompanion], x: Exp[Any]): Rep[Unit] = {

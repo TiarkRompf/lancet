@@ -12,7 +12,7 @@ import scala.reflect.SourceContext
 import ppl.delite.framework.DeliteApplication
 import ppl.delite.framework.Config
 
-import ppl.dsl.optiml.{Vector,DenseVector,DenseVectorView,DenseMatrix,RangeVector,IndexVectorRange}
+//import ppl.dsl.optiml.{Vector,DenseVector,DenseVectorView,DenseMatrix,RangeVector,IndexVectorRange}
 import ppl.dsl.optiml.{OptiMLApplication, OptiMLApplicationRunner}
 import ppl.dsl.optiml.{OptiMLCodeGenScala,OptiMLExp}
 

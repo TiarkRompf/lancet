@@ -654,7 +654,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       // obtain block mapping that will tell us about dominance relations
       val method = mframe.getMethod()
-      val graalBlocks = getGraalBlocks(method)
+      val graalBlocks = getGraalBlocks(method, 0)
       def getGraalBlock(fr: InterpreterFrame) = graalBlocks.blocks.find(_.startBci == fr.getBCI).get
 
       //emitString("/*")

@@ -700,7 +700,7 @@ trait DefaultMacrosLMS extends BytecodeInterpreter_LMS_Opt { self =>
       res.asInstanceOf[B]
     }
 
-    def exec[B:Manifest](f: => B): B = compile[Int,B](x => f).apply(0)
+    def exec[B:Manifest](f: => B): B = compile0[Int,B](x => f).apply(0)
 
     def toFunction[A](x: => A) = ((x:()=>A)=>x).asInstanceOf[{def apply(x: => A):()=>A}](x)
 
@@ -741,7 +741,7 @@ trait DefaultMacrosLMS extends BytecodeInterpreter_LMS_Opt { self =>
 
 
     def decompileInternal[A:TypeRep,B:TypeRep](f: Rep[A=>B]): (Rep[A],Block[B]) = {
-      val arg = fresh[A]
+      val arg = fresh[A](typeRepToManifest[A])
       val body = reify {
         decompileFun(f)apply(arg)
       }
@@ -769,7 +769,7 @@ trait DefaultMacrosLMS extends BytecodeInterpreter_LMS_Opt { self =>
     }
 
     def decompileDelimited[A:TypeRep,B:TypeRep](frame: InterpreterFrame): (Rep[A],Block[B]) = {
-      val arg = fresh[A]
+      val arg = fresh[A](typeRepToManifest[A])
       val body = reify {
         runDelimited[A,B](frame)(arg)
       }
@@ -855,7 +855,9 @@ trait DefaultMacrosLMS extends BytecodeInterpreter_LMS_Opt { self =>
           val (arg,block) = decompileDelimited[A,B](frame)
           val nm = "fx"+arg.asInstanceOf[Sym[A]].id
           reflect[Unit]("def ",nm,"(",arg,":","Int","): Int = ", block)
-          reflect[A=>B](nm+" _")(TypeRep(typeRep[A]+" => "+typeRep[B]))
+          implicit val mA = typeRepToManifest(typeRep[A])
+          implicit val mB = typeRepToManifest(typeRep[B])
+          reflect[A=>B](nm+" _")(TypeRep[A=>B](typeRep[A]+" => "+typeRep[B]))
         }
       }
 

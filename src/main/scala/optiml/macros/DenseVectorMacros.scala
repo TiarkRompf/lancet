@@ -11,7 +11,8 @@ import scala.virtualization.lms.common._
 import ppl.delite.framework.DeliteApplication
 import ppl.delite.framework.Config
 
-import ppl.dsl.optiml.{Vector,DenseVector,DenseVectorView,RangeVector,IndexVectorRange}
+//import ppl.dsl.optila.{Vector,DenseVector,DenseVectorView,RangeVector}
+//import ppl.dsl.optiml.{IndexVectorRange}
 import ppl.dsl.optiml.{OptiMLApplication, OptiMLApplicationRunner}
 import ppl.dsl.optiml.{OptiMLCodeGenScala,OptiMLExp}
 
@@ -21,7 +22,7 @@ import OptiMLLancetRunner._
 object DenseVectorMacros extends OptiMLRunner.ClassMacros {
   val targets = List(classOf[optiml.library.DenseVectorCompanion],classOf[optiml.library.DenseVector[_]],classOf[optiml.library.DenseVectorView[_]])
   //type Rep[T] = VectorOperatorsRunner.Rep[T]
-  import OptiMLRunner.{Rep,reflect,mtr,infix_relax}
+  import OptiMLRunner._//{Rep,reflect,mtr,infix_relax}
   
   def rand(self: Rep[DenseVectorCompanion], n: Rep[Int]): Rep[DenseVector[Double]] = {
     Console.println("catch vector_rand")
@@ -80,7 +81,7 @@ object DenseVectorMacros extends OptiMLRunner.ClassMacros {
   def sum[T](self: Rep[DenseVector[T]]): Rep[T] = {
     Console.println("catch vector_sum")
     implicit val mf = manifest[DenseVector[Double]].asInstanceOf[Manifest[T]] //FIXME: generic types
-    implicit val a = OptiMLRunner.doubleArith
+    //implicit val a = OptiMLRunner.doubleArith
     implicit val ar = OptiMLRunner.denseVectorArith[Double].asInstanceOf[OptiMLRunner.Arith[T]]
     OptiMLRunner.vector_sum(OptiMLRunner.denseVecToInterface(self))
   }      
