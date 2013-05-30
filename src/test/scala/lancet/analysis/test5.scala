@@ -222,6 +222,11 @@ class TestAnalysis5 extends FileDiffSuite {
       if (expanding contains t) DObj(Map(), Map(), Map()) else {
         val save = expanding; try {
         expanding = t::expanding
+        if (expanding.length > 100) {
+          println("abort expanding:")
+          expanding.foreach(println)
+          assert(false)
+        }
         t match { // may not exist for recursive values
           case TTop                 => DObj(Map(), Map(), Map())
           case TBot                 => DObj(Map() withDefaultValue ((TTop,TBot)), Map() withDefaultValue TBot, Map() withDefaultValue (("?",TTop,TBot)))
@@ -460,6 +465,33 @@ dep method type
           Var("r")
       ))))
 
+/*
+expansion case
+
+val a = new {a =>
+  C : Bot .. { c =>
+    M : c.f.M .. c.f.M
+    f : a.C
+  }
+}
+val r = new a.C ( f = r )
+
+*/
+
+
+    val testType6 = TStruct("a", 
+        Map(
+          "C" -> ((TBot,TStruct("c",
+              Map("M"      -> ((TSel(Sel(Var("c"), "f"), "M"),TSel(Sel(Var("c"), "f"), "M")))), 
+              Map("f"      -> (TSel(Var("a"), "C"))),
+              Map())))),
+        Map(), Map())
+
+    /*val testProg6 = 
+      Let("a", testType6, ... not quite clear how to construct object ...,
+      Let("r", New(TSel(Var("a"), "C"), Map("f" -> TRef(Var("r"))), Map()),
+        Var("r")
+      ))*/
 
 
 
@@ -502,6 +534,10 @@ dep method type
     println("should have r: a.Bar = c.Bar (true)")
     println(tsub(TRef(Var("r")), TSel(Sel(Var("c"),"self"), "Bar"), tenv5))
 
+
+    println("this will hang:")
+    val tenv6 = Map("a" -> testType6, "b" -> TSel(Var("a"), "C"))
+    println(texpand(TSel(Var("b"), "M"), Var("z"), tenv6))
 
   }
 
