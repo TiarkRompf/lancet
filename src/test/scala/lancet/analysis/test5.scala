@@ -21,6 +21,7 @@ class TestAnalysis5 extends FileDiffSuite {
     }
     case class Var(s: String) extends Exp
     case class Sel(x: Exp, l: String) extends Exp
+    case class Subst(x: Exp, a: List[String], b: Exp) extends Exp
     case class Let(x: String, y: Exp, z: Exp) extends Exp
     case class App(x: Exp, l: String, y: Exp) extends Exp
     case class New(tp: Typ, ls: Map[String,Exp], ms: Map[String,(String,Exp)]) extends Exp
@@ -41,6 +42,7 @@ class TestAnalysis5 extends FileDiffSuite {
     def prettyExp(e: Exp) = e match {
       case Var(s)        => s
       case Sel(x,l)      => s"$x.$l"
+      case Subst(x,a,b)  => s"($x)[${a.mkString(",")}->$b]"
       case Let(x,y,z)    => s"val $x = $y\n$z"
       case App(x,l,y)    => s"$x.$l($y)"
       case New(tp,ls,ms) => if ((ls++ms).nonEmpty) s"new $tp {\n  ${ (ls++ms).mkString("\n").replace("\n","\n  ") }\n}" else s"new $tp { }"
@@ -129,6 +131,7 @@ class TestAnalysis5 extends FileDiffSuite {
     def tevalp(e: Exp, tenv: TEnv): Typ = {/*println("tevalp " + e)*/; e} match {
       case Var(s)    => tenv(s)
       case Sel(x,l)  => tevald(x,tenv).ls(l)
+      case Subst(x,a,b)  => tevalp(tsubstpFull(x,a,b),tenv)
     }
 
     // eval path and check type conformance
@@ -212,17 +215,39 @@ class TestAnalysis5 extends FileDiffSuite {
     }
     
     // *** expansion
-    def texpandp(t: Exp, tenv: TEnv): DObj = t match {
-      case Var(s)     => texpand(tenv(s),t,tenv)
-      case Sel(x,l)   => texpand(texpandp(x,tenv).ls(l),t,tenv)
-    }
+    def texpandp(t: Exp, tenv: TEnv): DObj = 
+      if (expanding contains t) { println(s"hang with $t"); DObj(Map(), Map(), Map()) } else {
+        val save = expanding; try {
+        expanding = t::expanding
+        t match {
+          case Var(s)       => texpand(tenv(s),t,tenv)
+          case Sel(x,l)     => texpand(texpandp(x,tenv).ls(l),t,tenv)
+          case Subst(x,a,b) => 
+            // WORK IN PROGRESS
+            def tsubst1(t:Typ)       = tsubst(t,a,b)
+            def tsubst2(t:(Typ,Typ)) = (tsubst1(t._1),tsubst1(t._2))
+            def tsubst3(t:(String,Typ,Typ)) = (t._1,tsubst1(t._2),tsubst1(t._3))
 
-    var expanding: List[Typ] = Nil
+            //println(s"expandingp $t $tenv")
+            val a0::_ = a
+            if (expanding exists { case (`a0`,b1) if b1 != b => { 
+              println(s"CONFLICT $a0 -> $b1 / $b"); true } case _ => false }) {
+                return DObj(Map(), Map(), Map())
+            }
+            expanding = ((a0,b))::expanding
+
+            val d = texpandp(tsubstpFull(x,a,b),tenv)
+            //println(s"result $d")
+            d//DObj(d.ts.mapValues(tsubst2),d.ls.mapValues(tsubst1),d.ms.mapValues(tsubst3))
+        }
+      } finally { expanding = save }}
+
+    var expanding: List[Any] = Nil
     def texpand(t: Typ, self: Exp, tenv: TEnv): DObj = 
       if (expanding contains t) DObj(Map(), Map(), Map()) else {
         val save = expanding; try {
         expanding = t::expanding
-        if (expanding.length > 100) {
+        if (expanding.length > 49) {
           println("abort expanding:")
           expanding.foreach(println)
           assert(false)
@@ -232,7 +257,11 @@ class TestAnalysis5 extends FileDiffSuite {
           case TBot                 => DObj(Map() withDefaultValue ((TTop,TBot)), Map() withDefaultValue TBot, Map() withDefaultValue (("?",TTop,TBot)))
           case TAnd(x,y)            => dand(texpand(x,self,tenv), texpand(y,self,tenv))
           case TOr(x,y)             => dor(texpand(x,self,tenv), texpand(y,self,tenv))
-          case TSel(e,l)            => texpand(texpandp(e,tenv).ts(l)._2, self, tenv) // expand upper bound
+          case TSel(e,l)            => 
+            //println(s"expand sel $t")
+            val e1 = texpandp(e,tenv).ts(l)._2
+            //println(s"upper bound $e1")
+            texpand(e1, self, tenv) // expand upper bound
      
           case TStruct(y,ts,ls,ms)  => 
             def tsubst1(t:Typ)       = tsubst(t,List(y),self)
@@ -242,7 +271,7 @@ class TestAnalysis5 extends FileDiffSuite {
             DObj(ts.mapValues(tsubst2),ls.mapValues(tsubst1),ms.mapValues(tsubst3))
 
           case TRef(x)              => texpandp(x,tenv)//texpand(tenv(x),Var(x),tenv)
-          case TObj(n,x)              => texpand(x,self,tenv) // TODO: n
+          case TObj(n,x)            => texpand(x,self,tenv) // TODO: n
         }
       } finally { expanding = save }}
 
@@ -325,11 +354,17 @@ class TestAnalysis5 extends FileDiffSuite {
 
 
     // type substitution
-    def tsubstp(t: Exp, a: List[String], b: Exp): Exp = t match {
-      case Var(s)     => if (a contains s) b else Var(s)
-      case Sel(x,l)   => Sel(tsubstp(x,a,b),l)
+    def tsubstp(t: Exp, a: List[String], b: Exp): Exp = {  /*println(s"tsubstp $t $a -> $b");*/ t} match {
+      //case Var(s)     => if (a contains s) b else Var(s)
+      //case Sel(x,l) if b.isInstanceOf[Var]  => Sel(tsubstp(x,a,b),l)
+      case _ => Subst(t,a,b)
     }
-    def tsubst(t: Typ, a: List[String], b: Exp): Typ = t match {
+    def tsubstpFull(t: Exp, a: List[String], b: Exp): Exp = {  /*println(s"tsubstp $t $a -> $b");*/ t} match {
+      case Var(s)     => if (a contains s) b else Var(s)
+      case Sel(x,l)   => Sel(tsubstpFull(x,a,b),l)
+      case Subst(x,u,v) => tsubstpFull(tsubstpFull(x,u,v),a,b)
+    }
+    def tsubst(t: Typ, a: List[String], b: Exp): Typ = {  /*println(s"tsubst $t $a -> $b");*/ t} match {
       case TTop                 => TTop
       case TBot                 => TBot
       case TAnd(x,y)            => TAnd(tsubst(x,a,b),tsubst(y,a,b))
@@ -468,37 +503,62 @@ dep method type
 /*
 expansion case
 
-val a = new {a =>
+val a = new { za =>
   C : Bot .. { c =>
     M : c.f.M .. c.f.M
-    f : a.C
+    f : za.C
   }
-}
-val r = new a.C ( f = r )
+} ( .. )
+val b = new a.C ( .. )
+
+expand b.M  -->  b.f.f...f.f.M
 
 */
 
-
-    val testType6 = TStruct("a", 
+    val testType6 = TStruct("za", 
         Map(
           "C" -> ((TBot,TStruct("c",
               Map("M"      -> ((TSel(Sel(Var("c"), "f"), "M"),TSel(Sel(Var("c"), "f"), "M")))), 
-              Map("f"      -> (TSel(Var("a"), "C"))),
+              Map("f"      -> (TSel(Var("za"), "C"))),
               Map())))),
         Map(), Map())
 
-    /*val testProg6 = 
-      Let("a", testType6, ... not quite clear how to construct object ...,
-      Let("r", New(TSel(Var("a"), "C"), Map("f" -> TRef(Var("r"))), Map()),
-        Var("r")
-      ))*/
+    /*
+    val tenv6 = Map("a" -> testType6, "b" -> TSel(Var("a"), "C"))
+    println(texpand(TSel(Var("b"), "M"), Var("z"), tenv6))
+    */
 
+/*
+    env = { a -> \za. { C = \c. { M = c.f.M,  f = za.C }},  b -> a.C }
 
+    b.M 
+    (b: a.C).M
+    (b: (a: { za => C = { c => M = c.f.M,  f = za.C }}).C).M
+    (b: { c => M = c.f.M,  f = [za->a].C }).M
+    [c->b].f.M
+
+    ([c->b]: a.C).f.M
+    ([c->b]: (a: { za => C = { c => M = c.f.M,  f = za.C }}).C).f.M
+    ([c->b]: { c => M = c.f.M,  f = [za->a].C }).f.M
+    ([c->[c->b]].f: [za->a].C ).M  
+
+    // first opportunity to bail out: 
+    // c->RHS, and we detect c in RHS (but final result is b, so ok)
+    
+    ([c->[c->b]].f: (a: { za => C = { c => M = c.f.M,  f = za.C }}).C) ).M
+    ...
+    ([c->[c->b]].f: { c => M = c.f.M,  f = [za->a].C }.M
+
+    [c -> [c->[c->b]].f].f.M  
+
+    // definitely stop here: c = c.f
+*/
 
   }
 
   def testA = withOutFileChecked(prefix+"A") {
     import Test1._
+
     Test1.run(testProg1)
     val (t2,tenv2) = Test1.run(testProg2)
     println("a.self <: b.Inner (true)")
@@ -534,8 +594,7 @@ val r = new a.C ( f = r )
     println("should have r: a.Bar = c.Bar (true)")
     println(tsub(TRef(Var("r")), TSel(Sel(Var("c"),"self"), "Bar"), tenv5))
 
-
-    println("this will hang:")
+    println("expansion with cyclic paths: should have a 'C not found' error")
     val tenv6 = Map("a" -> testType6, "b" -> TSel(Var("a"), "C"))
     println(texpand(TSel(Var("b"), "M"), Var("z"), tenv6))
 
