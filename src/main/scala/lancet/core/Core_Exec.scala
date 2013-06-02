@@ -1,14 +1,20 @@
 package lancet.core
 
+object NoRecurse {
+  // methods can't be implicit -- otherwise we'd get infinite recursion
+  def anyType[T:Manifest] = manifest[T]
+  val booleanType = manifest[Boolean]
+  val intType = manifest[Int]
+  val unitType = manifest[Unit]
+}
+
 
 trait Core_Exec extends Base_Exec with Core {
   type TypeRep[T] = Manifest[T]
-  implicit def anyType[T:Manifest]: TypeRep[T] = manifest[T]
-  implicit def booleanType = manifest[Boolean]
-  implicit def intType = manifest[Int]
-  implicit val unitType: Manifest[Unit] = manifest[Unit] // stack overflow in test5 if it's a def (?)
-  // TODO: hmmmm, this stuff is recursive...
-
+  implicit def anyType[T:Manifest] = NoRecurse.anyType[T]
+  implicit def booleanType = NoRecurse.booleanType
+  implicit def intType = NoRecurse.intType
+  implicit def unitType = NoRecurse.unitType
 
   implicit def unit(x: Boolean): Boolean = x
   implicit def unit(x: Byte): Byte = x
