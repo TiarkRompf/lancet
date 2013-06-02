@@ -238,10 +238,20 @@ Get commit `7839:838293a77af7`.
   export JAVA_OPTS="-graal -Ddelite.home.dir=~/delite"  # Delite home
 ```
 
-   Alternatively, modify the `gsbt` file to reflect your paths and use that
-   instead of the system-wide `sbt`.
+  Alternatively, modify the `gsbt` file to reflect your paths and use that
+  instead of the system-wide `sbt`.
 
-5. Run `sbt` to start the sbt console, then `test` to run the test suite.
+5. Install dependencies: LMS-Core and Delite
+    - [LMS-Core](http://github.com/tiarkrompf/virtualization-lms-core): 
+      branch `wip-delite-develop` (latest commit tested: 2190c9ad07cdf5aa63b138a73440050291b82699). 
+      Run `sbt publish-local` inside your local clone dir.
+    - [Delite](http://github.com/stanford-ppl/delite): 
+      branch `wip-clusters-lancet` (latest commit tested: 9c0599dd60614811e48ad5d15e9a696bb9a3d76e).
+      Run `sbt publish-local` inside your local clone dir.
+    - Create a `delite.properties` file in your local lancet clone 
+      (contents as described [here](http://github.com/stanford-ppl/delite)).
+
+6. Run `sbt` to start the sbt console, then `test` to run the test suite.
 
 
 ### License
