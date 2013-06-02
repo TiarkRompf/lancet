@@ -567,7 +567,7 @@ object DeliteRunner {
     println("EXECUTING...")
     ppl.delite.runtime.profiler.PerformanceTimer.times.clear // don't print running time (messes up check file)
     val name = "test.tmp"
-    System.setProperty("delite.runs", 10.toString)
+    System.setProperty("delite.runs", 1.toString)
     System.setProperty("delite.threads", threads.toString)
     System.setProperty("delite.home", Config.homeDir)
     //System.setProperty("delite.cuda", 1.toString)
