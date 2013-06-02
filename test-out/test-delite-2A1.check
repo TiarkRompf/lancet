@@ -19,250 +19,245 @@ ppl.delite.runtime.profiler.PerformanceTimer.print("app")
 /*****************************************
   Emitting Generated Code                  
 *******************************************/
+package generated.scala
+import generated.scala.LancetUtils._
 class Generated(pConst_0:Object,pConst_1:Object,pConst_2:Object,pConst_3:Object,pConst_4:Object) extends ((Array[java.lang.String])=>(Unit)) {
 def apply(x0:Array[java.lang.String]): Unit = {
-val x1 = 7.asInstanceOf[Int];
 def x80_block = { 
-val x2 = new Array[Double](1000);
-var x3: Array[Double] = x2
-var x4: Int = 1000
-var x5: Boolean = true
-val x6 = new DenseVectorDouble(x3,x4,x5);
-val x7 = x6._length;
+val x1 = new Array[Double](1000);
+var x2: Array[Double] = x1
+var x3: Int = 1000
+var x4: Boolean = true
+val x5 = new DenseVectorDouble(x2,x3,x4);
+val x6 = x5._length;
 def x78_thin = {
 // a *thin* loop follows: x78
-var x10: Int = x7
-val x12 = x6._isRow;
-val x13 = new Array[Double](x10);
-var x14: Array[Double] = x13
-var x15: Int = x10
-var x16: Boolean = x12
-val x17 = new DenseVectorDouble(x14,x15,x16);
-val x78_data: generated.scala.DenseVectorDouble = x17
+var x9: Int = x6
+val x11 = x5._isRow;
+val x12 = new Array[Double](x9);
+var x13: Array[Double] = x12
+var x14: Int = x9
+var x15: Boolean = x11
+val x16 = new DenseVectorDouble(x13,x14,x15);
+val x78_data: generated.scala.DenseVectorDouble = x16
 var x78_size: Int = 0
-var x8: Int = 0
-while (x8 < x7) {  // begin fat loop x78
-val x19 = x6._data;
-val x20 = x19(x8);
-val x21 = generated.scala.Global.randRef.nextDouble();
-val x22 = x21.asInstanceOf[Double];
-val x9 = x22;
-val x11 = x78_data;
-val x24 = x11._data;
-val x25 = x11._data(x8) = x9;
-x8 = x8 + 1
+var x7: Int = 0
+while (x7 < x6) {  // begin fat loop x78
+val x18 = x5._data;
+val x20 = generated.scala.Global.randRef.nextDouble();
+val x21 = x20.asInstanceOf[Double];
+val x8 = x21;
+val x10 = x78_data;
+val x23 = x10._data;
+val x24 = x10._data(x7) = x8;
+x7 = x7 + 1
 } // end fat loop x78
-val x11 = x78_data;
-val x78 = x11;
+val x10 = x78_data;
+val x78 = x10;
 x78
 }
 val x78 = x78_thin
 x78
 }
 val x80 = x80_block
-val x151: Object = new Array[Int](5);
-if (x151 ne null) unsafe.putInt(x151,24L, 1) else println("BUG: putInt"+x151);;
-if (x151 ne null) unsafe.putInt(x151,28L, 2) else println("BUG: putInt"+x151);;
-if (x151 ne null) unsafe.putInt(x151,32L, 3) else println("BUG: putInt"+x151);;
-if (x151 ne null) unsafe.putInt(x151,36L, 4) else println("BUG: putInt"+x151);;
-if (x151 ne null) unsafe.putInt(x151,40L, 5) else println("BUG: putInt"+x151);;
-val x157: Object = unsafe.allocateInstance(Class.forName("scala.collection.mutable.WrappedArray$ofInt"));
-unsafe.putObject(x157,16L, x151);
-val x159: scala.collection.Seq[Int] = x157.asInstanceOf[Seq[Int]];
-val x160 = x159.length;
-def x175_block = { 
-val x161 = new Array[Int](x160);
-var x162: Array[Int] = x161
-var x163: Int = x160
-var x164: Boolean = true
-val x165 = new DenseVectorInt(x162,x163,x164);
-var x167 : Int = 0
-val x172 = while (x167 < x160) {
-val x169 = x165._data;
-val x168 = x159(x167);
-val x170 = x165._data(x167) = x168;
-x170
-x167 = x167 + 1
+val x152: Object = new Array[Int](5);
+if (x152 ne null) unsafe.putInt(x152,24L, 1) else println("BUG: putInt"+x152);;
+if (x152 ne null) unsafe.putInt(x152,28L, 2) else println("BUG: putInt"+x152);;
+if (x152 ne null) unsafe.putInt(x152,32L, 3) else println("BUG: putInt"+x152);;
+if (x152 ne null) unsafe.putInt(x152,36L, 4) else println("BUG: putInt"+x152);;
+if (x152 ne null) unsafe.putInt(x152,40L, 5) else println("BUG: putInt"+x152);;
+val x158: Object = unsafe.allocateInstance(Class.forName("scala.collection.mutable.WrappedArray$ofInt"));
+unsafe.putObject(x158,16L, x152);
+val x160: scala.collection.Seq[Int] = x158.asInstanceOf[Seq[Int]];
+val x161 = x160.length;
+def x176_block = { 
+val x162 = new Array[Int](x161);
+var x163: Array[Int] = x162
+var x164: Int = x161
+var x165: Boolean = true
+val x166 = new DenseVectorInt(x163,x164,x165);
+var x168 : Int = 0
+val x173 = while (x168 < x161) {
+val x170 = x166._data;
+val x169 = x160(x168);
+val x171 = x166._data(x168) = x169;
+x171
+x168 = x168 + 1
 }
-val x173 = x165// unsafe immutable;
-x173
+val x174 = x166// unsafe immutable;
+x174
 }
-val x175 = x175_block
-val x176 = x175._length;
-val x178 = x175._data;
-val x185_zero: Int = 0
-var x185: Int = x185_zero
-val x346_zero: Int = -2147483648
-var x346: Int = x346_zero
-val x350_zero: Int = 2147483647
-var x350: Int = x350_zero
-val x356_zero: Int = 2147483647
-var x356: Int = x356_zero
-val x364_zero: Int = -2147483648
-var x364: Int = x364_zero
-val x368_zero: Int = 2147483647
-var x368: Int = x368_zero
-val x374_zero: Int = 2147483647
-var x374: Int = x374_zero
-var x177: Int = 0
-while (x177 < x176) {  // begin fat loop x185,x346,x350,x356,x364,x368,x374
-val x179 = x178(x177);
-val x182 = x185;
-val x183 = x179;
-val x184 = x182 + x183;
-x185 = x184
-val x197 = x346;
-val x198 = x179;
-val x199 = x197 > x198;
-val x200 = {
-def x200thenb(): Int = {
+val x176 = x176_block
+val x177 = x176._length;
+val x179 = x176._data;
+val x186_zero: Int = 0
+var x186: Int = x186_zero
+val x326_zero: Int = -2147483648
+var x326: Int = x326_zero
+val x329_zero: Int = 2147483647
+var x329: Int = x329_zero
+val x334_zero: Int = 2147483647
+var x334: Int = x334_zero
+val x341_zero: Int = -2147483648
+var x341: Int = x341_zero
+val x344_zero: Int = 2147483647
+var x344: Int = x344_zero
+val x349_zero: Int = 2147483647
+var x349: Int = x349_zero
+var x178: Int = 0
+while (x178 < x177) {  // begin fat loop x186,x326,x329,x334,x341,x344,x349
+val x180 = x179(x178);
+val x183 = x186;
+val x184 = x180;
+val x185 = x183 + x184;
+x186 = x185
+val x196 = x326;
+val x197 = x180;
+val x198 = x196 > x197;
+val x199 = {
+def x199thenb(): Int = {
+x196
+}
+def x199elseb(): Int = {
 x197
 }
-def x200elseb(): Int = {
-x198
-}
-if (x199) {
-x200thenb()
+if (x198) {
+x199thenb()
 } else { 
-x200elseb()
+x199elseb()
 }
 }
-x346 = x200
-val x211 = x350;
-val x212 = x179;
-val x213 = x211 < x212;
-val x214 = {
-def x214thenb(): Int = {
-x211
+x326 = x199
+val x208 = x329;
+val x209 = x180;
+val x210 = x208 < x209;
+val x211 = {
+def x211thenb(): Int = {
+x208
 }
-def x214elseb(): Int = {
-x212
+def x211elseb(): Int = {
+x209
 }
-if (x213) {
-x214thenb()
+if (x210) {
+x211thenb()
 } else { 
-x214elseb()
+x211elseb()
 }
 }
-x350 = x214
-val x241 = x356;
-val x242 = x179;
-val x243 = x241 < x242;
-val x244 = {
-def x244thenb(): Int = {
-x241
+x329 = x211
+val x234 = x334;
+val x235 = x180;
+val x236 = x234 < x235;
+val x237 = {
+def x237thenb(): Int = {
+x234
 }
-def x244elseb(): Int = {
-x242
+def x237elseb(): Int = {
+x235
 }
-if (x243) {
-x244thenb()
+if (x236) {
+x237thenb()
 } else { 
-x244elseb()
+x237elseb()
 }
 }
-x356 = x244
-val x273 = x364;
-val x274 = x179;
-val x275 = x273 > x274;
-val x276 = {
-def x276thenb(): Int = {
-x273
+x334 = x237
+val x262 = x341;
+val x263 = x180;
+val x264 = x262 > x263;
+val x265 = {
+def x265thenb(): Int = {
+x262
 }
-def x276elseb(): Int = {
+def x265elseb(): Int = {
+x263
+}
+if (x264) {
+x265thenb()
+} else { 
+x265elseb()
+}
+}
+x341 = x265
+val x274 = x344;
+val x275 = x180;
+val x276 = x274 < x275;
+val x277 = {
+def x277thenb(): Int = {
 x274
 }
-if (x275) {
-x276thenb()
+def x277elseb(): Int = {
+x275
+}
+if (x276) {
+x277thenb()
 } else { 
-x276elseb()
+x277elseb()
 }
 }
-x364 = x276
-val x287 = x368;
-val x288 = x179;
-val x289 = x287 < x288;
-val x290 = {
-def x290thenb(): Int = {
-x287
+x344 = x277
+val x300 = x349;
+val x301 = x180;
+val x302 = x300 < x301;
+val x303 = {
+def x303thenb(): Int = {
+x300
 }
-def x290elseb(): Int = {
-x288
+def x303elseb(): Int = {
+x301
 }
-if (x289) {
-x290thenb()
+if (x302) {
+x303thenb()
 } else { 
-x290elseb()
+x303elseb()
 }
 }
-x368 = x290
-val x317 = x374;
-val x318 = x179;
-val x319 = x317 < x318;
-val x320 = {
-def x320thenb(): Int = {
-x317
-}
-def x320elseb(): Int = {
-x318
-}
-if (x319) {
-x320thenb()
-} else { 
-x320elseb()
-}
-}
-x374 = x320
-x177 = x177 + 1
-} // end fat loop x185,x346,x350,x356,x364,x368,x374
-val x186: Int = x185.asInstanceOf[Int];
+x349 = x303
+x178 = x178 + 1
+} // end fat loop x186,x326,x329,x334,x341,x344,x349
 val x187 = x186.asInstanceOf[Int];
-val x188 = x176.asInstanceOf[Int];
+val x188 = x177.asInstanceOf[Int];
 val x189 = x187 / x188;
 val x190 = 3 != x189;
+val x327 = x326.asInstanceOf[Int];
+val x328 = 5 != x327;
+val x330 = x329.asInstanceOf[Int];
+val x331 = 1 != x330;
+val x335 = x334.asInstanceOf[Int];
+val x336 = 1 != x335;
+val x342 = x341.asInstanceOf[Int];
+val x343 = 5 != x342;
+val x345 = x344.asInstanceOf[Int];
+val x346 = 1 != x345;
+val x350 = x349.asInstanceOf[Int];
+val x351 = 1 != x350;
 if (x190) {
-val x191: java.lang.Boolean = false.asInstanceOf[java.lang.Boolean];
-println(x191);
-val x347: Int = x346.asInstanceOf[Int];
-val x348 = x347.asInstanceOf[Int];
-val x349 = 5 != x348;
-if (x349) {
-val x205: java.lang.Boolean = false.asInstanceOf[java.lang.Boolean];
-println(x205);
-val x351: Int = x350.asInstanceOf[Int];
-val x352 = x351.asInstanceOf[Int];
-val x353 = 1 != x352;
-if (x353) {
-val x219: java.lang.Boolean = false.asInstanceOf[java.lang.Boolean];
-println(x219);
+println(false);
+if (x328) {
+println(false);
+if (x331) {
+println(false);
 println("AA");
 println("BB");
 println("CC");
 (RES0 = 42) // return to root;
 } else {
-val x226: java.lang.Boolean = true.asInstanceOf[java.lang.Boolean];
-println(x226);
+println(true);
 println("AA");
 println("BB");
 println("CC");
 (RES0 = 42) // return to root;
 }
 } else {
-val x235: java.lang.Boolean = true.asInstanceOf[java.lang.Boolean];
-println(x235);
-val x357: Int = x356.asInstanceOf[Int];
-val x358 = x357.asInstanceOf[Int];
-val x359 = 1 != x358;
-if (x359) {
-val x249: java.lang.Boolean = false.asInstanceOf[java.lang.Boolean];
-println(x249);
+println(true);
+if (x336) {
+println(false);
 println("AA");
 println("BB");
 println("CC");
 (RES0 = 42) // return to root;
 } else {
-val x256: java.lang.Boolean = true.asInstanceOf[java.lang.Boolean];
-println(x256);
+println(true);
 println("AA");
 println("BB");
 println("CC");
@@ -270,48 +265,32 @@ println("CC");
 }
 }
 } else {
-val x267: java.lang.Boolean = true.asInstanceOf[java.lang.Boolean];
-println(x267);
-val x365: Int = x364.asInstanceOf[Int];
-val x366 = x365.asInstanceOf[Int];
-val x367 = 5 != x366;
-if (x367) {
-val x281: java.lang.Boolean = false.asInstanceOf[java.lang.Boolean];
-println(x281);
-val x369: Int = x368.asInstanceOf[Int];
-val x370 = x369.asInstanceOf[Int];
-val x371 = 1 != x370;
-if (x371) {
-val x295: java.lang.Boolean = false.asInstanceOf[java.lang.Boolean];
-println(x295);
+println(true);
+if (x343) {
+println(false);
+if (x346) {
+println(false);
 println("AA");
 println("BB");
 println("CC");
 (RES0 = 42) // return to root;
 } else {
-val x302: java.lang.Boolean = true.asInstanceOf[java.lang.Boolean];
-println(x302);
+println(true);
 println("AA");
 println("BB");
 println("CC");
 (RES0 = 42) // return to root;
 }
 } else {
-val x311: java.lang.Boolean = true.asInstanceOf[java.lang.Boolean];
-println(x311);
-val x375: Int = x374.asInstanceOf[Int];
-val x376 = x375.asInstanceOf[Int];
-val x377 = 1 != x376;
-if (x377) {
-val x325: java.lang.Boolean = false.asInstanceOf[java.lang.Boolean];
-println(x325);
+println(true);
+if (x351) {
+println(false);
 println("AA");
 println("BB");
 println("CC");
 (RES0 = 42) // return to root;
 } else {
-val x332: java.lang.Boolean = true.asInstanceOf[java.lang.Boolean];
-println(x332);
+println(true);
 println("AA");
 println("BB");
 println("CC");
@@ -326,79 +305,79 @@ RES0;
 /*****************************************
   End of Generated Code                  
 *******************************************/
-TP(Sym(1),Reflect(ObjectAsInstanceOf(Const(7)),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(2),Reflect(DeliteArrayNew(Const(1000)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(3),Reflect(NewVar(Sym(2)),Summary(false,false,false,false,true,List(Sym(2)),List(Sym(2)),List(),List()),List(Sym(2))))
-TP(Sym(4),Reflect(NewVar(Const(1000)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(5),Reflect(NewVar(Const(true)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(6),Reflect(DenseVectorNew(Const(1000),Const(true)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(7),Reflect(FieldApply(Sym(6),_length),Summary(false,false,false,false,false,List(Sym(6)),List(Sym(6)),List(),List()),List(Sym(6))))
-TP(Sym(12),Reflect(FieldApply(Sym(6),_isRow),Summary(false,false,false,false,false,List(Sym(6)),List(Sym(6)),List(),List()),List()))
-TP(Sym(13),Reflect(DeliteArrayNew(Sym(10)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(14),Reflect(NewVar(Sym(13)),Summary(false,false,false,false,true,List(Sym(13)),List(Sym(13)),List(),List()),List(Sym(13))))
-TP(Sym(15),Reflect(NewVar(Sym(10)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(16),Reflect(NewVar(Sym(12)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(17),Reflect(DenseVectorNew(Sym(10),Sym(12)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(18),Reify(Sym(17),Summary(false,false,false,false,true,List(Sym(6)),List(Sym(6)),List(),List()),List(Sym(12), Sym(13), Sym(14), Sym(15), Sym(16), Sym(17))))
-TP(Sym(19),Reflect(FieldApply(Sym(6),_data),Summary(false,false,false,false,false,List(Sym(6)),List(Sym(6)),List(),List()),List()))
-TP(Sym(20),Reflect(DeliteArrayApply(Sym(19),Sym(8)),Summary(false,false,false,false,false,List(Sym(6)),List(Sym(6)),List(),List()),List()))
-TP(Sym(21),Reflect(RandDouble(),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(22),RepAsInstanceOf(Sym(21),Double,Double))
-TP(Sym(23),Reify(Sym(22),Summary(true,true,false,false,false,List(Sym(6)),List(Sym(6)),List(),List()),List(Sym(19), Sym(20), Sym(21))))
-TP(Sym(24),Reflect(FieldApply(Sym(11),_data),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(),List()),List()))
-TP(Sym(25),Reflect(StructUpdate(Sym(11),List(_data),Sym(8),Sym(9)),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(Sym(11)),List(Sym(11))),List(Sym(24))))
-TP(Sym(26),Reify(Sym(25),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(Sym(11)),List(Sym(11))),List(Sym(24), Sym(25))))
-TP(Sym(30),Reflect(FieldApply(Sym(11),_length),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(),List()),List()))
-TP(Sym(31),Reflect(FieldApply(Sym(11),_data),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(),List()),List()))
-TP(Sym(32),Reflect(DeliteArrayLength(Sym(31)),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(),List()),List()))
-TP(Sym(33),IntMinus(Sym(32),Sym(30)))
-TP(Sym(34),OrderingLT(Sym(33),Const(1)))
-TP(Sym(35),IntPlus(Sym(30),Const(1)))
-TP(Sym(36),ArithTimes(Sym(32),Const(2)))
-TP(Sym(37),MathMax(Const(4),Sym(36)))
-TP(Sym(38),Reflect(NewVar(Sym(37)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(39),Reflect(ReadVar(Variable(Sym(38))),Summary(false,false,false,false,false,List(Sym(38)),List(Sym(38)),List(),List()),List()))
-TP(Sym(40),OrderingLT(Sym(39),Sym(35)))
-TP(Sym(41),Reify(Sym(40),Summary(false,false,false,false,false,List(Sym(38)),List(Sym(38)),List(),List()),List(Sym(39))))
-TP(Sym(42),Reflect(ReadVar(Variable(Sym(38))),Summary(false,false,false,false,false,List(Sym(38)),List(Sym(38)),List(),List()),List()))
-TP(Sym(43),ArithTimes(Sym(42),Const(2)))
-TP(Sym(44),Reflect(Assign(Variable(Sym(38)),Sym(43)),Summary(false,false,false,false,false,List(Sym(38)),List(Sym(38)),List(Sym(38)),List(Sym(38))),List(Sym(42))))
-TP(Sym(45),Reify(Const(()),Summary(false,false,false,false,false,List(Sym(38)),List(Sym(38)),List(Sym(38)),List(Sym(38))),List(Sym(42), Sym(44))))
-TP(Sym(46),Reflect(DeliteWhile(Block(Sym(41)),Block(Sym(45))),Summary(false,false,false,false,false,List(Sym(38)),List(Sym(38)),List(Sym(38)),List()),List(Sym(38))))
-TP(Sym(47),Reflect(ReadVar(Variable(Sym(38))),Summary(false,false,false,false,false,List(Sym(38)),List(Sym(38)),List(),List()),List(Sym(38), Sym(46))))
-TP(Sym(48),Reflect(DeliteArrayNew(Sym(47)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(49),Reflect(DeliteArrayCopy(Sym(31),Const(0),Sym(48),Const(0),Sym(30)),Summary(false,false,false,false,false,List(Sym(11), Sym(48)),List(Sym(11), Sym(48)),List(),List()),List(Sym(48))))
-TP(Sym(50),Reflect(ObjectUnsafeImmutable(Sym(48)),Summary(false,false,false,false,false,List(Sym(48)),List(Sym(48)),List(),List()),List(Sym(48))))
-TP(Sym(51),Reflect(NestedFieldUpdate(Sym(11),List(_data),Sym(50)),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(Sym(11)),List(Sym(11))),List(Sym(30), Sym(31), Sym(32), Sym(49))))
-TP(Sym(52),Reify(Sym(51),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(Sym(11)),List(Sym(11))),List(Sym(38), Sym(46), Sym(47), Sym(48), Sym(49), Sym(50), Sym(51))))
-TP(Sym(53),Reflect(DeliteIfThenElse(Sym(34),Block(Sym(52)),Block(Const(())),false),Summary(false,false,false,false,false,List(Sym(11)),List(),List(Sym(11)),List()),List(Sym(30), Sym(31), Sym(32))))
-TP(Sym(54),Reflect(FieldApply(Sym(11),_data),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(),List()),List(Sym(53))))
-TP(Sym(55),Reflect(FieldApply(Sym(11),_length),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(),List()),List(Sym(53))))
-TP(Sym(56),IntMinus(Sym(55),Sym(30)))
-TP(Sym(57),Reflect(DeliteArrayCopy(Sym(54),Sym(30),Sym(54),Sym(35),Sym(56)),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(),List()),List(Sym(53))))
-TP(Sym(58),IntPlus(Sym(55),Const(1)))
-TP(Sym(59),Reflect(NestedFieldUpdate(Sym(11),List(_length),Sym(58)),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(Sym(11)),List(Sym(11))),List(Sym(30), Sym(31), Sym(32), Sym(53), Sym(54), Sym(55), Sym(57))))
-TP(Sym(60),Reflect(FieldApply(Sym(11),_data),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(),List()),List(Sym(53), Sym(59))))
-TP(Sym(61),Reflect(StructUpdate(Sym(11),List(_data),Sym(30),Sym(9)),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(Sym(11)),List(Sym(11))),List(Sym(30), Sym(31), Sym(32), Sym(53), Sym(54), Sym(55), Sym(57), Sym(59), Sym(60))))
-TP(Sym(62),Reify(Sym(61),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(Sym(11)),List(Sym(11))),List(Sym(31), Sym(32), Sym(53), Sym(54), Sym(55), Sym(57), Sym(59), Sym(60), Sym(61))))
-TP(Sym(63),Reflect(DenseVectorInsert(Sym(11),Sym(30),Sym(9)),Summary(false,false,false,false,false,List(),List(),List(Sym(11)),List(Sym(11))),List(Sym(30))))
-TP(Sym(64),Reify(Const(true),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(Sym(11)),List(Sym(11))),List(Sym(30), Sym(63))))
-TP(Sym(65),Reflect(NestedFieldUpdate(Sym(11),List(_length),Sym(10)),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(Sym(11)),List(Sym(11))),List()))
-TP(Sym(66),Reify(Sym(65),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(Sym(11)),List(Sym(11))),List(Sym(65))))
-TP(Sym(67),Reflect(FieldApply(Sym(11),_isRow),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(),List()),List()))
-TP(Sym(68),Reflect(DeliteArrayNew(Sym(10)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(1),Reflect(DeliteArrayNew(Const(1000)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(2),Reflect(NewVar(Sym(1)),Summary(false,false,false,false,true,List(Sym(1)),List(Sym(1)),List(),List()),List(Sym(1))))
+TP(Sym(3),Reflect(NewVar(Const(1000)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(4),Reflect(NewVar(Const(true)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(5),Reflect(DenseVectorNew(Const(1000),Const(true)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(6),Reflect(FieldApply(Sym(5),_length),Summary(false,false,false,false,false,List(Sym(5)),List(Sym(5)),List(),List()),List(Sym(5))))
+TP(Sym(11),Reflect(FieldApply(Sym(5),_isRow),Summary(false,false,false,false,false,List(Sym(5)),List(Sym(5)),List(),List()),List()))
+TP(Sym(12),Reflect(DeliteArrayNew(Sym(9)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(13),Reflect(NewVar(Sym(12)),Summary(false,false,false,false,true,List(Sym(12)),List(Sym(12)),List(),List()),List(Sym(12))))
+TP(Sym(14),Reflect(NewVar(Sym(9)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(15),Reflect(NewVar(Sym(11)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(16),Reflect(DenseVectorNew(Sym(9),Sym(11)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(17),Reify(Sym(16),Summary(false,false,false,false,true,List(Sym(5)),List(Sym(5)),List(),List()),List(Sym(11), Sym(12), Sym(13), Sym(14), Sym(15), Sym(16))))
+TP(Sym(18),Reflect(FieldApply(Sym(5),_data),Summary(false,false,false,false,false,List(Sym(5)),List(Sym(5)),List(),List()),List()))
+TP(Sym(19),DeliteArrayApply(Sym(18),Sym(7)))
+TP(Sym(20),Reflect(RandDouble(),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+TP(Sym(21),RepAsInstanceOf(Sym(20),Double,Double))
+TP(Sym(22),Reify(Sym(21),Summary(true,true,false,false,false,List(Sym(5)),List(Sym(5)),List(),List()),List(Sym(18), Sym(20))))
+TP(Sym(23),Reflect(FieldApply(Sym(10),_data),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(),List()),List()))
+TP(Sym(24),Reflect(StructUpdate(Sym(10),List(_data),Sym(7),Sym(8)),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(Sym(10)),List(Sym(10))),List(Sym(23))))
+TP(Sym(25),Reify(Sym(24),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(Sym(10)),List(Sym(10))),List(Sym(23), Sym(24))))
+TP(Sym(29),Reflect(FieldApply(Sym(10),_length),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(),List()),List()))
+TP(Sym(30),Reflect(FieldApply(Sym(10),_data),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(),List()),List()))
+TP(Sym(31),DeliteArrayLength(Sym(30)))
+TP(Sym(32),IntMinus(Sym(31),Sym(29)))
+TP(Sym(33),OrderingLT(Sym(32),Const(1)))
+TP(Sym(34),IntPlus(Sym(29),Const(1)))
+TP(Sym(35),IntTimes(Sym(31),Const(2)))
+TP(Sym(36),MathMax(Const(4),Sym(35)))
+TP(Sym(37),Reflect(NewVar(Sym(36)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(38),Reflect(ReadVar(Variable(Sym(37))),Summary(false,false,false,false,false,List(Sym(37)),List(Sym(37)),List(),List()),List()))
+TP(Sym(39),OrderingLT(Sym(38),Sym(34)))
+TP(Sym(40),Reify(Sym(39),Summary(false,false,false,false,false,List(Sym(37)),List(Sym(37)),List(),List()),List(Sym(38))))
+TP(Sym(41),Reflect(ReadVar(Variable(Sym(37))),Summary(false,false,false,false,false,List(Sym(37)),List(Sym(37)),List(),List()),List()))
+TP(Sym(42),IntTimes(Sym(41),Const(2)))
+TP(Sym(43),Reflect(Assign(Variable(Sym(37)),Sym(42)),Summary(false,false,false,false,false,List(Sym(37)),List(Sym(37)),List(Sym(37)),List(Sym(37))),List(Sym(41))))
+TP(Sym(44),Reify(Const(()),Summary(false,false,false,false,false,List(Sym(37)),List(Sym(37)),List(Sym(37)),List(Sym(37))),List(Sym(41), Sym(43))))
+TP(Sym(45),Reflect(DeliteWhile(Block(Sym(40)),Block(Sym(44))),Summary(false,false,false,false,false,List(Sym(37)),List(Sym(37)),List(Sym(37)),List()),List(Sym(37))))
+TP(Sym(46),Reflect(ReadVar(Variable(Sym(37))),Summary(false,false,false,false,false,List(Sym(37)),List(Sym(37)),List(),List()),List(Sym(37), Sym(45))))
+TP(Sym(47),Reflect(DeliteArrayNew(Sym(46)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(48),Reflect(DeliteArrayCopy(Sym(30),Const(0),Sym(47),Const(0),Sym(29)),Summary(false,false,false,false,false,List(Sym(47)),List(Sym(47)),List(Sym(47)),List(Sym(47))),List(Sym(47))))
+TP(Sym(49),Reflect(ObjectUnsafeImmutable(Sym(47)),Summary(false,false,false,false,false,List(Sym(47)),List(Sym(47)),List(),List()),List(Sym(47), Sym(48))))
+TP(Sym(50),Reflect(NestedFieldUpdate(Sym(10),List(_data),Sym(49)),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(Sym(10)),List(Sym(10))),List(Sym(29), Sym(30))))
+TP(Sym(51),Reify(Sym(50),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(Sym(10)),List(Sym(10))),List(Sym(37), Sym(45), Sym(46), Sym(47), Sym(48), Sym(49), Sym(50))))
+TP(Sym(52),Reflect(DeliteIfThenElse(Sym(33),Block(Sym(51)),Block(Const(())),false),Summary(false,false,false,false,false,List(Sym(10)),List(),List(Sym(10)),List()),List(Sym(29), Sym(30))))
+TP(Sym(53),Reflect(FieldApply(Sym(10),_data),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(),List()),List(Sym(52))))
+TP(Sym(54),Reflect(FieldApply(Sym(10),_length),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(),List()),List(Sym(52))))
+TP(Sym(55),IntMinus(Sym(54),Sym(29)))
+TP(Sym(56),Reflect(StructCopy(Sym(53),Sym(29),Sym(10),List(_data),Sym(34),Sym(55)),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(Sym(10)),List(Sym(10))),List(Sym(29), Sym(30), Sym(52), Sym(53), Sym(54))))
+TP(Sym(57),Reflect(FieldApply(Sym(10),_length),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(),List()),List(Sym(52), Sym(56))))
+TP(Sym(58),IntPlus(Sym(57),Const(1)))
+TP(Sym(59),Reflect(NestedFieldUpdate(Sym(10),List(_length),Sym(58)),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(Sym(10)),List(Sym(10))),List(Sym(29), Sym(30), Sym(52), Sym(53), Sym(54), Sym(56), Sym(57))))
+TP(Sym(60),Reflect(FieldApply(Sym(10),_data),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(),List()),List(Sym(52), Sym(56), Sym(59))))
+TP(Sym(61),Reflect(StructUpdate(Sym(10),List(_data),Sym(29),Sym(8)),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(Sym(10)),List(Sym(10))),List(Sym(29), Sym(30), Sym(52), Sym(53), Sym(54), Sym(56), Sym(57), Sym(59), Sym(60))))
+TP(Sym(62),Reify(Sym(61),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(Sym(10)),List(Sym(10))),List(Sym(30), Sym(52), Sym(53), Sym(54), Sym(56), Sym(57), Sym(59), Sym(60), Sym(61))))
+TP(Sym(63),Reflect(DenseVectorInsert(Sym(10),Sym(29),Sym(8)),Summary(false,false,false,false,false,List(),List(),List(Sym(10)),List(Sym(10))),List(Sym(29))))
+TP(Sym(64),Reify(Sym(63),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(Sym(10)),List(Sym(10))),List(Sym(29), Sym(63))))
+TP(Sym(65),Reflect(NestedFieldUpdate(Sym(10),List(_length),Sym(9)),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(Sym(10)),List(Sym(10))),List()))
+TP(Sym(66),Reify(Sym(65),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(Sym(10)),List(Sym(10))),List(Sym(65))))
+TP(Sym(67),Reflect(FieldApply(Sym(10),_isRow),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(),List()),List()))
+TP(Sym(68),Reflect(DeliteArrayNew(Sym(9)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
 TP(Sym(69),Reflect(NewVar(Sym(68)),Summary(false,false,false,false,true,List(Sym(68)),List(Sym(68)),List(),List()),List(Sym(68))))
-TP(Sym(70),Reflect(NewVar(Sym(10)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(70),Reflect(NewVar(Sym(9)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
 TP(Sym(71),Reflect(NewVar(Sym(67)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(72),Reflect(DenseVectorNew(Sym(10),Sym(67)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(73),Reify(Sym(72),Summary(false,false,false,false,true,List(Sym(11)),List(Sym(11)),List(),List()),List(Sym(67), Sym(68), Sym(69), Sym(70), Sym(71), Sym(72))))
-TP(Sym(74),FieldApply(Sym(29),_data))
-TP(Sym(75),Reflect(FieldApply(Sym(11),_data),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(),List()),List()))
-TP(Sym(76),Reflect(DeliteArrayCopy(Sym(74),Sym(27),Sym(75),Sym(28),Sym(10)),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(),List()),List()))
-TP(Sym(77),Reify(Sym(76),Summary(false,false,false,false,false,List(Sym(11)),List(Sym(11)),List(),List()),List(Sym(75), Sym(76))))
-TP(Sym(78),Reflect(VectorMap(VInterface(Sym(6)  [Double]),<function1>),Summary(true,false,false,false,false,List(Sym(6)),List(),List(),List()),List(Sym(1), Sym(6))))
-TP(Sym(79),Reify(Sym(78),Summary(true,false,false,false,false,List(),List(),List(),List()),List(Sym(2), Sym(3), Sym(4), Sym(5), Sym(6), Sym(7), Sym(78))))
-TP(Sym(80),Reflect(DenseVectorObjectRand(Const(1000)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1))))
+TP(Sym(72),Reflect(DenseVectorNew(Sym(9),Sym(67)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(73),Reify(Sym(72),Summary(false,false,false,false,true,List(Sym(10)),List(Sym(10)),List(),List()),List(Sym(67), Sym(68), Sym(69), Sym(70), Sym(71), Sym(72))))
+TP(Sym(74),FieldApply(Sym(28),_data))
+TP(Sym(75),Reflect(FieldApply(Sym(10),_data),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(),List()),List()))
+TP(Sym(76),DeliteArrayCopy(Sym(74),Sym(26),Sym(75),Sym(27),Sym(9)))
+TP(Sym(77),Reify(Sym(76),Summary(false,false,false,false,false,List(Sym(10)),List(Sym(10)),List(),List()),List(Sym(75))))
+TP(Sym(78),Reflect(VectorMap(VInterface(Sym(5)  [Double]),<function1>),Summary(true,false,false,false,false,List(Sym(5)),List(),List(),List()),List(Sym(5))))
+TP(Sym(79),Reify(Sym(78),Summary(true,false,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(2), Sym(3), Sym(4), Sym(5), Sym(6), Sym(78))))
+TP(Sym(80),Reflect(DenseVectorObjectRand(Const(1000)),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
 TP(Sym(81),FieldApply(Sym(80),_length))
 TP(Sym(86),FieldApply(Sym(80),_isRow))
 TP(Sym(87),BooleanNegate(Sym(86)))
@@ -415,269 +394,243 @@ TP(Sym(97),Reflect(StructUpdate(Sym(85),List(_data),Sym(82),Sym(83)),Summary(fal
 TP(Sym(98),Reify(Sym(97),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List(Sym(96), Sym(97))))
 TP(Sym(102),Reflect(FieldApply(Sym(85),_length),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List()))
 TP(Sym(103),Reflect(FieldApply(Sym(85),_data),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List()))
-TP(Sym(104),Reflect(DeliteArrayLength(Sym(103)),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List()))
+TP(Sym(104),DeliteArrayLength(Sym(103)))
 TP(Sym(105),IntMinus(Sym(104),Sym(102)))
 TP(Sym(106),OrderingLT(Sym(105),Const(1)))
 TP(Sym(107),IntPlus(Sym(102),Const(1)))
-TP(Sym(108),ArithTimes(Sym(104),Const(2)))
+TP(Sym(108),IntTimes(Sym(104),Const(2)))
 TP(Sym(109),MathMax(Const(4),Sym(108)))
 TP(Sym(110),Reflect(NewVar(Sym(109)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
 TP(Sym(111),Reflect(ReadVar(Variable(Sym(110))),Summary(false,false,false,false,false,List(Sym(110)),List(Sym(110)),List(),List()),List()))
 TP(Sym(112),OrderingLT(Sym(111),Sym(107)))
 TP(Sym(113),Reify(Sym(112),Summary(false,false,false,false,false,List(Sym(110)),List(Sym(110)),List(),List()),List(Sym(111))))
 TP(Sym(114),Reflect(ReadVar(Variable(Sym(110))),Summary(false,false,false,false,false,List(Sym(110)),List(Sym(110)),List(),List()),List()))
-TP(Sym(115),ArithTimes(Sym(114),Const(2)))
+TP(Sym(115),IntTimes(Sym(114),Const(2)))
 TP(Sym(116),Reflect(Assign(Variable(Sym(110)),Sym(115)),Summary(false,false,false,false,false,List(Sym(110)),List(Sym(110)),List(Sym(110)),List(Sym(110))),List(Sym(114))))
 TP(Sym(117),Reify(Const(()),Summary(false,false,false,false,false,List(Sym(110)),List(Sym(110)),List(Sym(110)),List(Sym(110))),List(Sym(114), Sym(116))))
 TP(Sym(118),Reflect(DeliteWhile(Block(Sym(113)),Block(Sym(117))),Summary(false,false,false,false,false,List(Sym(110)),List(Sym(110)),List(Sym(110)),List()),List(Sym(110))))
 TP(Sym(119),Reflect(ReadVar(Variable(Sym(110))),Summary(false,false,false,false,false,List(Sym(110)),List(Sym(110)),List(),List()),List(Sym(110), Sym(118))))
 TP(Sym(120),Reflect(DeliteArrayNew(Sym(119)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(121),Reflect(DeliteArrayCopy(Sym(103),Const(0),Sym(120),Const(0),Sym(102)),Summary(false,false,false,false,false,List(Sym(85), Sym(120)),List(Sym(85), Sym(120)),List(),List()),List(Sym(120))))
-TP(Sym(122),Reflect(ObjectUnsafeImmutable(Sym(120)),Summary(false,false,false,false,false,List(Sym(120)),List(Sym(120)),List(),List()),List(Sym(120))))
-TP(Sym(123),Reflect(NestedFieldUpdate(Sym(85),List(_data),Sym(122)),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List(Sym(102), Sym(103), Sym(104), Sym(121))))
+TP(Sym(121),Reflect(DeliteArrayCopy(Sym(103),Const(0),Sym(120),Const(0),Sym(102)),Summary(false,false,false,false,false,List(Sym(120)),List(Sym(120)),List(Sym(120)),List(Sym(120))),List(Sym(120))))
+TP(Sym(122),Reflect(ObjectUnsafeImmutable(Sym(120)),Summary(false,false,false,false,false,List(Sym(120)),List(Sym(120)),List(),List()),List(Sym(120), Sym(121))))
+TP(Sym(123),Reflect(NestedFieldUpdate(Sym(85),List(_data),Sym(122)),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List(Sym(102), Sym(103))))
 TP(Sym(124),Reify(Sym(123),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List(Sym(110), Sym(118), Sym(119), Sym(120), Sym(121), Sym(122), Sym(123))))
-TP(Sym(125),Reflect(DeliteIfThenElse(Sym(106),Block(Sym(124)),Block(Const(())),false),Summary(false,false,false,false,false,List(Sym(85)),List(),List(Sym(85)),List()),List(Sym(102), Sym(103), Sym(104))))
+TP(Sym(125),Reflect(DeliteIfThenElse(Sym(106),Block(Sym(124)),Block(Const(())),false),Summary(false,false,false,false,false,List(Sym(85)),List(),List(Sym(85)),List()),List(Sym(102), Sym(103))))
 TP(Sym(126),Reflect(FieldApply(Sym(85),_data),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List(Sym(125))))
 TP(Sym(127),Reflect(FieldApply(Sym(85),_length),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List(Sym(125))))
 TP(Sym(128),IntMinus(Sym(127),Sym(102)))
-TP(Sym(129),Reflect(DeliteArrayCopy(Sym(126),Sym(102),Sym(126),Sym(107),Sym(128)),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List(Sym(125))))
-TP(Sym(130),IntPlus(Sym(127),Const(1)))
-TP(Sym(131),Reflect(NestedFieldUpdate(Sym(85),List(_length),Sym(130)),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List(Sym(102), Sym(103), Sym(104), Sym(125), Sym(126), Sym(127), Sym(129))))
-TP(Sym(132),Reflect(FieldApply(Sym(85),_data),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List(Sym(125), Sym(131))))
-TP(Sym(133),Reflect(StructUpdate(Sym(85),List(_data),Sym(102),Sym(83)),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List(Sym(102), Sym(103), Sym(104), Sym(125), Sym(126), Sym(127), Sym(129), Sym(131), Sym(132))))
-TP(Sym(134),Reify(Sym(133),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List(Sym(103), Sym(104), Sym(125), Sym(126), Sym(127), Sym(129), Sym(131), Sym(132), Sym(133))))
-TP(Sym(135),Reflect(DenseVectorInsert(Sym(85),Sym(102),Sym(83)),Summary(false,false,false,false,false,List(),List(),List(Sym(85)),List(Sym(85))),List(Sym(102))))
-TP(Sym(136),Reify(Const(true),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List(Sym(102), Sym(135))))
-TP(Sym(137),Reflect(NestedFieldUpdate(Sym(85),List(_length),Sym(84)),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List()))
-TP(Sym(138),Reify(Sym(137),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List(Sym(137))))
-TP(Sym(139),Reflect(FieldApply(Sym(85),_isRow),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List()))
-TP(Sym(140),Reflect(DeliteArrayNew(Sym(84)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(141),Reflect(NewVar(Sym(140)),Summary(false,false,false,false,true,List(Sym(140)),List(Sym(140)),List(),List()),List(Sym(140))))
-TP(Sym(142),Reflect(NewVar(Sym(84)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(143),Reflect(NewVar(Sym(139)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(144),Reflect(DenseVectorNew(Sym(84),Sym(139)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(145),Reify(Sym(144),Summary(false,false,false,false,true,List(Sym(85)),List(Sym(85)),List(),List()),List(Sym(139), Sym(140), Sym(141), Sym(142), Sym(143), Sym(144))))
-TP(Sym(146),FieldApply(Sym(101),_data))
-TP(Sym(147),Reflect(FieldApply(Sym(85),_data),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List()))
-TP(Sym(148),Reflect(DeliteArrayCopy(Sym(146),Sym(99),Sym(147),Sym(100),Sym(84)),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List()))
-TP(Sym(149),Reify(Sym(148),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List(Sym(147), Sym(148))))
-TP(Sym(150),DenseVectorTrans(Sym(80)))
-TP(Sym(151),Reflect(Unstructured(List(new Array[, Int, ](, Const(5), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80))))
-TP(Sym(152),Reflect(Unstructured(List(if (, Sym(151),  ne null) unsafe.putInt(, Sym(151), ,, Const(24), , , Const(1), ) else println("BUG: putInt"+, Sym(151), );)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151))))
-TP(Sym(153),Reflect(Unstructured(List(if (, Sym(151),  ne null) unsafe.putInt(, Sym(151), ,, Const(28), , , Const(2), ) else println("BUG: putInt"+, Sym(151), );)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152))))
-TP(Sym(154),Reflect(Unstructured(List(if (, Sym(151),  ne null) unsafe.putInt(, Sym(151), ,, Const(32), , , Const(3), ) else println("BUG: putInt"+, Sym(151), );)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153))))
-TP(Sym(155),Reflect(Unstructured(List(if (, Sym(151),  ne null) unsafe.putInt(, Sym(151), ,, Const(36), , , Const(4), ) else println("BUG: putInt"+, Sym(151), );)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154))))
-TP(Sym(156),Reflect(Unstructured(List(if (, Sym(151),  ne null) unsafe.putInt(, Sym(151), ,, Const(40), , , Const(5), ) else println("BUG: putInt"+, Sym(151), );)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155))))
-TP(Sym(157),Reflect(Unstructured(List(unsafe.allocateInstance(Class.forName(", scala.collection.mutable.WrappedArray$ofInt, ")))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156))))
-TP(Sym(158),Reflect(Unstructured(List(unsafe.putObject(, Sym(157), ,, Const(16), , , Sym(151), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157))))
-TP(Sym(159),Reflect(Unstructured(List(Sym(157), .asInstanceOf[Seq[Int]])),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158))))
-TP(Sym(160),SeqLength(Sym(159)))
-TP(Sym(161),Reflect(DeliteArrayNew(Sym(160)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(162),Reflect(NewVar(Sym(161)),Summary(false,false,false,false,true,List(Sym(161)),List(Sym(161)),List(),List()),List(Sym(161))))
-TP(Sym(163),Reflect(NewVar(Sym(160)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(164),Reflect(NewVar(Const(true)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(165),Reflect(DenseVectorNew(Sym(160),Const(true)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
-TP(Sym(166),Until(Const(0),Sym(160)))
-TP(Sym(168),SeqApply(Sym(159),Sym(167)))
-TP(Sym(169),Reflect(FieldApply(Sym(165),_data),Summary(false,false,false,false,false,List(Sym(165)),List(Sym(165)),List(),List()),List()))
-TP(Sym(170),Reflect(StructUpdate(Sym(165),List(_data),Sym(167),Sym(168)),Summary(false,false,false,false,false,List(Sym(165)),List(Sym(165)),List(Sym(165)),List(Sym(165))),List(Sym(169))))
-TP(Sym(171),Reify(Sym(170),Summary(false,false,false,false,false,List(Sym(165)),List(Sym(165)),List(Sym(165)),List(Sym(165))),List(Sym(169), Sym(170))))
-TP(Sym(172),Reflect(RangeForeach(Const(0),Sym(160),Sym(167),Block(Sym(171))),Summary(false,false,false,false,false,List(Sym(165)),List(),List(Sym(165)),List()),List(Sym(165))))
-TP(Sym(173),Reflect(ObjectUnsafeImmutable(Sym(165)),Summary(false,false,false,false,false,List(Sym(165)),List(Sym(165)),List(),List()),List(Sym(165), Sym(172))))
-TP(Sym(174),Reify(Sym(173),Summary(false,false,false,false,false,List(),List(),List(),List()),List(Sym(161), Sym(162), Sym(163), Sym(164), Sym(165), Sym(172), Sym(173))))
-TP(Sym(175),DenseVectorObjectFromSeq(Sym(159)))
-TP(Sym(176),FieldApply(Sym(175),_length))
-TP(Sym(178),FieldApply(Sym(175),_data))
-TP(Sym(179),DeliteArrayApply(Sym(178),Sym(177)))
-TP(Sym(180),Reflect(ThrowException(Const(DeliteOpReduce accInit called without any implementation on Int)),Summary(false,false,true,true,false,List(),List(),List(),List()),List()))
-TP(Sym(181),Reify(Sym(180),Summary(false,false,true,true,false,List(),List(),List(),List()),List(Sym(180))))
-TP(Sym(184),ArithPlus(Sym(182),Sym(183)))
-TP(Sym(185),VectorSum(VInterface(Sym(175)  [Int])))
-TP(Sym(186),Reflect(Unstructured(List(Sym(185), .asInstanceOf[Int])),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159))))
-TP(Sym(187),Reflect(ObjectAsInstanceOf(Sym(186)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186))))
-TP(Sym(188),Reflect(ObjectAsInstanceOf(Sym(176)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187))))
-TP(Sym(189),Reflect(PrimDiv(Sym(187),Sym(188)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188))))
-TP(Sym(190),Reflect(PrimNotEqual(Const(3),Sym(189)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188), Sym(189))))
-TP(Sym(191),Reflect(Unstructured(List(Const(false), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(192),Reflect(Unstructured(List(println(, Sym(191), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(191))))
-TP(Sym(194),DeliteArrayApply(Sym(178),Sym(193)))
-TP(Sym(195),Reflect(ThrowException(Const(DeliteOpReduce accInit called without any implementation on Int)),Summary(false,false,true,true,false,List(),List(),List(),List()),List()))
-TP(Sym(196),Reify(Sym(195),Summary(false,false,true,true,false,List(),List(),List(),List()),List(Sym(195))))
-TP(Sym(199),OrderingGT(Sym(197),Sym(198)))
-TP(Sym(200),DeliteIfThenElse(Sym(199),Block(Sym(197)),Block(Sym(198)),false))
-TP(Sym(201),VectorMax(VInterface(Sym(175)  [Int])))
-TP(Sym(202),Reflect(Unstructured(List(Sym(201), .asInstanceOf[Int])),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(191), Sym(192))))
-TP(Sym(203),Reflect(ObjectAsInstanceOf(Sym(202)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(191), Sym(192), Sym(202))))
-TP(Sym(204),Reflect(PrimNotEqual(Const(5),Sym(203)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(191), Sym(192), Sym(202), Sym(203))))
-TP(Sym(205),Reflect(Unstructured(List(Const(false), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(206),Reflect(Unstructured(List(println(, Sym(205), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(205))))
-TP(Sym(208),DeliteArrayApply(Sym(178),Sym(207)))
-TP(Sym(209),Reflect(ThrowException(Const(DeliteOpReduce accInit called without any implementation on Int)),Summary(false,false,true,true,false,List(),List(),List(),List()),List()))
-TP(Sym(210),Reify(Sym(209),Summary(false,false,true,true,false,List(),List(),List(),List()),List(Sym(209))))
-TP(Sym(213),OrderingLT(Sym(211),Sym(212)))
-TP(Sym(214),DeliteIfThenElse(Sym(213),Block(Sym(211)),Block(Sym(212)),false))
-TP(Sym(215),VectorMin(VInterface(Sym(175)  [Int])))
-TP(Sym(216),Reflect(Unstructured(List(Sym(215), .asInstanceOf[Int])),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(205), Sym(206))))
-TP(Sym(217),Reflect(ObjectAsInstanceOf(Sym(216)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(205), Sym(206), Sym(216))))
-TP(Sym(218),Reflect(PrimNotEqual(Const(1),Sym(217)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(205), Sym(206), Sym(216), Sym(217))))
-TP(Sym(219),Reflect(Unstructured(List(Const(false), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(220),Reflect(Unstructured(List(println(, Sym(219), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(219))))
-TP(Sym(221),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(219), Sym(220))))
-TP(Sym(222),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(219), Sym(220), Sym(221))))
-TP(Sym(223),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(219), Sym(220), Sym(221), Sym(222))))
-TP(Sym(224),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(219), Sym(220), Sym(221), Sym(222), Sym(223))))
-TP(Sym(225),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(219), Sym(220), Sym(221), Sym(222), Sym(223), Sym(224))))
-TP(Sym(226),Reflect(Unstructured(List(Const(true), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(227),Reflect(Unstructured(List(println(, Sym(226), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(226))))
-TP(Sym(228),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(226), Sym(227))))
-TP(Sym(229),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(226), Sym(227), Sym(228))))
-TP(Sym(230),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(226), Sym(227), Sym(228), Sym(229))))
-TP(Sym(231),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(226), Sym(227), Sym(228), Sym(229), Sym(230))))
-TP(Sym(232),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(226), Sym(227), Sym(228), Sym(229), Sym(230), Sym(231))))
-TP(Sym(233),Reflect(IfElse(Sym(218),Block(Sym(225)),Block(Sym(232))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(205), Sym(206), Sym(216), Sym(217), Sym(218))))
-TP(Sym(234),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(205), Sym(206), Sym(216), Sym(217), Sym(218), Sym(233))))
-TP(Sym(235),Reflect(Unstructured(List(Const(true), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(236),Reflect(Unstructured(List(println(, Sym(235), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(235))))
-TP(Sym(238),DeliteArrayApply(Sym(178),Sym(237)))
-TP(Sym(239),Reflect(ThrowException(Const(DeliteOpReduce accInit called without any implementation on Int)),Summary(false,false,true,true,false,List(),List(),List(),List()),List()))
-TP(Sym(240),Reify(Sym(239),Summary(false,false,true,true,false,List(),List(),List(),List()),List(Sym(239))))
-TP(Sym(243),OrderingLT(Sym(241),Sym(242)))
-TP(Sym(244),DeliteIfThenElse(Sym(243),Block(Sym(241)),Block(Sym(242)),false))
-TP(Sym(245),VectorMin(VInterface(Sym(175)  [Int])))
-TP(Sym(246),Reflect(Unstructured(List(Sym(245), .asInstanceOf[Int])),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(235), Sym(236))))
-TP(Sym(247),Reflect(ObjectAsInstanceOf(Sym(246)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(235), Sym(236), Sym(246))))
-TP(Sym(248),Reflect(PrimNotEqual(Const(1),Sym(247)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(235), Sym(236), Sym(246), Sym(247))))
-TP(Sym(249),Reflect(Unstructured(List(Const(false), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(250),Reflect(Unstructured(List(println(, Sym(249), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(249))))
-TP(Sym(251),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(249), Sym(250))))
-TP(Sym(252),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(249), Sym(250), Sym(251))))
-TP(Sym(253),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(249), Sym(250), Sym(251), Sym(252))))
-TP(Sym(254),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(249), Sym(250), Sym(251), Sym(252), Sym(253))))
-TP(Sym(255),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(249), Sym(250), Sym(251), Sym(252), Sym(253), Sym(254))))
-TP(Sym(256),Reflect(Unstructured(List(Const(true), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(257),Reflect(Unstructured(List(println(, Sym(256), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(256))))
-TP(Sym(258),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(256), Sym(257))))
-TP(Sym(259),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(256), Sym(257), Sym(258))))
-TP(Sym(260),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(256), Sym(257), Sym(258), Sym(259))))
-TP(Sym(261),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(256), Sym(257), Sym(258), Sym(259), Sym(260))))
-TP(Sym(262),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(256), Sym(257), Sym(258), Sym(259), Sym(260), Sym(261))))
-TP(Sym(263),Reflect(IfElse(Sym(248),Block(Sym(255)),Block(Sym(262))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(235), Sym(236), Sym(246), Sym(247), Sym(248))))
-TP(Sym(264),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(235), Sym(236), Sym(246), Sym(247), Sym(248), Sym(263))))
-TP(Sym(265),Reflect(IfElse(Sym(204),Block(Sym(234)),Block(Sym(264))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(191), Sym(192), Sym(202), Sym(203), Sym(204))))
-TP(Sym(266),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(191), Sym(192), Sym(202), Sym(203), Sym(204), Sym(265))))
-TP(Sym(267),Reflect(Unstructured(List(Const(true), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(268),Reflect(Unstructured(List(println(, Sym(267), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267))))
-TP(Sym(270),DeliteArrayApply(Sym(178),Sym(269)))
-TP(Sym(271),Reflect(ThrowException(Const(DeliteOpReduce accInit called without any implementation on Int)),Summary(false,false,true,true,false,List(),List(),List(),List()),List()))
-TP(Sym(272),Reify(Sym(271),Summary(false,false,true,true,false,List(),List(),List(),List()),List(Sym(271))))
-TP(Sym(275),OrderingGT(Sym(273),Sym(274)))
-TP(Sym(276),DeliteIfThenElse(Sym(275),Block(Sym(273)),Block(Sym(274)),false))
-TP(Sym(277),VectorMax(VInterface(Sym(175)  [Int])))
-TP(Sym(278),Reflect(Unstructured(List(Sym(277), .asInstanceOf[Int])),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267), Sym(268))))
-TP(Sym(279),Reflect(ObjectAsInstanceOf(Sym(278)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267), Sym(268), Sym(278))))
-TP(Sym(280),Reflect(PrimNotEqual(Const(5),Sym(279)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267), Sym(268), Sym(278), Sym(279))))
-TP(Sym(281),Reflect(Unstructured(List(Const(false), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(282),Reflect(Unstructured(List(println(, Sym(281), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(281))))
-TP(Sym(284),DeliteArrayApply(Sym(178),Sym(283)))
-TP(Sym(285),Reflect(ThrowException(Const(DeliteOpReduce accInit called without any implementation on Int)),Summary(false,false,true,true,false,List(),List(),List(),List()),List()))
-TP(Sym(286),Reify(Sym(285),Summary(false,false,true,true,false,List(),List(),List(),List()),List(Sym(285))))
-TP(Sym(289),OrderingLT(Sym(287),Sym(288)))
-TP(Sym(290),DeliteIfThenElse(Sym(289),Block(Sym(287)),Block(Sym(288)),false))
-TP(Sym(291),VectorMin(VInterface(Sym(175)  [Int])))
-TP(Sym(292),Reflect(Unstructured(List(Sym(291), .asInstanceOf[Int])),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(281), Sym(282))))
-TP(Sym(293),Reflect(ObjectAsInstanceOf(Sym(292)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(281), Sym(282), Sym(292))))
-TP(Sym(294),Reflect(PrimNotEqual(Const(1),Sym(293)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(281), Sym(282), Sym(292), Sym(293))))
-TP(Sym(295),Reflect(Unstructured(List(Const(false), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(296),Reflect(Unstructured(List(println(, Sym(295), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295))))
-TP(Sym(297),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295), Sym(296))))
-TP(Sym(298),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295), Sym(296), Sym(297))))
-TP(Sym(299),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295), Sym(296), Sym(297), Sym(298))))
-TP(Sym(300),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295), Sym(296), Sym(297), Sym(298), Sym(299))))
-TP(Sym(301),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295), Sym(296), Sym(297), Sym(298), Sym(299), Sym(300))))
-TP(Sym(302),Reflect(Unstructured(List(Const(true), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(303),Reflect(Unstructured(List(println(, Sym(302), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(302))))
-TP(Sym(304),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(302), Sym(303))))
-TP(Sym(305),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(302), Sym(303), Sym(304))))
-TP(Sym(306),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(302), Sym(303), Sym(304), Sym(305))))
-TP(Sym(307),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(302), Sym(303), Sym(304), Sym(305), Sym(306))))
-TP(Sym(308),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(302), Sym(303), Sym(304), Sym(305), Sym(306), Sym(307))))
-TP(Sym(309),Reflect(IfElse(Sym(294),Block(Sym(301)),Block(Sym(308))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(281), Sym(282), Sym(292), Sym(293), Sym(294))))
-TP(Sym(310),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(281), Sym(282), Sym(292), Sym(293), Sym(294), Sym(309))))
-TP(Sym(311),Reflect(Unstructured(List(Const(true), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(312),Reflect(Unstructured(List(println(, Sym(311), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(311))))
-TP(Sym(314),DeliteArrayApply(Sym(178),Sym(313)))
-TP(Sym(315),Reflect(ThrowException(Const(DeliteOpReduce accInit called without any implementation on Int)),Summary(false,false,true,true,false,List(),List(),List(),List()),List()))
-TP(Sym(316),Reify(Sym(315),Summary(false,false,true,true,false,List(),List(),List(),List()),List(Sym(315))))
-TP(Sym(319),OrderingLT(Sym(317),Sym(318)))
-TP(Sym(320),DeliteIfThenElse(Sym(319),Block(Sym(317)),Block(Sym(318)),false))
-TP(Sym(321),VectorMin(VInterface(Sym(175)  [Int])))
-TP(Sym(322),Reflect(Unstructured(List(Sym(321), .asInstanceOf[Int])),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(311), Sym(312))))
-TP(Sym(323),Reflect(ObjectAsInstanceOf(Sym(322)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(311), Sym(312), Sym(322))))
-TP(Sym(324),Reflect(PrimNotEqual(Const(1),Sym(323)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(311), Sym(312), Sym(322), Sym(323))))
-TP(Sym(325),Reflect(Unstructured(List(Const(false), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(326),Reflect(Unstructured(List(println(, Sym(325), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(325))))
-TP(Sym(327),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(325), Sym(326))))
-TP(Sym(328),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(325), Sym(326), Sym(327))))
-TP(Sym(329),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(325), Sym(326), Sym(327), Sym(328))))
-TP(Sym(330),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(325), Sym(326), Sym(327), Sym(328), Sym(329))))
-TP(Sym(331),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(325), Sym(326), Sym(327), Sym(328), Sym(329), Sym(330))))
-TP(Sym(332),Reflect(Unstructured(List(Const(true), .asInstanceOf[java.lang.Boolean])),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
-TP(Sym(333),Reflect(Unstructured(List(println(, Sym(332), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(332))))
-TP(Sym(334),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(332), Sym(333))))
-TP(Sym(335),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(332), Sym(333), Sym(334))))
-TP(Sym(336),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(332), Sym(333), Sym(334), Sym(335))))
-TP(Sym(337),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(332), Sym(333), Sym(334), Sym(335), Sym(336))))
-TP(Sym(338),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(332), Sym(333), Sym(334), Sym(335), Sym(336), Sym(337))))
-TP(Sym(339),Reflect(IfElse(Sym(324),Block(Sym(331)),Block(Sym(338))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(311), Sym(312), Sym(322), Sym(323), Sym(324))))
-TP(Sym(340),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(311), Sym(312), Sym(322), Sym(323), Sym(324), Sym(339))))
-TP(Sym(341),Reflect(IfElse(Sym(280),Block(Sym(310)),Block(Sym(340))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267), Sym(268), Sym(278), Sym(279), Sym(280))))
-TP(Sym(342),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267), Sym(268), Sym(278), Sym(279), Sym(280), Sym(341))))
-TP(Sym(343),Reflect(IfElse(Sym(190),Block(Sym(266)),Block(Sym(342))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188), Sym(189), Sym(190))))
-TP(Sym(344),Reflect(Unstructured(List(DynExp(RES0))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188), Sym(189), Sym(190), Sym(343))))
-TP(Sym(345),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188), Sym(189), Sym(190), Sym(343), Sym(344))))
-TP(Sym(346),VectorMax(VInterface(Sym(175)  [Int])))
-TP(Sym(347),Reflect(Unstructured(List(Sym(346), .asInstanceOf[Int])),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(191), Sym(192))))
-TP(Sym(348),Reflect(ObjectAsInstanceOf(Sym(347)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(191), Sym(192), Sym(347))))
-TP(Sym(349),Reflect(PrimNotEqual(Const(5),Sym(348)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(191), Sym(192), Sym(347), Sym(348))))
-TP(Sym(350),VectorMin(VInterface(Sym(175)  [Int])))
-TP(Sym(351),Reflect(Unstructured(List(Sym(350), .asInstanceOf[Int])),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(205), Sym(206))))
-TP(Sym(352),Reflect(ObjectAsInstanceOf(Sym(351)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(205), Sym(206), Sym(351))))
-TP(Sym(353),Reflect(PrimNotEqual(Const(1),Sym(352)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(205), Sym(206), Sym(351), Sym(352))))
-TP(Sym(354),Reflect(IfElse(Sym(353),Block(Sym(225)),Block(Sym(232))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(205), Sym(206), Sym(351), Sym(352), Sym(353))))
-TP(Sym(355),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(205), Sym(206), Sym(351), Sym(352), Sym(353), Sym(354))))
-TP(Sym(356),VectorMin(VInterface(Sym(175)  [Int])))
-TP(Sym(357),Reflect(Unstructured(List(Sym(356), .asInstanceOf[Int])),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(235), Sym(236))))
-TP(Sym(358),Reflect(ObjectAsInstanceOf(Sym(357)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(235), Sym(236), Sym(357))))
-TP(Sym(359),Reflect(PrimNotEqual(Const(1),Sym(358)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(235), Sym(236), Sym(357), Sym(358))))
-TP(Sym(360),Reflect(IfElse(Sym(359),Block(Sym(255)),Block(Sym(262))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(235), Sym(236), Sym(357), Sym(358), Sym(359))))
-TP(Sym(361),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(235), Sym(236), Sym(357), Sym(358), Sym(359), Sym(360))))
-TP(Sym(362),Reflect(IfElse(Sym(349),Block(Sym(355)),Block(Sym(361))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(191), Sym(192), Sym(347), Sym(348), Sym(349))))
-TP(Sym(363),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(191), Sym(192), Sym(347), Sym(348), Sym(349), Sym(362))))
-TP(Sym(364),VectorMax(VInterface(Sym(175)  [Int])))
-TP(Sym(365),Reflect(Unstructured(List(Sym(364), .asInstanceOf[Int])),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267), Sym(268))))
-TP(Sym(366),Reflect(ObjectAsInstanceOf(Sym(365)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267), Sym(268), Sym(365))))
-TP(Sym(367),Reflect(PrimNotEqual(Const(5),Sym(366)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267), Sym(268), Sym(365), Sym(366))))
-TP(Sym(368),VectorMin(VInterface(Sym(175)  [Int])))
-TP(Sym(369),Reflect(Unstructured(List(Sym(368), .asInstanceOf[Int])),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(281), Sym(282))))
-TP(Sym(370),Reflect(ObjectAsInstanceOf(Sym(369)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(281), Sym(282), Sym(369))))
-TP(Sym(371),Reflect(PrimNotEqual(Const(1),Sym(370)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(281), Sym(282), Sym(369), Sym(370))))
-TP(Sym(372),Reflect(IfElse(Sym(371),Block(Sym(301)),Block(Sym(308))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(281), Sym(282), Sym(369), Sym(370), Sym(371))))
-TP(Sym(373),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(281), Sym(282), Sym(369), Sym(370), Sym(371), Sym(372))))
-TP(Sym(374),VectorMin(VInterface(Sym(175)  [Int])))
-TP(Sym(375),Reflect(Unstructured(List(Sym(374), .asInstanceOf[Int])),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(311), Sym(312))))
-TP(Sym(376),Reflect(ObjectAsInstanceOf(Sym(375)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(311), Sym(312), Sym(375))))
-TP(Sym(377),Reflect(PrimNotEqual(Const(1),Sym(376)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(311), Sym(312), Sym(375), Sym(376))))
-TP(Sym(378),Reflect(IfElse(Sym(377),Block(Sym(331)),Block(Sym(338))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(311), Sym(312), Sym(375), Sym(376), Sym(377))))
-TP(Sym(379),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(311), Sym(312), Sym(375), Sym(376), Sym(377), Sym(378))))
-TP(Sym(380),Reflect(IfElse(Sym(367),Block(Sym(373)),Block(Sym(379))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267), Sym(268), Sym(365), Sym(366), Sym(367))))
-TP(Sym(381),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(267), Sym(268), Sym(365), Sym(366), Sym(367), Sym(380))))
-TP(Sym(382),Reflect(IfElse(Sym(190),Block(Sym(363)),Block(Sym(381))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188), Sym(189), Sym(190))))
-TP(Sym(383),Reflect(Unstructured(List(DynExp(RES0))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188), Sym(189), Sym(190), Sym(382))))
-TP(Sym(384),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1), Sym(80), Sym(151), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(186), Sym(187), Sym(188), Sym(189), Sym(190), Sym(382), Sym(383))))
-constants: Vector((Sym(-1000),<function1>), (Sym(-1001),scala.Predef$@6d1b8b34), (Sym(-1002),scala.reflect.Manifest$@51839d8f), (Sym(-1003),Int), (Sym(-1004),lancet.advanced.TestDelite2$$anonfun$testA1$1$UtilCompanion$1@3e9105df))
+TP(Sym(129),Reflect(StructCopy(Sym(126),Sym(102),Sym(85),List(_data),Sym(107),Sym(128)),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List(Sym(102), Sym(103), Sym(125), Sym(126), Sym(127))))
+TP(Sym(130),Reflect(FieldApply(Sym(85),_length),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List(Sym(125), Sym(129))))
+TP(Sym(131),IntPlus(Sym(130),Const(1)))
+TP(Sym(132),Reflect(NestedFieldUpdate(Sym(85),List(_length),Sym(131)),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List(Sym(102), Sym(103), Sym(125), Sym(126), Sym(127), Sym(129), Sym(130))))
+TP(Sym(133),Reflect(FieldApply(Sym(85),_data),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List(Sym(125), Sym(129), Sym(132))))
+TP(Sym(134),Reflect(StructUpdate(Sym(85),List(_data),Sym(102),Sym(83)),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List(Sym(102), Sym(103), Sym(125), Sym(126), Sym(127), Sym(129), Sym(130), Sym(132), Sym(133))))
+TP(Sym(135),Reify(Sym(134),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List(Sym(103), Sym(125), Sym(126), Sym(127), Sym(129), Sym(130), Sym(132), Sym(133), Sym(134))))
+TP(Sym(136),Reflect(DenseVectorInsert(Sym(85),Sym(102),Sym(83)),Summary(false,false,false,false,false,List(),List(),List(Sym(85)),List(Sym(85))),List(Sym(102))))
+TP(Sym(137),Reify(Sym(136),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List(Sym(102), Sym(136))))
+TP(Sym(138),Reflect(NestedFieldUpdate(Sym(85),List(_length),Sym(84)),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List()))
+TP(Sym(139),Reify(Sym(138),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(Sym(85)),List(Sym(85))),List(Sym(138))))
+TP(Sym(140),Reflect(FieldApply(Sym(85),_isRow),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List()))
+TP(Sym(141),Reflect(DeliteArrayNew(Sym(84)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(142),Reflect(NewVar(Sym(141)),Summary(false,false,false,false,true,List(Sym(141)),List(Sym(141)),List(),List()),List(Sym(141))))
+TP(Sym(143),Reflect(NewVar(Sym(84)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(144),Reflect(NewVar(Sym(140)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(145),Reflect(DenseVectorNew(Sym(84),Sym(140)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(146),Reify(Sym(145),Summary(false,false,false,false,true,List(Sym(85)),List(Sym(85)),List(),List()),List(Sym(140), Sym(141), Sym(142), Sym(143), Sym(144), Sym(145))))
+TP(Sym(147),FieldApply(Sym(101),_data))
+TP(Sym(148),Reflect(FieldApply(Sym(85),_data),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List()))
+TP(Sym(149),DeliteArrayCopy(Sym(147),Sym(99),Sym(148),Sym(100),Sym(84)))
+TP(Sym(150),Reify(Sym(149),Summary(false,false,false,false,false,List(Sym(85)),List(Sym(85)),List(),List()),List(Sym(148))))
+TP(Sym(151),DenseVectorTrans(Sym(80)))
+TP(Sym(152),Reflect(Unstructured(List(new Array[, Int, ](, Const(5), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(80))))
+TP(Sym(153),Reflect(Unstructured(List(if (, Sym(152),  ne null) unsafe.putInt(, Sym(152), ,, Const(24), , , Const(1), ) else println("BUG: putInt"+, Sym(152), );)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(152))))
+TP(Sym(154),Reflect(Unstructured(List(if (, Sym(152),  ne null) unsafe.putInt(, Sym(152), ,, Const(28), , , Const(2), ) else println("BUG: putInt"+, Sym(152), );)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(153))))
+TP(Sym(155),Reflect(Unstructured(List(if (, Sym(152),  ne null) unsafe.putInt(, Sym(152), ,, Const(32), , , Const(3), ) else println("BUG: putInt"+, Sym(152), );)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(154))))
+TP(Sym(156),Reflect(Unstructured(List(if (, Sym(152),  ne null) unsafe.putInt(, Sym(152), ,, Const(36), , , Const(4), ) else println("BUG: putInt"+, Sym(152), );)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(155))))
+TP(Sym(157),Reflect(Unstructured(List(if (, Sym(152),  ne null) unsafe.putInt(, Sym(152), ,, Const(40), , , Const(5), ) else println("BUG: putInt"+, Sym(152), );)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(156))))
+TP(Sym(158),Reflect(Unstructured(List(unsafe.allocateInstance(Class.forName(", scala.collection.mutable.WrappedArray$ofInt, ")))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(157))))
+TP(Sym(159),Reflect(Unstructured(List(unsafe.putObject(, Sym(158), ,, Const(16), , , Sym(152), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(158))))
+TP(Sym(160),Reflect(Unstructured(List(Sym(158), .asInstanceOf[Seq[Int]])),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(159))))
+TP(Sym(161),SeqLength(Sym(160)))
+TP(Sym(162),Reflect(DeliteArrayNew(Sym(161)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(163),Reflect(NewVar(Sym(162)),Summary(false,false,false,false,true,List(Sym(162)),List(Sym(162)),List(),List()),List(Sym(162))))
+TP(Sym(164),Reflect(NewVar(Sym(161)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(165),Reflect(NewVar(Const(true)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(166),Reflect(DenseVectorNew(Sym(161),Const(true)),Summary(false,false,false,false,true,List(),List(),List(),List()),List()))
+TP(Sym(167),Until(Const(0),Sym(161)))
+TP(Sym(169),SeqApply(Sym(160),Sym(168)))
+TP(Sym(170),Reflect(FieldApply(Sym(166),_data),Summary(false,false,false,false,false,List(Sym(166)),List(Sym(166)),List(),List()),List()))
+TP(Sym(171),Reflect(StructUpdate(Sym(166),List(_data),Sym(168),Sym(169)),Summary(false,false,false,false,false,List(Sym(166)),List(Sym(166)),List(Sym(166)),List(Sym(166))),List(Sym(170))))
+TP(Sym(172),Reify(Sym(171),Summary(false,false,false,false,false,List(Sym(166)),List(Sym(166)),List(Sym(166)),List(Sym(166))),List(Sym(170), Sym(171))))
+TP(Sym(173),Reflect(RangeForeach(Const(0),Sym(161),Sym(168),Block(Sym(172))),Summary(false,false,false,false,false,List(Sym(166)),List(),List(Sym(166)),List()),List(Sym(166))))
+TP(Sym(174),Reflect(ObjectUnsafeImmutable(Sym(166)),Summary(false,false,false,false,false,List(Sym(166)),List(Sym(166)),List(),List()),List(Sym(166), Sym(173))))
+TP(Sym(175),Reify(Sym(174),Summary(false,false,false,false,false,List(),List(),List(),List()),List(Sym(162), Sym(163), Sym(164), Sym(165), Sym(166), Sym(173), Sym(174))))
+TP(Sym(176),DenseVectorObjectFromSeq(Sym(160)))
+TP(Sym(177),FieldApply(Sym(176),_length))
+TP(Sym(179),FieldApply(Sym(176),_data))
+TP(Sym(180),DeliteArrayApply(Sym(179),Sym(178)))
+TP(Sym(181),Reflect(ThrowException(Const(DeliteOpReduce accInit called without any implementation on Int)),Summary(false,false,true,true,false,List(),List(),List(),List()),List()))
+TP(Sym(182),Reify(Sym(181),Summary(false,false,true,true,false,List(),List(),List(),List()),List(Sym(181))))
+TP(Sym(185),ArithPlus(Sym(183),Sym(184)))
+TP(Sym(186),VectorSum(VInterface(Sym(176)  [Int])))
+TP(Sym(187),ObjectAsInstanceOf(Sym(186)))
+TP(Sym(188),ObjectAsInstanceOf(Sym(177)))
+TP(Sym(189),PrimDiv(Sym(187),Sym(188)))
+TP(Sym(190),PrimNotEqual(Const(3),Sym(189)))
+TP(Sym(191),Reflect(Unstructured(List(println(, Const(false), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+TP(Sym(193),DeliteArrayApply(Sym(179),Sym(192)))
+TP(Sym(194),Reflect(ThrowException(Const(DeliteOpReduce accInit called without any implementation on Int)),Summary(false,false,true,true,false,List(),List(),List(),List()),List()))
+TP(Sym(195),Reify(Sym(194),Summary(false,false,true,true,false,List(),List(),List(),List()),List(Sym(194))))
+TP(Sym(198),OrderingGT(Sym(196),Sym(197)))
+TP(Sym(199),DeliteIfThenElse(Sym(198),Block(Sym(196)),Block(Sym(197)),false))
+TP(Sym(200),VectorMax(VInterface(Sym(176)  [Int])))
+TP(Sym(201),ObjectAsInstanceOf(Sym(200)))
+TP(Sym(202),PrimNotEqual(Const(5),Sym(201)))
+TP(Sym(203),Reflect(Unstructured(List(println(, Const(false), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+TP(Sym(205),DeliteArrayApply(Sym(179),Sym(204)))
+TP(Sym(206),Reflect(ThrowException(Const(DeliteOpReduce accInit called without any implementation on Int)),Summary(false,false,true,true,false,List(),List(),List(),List()),List()))
+TP(Sym(207),Reify(Sym(206),Summary(false,false,true,true,false,List(),List(),List(),List()),List(Sym(206))))
+TP(Sym(210),OrderingLT(Sym(208),Sym(209)))
+TP(Sym(211),DeliteIfThenElse(Sym(210),Block(Sym(208)),Block(Sym(209)),false))
+TP(Sym(212),VectorMin(VInterface(Sym(176)  [Int])))
+TP(Sym(213),ObjectAsInstanceOf(Sym(212)))
+TP(Sym(214),PrimNotEqual(Const(1),Sym(213)))
+TP(Sym(215),Reflect(Unstructured(List(println(, Const(false), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+TP(Sym(216),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(215))))
+TP(Sym(217),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(216))))
+TP(Sym(218),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(217))))
+TP(Sym(219),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(218))))
+TP(Sym(220),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(215), Sym(216), Sym(217), Sym(218), Sym(219))))
+TP(Sym(221),Reflect(Unstructured(List(println(, Const(true), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+TP(Sym(222),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(221))))
+TP(Sym(223),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(222))))
+TP(Sym(224),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(223))))
+TP(Sym(225),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(224))))
+TP(Sym(226),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(221), Sym(222), Sym(223), Sym(224), Sym(225))))
+TP(Sym(227),Reflect(IfElse(Sym(214),Block(Sym(220)),Block(Sym(226))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(203))))
+TP(Sym(228),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(203), Sym(227))))
+TP(Sym(229),Reflect(Unstructured(List(println(, Const(true), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+TP(Sym(231),DeliteArrayApply(Sym(179),Sym(230)))
+TP(Sym(232),Reflect(ThrowException(Const(DeliteOpReduce accInit called without any implementation on Int)),Summary(false,false,true,true,false,List(),List(),List(),List()),List()))
+TP(Sym(233),Reify(Sym(232),Summary(false,false,true,true,false,List(),List(),List(),List()),List(Sym(232))))
+TP(Sym(236),OrderingLT(Sym(234),Sym(235)))
+TP(Sym(237),DeliteIfThenElse(Sym(236),Block(Sym(234)),Block(Sym(235)),false))
+TP(Sym(238),VectorMin(VInterface(Sym(176)  [Int])))
+TP(Sym(239),ObjectAsInstanceOf(Sym(238)))
+TP(Sym(240),PrimNotEqual(Const(1),Sym(239)))
+TP(Sym(241),Reflect(Unstructured(List(println(, Const(false), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+TP(Sym(242),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(241))))
+TP(Sym(243),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(242))))
+TP(Sym(244),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(243))))
+TP(Sym(245),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(244))))
+TP(Sym(246),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(241), Sym(242), Sym(243), Sym(244), Sym(245))))
+TP(Sym(247),Reflect(Unstructured(List(println(, Const(true), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+TP(Sym(248),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(247))))
+TP(Sym(249),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(248))))
+TP(Sym(250),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(249))))
+TP(Sym(251),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(250))))
+TP(Sym(252),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(247), Sym(248), Sym(249), Sym(250), Sym(251))))
+TP(Sym(253),Reflect(IfElse(Sym(240),Block(Sym(246)),Block(Sym(252))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(229))))
+TP(Sym(254),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(229), Sym(253))))
+TP(Sym(255),Reflect(IfElse(Sym(202),Block(Sym(228)),Block(Sym(254))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(191))))
+TP(Sym(256),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(191), Sym(255))))
+TP(Sym(257),Reflect(Unstructured(List(println(, Const(true), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+TP(Sym(259),DeliteArrayApply(Sym(179),Sym(258)))
+TP(Sym(260),Reflect(ThrowException(Const(DeliteOpReduce accInit called without any implementation on Int)),Summary(false,false,true,true,false,List(),List(),List(),List()),List()))
+TP(Sym(261),Reify(Sym(260),Summary(false,false,true,true,false,List(),List(),List(),List()),List(Sym(260))))
+TP(Sym(264),OrderingGT(Sym(262),Sym(263)))
+TP(Sym(265),DeliteIfThenElse(Sym(264),Block(Sym(262)),Block(Sym(263)),false))
+TP(Sym(266),VectorMax(VInterface(Sym(176)  [Int])))
+TP(Sym(267),ObjectAsInstanceOf(Sym(266)))
+TP(Sym(268),PrimNotEqual(Const(5),Sym(267)))
+TP(Sym(269),Reflect(Unstructured(List(println(, Const(false), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+TP(Sym(271),DeliteArrayApply(Sym(179),Sym(270)))
+TP(Sym(272),Reflect(ThrowException(Const(DeliteOpReduce accInit called without any implementation on Int)),Summary(false,false,true,true,false,List(),List(),List(),List()),List()))
+TP(Sym(273),Reify(Sym(272),Summary(false,false,true,true,false,List(),List(),List(),List()),List(Sym(272))))
+TP(Sym(276),OrderingLT(Sym(274),Sym(275)))
+TP(Sym(277),DeliteIfThenElse(Sym(276),Block(Sym(274)),Block(Sym(275)),false))
+TP(Sym(278),VectorMin(VInterface(Sym(176)  [Int])))
+TP(Sym(279),ObjectAsInstanceOf(Sym(278)))
+TP(Sym(280),PrimNotEqual(Const(1),Sym(279)))
+TP(Sym(281),Reflect(Unstructured(List(println(, Const(false), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+TP(Sym(282),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(281))))
+TP(Sym(283),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(282))))
+TP(Sym(284),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(283))))
+TP(Sym(285),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(284))))
+TP(Sym(286),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(281), Sym(282), Sym(283), Sym(284), Sym(285))))
+TP(Sym(287),Reflect(Unstructured(List(println(, Const(true), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+TP(Sym(288),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(287))))
+TP(Sym(289),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(288))))
+TP(Sym(290),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(289))))
+TP(Sym(291),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(290))))
+TP(Sym(292),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(287), Sym(288), Sym(289), Sym(290), Sym(291))))
+TP(Sym(293),Reflect(IfElse(Sym(280),Block(Sym(286)),Block(Sym(292))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(269))))
+TP(Sym(294),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(269), Sym(293))))
+TP(Sym(295),Reflect(Unstructured(List(println(, Const(true), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+TP(Sym(297),DeliteArrayApply(Sym(179),Sym(296)))
+TP(Sym(298),Reflect(ThrowException(Const(DeliteOpReduce accInit called without any implementation on Int)),Summary(false,false,true,true,false,List(),List(),List(),List()),List()))
+TP(Sym(299),Reify(Sym(298),Summary(false,false,true,true,false,List(),List(),List(),List()),List(Sym(298))))
+TP(Sym(302),OrderingLT(Sym(300),Sym(301)))
+TP(Sym(303),DeliteIfThenElse(Sym(302),Block(Sym(300)),Block(Sym(301)),false))
+TP(Sym(304),VectorMin(VInterface(Sym(176)  [Int])))
+TP(Sym(305),ObjectAsInstanceOf(Sym(304)))
+TP(Sym(306),PrimNotEqual(Const(1),Sym(305)))
+TP(Sym(307),Reflect(Unstructured(List(println(, Const(false), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+TP(Sym(308),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(307))))
+TP(Sym(309),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(308))))
+TP(Sym(310),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(309))))
+TP(Sym(311),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(310))))
+TP(Sym(312),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(307), Sym(308), Sym(309), Sym(310), Sym(311))))
+TP(Sym(313),Reflect(Unstructured(List(println(, Const(true), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+TP(Sym(314),Reflect(Unstructured(List(println(, Const(AA), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(313))))
+TP(Sym(315),Reflect(Unstructured(List(println(, Const(BB), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(314))))
+TP(Sym(316),Reflect(Unstructured(List(println(, Const(CC), ))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(315))))
+TP(Sym(317),Reflect(Unstructured(List((RES0 = , 42, ) // return to root)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(316))))
+TP(Sym(318),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(313), Sym(314), Sym(315), Sym(316), Sym(317))))
+TP(Sym(319),Reflect(IfElse(Sym(306),Block(Sym(312)),Block(Sym(318))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295))))
+TP(Sym(320),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295), Sym(319))))
+TP(Sym(321),Reflect(IfElse(Sym(268),Block(Sym(294)),Block(Sym(320))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(257))))
+TP(Sym(322),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(257), Sym(321))))
+TP(Sym(323),Reflect(IfElse(Sym(190),Block(Sym(256)),Block(Sym(322))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(160))))
+TP(Sym(324),Reflect(Unstructured(List(DynExp(RES0))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(323))))
+TP(Sym(325),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(80), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(160), Sym(323), Sym(324))))
+TP(Sym(326),VectorMax(VInterface(Sym(176)  [Int])))
+TP(Sym(327),ObjectAsInstanceOf(Sym(326)))
+TP(Sym(328),PrimNotEqual(Const(5),Sym(327)))
+TP(Sym(329),VectorMin(VInterface(Sym(176)  [Int])))
+TP(Sym(330),ObjectAsInstanceOf(Sym(329)))
+TP(Sym(331),PrimNotEqual(Const(1),Sym(330)))
+TP(Sym(332),Reflect(IfElse(Sym(331),Block(Sym(220)),Block(Sym(226))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(203))))
+TP(Sym(333),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(203), Sym(332))))
+TP(Sym(334),VectorMin(VInterface(Sym(176)  [Int])))
+TP(Sym(335),ObjectAsInstanceOf(Sym(334)))
+TP(Sym(336),PrimNotEqual(Const(1),Sym(335)))
+TP(Sym(337),Reflect(IfElse(Sym(336),Block(Sym(246)),Block(Sym(252))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(229))))
+TP(Sym(338),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(229), Sym(337))))
+TP(Sym(339),Reflect(IfElse(Sym(328),Block(Sym(333)),Block(Sym(338))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(191))))
+TP(Sym(340),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(191), Sym(339))))
+TP(Sym(341),VectorMax(VInterface(Sym(176)  [Int])))
+TP(Sym(342),ObjectAsInstanceOf(Sym(341)))
+TP(Sym(343),PrimNotEqual(Const(5),Sym(342)))
+TP(Sym(344),VectorMin(VInterface(Sym(176)  [Int])))
+TP(Sym(345),ObjectAsInstanceOf(Sym(344)))
+TP(Sym(346),PrimNotEqual(Const(1),Sym(345)))
+TP(Sym(347),Reflect(IfElse(Sym(346),Block(Sym(286)),Block(Sym(292))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(269))))
+TP(Sym(348),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(269), Sym(347))))
+TP(Sym(349),VectorMin(VInterface(Sym(176)  [Int])))
+TP(Sym(350),ObjectAsInstanceOf(Sym(349)))
+TP(Sym(351),PrimNotEqual(Const(1),Sym(350)))
+TP(Sym(352),Reflect(IfElse(Sym(351),Block(Sym(312)),Block(Sym(318))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295))))
+TP(Sym(353),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(295), Sym(352))))
+TP(Sym(354),Reflect(IfElse(Sym(343),Block(Sym(348)),Block(Sym(353))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(257))))
+TP(Sym(355),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(257), Sym(354))))
+TP(Sym(356),Reflect(IfElse(Sym(190),Block(Sym(340)),Block(Sym(355))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(160))))
+TP(Sym(357),Reflect(Unstructured(List(DynExp(RES0))),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(356))))
+TP(Sym(358),Reify(Const(()),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(80), Sym(152), Sym(153), Sym(154), Sym(155), Sym(156), Sym(157), Sym(158), Sym(159), Sym(160), Sym(356), Sym(357))))
+constants: Vector((Sym(-1000),<function1>), (Sym(-1001),scala.Predef$@522689ce), (Sym(-1002),scala.reflect.ManifestFactory$@45a983a9), (Sym(-1003),Int), (Sym(-1004),lancet.advanced.TestDelite2$$anonfun$testA1$1$UtilCompanion$1@5d48ff6b))
 *** running compileAndTest ***
 =================================================================================================
-TEST: lancet.api.LancetDeliteRunner@724d512a
+TEST: lancet.api.LancetDeliteRunner@25fa6405
 =================================================================================================
 STAGING...
 Delite Application Being Staged:[lancet.api.LancetDeliteRunner]
@@ -693,12 +646,13 @@ catch vector_min
 catch vector_max
 catch vector_min
 catch vector_min
+error: don't know how to mirror SeqLength(Sym(160))
+error: don't know how to mirror SeqApply(Sym(160),Sym(168))
 EXECUTING...
-test output for: lancet.api.LancetDeliteRunner@724d512a
+test output for: lancet.api.LancetDeliteRunner@25fa6405
 Delite Runtime executing with the following arguments:
 lancet.api.LancetDeliteRunner-test.deg
-Delite Runtime executing with 1 CPU thread(s) and 0 GPU(s)
-scheduling loop op x185x385x389x395x403x407x413 as Local
+Delite Runtime executing with: 1 Scala thread(s), 0 Cpp thread(s), 0 Cuda(s), 0 OpenCL(s)
 Beginning Execution Run 1
 true
 true
@@ -706,5 +660,5 @@ true
 AA
 BB
 CC
-[METRICS]: Latest time for component all: 0.020859s
+[METRICS]: Latest time for component all: 0.033943s
 CHECKING...
