@@ -2,7 +2,6 @@
   Emitting Generated Code
   *******************************************/
   class Generated extends ((Int)=>(Int)) {
-<<<<<<< HEAD
     def apply(x169:Int): Int = {
       val x0 = x169;
       val x171: Int = {
@@ -32,50 +31,6 @@
           ;{;
             val PHI_3_6 = 0 // LUBC(DynExp(PHI_3_6):Int,Const(0):Int);
             BLOCK_13(LUB_x8_intField,PHI_3_6,x7,x8);
-=======
-    def apply(x0:Int): Int = {
-      import sun.misc.Unsafe;
-      val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
-      type char = Char;
-      def WARN = assert(false, "WARN");
-      def ERROR = assert(false, "ERROR");
-      var RES = null.asInstanceOf[Int];
-      val x7 = x0.asInstanceOf[Int];
-      val x10: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
-      if (x10 ne null) unsafe.putInt(x10,16L, 7) else println("BUG: putInt"+x10);;
-      val x40 = 0 >= x7;
-      if (x40) {
-        ;{;
-          val LUB_x10_intField = 7; // Alias(Some(DynExp(LUB_x10_intField)),Some(Const(7)));
-          BLOCK_12(LUB_x10_intField,x10,x7);
-        };
-      } else {
-        if (x10 ne null) unsafe.putInt(x10,16L, 9) else println("BUG: putInt"+x10);;
-        ;{;
-          val LUB_x10_intField = 9; // Alias(Some(DynExp(LUB_x10_intField)),Some(Const(9)));
-          BLOCK_12(LUB_x10_intField,x10,x7);
-        };
-      }
-      def BLOCK_12(LUB_x10_intField:Int,x10:Object,x7:Int): Unit = {
-        ;{;
-          val PHI_3_6 = 0 // LUBC(DynExp(PHI_3_6):Int,Const(0):Int);
-          BLOCK_13(LUB_x10_intField,PHI_3_6,x10,x7);
-        };
-      }
-      def BLOCK_13(LUB_x10_intField:Int,PHI_3_6:Int,x10:Object,x7:Int): Unit = {
-        val x10: Object = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"));
-        val x105 = 0 >= LUB_x10_intField;
-        if (x105) {
-          (RES = PHI_3_6) // return to root;
-        } else {
-          val x119 = -1 + LUB_x10_intField;
-          if (x10 ne null) unsafe.putInt(x10,16L, x119) else println("BUG: putInt"+x10);;
-          val x128 = 1 + PHI_3_6;
-          ;{;
-            val PHI_3_6 = x128 // LUBC(DynExp(PHI_3_6):Int,Sym(128):Int);
-            val LUB_x10_intField = x119; // Alias(Some(DynExp(LUB_x10_intField)),Some(Sym(119)));
-            BLOCK_13(LUB_x10_intField,PHI_3_6,x10,x7);
->>>>>>> 5928874f8b91b6165b6d0637e8c9fee727876d17
           };
         }
         def BLOCK_13(LUB_x8_intField:Int,PHI_3_6:Int,x7:Int,x8:Object): Unit = {

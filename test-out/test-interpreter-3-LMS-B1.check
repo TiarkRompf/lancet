@@ -2,7 +2,6 @@
   Emitting Generated Code
   *******************************************/
   class Generated(pConst_0:Object) extends ((Int)=>(Int)) {
-<<<<<<< HEAD
     def apply(x64:Int): Int = {
       val x0 = x64;
       val x66: Int = {
@@ -34,35 +33,6 @@
         RES0
       };
       x66
-=======
-    def apply(x0:Int): Int = {
-      import sun.misc.Unsafe;
-      val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
-      type char = Char;
-      def WARN = assert(false, "WARN");
-      def ERROR = assert(false, "ERROR");
-      var RES = null.asInstanceOf[Int];
-      val x7 = x0.asInstanceOf[Int];
-      val x10 = 0 >= x7;
-      if (x10) {
-        ;{;
-          val x46: Int = unsafe.getInt(pConst_0,16L);
-          val LUB_pConst_1_intField = x46; // XXX LUBC(Some(DynExp(LUB_pConst_1_intField)),None);
-          BLOCK_4(LUB_pConst_1_intField,x7);
-        };
-      } else {
-        if (pConst_0 ne null) unsafe.putInt(pConst_0,16L, 9) else println("BUG: putInt"+pConst_0);;
-        ;{;
-          val LUB_pConst_1_intField = 9; // Alias(Some(DynExp(LUB_pConst_1_intField)),Some(Const(9)));
-          BLOCK_4(LUB_pConst_1_intField,x7);
-        };
-      }
-      def BLOCK_4(LUB_pConst_1_intField:Int,x7:Int): Unit = {
-        (RES = LUB_pConst_1_intField) // return to root;
-      }
-      // (no return?);
-      RES
->>>>>>> 5928874f8b91b6165b6d0637e8c9fee727876d17
     }
   }
   /*****************************************
