@@ -36,7 +36,7 @@ trait IR_LMS_Base extends EffectExp {
     case BlockDef(key,keyid,xs,body) => 
     // FIXME: here's a problem:
     // xs may contains items like DynExp("PHI_3_6") on which stuff in the block depends.
-    // since these are note symbols we can't return them here....
+    // since these are not symbols we can't return them here....
     // (and dependent nodes might be hoisted to the top or removed)
     xs collect { case s@Sym(n) => s }
     case _ => super.tunnelSyms(e)
