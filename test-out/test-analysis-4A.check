@@ -77,6 +77,7 @@ val x6 = { x7 => x18 }
 fixindex: 100
 val x24 = Map("val" -> 100)
 val x25 = Map("&i" -> x24, "&y" -> x24, "&x" -> x4)
+*** after loop x25 ***
 res: ()
 store: x25
 transformed: x25
@@ -371,6 +372,7 @@ val x142 = Map("val" -> 17)
 val x143 = Map("val" -> 405450)
 val x144 = Map("val" -> 1220850)
 val x145 = Map("&x" -> x3, "&y" -> x142, "&z" -> x143, "&z2" -> x144)
+*** after loop x145 ***
 val x146 = Map("&x" -> x3, "&y" -> x142, "&z" -> x143, "&r" -> x3, "&z2" -> x144)
 res: ()
 store: x146
