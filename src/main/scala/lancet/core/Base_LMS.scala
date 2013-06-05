@@ -31,7 +31,7 @@ trait IR_LMS_Base extends EffectExp {
     case _ => super.boundSyms(e)
   }
 
-  lazy val phiSym = Sym(-42)
+  lazy val phiSym = Sym(999)
 
   override def tunnelSyms(e: Any): List[Sym[Any]] = e match {
     case BlockDef(key,keyid,xs,body) => 
@@ -47,7 +47,7 @@ trait IR_LMS_Base extends EffectExp {
   override def syms(e: Any): List[Sym[Any]] = {
     val xx = super.syms(e)
     if (e.toString.contains("PHI")) { println(""+
-      cc + ":" + exx + ";") + List(phiSym) } else xx
+      e + ":" + xx); xx ++ List(phiSym) } else xx
   }
 
   override def symsFreq(e: Any): List[(Sym[Any],Double)] = {
