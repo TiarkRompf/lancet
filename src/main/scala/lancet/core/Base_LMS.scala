@@ -24,13 +24,14 @@ trait IR_LMS_Base extends EffectExp {
   // but override effectsSyms to include effectSyms of all
   // patches...
 
-
   override def boundSyms(e: Any): List[Sym[Any]] = e match {
     case Unstructured(xs) => blocks(xs) flatMap effectSyms
     case Patch(key,block) => effectSyms(block)
-    case BlockDef(key,keyid,xs,body) => effectSyms(body)
+    case BlockDef(key,keyid,xs,body) => effectSyms(body)// ++ List(phiSym)
     case _ => super.boundSyms(e)
   }
+
+  lazy val phiSym = Sym(-42)
 
   override def tunnelSyms(e: Any): List[Sym[Any]] = e match {
     case BlockDef(key,keyid,xs,body) => 
@@ -38,9 +39,22 @@ trait IR_LMS_Base extends EffectExp {
     // xs may contains items like DynExp("PHI_3_6") on which stuff in the block depends.
     // since these are not symbols we can't return them here....
     // (and dependent nodes might be hoisted to the top or removed)
-    xs collect { case s@Sym(n) => s }
+    xs.collect { case s@Sym(n) => s }  ++ List(phiSym)//case d if d.toString.contains("PHI") => println(s"add accidental dependency $d: def x42"); phiSym }
     case _ => super.tunnelSyms(e)
   }
+
+
+  override def syms(e: Any): List[Sym[Any]] = {
+    val xx = super.syms(e)
+    if (e.toString.contains("PHI")) { println(""+
+      cc + ":" + exx + ";") + List(phiSym) } else xx
+  }
+
+  override def symsFreq(e: Any): List[(Sym[Any],Double)] = {
+    val xx = super.symsFreq(e)
+    if (e.toString.contains("PHI")) xx ++ List((phiSym,1.0)) else xx
+  }
+
 
   override def mirrorDef[A:Manifest](d: Def[A], f: Transformer)(implicit pos: SourceContext): Def[A] = (d match {
     case d@Unstructured(xs)                   => Unstructured(xs.map{ case x: Exp[Any] =>f(x) case x => x})

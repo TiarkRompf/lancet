@@ -56,7 +56,7 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
       else if (quote(b) != str)
         emitString("val "+str+" = " + quote(b) + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
       val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
-      Dyn[AnyRef](str)(tp)        
+      Dyn[AnyRef](str)(tp)
     }
 
     object FrameLattice {
