@@ -19,7 +19,7 @@ trait IR_LMS_Base extends EffectExp {
   case class Patch(key: String, var block: Block[Unit]) extends Def[Unit]
   case class BlockDef(key: String, keyid: Int, params: List[Rep[Any]], body: Block[Unit]) extends Def[Unit]
 
-  // idea: patches should not schedule stuff inside, but in
+  // alternative idea: patches should not schedule stuff inside, but in
   // their parent scope. thus, do not override boundSyms for Patch,
   // but override effectsSyms to include effectSyms of all
   // patches...
