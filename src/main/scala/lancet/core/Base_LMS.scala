@@ -31,7 +31,9 @@ trait IR_LMS_Base extends EffectExp {
     case _ => super.boundSyms(e)
   }
 
-  lazy val phiSym = Sym(999)
+  //lazy val phiSym = Sym(999)
+
+  val phiSyms = new scala.collection.mutable.HashMap[Int,Sym[Any]]
 
   override def tunnelSyms(e: Any): List[Sym[Any]] = e match {
     case BlockDef(key,keyid,xs,body) => 
@@ -39,20 +41,28 @@ trait IR_LMS_Base extends EffectExp {
     // xs may contains items like DynExp("PHI_3_6") on which stuff in the block depends.
     // since these are not symbols we can't return them here....
     // (and dependent nodes might be hoisted to the top or removed)
+    val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
+    println(s"tunnelSyms add accidental dependency $xs + $phiSym")
     xs.collect { case s@Sym(n) => s }  ++ List(phiSym)//case d if d.toString.contains("PHI") => println(s"add accidental dependency $d: def x42"); phiSym }
     case _ => super.tunnelSyms(e)
   }
 
 
+  def getBlockId(e: Any): Int
+
   override def syms(e: Any): List[Sym[Any]] = {
     val xx = super.syms(e)
-    if (e.toString.contains("PHI")) { println(""+
+    val keyid = getBlockId(e)
+    val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
+    if (e.toString.contains("PHI") || e.toString.contains("LUB")) { println("syms "+
       e + ":" + xx); xx ++ List(phiSym) } else xx
   }
 
   override def symsFreq(e: Any): List[(Sym[Any],Double)] = {
     val xx = super.symsFreq(e)
-    if (e.toString.contains("PHI")) xx ++ List((phiSym,1.0)) else xx
+    val keyid = getBlockId(e)
+    val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
+    if (e.toString.contains("PHI") || e.toString.contains("LUB")) xx ++ List((phiSym,1.0)) else xx
   }
 
 
@@ -168,7 +178,12 @@ trait Base_LMS1 extends Base with IR_LMS { self =>
   type Static[+T] = IR.Const[T]
   type Dyn[+T] = IR.Sym[T]
 
-  case class DynExp[T:TypeRep](s: String) extends Exp[T]
+  case class DynExp[T:TypeRep](s: String) extends Exp[T] {
+    var keyid = -1
+  }
+
+  def getBlockId(e: Any): Int = e match { case e: DynExp[_] => e.keyid case _ => -1 }
+
 
   val Static = IR.Const
   object Dyn {
