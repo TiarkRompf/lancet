@@ -485,7 +485,9 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
               if (quote(b) != str)
                 emitString("val "+str+" = " + quote(b) + "; // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
               val tp = bb.typ.asInstanceOf[TypeRep[Any]]
-              Dyn[Any](str)(tp)
+              val res = Dyn[Any](str)(tp)
+              res.keyid = curBlockId
+              res
             case (Some(a),None) if p.startsWith("pConst") && k == "clazz" => a // class is VConstant
             case (None,Some(b)) if p.startsWith("pConst") && k == "clazz" => b // class is VConstant
             case (a,b) => 
