@@ -47,16 +47,23 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
       }        
     }
 
+
+    def contextKeyId(frame: InterpreterFrame): (String, Int)
+
     
     // TODO: externalize
     // side-effect: may create definition phi_str = b
+    var curBlockId = -1
     def phi(str: String, a: Rep[Object], b: Rep[Object]) = if (a == b) b else {
       if (b == null)
         emitString("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
       else if (quote(b) != str)
         emitString("val "+str+" = " + quote(b) + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
       val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
-      Dyn[AnyRef](str)(tp)
+      val res = Dyn[AnyRef](str)(tp)
+      res.keyid = curBlockId
+      println(res + " in block " + res.keyid)
+      res
     }
 
     object FrameLattice {
@@ -104,6 +111,8 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
         var condY = condX
         val go = reify { // start with 'this' state, make it match all others
           states foreach { case (f,s,e,c) => 
+            val (mkey, mkeyId) = contextKeyId(f)
+            curBlockId = mkeyId
             FrameLattice.lub(f, frameY) 
             storeY = StoreLattice.lub(s,storeY)
             exprY = ExprLattice.lub(e,exprY)

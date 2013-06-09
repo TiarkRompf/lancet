@@ -27,7 +27,10 @@ trait IR_LMS_Base extends EffectExp {
   override def boundSyms(e: Any): List[Sym[Any]] = e match {
     case Unstructured(xs) => blocks(xs) flatMap effectSyms
     case Patch(key,block) => effectSyms(block)
-    case BlockDef(key,keyid,xs,body) => effectSyms(body)// ++ List(phiSym)
+    case BlockDef(key,keyid,xs,body) => 
+      val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
+      println(s"boundSyms add accidental dependency $xs + $phiSym")
+      effectSyms(body) ++ List(phiSym)
     case _ => super.boundSyms(e)
   }
 
@@ -42,7 +45,8 @@ trait IR_LMS_Base extends EffectExp {
     // since these are not symbols we can't return them here....
     // (and dependent nodes might be hoisted to the top or removed)
     val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
-    /*println(s"tunnelSyms add accidental dependency $xs + $phiSym")*/
+    // FIXME: do we need to tunnel keyids of all parameters??
+    println(s"tunnelSyms add accidental dependency $xs + $phiSym")
     xs.collect { case s@Sym(n) => s }  ++ List(phiSym)//case d if d.toString.contains("PHI") => println(s"add accidental dependency $d: def x42"); phiSym }
     case _ => super.tunnelSyms(e)
   }
@@ -54,8 +58,8 @@ trait IR_LMS_Base extends EffectExp {
     val xx = super.syms(e)
     val keyid = getBlockId(e)
     val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
-    if (e.toString.contains("PHI") || e.toString.contains("LUB")) { /*println("syms "+
-      e + ":" + xx);*/ xx ++ List(phiSym) } else xx
+    if (e.toString.contains("PHI") || e.toString.contains("LUB")) { println("syms "+
+      e + ":" + xx); xx ++ List(phiSym) } else xx
   }
 
   override def symsFreq(e: Any): List[(Sym[Any],Double)] = {
@@ -428,6 +432,8 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
   
   def getFieldForLub[T:TypeRep](base: Rep[Object], cls: Class[_], k: String): Rep[T] = throw new Exception
 
+  def curBlockId: Int // defined in Opt4 (bit of a hack)
+
   object StoreLattice {
     type Elem = Map[String, Val[Any]]
     def bottom: Elem = Map.empty
@@ -507,7 +513,9 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
                   emitString("val "+str+" = " + quote(a.get) + "; // AAA Alias(" + a + "," + b + ")") // FIXME: kill in expr!
                 tp
               }
-              Dyn[Any](str)(tp)
+              val res = Dyn[Any](str)(tp)
+              res.keyid = curBlockId
+              res
           })
         }.toMap
       }
