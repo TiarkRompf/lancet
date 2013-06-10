@@ -89,7 +89,7 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
         for (i <- 0 until y.locals.length) {
           val a = x.locals(i)
           val b = y.locals(i)
-          val str = "PHI_"+x.depth+"_"+i
+          val str = "PHI_b"+curBlockId+"_"+x.depth+"_"+i
           y.locals(i) = phi(str,a,b)
         }
 
