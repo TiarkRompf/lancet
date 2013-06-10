@@ -56,9 +56,9 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
     var curBlockId = -1
     def phi(str: String, a: Rep[Object], b: Rep[Object]) = if (a == b) b else {
       if (b == null)
-        emitString("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
+        reflect[Unit]("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
       else if (quote(b) != str)
-        emitString("val "+str+" = " + quote(b) + " // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
+        reflect[Unit]("val "+str+" = ",b," // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
       val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
       val res = Dyn[AnyRef](str)(tp)
       res.keyid = curBlockId
