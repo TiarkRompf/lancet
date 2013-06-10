@@ -29,7 +29,7 @@ trait IR_LMS_Base extends EffectExp {
     case Patch(key,block) => effectSyms(block)
     case BlockDef(key,keyid,xs,body) => 
       val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
-      println(s"boundSyms add accidental dependency $xs + $phiSym")
+      //println(s"boundSyms add accidental dependency $xs + $phiSym")
       effectSyms(body) ++ List(phiSym)
     case _ => super.boundSyms(e)
   }
@@ -46,7 +46,7 @@ trait IR_LMS_Base extends EffectExp {
     // (and dependent nodes might be hoisted to the top or removed)
     val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
     // FIXME: do we need to tunnel keyids of all parameters??
-    println(s"tunnelSyms add accidental dependency $xs + $phiSym")
+    //println(s"tunnelSyms add accidental dependency $xs + $phiSym")
     xs.collect { case s@Sym(n) => s }  ++ List(phiSym)//case d if d.toString.contains("PHI") => println(s"add accidental dependency $d: def x42"); phiSym }
     case _ => super.tunnelSyms(e)
   }
@@ -58,8 +58,10 @@ trait IR_LMS_Base extends EffectExp {
     val xx = super.syms(e)
     val keyid = getBlockId(e)
     val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
-    if (e.toString.contains("PHI") || e.toString.contains("LUB")) { println("syms "+
-      e + ":" + xx); xx ++ List(phiSym) } else xx
+    if (e.toString.contains("PHI") || e.toString.contains("LUB")) { 
+      //println("syms "+ e + ":" + xx)
+      xx ++ List(phiSym) 
+    } else xx
   }
 
   override def symsFreq(e: Any): List[(Sym[Any],Double)] = {

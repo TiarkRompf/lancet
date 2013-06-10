@@ -62,7 +62,7 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
       val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
       val res = Dyn[AnyRef](str)(tp)
       res.keyid = curBlockId
-      println(res + " in block " + res.keyid)
+      //println(res + " in block " + res.keyid)
       res
     }
 
