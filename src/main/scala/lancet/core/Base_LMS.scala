@@ -481,7 +481,7 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
           (k, (x.get(k), y.get(k)) match {
             case (Some(a),Some(b)) if a == b => a
             case (Some(Static(a)),Some(bb@Static(b))) => 
-              val str = "LUB_"+p+"_"+k
+              val str = "LUB_b"+curBlockId+"_"+p+"_"+k
               if (quote(b) != str)
                 emitString("val "+str+" = " + quote(b) + "; // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
               val tp = bb.typ.asInstanceOf[TypeRep[Any]]
@@ -491,7 +491,7 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
             case (Some(a),None) if p.startsWith("pConst") && k == "clazz" => a // class is VConstant
             case (None,Some(b)) if p.startsWith("pConst") && k == "clazz" => b // class is VConstant
             case (a,b) => 
-              val str = "LUB_"+p+"_"+k
+              val str = "LUB_b"+curBlockId+"_"+p+"_"+k
               val tp = if (b.nonEmpty) {
                 //if (b.get.toString != str && !y0.contains(b.get.toString)) {
                 //  emitString("// PROBLEMO "+b.get+" not in "+y0)
