@@ -509,6 +509,9 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
                   val fld = getFieldForLub(obj,cls,k)(tp)
                   //println("// lookup "+obj+"."+k+"="+fld)
                   // may fld and a.get be equal? unlikely ...
+
+                  // FIXME: can't use emitString, need to maintain sym ref
+
                   if (quote(fld) != str)
                     emitString("val "+str+" = " + quote(fld) + "; // XXX LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
                 } else 
