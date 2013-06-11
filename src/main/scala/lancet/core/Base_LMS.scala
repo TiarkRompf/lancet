@@ -57,9 +57,8 @@ trait IR_LMS_Base extends EffectExp {
   override def syms(e: Any): List[Sym[Any]] = {
     val xx = super.syms(e)
     val keyid = getBlockId(e)
-    val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
-    if (e.toString.contains("PHI") || e.toString.contains("LUB")) { 
-      //println("syms "+ e + ":" + xx)
+    if (keyid >= 0) {
+      val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
       xx ++ List(phiSym) 
     } else xx
   }
@@ -67,8 +66,10 @@ trait IR_LMS_Base extends EffectExp {
   override def symsFreq(e: Any): List[(Sym[Any],Double)] = {
     val xx = super.symsFreq(e)
     val keyid = getBlockId(e)
-    val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
-    if (e.toString.contains("PHI") || e.toString.contains("LUB")) xx ++ List((phiSym,1.0)) else xx
+    if (keyid >= 0) {
+      val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
+      xx ++ List((phiSym,1.0)) 
+    } else xx
   }
 
 
