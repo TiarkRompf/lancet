@@ -51,9 +51,12 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
     def contextKeyId(frame: InterpreterFrame): (String, Int)
 
     
+    // the current block id. set by allLubs, and picked up by phi/lub operations
+    var curBlockId = -1 // FIXME: make less ad-hoc
+
+
     // TODO: externalize
     // side-effect: may create definition phi_str = b
-    var curBlockId = -1
     def phi(str: String, a: Rep[Object], b: Rep[Object]) = if (a == b) b else {
       if (b == null)
         reflect[Unit]("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
@@ -62,7 +65,6 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
       val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
       val res = Dyn[AnyRef](str)(tp)
       res.keyid = curBlockId
-      //println(res + " in block " + res.keyid)
       res
     }
 

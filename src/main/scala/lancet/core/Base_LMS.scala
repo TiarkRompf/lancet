@@ -52,7 +52,7 @@ trait IR_LMS_Base extends EffectExp {
   }
 
 
-  def getBlockId(e: Any): Int
+  def getBlockId(e: Any): Int // return the block id a Def is bound to, if any. otherwise -1
 
   override def syms(e: Any): List[Sym[Any]] = {
     val xx = super.syms(e)
@@ -188,6 +188,7 @@ trait Base_LMS1 extends Base with IR_LMS { self =>
     var keyid = -1
   }
 
+  // return the block id a Def is bound to, if any. otherwise -1
   def getBlockId(e: Any): Int = e match { case e: DynExp[_] => e.keyid case _ => -1 }
 
 
