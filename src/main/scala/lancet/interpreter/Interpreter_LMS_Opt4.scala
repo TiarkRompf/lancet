@@ -901,7 +901,34 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       import collection.JavaConversions._
       val c = super.executeInstruction(frame,bs)
 
-      val graalBlock = graalBlockMapping(frame.getMethod)
+      val graalBlock = graalBlockMapping(frame.getMethod)  
+
+      /*  FIXME: exception here when running stuff twice in the repl:
+
+      scala> OptiMLRunner.program = { x => val OptiML = new OptiMLCompanion; OptiML.DenseVector.rand(20).pprint; 7 }
+      scala> OptiMLRunner.run
+      ok
+      scala> OptiMLRunner.program = { x => val OptiML = new OptiMLCompanion; OptiML.DenseVector.rand(20).pprint; 7 }
+      scala> OptiMLRunner.run
+      error
+
+      Delite Application Being Staged:[lancet.api.LancetDeliteRunner]
+      ******Generating the program******
+      TP(Sym(1),Reflect(Unstructured(List(ERROR / *)),Summary(true,true,false,false,false,List(),List(),List(),List()),List()))
+      TP(Sym(2),Reflect(Unstructured(List(0:<$read$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$anonfun$1.apply>HotSpotSignature<(I)I> // 0:<BytecodeInterpreter_Exec.execute>HotSpotSignature<(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(1))))
+      TP(Sym(3),Reflect(Unstructured(List(java.util.NoSuchElementException: key not found: HotSpotMethod<$read$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$anonfun$1.apply>)),Summary(true,true,false,false,false,List(),List(),List(),List()),List(Sym(2))))
+      TP(Sym(4),Reflect(Unstructured(List(scala.collection.MapLike$class.default(MapLike.scala:228)
+      scala.collection.AbstractMap.default(Map.scala:58)
+      scala.collection.mutable.HashMap.apply(HashMap.scala:64)
+      lancet.interpreter.BytecodeInterpreter_LMS_Opt4Engine$class.executeInstruction(Interpreter_LMS_Opt4.scala:904)
+      lancet.interpreter.BytecodeInterpreter_LMS_Opt4.executeInstruction(Interpreter_LMS_Opt4.scala:197)
+      lancet.interpreter.BytecodeInterpreter_Abstract$class.executeBlock(Interpreter.scala:286)
+      lancet.interpreter.BytecodeInterpreter_LMS_Opt4.executeBlock(Interpreter_LMS_Opt4.scala:197)
+      lancet.interpreter.BytecodeInterpreter_LMS_Opt4Engine$class.execFoReal(Interpreter_LMS_Opt4.scala:933)
+      lancet.interpreter.BytecodeInterpreter_LMS_Opt4.execFoReal(Interpreter_LMS_Opt4.scala:197)
+      lancet.interpreter.BytecodeInterpreter_LMS_Opt4Engine$class.gotoBlock$2(Interpreter_LMS_Opt4.scala:735)
+      ...
+      */
 
       val bci = bs.nextBCI()
 
