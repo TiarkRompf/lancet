@@ -17,18 +17,18 @@
         if (x10 ne null) unsafe.putInt(x10,16L, 7) else println("BUG: putInt"+x10);;
         if (x40) {
           ;{;
-            val LUB_x10_intField = 7; // Alias(Some(DynExp(LUB_x10_intField)),Some(Const(7)));
-            BLOCK_12(LUB_x10_intField,x10,x7);
+            val LUB_b12_x10_intField = 7; // Alias(Some(DynExp(LUB_b12_x10_intField)),Some(Const(7)));
+            BLOCK_12(LUB_b12_x10_intField,x10,x7);
           };
         } else {
           if (x10 ne null) unsafe.putInt(x10,16L, 9) else println("BUG: putInt"+x10);;
           ;{;
-            val LUB_x10_intField = 9; // Alias(Some(DynExp(LUB_x10_intField)),Some(Const(9)));
-            BLOCK_12(LUB_x10_intField,x10,x7);
+            val LUB_b12_x10_intField = 9; // Alias(Some(DynExp(LUB_b12_x10_intField)),Some(Const(9)));
+            BLOCK_12(LUB_b12_x10_intField,x10,x7);
           };
         }
-        def BLOCK_12(LUB_x10_intField:Int,x10:Object,x7:Int): Unit = {
-          (RES0 = LUB_x10_intField) // return to root;
+        def BLOCK_12(LUB_b12_x10_intField:Int,x10:Object,x7:Int): Unit = {
+          (RES0 = LUB_b12_x10_intField) // return to root;
         }
         // (no return?);
         RES0
