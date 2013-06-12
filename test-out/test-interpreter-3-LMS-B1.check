@@ -2,43 +2,43 @@
   Emitting Generated Code
   *******************************************/
   class Generated(pConst_0:Object) extends ((Int)=>(Int)) {
-    def apply(x64:Int): Int = {
-      val x0 = x64;
-      val x66: Int = {
+    def apply(x68:Int): Int = {
+      val x0 = x68;
+      val x7 = x0.asInstanceOf[Int];
+      val x10 = 0 >= x7;
+      val x70: Int = {
         import sun.misc.Unsafe;
         val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
         type char = Char;
         def WARN = assert(false, "WARN");
         def ERROR = assert(false, "ERROR");
         var RES0 = null.asInstanceOf[Int];
-        val x7 = x0.asInstanceOf[Int];
-        val x8 = 0 >= x7;
-        if (x8) {
+        if (x10) {
           ;{;
-            val x42: Int = unsafe.getInt(pConst_0,16L);
-            val LUB_pConst_1_intField = x42; // XXX LUBC(Some(DynExp(LUB_pConst_1_intField)),None);
-            BLOCK_4(LUB_pConst_1_intField,x7);
+            val x46: Int = unsafe.getInt(pConst_0,16L);
+            val LUB_b4_pConst_1_intField = x46; // XXX LUBC(Some(DynExp(LUB_b4_pConst_1_intField)),None);
+            BLOCK_4(LUB_b4_pConst_1_intField,x7);
           };
         } else {
           if (pConst_0 ne null) unsafe.putInt(pConst_0,16L, 9) else println("BUG: putInt"+pConst_0);;
           ;{;
-            val LUB_pConst_1_intField = 9; // Alias(Some(DynExp(LUB_pConst_1_intField)),Some(Const(9)));
-            BLOCK_4(LUB_pConst_1_intField,x7);
+            val LUB_b4_pConst_1_intField = 9; // Alias(Some(DynExp(LUB_b4_pConst_1_intField)),Some(Const(9)));
+            BLOCK_4(LUB_b4_pConst_1_intField,x7);
           };
         }
-        def BLOCK_4(LUB_pConst_1_intField:Int,x7:Int): Unit = {
-          (RES0 = LUB_pConst_1_intField) // return to root;
+        def BLOCK_4(LUB_b4_pConst_1_intField:Int,x7:Int): Unit = {
+          (RES0 = LUB_b4_pConst_1_intField) // return to root;
         }
         // (no return?);
         RES0
       };
-      x66
+      x70
     }
   }
   /*****************************************
   End of Generated Code
   *******************************************/
-Vector((Sym(-1000),lancet.interpreter.BaseTestInterpreter3$Bar@778a32b7))
-List((lancet.interpreter.BaseTestInterpreter3$Bar@778a32b7,class java.lang.Object))
+Vector((Sym(-1000),lancet.interpreter.BaseTestInterpreter3$Bar@78b2ba0f))
+List((lancet.interpreter.BaseTestInterpreter3$Bar@78b2ba0f,class java.lang.Object))
 compilation: ok
 9

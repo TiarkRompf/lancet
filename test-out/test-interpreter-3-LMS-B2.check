@@ -2,47 +2,47 @@
   Emitting Generated Code
   *******************************************/
   class Generated(pConst_0:Object) extends ((Int)=>(Int)) {
-    def apply(x112:Int): Int = {
-      val x0 = x112;
-      val x114: Int = {
+    def apply(x119:Int): Int = {
+      val x0 = x119;
+      val x7 = x0.asInstanceOf[Int];
+      val x121: Int = {
         import sun.misc.Unsafe;
         val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; };
         type char = Char;
         def WARN = assert(false, "WARN");
         def ERROR = assert(false, "ERROR");
         var RES0 = null.asInstanceOf[Int];
-        val x7 = x0.asInstanceOf[Int];
         ;{;
-          val PHI_3_5 = x7 // LUBC(DynExp(PHI_3_5):Int,Sym(7):Int);
-          val x90: Int = unsafe.getInt(pConst_0,16L);
-          val LUB_pConst_1_intField = x90; // XXX LUBC(Some(DynExp(LUB_pConst_1_intField)),None);
-          BLOCK_2(LUB_pConst_1_intField,PHI_3_5,x7);
+          val PHI_b2_3_5 = x7 // LUBC(DynExp(PHI_b2_3_5):Int,Sym(7):Int);
+          val x97: Int = unsafe.getInt(pConst_0,16L);
+          val LUB_b2_pConst_1_intField = x97; // XXX LUBC(Some(DynExp(LUB_b2_pConst_1_intField)),None);
+          BLOCK_2(LUB_b2_pConst_1_intField,PHI_b2_3_5,x7);
         };
-        def BLOCK_2(LUB_pConst_1_intField:Int,PHI_3_5:Int,x7:Int): Unit = {
-          val x42 = 0 >= PHI_3_5;
-          if (x42) {
-            (RES0 = LUB_pConst_1_intField) // return to root;
+        def BLOCK_2(LUB_b2_pConst_1_intField:Int,PHI_b2_3_5:Int,x7:Int): Unit = {
+          val x46 = 0 >= PHI_b2_3_5;
+          val x60 = 1 + LUB_b2_pConst_1_intField;
+          val x69 = -1 + PHI_b2_3_5;
+          if (x46) {
+            (RES0 = LUB_b2_pConst_1_intField) // return to root;
           } else {
-            val x55 = 1 + LUB_pConst_1_intField;
-            if (pConst_0 ne null) unsafe.putInt(pConst_0,16L, x55) else println("BUG: putInt"+pConst_0);;
-            val x63 = -1 + PHI_3_5;
+            if (pConst_0 ne null) unsafe.putInt(pConst_0,16L, x60) else println("BUG: putInt"+pConst_0);;
             ;{;
-              val PHI_3_5 = x63 // LUBC(DynExp(PHI_3_5):Int,Sym(63):Int);
-              val LUB_pConst_1_intField = x55; // Alias(Some(DynExp(LUB_pConst_1_intField)),Some(Sym(55)));
-              BLOCK_2(LUB_pConst_1_intField,PHI_3_5,x7);
+              val PHI_b2_3_5 = x69 // LUBC(DynExp(PHI_b2_3_5):Int,Sym(69):Int);
+              val LUB_b2_pConst_1_intField = x60; // Alias(Some(DynExp(LUB_b2_pConst_1_intField)),Some(Sym(60)));
+              BLOCK_2(LUB_b2_pConst_1_intField,PHI_b2_3_5,x7);
             };
           }
         }
         // (no return?);
         RES0
       };
-      x114
+      x121
     }
   }
   /*****************************************
   End of Generated Code
   *******************************************/
-Vector((Sym(-1000),lancet.interpreter.BaseTestInterpreter3$Bar@187c7c10))
-List((lancet.interpreter.BaseTestInterpreter3$Bar@187c7c10,class java.lang.Object))
+Vector((Sym(-1000),lancet.interpreter.BaseTestInterpreter3$Bar@7df75432))
+List((lancet.interpreter.BaseTestInterpreter3$Bar@7df75432,class java.lang.Object))
 compilation: ok
 14
