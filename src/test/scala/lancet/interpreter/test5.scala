@@ -230,6 +230,8 @@ class TestInterpreter5 extends FileDiffSuite {
         i += 1
       }
 
+      // TODO: look at mix of read/writes,
+      // with reads dominating by a large margin
 
       9
     }
