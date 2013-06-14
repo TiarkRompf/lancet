@@ -233,6 +233,8 @@ class TestInterpreter5 extends FileDiffSuite {
       // TODO: look at mix of read/writes,
       // with reads dominating by a large margin
 
+      // use cases: IP routing, ... (?)
+
       9
     }
     f(0)
