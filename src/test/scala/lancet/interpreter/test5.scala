@@ -157,6 +157,12 @@ class TestInterpreter5 extends FileDiffSuite {
     it.emitRecursive = true
     it.debugReturns = false
 
+    class Stable[T](var value: T) = {
+      def apply() = it.freeze(value)
+      def update(x: T) = value = x
+    }
+
+
     class Tree {
       var _key: Int = 0
       var _value: Double = 0
