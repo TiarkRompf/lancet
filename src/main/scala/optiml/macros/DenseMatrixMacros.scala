@@ -12,7 +12,6 @@ import ppl.delite.framework.DeliteApplication
 import ppl.delite.framework.Config
 
 //import ppl.dsl.optila.{Vector,DenseVector,DenseVectorView,DenseMatrix,RangeVector}
-import ppl.dsl.optiml.{IndexVectorRange}
 import ppl.dsl.optiml.{OptiMLApplication, OptiMLApplicationRunner}
 import ppl.dsl.optiml.{OptiMLCodeGenScala,OptiMLExp}
 

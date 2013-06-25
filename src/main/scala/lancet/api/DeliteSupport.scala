@@ -30,8 +30,6 @@ import lancet.api._
 import lancet.interpreter._
 import lancet.core._
 
-import ppl.dsl.optila.{Vector,DenseVector,RangeVector}
-import ppl.dsl.optiml.{IndexVectorRange}
 import ppl.dsl.optiml.{OptiMLApplication, OptiMLApplicationRunner}
 
 import ppl.delite.framework.DeliteApplication
