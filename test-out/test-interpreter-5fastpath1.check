@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-// constants: <function1>,lancet.interpreter.TestInterpreter5$Decompiler@26173e22,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.compute$3>
-class Generated0(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3,CONST_1: lancet.interpreter.TestInterpreter5#Decompiler,CONST_2: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_3: Array[lancet.core.Base_LIR$Rep],CONST_4: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1,CONST_7: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (Int=>Int){
-=======
-// constants: <function1>,lancet.interpreter.TestInterpreter5$Decompiler@50c466bc,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
+// constants: <function1>,lancet.interpreter.TestInterpreter5$Decompiler@22b530f,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
 class Generated0(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3,CONST_1: lancet.interpreter.TestInterpreter5#Decompiler,CONST_2: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_3: Array[lancet.core.Base_TIR$Rep],CONST_4: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1,CONST_7: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (Int=>Int){
->>>>>>> 5928874f8b91b6165b6d0637e8c9fee727876d17
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -36,7 +31,7 @@ def apply(ARG: Int): Int = { object BODY {
           vx3 = x3
         };
       } else {
-        // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.compute$3>
+        // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
         val x4 = 50 != PHI_3_5
         if (x4) {
           // return 2_0 to 19:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
@@ -51,7 +46,7 @@ def apply(ARG: Int): Int = { object BODY {
           val x7 = CONST_1.mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_0.asInstanceOf[AnyRef],x1.asInstanceOf[AnyRef],PHI_3_5.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 19, 6, CONST_5, x6)
           val x8 = CONST_1.mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_6.asInstanceOf[AnyRef],PHI_3_5.asInstanceOf[AnyRef],CONST_1.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 12, 6, CONST_7, x7)
           val x9 = CONST_1.execCompiler(x8).asInstanceOf[Int] // drop into freshly compiled
-          // old parent: 7:<TestInterpreter5$$anonfun$testFastpath1$1.compute$3><(ILlancet/interpreter/TestInterpreter5$Decompiler;)V> // 19:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+          // old parent: 7:<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3><(ILlancet/interpreter/TestInterpreter5$Decompiler;)V> // 19:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
           // new parent: 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
           val x10 = x9.asInstanceOf[Int]
           // return 1_0 to 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // 0:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
@@ -81,7 +76,7 @@ def apply(ARG: Int): Int = { object BODY {
 compilation: ok
 -- start compiling
 frame:
-HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.compute$3>
+HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
 CONST_6,50,CONST_1,null,null
 HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>
 CONST_0,100,50,null,null,null
@@ -92,13 +87,8 @@ CONST_1,CONST_2,CONST_3,null,null,null,null,null,null
 root:
 HotSpotMethod<BytecodeInterpreter_Exec.execute>
 CONST_1,CONST_2,CONST_3,null,null,null,null,null,null
-<<<<<<< HEAD
-// constants: <function1>,lancet.interpreter.TestInterpreter5$Decompiler@26173e22,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.compute$3>
-class Generated1(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3,CONST_1: lancet.interpreter.TestInterpreter5#Decompiler,CONST_2: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_3: Array[lancet.core.Base_LIR$Rep],CONST_4: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1,CONST_7: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (Unit=>Int){
-=======
-// constants: <function1>,lancet.interpreter.TestInterpreter5$Decompiler@50c466bc,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
+// constants: <function1>,lancet.interpreter.TestInterpreter5$Decompiler@22b530f,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply>,Array(CONST_0, x0),HotSpotMethod<BytecodeInterpreter_Exec.execute>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp>,<function0>,HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
 class Generated1(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3,CONST_1: lancet.interpreter.TestInterpreter5#Decompiler,CONST_2: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_3: Array[lancet.core.Base_TIR$Rep],CONST_4: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_5: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod,CONST_6: lancet.interpreter.TestInterpreter5$$anonfun$testFastpath1$1,CONST_7: com.oracle.graal.hotspot.meta.HotSpotResolvedJavaMethod) extends (Unit=>Int){
->>>>>>> 5928874f8b91b6165b6d0637e8c9fee727876d17
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -112,7 +102,7 @@ def apply(ARG: Unit): Int = { object BODY {
   // new: B2[12->12]
   // fixed: B0[12->12]
   // return 0_0 to 19:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // -1:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
-  // ret single HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.compute$3>
+  // ret single HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
   // need to fix block ordering for bci=19
   // old: B0[0->1],B1[2->4 L],B2[7->16],B3[19->27],B4[30->31]
   // new: B3[19->27],B1[2->4 L],B2[7->16],B4[30->31]
@@ -125,12 +115,12 @@ def apply(ARG: Unit): Int = { object BODY {
     // should not inline start block 0
     ;{
       val PHI_3_5 = 50 // LUBC(PHI_3_5:Int,50:Int)
-      val PHI_3_6 = null // LUBC(PHI_3_6:java.lang.Object,null:java.lang.Object)
-      val PHI_3_7 = null // LUBC(PHI_3_7:java.lang.Object,null:java.lang.Object)
-      val PHI_3_8 = null // LUBC(PHI_3_8:java.lang.Object,null:java.lang.Object)
+      val PHI_3_6 = null // LUBC(PHI_3_6:scala.runtime.Null$,null:scala.runtime.Null$)
+      val PHI_3_7 = null // LUBC(PHI_3_7:scala.runtime.Null$,null:scala.runtime.Null$)
+      val PHI_3_8 = null // LUBC(PHI_3_8:scala.runtime.Null$,null:scala.runtime.Null$)
       BLOCK_11(PHI_3_5,PHI_3_6,PHI_3_7,PHI_3_8)
     }
-    def BLOCK_11(PHI_3_5:Int,PHI_3_6:java.lang.Object,PHI_3_7:java.lang.Object,PHI_3_8:java.lang.Object): Unit = {
+    def BLOCK_11(PHI_3_5:Int,PHI_3_6:scala.runtime.Null$,PHI_3_7:scala.runtime.Null$,PHI_3_8:scala.runtime.Null$): Unit = {
       val x12 = 1 + PHI_3_5
       val x13 = 100 <= x12
       if (x13) {
@@ -142,15 +132,15 @@ def apply(ARG: Unit): Int = { object BODY {
           vx13 = x13
         };
       } else {
-        // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.compute$3>
+        // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3>
         val x14 = 50 != x12
         if (x14) {
           // return 2_0 to 19:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // -1:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
           ;{
             val PHI_3_5 = x12 // LUBC(PHI_3_5:Int,x12:Int)
-            val PHI_3_6 = null.asInstanceOf[java.lang.Object] // LUBC(PHI_3_6,null)
-            val PHI_3_7 = null.asInstanceOf[java.lang.Object] // LUBC(PHI_3_7,null)
-            val PHI_3_8 = null.asInstanceOf[java.lang.Object] // LUBC(PHI_3_8,null)
+            val PHI_3_6 = null.asInstanceOf[scala.runtime.Null$] // LUBC(PHI_3_6,null)
+            val PHI_3_7 = null.asInstanceOf[scala.runtime.Null$] // LUBC(PHI_3_7,null)
+            val PHI_3_8 = null.asInstanceOf[scala.runtime.Null$] // LUBC(PHI_3_8,null)
             BLOCK_11(PHI_3_5,PHI_3_6,PHI_3_7,PHI_3_8)
           }
         } else {
@@ -159,7 +149,7 @@ def apply(ARG: Unit): Int = { object BODY {
           val x17 = CONST_1.mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_0.asInstanceOf[AnyRef],100.asInstanceOf[AnyRef],x12.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 19, 6, CONST_5, x16)
           val x18 = CONST_1.mkCompilerFrame(Array[Object](null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],CONST_6.asInstanceOf[AnyRef],x12.asInstanceOf[AnyRef],CONST_1.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef],null.asInstanceOf[AnyRef]), 12, 6, CONST_7, x17)
           val x19 = CONST_1.execCompiler(x18).asInstanceOf[Int] // drop into freshly compiled
-          // old parent: 7:<TestInterpreter5$$anonfun$testFastpath1$1.compute$3><(ILlancet/interpreter/TestInterpreter5$Decompiler;)V> // 19:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // -1:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
+          // old parent: 7:<TestInterpreter5$$anonfun$testFastpath1$1.lancet$interpreter$TestInterpreter5$$anonfun$$compute$3><(ILlancet/interpreter/TestInterpreter5$Decompiler;)V> // 19:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply$mcII$sp><(I)I> // 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // -1:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
           // new parent: 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // -1:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
           val x20 = x19.asInstanceOf[Int]
           // return 1_0 to 5:<TestInterpreter5$$anonfun$testFastpath1$1$$anonfun$3.apply><(I)I> // -1:<BytecodeInterpreter_Exec.execute><(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;>
