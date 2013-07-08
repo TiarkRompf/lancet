@@ -1,5 +1,5 @@
-// constants: <function1>,lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1@527edd98,lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1@1781a016,lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1@7984d48b
-class Generated0(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$test11$1$$anonfun$10,CONST_1: lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1,CONST_2: lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1,CONST_3: lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1) extends (Int=>Int){
+// constants: <function1>,lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1@30aa97ad,lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1@17ad57e8,<function0>,lancet.interpreter.TestInterpreter5$Decompiler@1df606a7,lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1@64c74811
+class Generated0(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$test11$1$$anonfun$10,CONST_1: lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1,CONST_2: lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1,CONST_3: lancet.interpreter.TestInterpreter5$$anonfun$test11$1,CONST_4: lancet.interpreter.TestInterpreter5#Decompiler,CONST_5: lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
 type char = Char
@@ -11,97 +11,247 @@ def apply(ARG: Int): Int = { object BODY {
   val x1 = x0.asInstanceOf[Int]
   ;{
     val PHI_3_5 = 0 // LUBC(PHI_3_5:Int,0:Int)
-    BLOCK_2(PHI_3_5,x0,x1)
+    val x146 = unsafe.getDouble(CONST_5,16L)
+    val LUB_CONST_5__value = x146 // XXX LUBC(Some(LUB_CONST_5__value),None)
+    val x147 = unsafe.getObject(CONST_5,40L)
+    val LUB_CONST_5__right = x147 // XXX LUBC(Some(LUB_CONST_5__right),None)
+    val x148 = unsafe.getObject(CONST_5,32L)
+    val LUB_CONST_5__left = x148 // XXX LUBC(Some(LUB_CONST_5__left),None)
+    val x149 = unsafe.getDouble(CONST_1,16L)
+    val LUB_CONST_1__value = x149 // XXX LUBC(Some(LUB_CONST_1__value),None)
+    val x150 = unsafe.getDouble(CONST_2,16L)
+    val LUB_CONST_2__value = x150 // XXX LUBC(Some(LUB_CONST_2__value),None)
+    val x151 = unsafe.getObject(CONST_2,40L)
+    val LUB_CONST_2__right = x151 // XXX LUBC(Some(LUB_CONST_2__right),None)
+    val x152 = unsafe.getObject(CONST_2,32L)
+    val LUB_CONST_2__left = x152 // XXX LUBC(Some(LUB_CONST_2__left),None)
+    BLOCK_2(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,x0,x1)
   }
-  def BLOCK_2(PHI_3_5:Int,x0:Int,x1:Int): Unit = {
-    val x9 = 10 <= PHI_3_5
-    if (x9) {
+  def BLOCK_2(LUB_CONST_1__value:Double,LUB_CONST_2__left:Object,LUB_CONST_2__right:Object,LUB_CONST_2__value:Double,LUB_CONST_5__left:Object,LUB_CONST_5__right:Object,LUB_CONST_5__value:Double,PHI_3_5:Int,x0:Int,x1:Int): Unit = {
+    val x97 = 10 <= PHI_3_5
+    if (x97) {
       (RES = 9) // return to root
     } else {
-      val x10 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$left$1"))
-      unsafe.putObject(x10,16L, CONST_1)
-      val x11 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$right$1"))
-      unsafe.putObject(x11,16L, CONST_1)
-      val x12 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$key$1"))
-      unsafe.putObject(x12,16L, CONST_1)
-      val x13 = 5 != PHI_3_5
-      if (x13) {
-        val x15 = 5 <= PHI_3_5
-        if (x15) {
-          val x22 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$left$1"))
-          unsafe.putObject(x22,16L, CONST_3)
-          val x23 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$right$1"))
-          unsafe.putObject(x23,16L, CONST_3)
-          val x24 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$key$1"))
-          unsafe.putObject(x24,16L, CONST_3)
-          val x25 = 7 != PHI_3_5
-          if (x25) {
-            val x27 = 7 <= PHI_3_5
-            if (x27) {
-              val PHI_5_8 = -1.0d // LUBC(PHI_5_8:Double,-1.0d:Double)
-              BLOCK_208(PHI_3_5,PHI_5_8,x0,x1,x10,x11,x12,x13,x15,x22,x23,x24,x25,x9)
+      val x98 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$left$1"))
+      unsafe.putObject(x98,16L, CONST_1)
+      val x99 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$right$1"))
+      unsafe.putObject(x99,16L, CONST_1)
+      val x100 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$key$1"))
+      unsafe.putObject(x100,16L, CONST_1)
+      val x101 = 5 != PHI_3_5
+      if (x101) {
+        val x103 = 5 <= PHI_3_5
+        if (x103) {
+          val x112 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$left$1"))
+          unsafe.putObject(x112,16L, CONST_5)
+          val x113 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$right$1"))
+          unsafe.putObject(x113,16L, CONST_5)
+          val x114 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$key$1"))
+          unsafe.putObject(x114,16L, CONST_5)
+          val x115 = 7 != PHI_3_5
+          if (x115) {
+            val x117 = 7 <= PHI_3_5
+            if (x117) {
+              val x119 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1"))
+              unsafe.putObject(x119,48L, CONST_3)
+              unsafe.putObject(x119,56L, CONST_4)
+              unsafe.putInt(x119,24L, 0)
+              unsafe.putDouble(x119,16L, 0.0d)
+              unsafe.putObject(x119,32L, null)
+              unsafe.putObject(x119,40L, null)
+              unsafe.putInt(x119,24L, PHI_3_5)
+              unsafe.putDouble(x119,16L, 1.0d)
+              unsafe.putObject(CONST_5,40L, x119)
+              ;{
+                val PHI_5_10 = null.asInstanceOf[Object] // LUBC(PHI_5_10,null)
+                val PHI_5_11 = x119 // LUBC(PHI_5_11:Object,x119:Object)
+                val LUB_CONST_5__right = x119 // Alias(Some(LUB_CONST_5__right),Some(x119))
+                BLOCK_316(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,PHI_5_10,PHI_5_11,x0,x1,x100,x101,x103,x112,x113,x114,x115,x97,x98,x99)
+              }
             } else {
-              val PHI_5_8 = -1.0d // LUBC(PHI_5_8:Double,-1.0d:Double)
-              BLOCK_208(PHI_3_5,PHI_5_8,x0,x1,x10,x11,x12,x13,x15,x22,x23,x24,x25,x9)
+              val x118 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1"))
+              unsafe.putObject(x118,48L, CONST_3)
+              unsafe.putObject(x118,56L, CONST_4)
+              unsafe.putInt(x118,24L, 0)
+              unsafe.putDouble(x118,16L, 0.0d)
+              unsafe.putObject(x118,32L, null)
+              unsafe.putObject(x118,40L, null)
+              unsafe.putInt(x118,24L, PHI_3_5)
+              unsafe.putDouble(x118,16L, 1.0d)
+              unsafe.putObject(CONST_5,32L, x118)
+              ;{
+                val PHI_5_10 = x118 // LUBC(PHI_5_10:Object,x118:Object)
+                val PHI_5_11 = null.asInstanceOf[Object] // LUBC(PHI_5_11,null)
+                val LUB_CONST_5__left = x118 // Alias(Some(LUB_CONST_5__left),Some(x118))
+                BLOCK_316(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,PHI_5_10,PHI_5_11,x0,x1,x100,x101,x103,x112,x113,x114,x115,x97,x98,x99)
+              }
             }
           } else {
-            val x26 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$value$1"))
-            unsafe.putObject(x26,16L, CONST_3)
+            val x116 = 1.0d + LUB_CONST_5__value
+            unsafe.putDouble(CONST_5,16L, x116)
             ;{
-              val PHI_5_8 = 7.0d // LUBC(PHI_5_8:Double,7.0d:Double)
-              BLOCK_208(PHI_3_5,PHI_5_8,x0,x1,x10,x11,x12,x13,x15,x22,x23,x24,x25,x9)
+              val PHI_5_10 = null.asInstanceOf[Object] // LUBC(PHI_5_10,null)
+              val PHI_5_11 = null.asInstanceOf[Object] // LUBC(PHI_5_11,null)
+              val LUB_CONST_5__value = x116 // Alias(Some(LUB_CONST_5__value),Some(x116))
+              BLOCK_316(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,PHI_5_10,PHI_5_11,x0,x1,x100,x101,x103,x112,x113,x114,x115,x97,x98,x99)
             }
           }
-          def BLOCK_208(PHI_3_5:Int,PHI_5_8:Double,x0:Int,x1:Int,x10:Object,x11:Object,x12:Object,x13:Boolean,x15:Boolean,x22:Object,x23:Object,x24:Object,x25:Boolean,x9:Boolean): Unit = {
-            val PHI_4_8 = PHI_5_8 // LUBC(PHI_4_8:Double,PHI_5_8:Double)
-            BLOCK_94(PHI_3_5,PHI_4_8,x0,x1,x10,x11,x12,x13,x9)
+          def BLOCK_316(LUB_CONST_1__value:Double,LUB_CONST_2__left:Object,LUB_CONST_2__right:Object,LUB_CONST_2__value:Double,LUB_CONST_5__left:Object,LUB_CONST_5__right:Object,LUB_CONST_5__value:Double,PHI_3_5:Int,PHI_5_10:Object,PHI_5_11:Object,x0:Int,x1:Int,x100:Object,x101:Boolean,x103:Boolean,x112:Object,x113:Object,x114:Object,x115:Boolean,x97:Boolean,x98:Object,x99:Object): Unit = {
+            BLOCK_107(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,x0,x1,x100,x101,x97,x98,x99)
           }
         } else {
-          val x16 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$left$1"))
-          unsafe.putObject(x16,16L, CONST_2)
-          val x17 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$right$1"))
-          unsafe.putObject(x17,16L, CONST_2)
-          val x18 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$key$1"))
-          unsafe.putObject(x18,16L, CONST_2)
-          val x19 = 2 != PHI_3_5
-          if (x19) {
-            val x21 = 2 <= PHI_3_5
-            if (x21) {
-              val PHI_5_8 = -1.0d // LUBC(PHI_5_8:Double,-1.0d:Double)
-              BLOCK_92(PHI_3_5,PHI_5_8,x0,x1,x10,x11,x12,x13,x15,x16,x17,x18,x19,x9)
+          val x104 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$left$1"))
+          unsafe.putObject(x104,16L, CONST_2)
+          val x105 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$right$1"))
+          unsafe.putObject(x105,16L, CONST_2)
+          val x106 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$key$1"))
+          unsafe.putObject(x106,16L, CONST_2)
+          val x107 = 2 != PHI_3_5
+          if (x107) {
+            val x109 = 2 <= PHI_3_5
+            if (x109) {
+              val x111 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1"))
+              unsafe.putObject(x111,48L, CONST_3)
+              unsafe.putObject(x111,56L, CONST_4)
+              unsafe.putInt(x111,24L, 0)
+              unsafe.putDouble(x111,16L, 0.0d)
+              unsafe.putObject(x111,32L, null)
+              unsafe.putObject(x111,40L, null)
+              unsafe.putInt(x111,24L, PHI_3_5)
+              unsafe.putDouble(x111,16L, 1.0d)
+              unsafe.putObject(CONST_2,40L, x111)
+              ;{
+                val PHI_5_10 = null.asInstanceOf[Object] // LUBC(PHI_5_10,null)
+                val PHI_5_11 = x111 // LUBC(PHI_5_11:Object,x111:Object)
+                val LUB_CONST_2__right = x111 // Alias(Some(LUB_CONST_2__right),Some(x111))
+                BLOCK_105(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,PHI_5_10,PHI_5_11,x0,x1,x100,x101,x103,x104,x105,x106,x107,x97,x98,x99)
+              }
             } else {
-              val PHI_5_8 = -1.0d // LUBC(PHI_5_8:Double,-1.0d:Double)
-              BLOCK_92(PHI_3_5,PHI_5_8,x0,x1,x10,x11,x12,x13,x15,x16,x17,x18,x19,x9)
+              val x110 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1"))
+              unsafe.putObject(x110,48L, CONST_3)
+              unsafe.putObject(x110,56L, CONST_4)
+              unsafe.putInt(x110,24L, 0)
+              unsafe.putDouble(x110,16L, 0.0d)
+              unsafe.putObject(x110,32L, null)
+              unsafe.putObject(x110,40L, null)
+              unsafe.putInt(x110,24L, PHI_3_5)
+              unsafe.putDouble(x110,16L, 1.0d)
+              unsafe.putObject(CONST_2,32L, x110)
+              ;{
+                val PHI_5_10 = x110 // LUBC(PHI_5_10:Object,x110:Object)
+                val PHI_5_11 = null.asInstanceOf[Object] // LUBC(PHI_5_11,null)
+                val LUB_CONST_2__left = x110 // Alias(Some(LUB_CONST_2__left),Some(x110))
+                BLOCK_105(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,PHI_5_10,PHI_5_11,x0,x1,x100,x101,x103,x104,x105,x106,x107,x97,x98,x99)
+              }
             }
           } else {
-            val x20 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$value$1"))
-            unsafe.putObject(x20,16L, CONST_2)
+            val x108 = 1.0d + LUB_CONST_2__value
+            unsafe.putDouble(CONST_2,16L, x108)
             ;{
-              val PHI_5_8 = 2.0d // LUBC(PHI_5_8:Double,2.0d:Double)
-              BLOCK_92(PHI_3_5,PHI_5_8,x0,x1,x10,x11,x12,x13,x15,x16,x17,x18,x19,x9)
+              val PHI_5_10 = null.asInstanceOf[Object] // LUBC(PHI_5_10,null)
+              val PHI_5_11 = null.asInstanceOf[Object] // LUBC(PHI_5_11,null)
+              val LUB_CONST_2__value = x108 // Alias(Some(LUB_CONST_2__value),Some(x108))
+              BLOCK_105(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,PHI_5_10,PHI_5_11,x0,x1,x100,x101,x103,x104,x105,x106,x107,x97,x98,x99)
             }
           }
-          def BLOCK_92(PHI_3_5:Int,PHI_5_8:Double,x0:Int,x1:Int,x10:Object,x11:Object,x12:Object,x13:Boolean,x15:Boolean,x16:Object,x17:Object,x18:Object,x19:Boolean,x9:Boolean): Unit = {
-            val PHI_4_8 = PHI_5_8 // LUBC(PHI_4_8:Double,PHI_5_8:Double)
-            BLOCK_94(PHI_3_5,PHI_4_8,x0,x1,x10,x11,x12,x13,x9)
+          def BLOCK_105(LUB_CONST_1__value:Double,LUB_CONST_2__left:Object,LUB_CONST_2__right:Object,LUB_CONST_2__value:Double,LUB_CONST_5__left:Object,LUB_CONST_5__right:Object,LUB_CONST_5__value:Double,PHI_3_5:Int,PHI_5_10:Object,PHI_5_11:Object,x0:Int,x1:Int,x100:Object,x101:Boolean,x103:Boolean,x104:Object,x105:Object,x106:Object,x107:Boolean,x97:Boolean,x98:Object,x99:Object): Unit = {
+            BLOCK_107(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,x0,x1,x100,x101,x97,x98,x99)
           }
         }
       } else {
-        val x14 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$value$1"))
-        unsafe.putObject(x14,16L, CONST_1)
+        val x102 = 1.0d + LUB_CONST_1__value
+        unsafe.putDouble(CONST_1,16L, x102)
         ;{
-          val PHI_4_8 = 5.0d // LUBC(PHI_4_8:Double,5.0d:Double)
-          BLOCK_94(PHI_3_5,PHI_4_8,x0,x1,x10,x11,x12,x13,x9)
+          val LUB_CONST_1__value = x102 // Alias(Some(LUB_CONST_1__value),Some(x102))
+          BLOCK_107(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,x0,x1,x100,x101,x97,x98,x99)
         }
       }
-      def BLOCK_94(PHI_3_5:Int,PHI_4_8:Double,x0:Int,x1:Int,x10:Object,x11:Object,x12:Object,x13:Boolean,x9:Boolean): Unit = {
-        val x28 = unsafe.allocateInstance(Class.forName("java.lang.Double"))
-        unsafe.putDouble(x28,16L, PHI_4_8)
-        println(x28)
-        val x29 = 1 + PHI_3_5
-        ;{
-          val PHI_3_5 = x29 // LUBC(PHI_3_5:Int,x29:Int)
-          BLOCK_2(PHI_3_5,x0,x1)
+      def BLOCK_107(LUB_CONST_1__value:Double,LUB_CONST_2__left:Object,LUB_CONST_2__right:Object,LUB_CONST_2__value:Double,LUB_CONST_5__left:Object,LUB_CONST_5__right:Object,LUB_CONST_5__value:Double,PHI_3_5:Int,x0:Int,x1:Int,x100:Object,x101:Boolean,x97:Boolean,x98:Object,x99:Object): Unit = {
+        val x120 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$left$1"))
+        unsafe.putObject(x120,16L, CONST_1)
+        val x121 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$right$1"))
+        unsafe.putObject(x121,16L, CONST_1)
+        val x122 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$key$1"))
+        unsafe.putObject(x122,16L, CONST_1)
+        /* cse: WrappedArray(PrimNotEqual(5,PHI_3_5)) = x101*/
+        if (x101) {
+          val x124 = 5 <= PHI_3_5
+          if (x124) {
+            val x131 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$left$1"))
+            unsafe.putObject(x131,16L, CONST_5)
+            val x132 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$right$1"))
+            unsafe.putObject(x132,16L, CONST_5)
+            val x133 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$key$1"))
+            unsafe.putObject(x133,16L, CONST_5)
+            val x134 = 7 != PHI_3_5
+            if (x134) {
+              val x136 = 7 <= PHI_3_5
+              if (x136) {
+                val PHI_5_8 = -1.0d // LUBC(PHI_5_8:Double,-1.0d:Double)
+                BLOCK_418(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,PHI_5_8,x0,x1,x100,x101,x120,x121,x122,x124,x131,x132,x133,x134,x97,x98,x99)
+              } else {
+                val PHI_5_8 = -1.0d // LUBC(PHI_5_8:Double,-1.0d:Double)
+                BLOCK_418(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,PHI_5_8,x0,x1,x100,x101,x120,x121,x122,x124,x131,x132,x133,x134,x97,x98,x99)
+              }
+            } else {
+              val x135 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$value$1"))
+              unsafe.putObject(x135,16L, CONST_5)
+              ;{
+                val PHI_5_8 = 7.0d // LUBC(PHI_5_8:Double,7.0d:Double)
+                BLOCK_418(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,PHI_5_8,x0,x1,x100,x101,x120,x121,x122,x124,x131,x132,x133,x134,x97,x98,x99)
+              }
+            }
+            def BLOCK_418(LUB_CONST_1__value:Double,LUB_CONST_2__left:Object,LUB_CONST_2__right:Object,LUB_CONST_2__value:Double,LUB_CONST_5__left:Object,LUB_CONST_5__right:Object,LUB_CONST_5__value:Double,PHI_3_5:Int,PHI_5_8:Double,x0:Int,x1:Int,x100:Object,x101:Boolean,x120:Object,x121:Object,x122:Object,x124:Boolean,x131:Object,x132:Object,x133:Object,x134:Boolean,x97:Boolean,x98:Object,x99:Object): Unit = {
+              val PHI_4_8 = PHI_5_8 // LUBC(PHI_4_8:Double,PHI_5_8:Double)
+              BLOCK_199(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,PHI_4_8,x0,x1,x100,x101,x120,x121,x122,x97,x98,x99)
+            }
+          } else {
+            val x125 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$left$1"))
+            unsafe.putObject(x125,16L, CONST_2)
+            val x126 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$right$1"))
+            unsafe.putObject(x126,16L, CONST_2)
+            val x127 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$key$1"))
+            unsafe.putObject(x127,16L, CONST_2)
+            val x128 = 2 != PHI_3_5
+            if (x128) {
+              val x130 = 2 <= PHI_3_5
+              if (x130) {
+                val PHI_5_8 = -1.0d // LUBC(PHI_5_8:Double,-1.0d:Double)
+                BLOCK_197(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,PHI_5_8,x0,x1,x100,x101,x120,x121,x122,x124,x125,x126,x127,x128,x97,x98,x99)
+              } else {
+                val PHI_5_8 = -1.0d // LUBC(PHI_5_8:Double,-1.0d:Double)
+                BLOCK_197(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,PHI_5_8,x0,x1,x100,x101,x120,x121,x122,x124,x125,x126,x127,x128,x97,x98,x99)
+              }
+            } else {
+              val x129 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$value$1"))
+              unsafe.putObject(x129,16L, CONST_2)
+              ;{
+                val PHI_5_8 = 2.0d // LUBC(PHI_5_8:Double,2.0d:Double)
+                BLOCK_197(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,PHI_5_8,x0,x1,x100,x101,x120,x121,x122,x124,x125,x126,x127,x128,x97,x98,x99)
+              }
+            }
+            def BLOCK_197(LUB_CONST_1__value:Double,LUB_CONST_2__left:Object,LUB_CONST_2__right:Object,LUB_CONST_2__value:Double,LUB_CONST_5__left:Object,LUB_CONST_5__right:Object,LUB_CONST_5__value:Double,PHI_3_5:Int,PHI_5_8:Double,x0:Int,x1:Int,x100:Object,x101:Boolean,x120:Object,x121:Object,x122:Object,x124:Boolean,x125:Object,x126:Object,x127:Object,x128:Boolean,x97:Boolean,x98:Object,x99:Object): Unit = {
+              val PHI_4_8 = PHI_5_8 // LUBC(PHI_4_8:Double,PHI_5_8:Double)
+              BLOCK_199(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,PHI_4_8,x0,x1,x100,x101,x120,x121,x122,x97,x98,x99)
+            }
+          }
+        } else {
+          val x123 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1$$anonfun$value$1"))
+          unsafe.putObject(x123,16L, CONST_1)
+          ;{
+            val PHI_4_8 = 5.0d // LUBC(PHI_4_8:Double,5.0d:Double)
+            BLOCK_199(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,PHI_4_8,x0,x1,x100,x101,x120,x121,x122,x97,x98,x99)
+          }
+        }
+        def BLOCK_199(LUB_CONST_1__value:Double,LUB_CONST_2__left:Object,LUB_CONST_2__right:Object,LUB_CONST_2__value:Double,LUB_CONST_5__left:Object,LUB_CONST_5__right:Object,LUB_CONST_5__value:Double,PHI_3_5:Int,PHI_4_8:Double,x0:Int,x1:Int,x100:Object,x101:Boolean,x120:Object,x121:Object,x122:Object,x97:Boolean,x98:Object,x99:Object): Unit = {
+          val x137 = unsafe.allocateInstance(Class.forName("java.lang.Double"))
+          unsafe.putDouble(x137,16L, PHI_4_8)
+          println(x137)
+          val x138 = 1 + PHI_3_5
+          ;{
+            val PHI_3_5 = x138 // LUBC(PHI_3_5:Int,x138:Int)
+            BLOCK_2(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,x0,x1)
+          }
         }
       }
     }
