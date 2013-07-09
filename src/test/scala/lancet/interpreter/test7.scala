@@ -147,6 +147,7 @@ class TestInterpreter7 extends FileDiffSuite {
     initialize()
     emitUniqueOpt = true
     emitRecursive = true
+    emitCheckCast = false
     debugBlockKeys = false
     debugReadWrite = false
     debugMethods = false
