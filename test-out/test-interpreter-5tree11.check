@@ -1,4 +1,4 @@
-// constants: <function1>,lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1@30aa97ad,lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1@17ad57e8,<function0>,lancet.interpreter.TestInterpreter5$Decompiler@1df606a7,lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1@64c74811
+// constants: <function1>,lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1@37a3733a,lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1@15dbc995,<function0>,lancet.interpreter.TestInterpreter5$Decompiler@7a0eb6d3,lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1@3cc79f14
 class Generated0(CONST_0: lancet.interpreter.TestInterpreter5$$anonfun$test11$1$$anonfun$10,CONST_1: lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1,CONST_2: lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1,CONST_3: lancet.interpreter.TestInterpreter5$$anonfun$test11$1,CONST_4: lancet.interpreter.TestInterpreter5#Decompiler,CONST_5: lancet.interpreter.TestInterpreter5$$anonfun$test11$1$Tree$1) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -11,20 +11,20 @@ def apply(ARG: Int): Int = { object BODY {
   val x1 = x0.asInstanceOf[Int]
   ;{
     val PHI_3_5 = 0 // LUBC(PHI_3_5:Int,0:Int)
-    val x146 = unsafe.getDouble(CONST_5,16L)
-    val LUB_CONST_5__value = x146 // XXX LUBC(Some(LUB_CONST_5__value),None)
-    val x147 = unsafe.getObject(CONST_5,40L)
-    val LUB_CONST_5__right = x147 // XXX LUBC(Some(LUB_CONST_5__right),None)
-    val x148 = unsafe.getObject(CONST_5,32L)
-    val LUB_CONST_5__left = x148 // XXX LUBC(Some(LUB_CONST_5__left),None)
-    val x149 = unsafe.getDouble(CONST_1,16L)
-    val LUB_CONST_1__value = x149 // XXX LUBC(Some(LUB_CONST_1__value),None)
-    val x150 = unsafe.getDouble(CONST_2,16L)
-    val LUB_CONST_2__value = x150 // XXX LUBC(Some(LUB_CONST_2__value),None)
-    val x151 = unsafe.getObject(CONST_2,40L)
-    val LUB_CONST_2__right = x151 // XXX LUBC(Some(LUB_CONST_2__right),None)
-    val x152 = unsafe.getObject(CONST_2,32L)
-    val LUB_CONST_2__left = x152 // XXX LUBC(Some(LUB_CONST_2__left),None)
+    val x146 = unsafe.getDouble(CONST_1,16L)
+    val LUB_CONST_1__value = x146 // XXX LUBC(Some(LUB_CONST_1__value),None)
+    val x147 = unsafe.getDouble(CONST_2,16L)
+    val LUB_CONST_2__value = x147 // XXX LUBC(Some(LUB_CONST_2__value),None)
+    val x148 = unsafe.getObject(CONST_2,40L)
+    val LUB_CONST_2__right = x148 // XXX LUBC(Some(LUB_CONST_2__right),None)
+    val x149 = unsafe.getObject(CONST_2,32L)
+    val LUB_CONST_2__left = x149 // XXX LUBC(Some(LUB_CONST_2__left),None)
+    val x150 = unsafe.getDouble(CONST_5,16L)
+    val LUB_CONST_5__value = x150 // XXX LUBC(Some(LUB_CONST_5__value),None)
+    val x151 = unsafe.getObject(CONST_5,40L)
+    val LUB_CONST_5__right = x151 // XXX LUBC(Some(LUB_CONST_5__right),None)
+    val x152 = unsafe.getObject(CONST_5,32L)
+    val LUB_CONST_5__left = x152 // XXX LUBC(Some(LUB_CONST_5__left),None)
     BLOCK_2(LUB_CONST_1__value,LUB_CONST_2__left,LUB_CONST_2__right,LUB_CONST_2__value,LUB_CONST_5__left,LUB_CONST_5__right,LUB_CONST_5__value,PHI_3_5,x0,x1)
   }
   def BLOCK_2(LUB_CONST_1__value:Double,LUB_CONST_2__left:Object,LUB_CONST_2__right:Object,LUB_CONST_2__value:Double,LUB_CONST_5__left:Object,LUB_CONST_5__right:Object,LUB_CONST_5__value:Double,PHI_3_5:Int,x0:Int,x1:Int): Unit = {
