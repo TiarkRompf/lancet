@@ -194,8 +194,13 @@ class Runtime_TIR(metaProvider: MetaAccessProvider) extends Runtime {
 
     }
 
+    def getTypName(s: String): String = s match {
+        case "int" => "Int"
+        case _ => s
+    }
+
     def typeIsInstance(typ: ResolvedJavaType, value: Rep[Object]): Rep[Boolean] = {
-        reflect[Boolean](""+value+".isInstanceOf["+typ.toJava().getName+"]")
+        reflect[Boolean](""+value+".isInstanceOf["+getTypName(typ.toJava().getName)+"]")
     }
 
     def monitorEnter(value: Rep[Object]): Unit = {
@@ -213,15 +218,15 @@ class Runtime_TIR(metaProvider: MetaAccessProvider) extends Runtime {
     }
 
     def newArray(typ: ResolvedJavaType, size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
-        reflect[Object]("new Array["+typ.toJava().getName+"]("+size+")");
+        reflect[Object]("new Array["+getTypName(typ.toJava().getName)+"]("+size+")");
     }
 
     def newArray(typ: Class[_], size: Rep[Int]): Rep[Object] = { // throws InstantiationException {
-        reflect[Object]("new Array["+typ.getName+"]("+size+")");
+        reflect[Object]("new Array["+getTypName(typ.getName)+"]("+size+")");
     }
 
     def newMultiArray(typ: ResolvedJavaType, dimensions: Array[Rep[Int]]): Rep[Object] = { // throws InstantiationException {
-        reflect[Object]("new Array["+typ.toJava().getName+"]("+dimensions.mkString(",")+")");
+        reflect[Object]("new Array["+getTypName(typ.toJava().getName)+"]("+dimensions.mkString(",")+")");
     }
 
     def getFieldObject(base: Rep[Object], field: ResolvedJavaField): Rep[AnyRef] = {
