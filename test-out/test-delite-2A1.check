@@ -21,8 +21,8 @@ ppl.delite.runtime.profiler.PerformanceTimer.print("app")
 *******************************************/
 package generated.scala
 import generated.scala.LancetUtils._
-class Generated(pConst_0:Object,pConst_1:Object,pConst_2:Object,pConst_3:Object,pConst_4:Object) extends ((Array[java.lang.String])=>(Unit)) {
-def apply(x0:Array[java.lang.String]): Unit = {
+class Generated(pConst_0:Object,pConst_1:Object,pConst_2:Object,pConst_3:Object,pConst_4:Object) extends ((Array[java.lang.String])=>(Any)) {
+def apply(x0:Array[java.lang.String]): Any = {
 def x80_block = { 
 val x1 = new Array[Double](1000);
 var x2: Array[Double] = x1
