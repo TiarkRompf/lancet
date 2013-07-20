@@ -42,8 +42,8 @@ class TestInterpreter3LMS extends BaseTestInterpreter3 {
   }
 }
 
-class TestInterpreter3LMSB extends BaseTestInterpreter3 {
-  val prefix = "test-out/test-interpreter-3-LMSB-"
+class TestInterpreter3LMSD extends BaseTestInterpreter3 {
+  val prefix = "test-out/test-interpreter-3-LMSD-"
   def newCompiler = new BytecodeInterpreter_LMS_Opt with Compiler {
     initialize()
     override def defaultHandler = execMethodPostDom

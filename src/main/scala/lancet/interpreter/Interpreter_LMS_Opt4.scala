@@ -302,7 +302,8 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
     val graalBlockMapping = new mutable.HashMap[ResolvedJavaMethod, BciBlockMapping] // map key to store
 
-    def getGraalBlocks(method: ResolvedJavaMethod, bci: Int) = if (bci == 0) graalBlockMapping.getOrElseUpdate(method, {
+    def getGraalBlocks(method: ResolvedJavaMethod, bci: Int) = 
+    if (bci == 0) graalBlockMapping.getOrElseUpdate(method, {
       val map = new BciBlockMapping(method);
       map.build();
       map
@@ -682,6 +683,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
     }
 
 
+    var xxx = 100
 
     def execMethodPostDom(mframe: InterpreterFrame): Rep[Unit] = {
       import scala.collection.JavaConversions._
@@ -691,18 +693,18 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       val graalBlocks = getGraalBlocks(method, 0)
       def getGraalBlock(fr: InterpreterFrame) = graalBlocks.blocks.find(_.startBci == fr.getBCI).get
 
-      //emitString("/*")
+      emitString("/*")
       val postDom = postDominators(graalBlocks.blocks.toList)
       for (b <- graalBlocks.blocks) {
-          //emitString(b + " succ [" + postDom(b).map("B"+_.blockID).mkString(",") + "]")
+          emitString(b + " succ [" + postDom(b).map("B"+_.blockID).mkString(",") + "]")
       }
-      //emitString("*/")
+      emitString("*/")
 
       val saveHandler = handler
       val saveDepth = getContext(mframe).length
 
       //if (debugMethods) 
-      //emitString("// << " + method)
+      emitString("// << " + method)
 
       val (mkey,mkeyid) = contextKeyId(mframe)
 
@@ -716,17 +718,24 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       var curBlock = -1
 
+      // post dominators of current block
+      var frontier: Set[BciBlockMapping.Block] = Set.empty 
+
       // *** entry point: main control transfer handler ***
       handler = { blockFrame =>
         val d = getContext(blockFrame).length
+
+        xxx -= 1
+        //println(xxx)
+        if (xxx == 0) assert(false,"budget!")
 
         if (d > saveDepth) execMethodPostDom(blockFrame)
         else if (d < saveDepth) { 
           handler = saveHandler
 
-          //emitString("// >> " + method)
+          emitString("// >> " + method)
 
-          exec(blockFrame)
+          exec(blockFrame) // pass on to next handler
 
           // TODO: is it safe to return here or should we do it
           // on exit from this method?
@@ -751,13 +760,23 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
         // TODO: do not exec past control flow joins (only up to post-dom frontier)
 
-        //println(">> "+contextKey(blockFrame))
-        //val b = getGraalBlock(blockFrame)
-        //println(b + " --> " + postDom(b))
+        val safeFrontier = frontier
 
-        execFoReal(blockFrame);
-
-        //println("<< "+contextKey(blockFrame))
+        try {
+          emitString("{// >> gotoBlock "+contextKey(blockFrame))
+          val b = getGraalBlock(blockFrame)
+          if (frontier.contains(b)) {
+            emitString("// bail out: " + b + " in frontier " + frontier)
+          } else {
+            frontier = postDom(b)
+            emitString("// " + b + " --> " + frontier)
+            execFoReal(blockFrame);
+          }
+        } finally {
+          emitString("}// << gotoBlock "+contextKey(blockFrame))
+          emitString("// remaining frontier: " + frontier) 
+          frontier = safeFrontier
+        }
 
         /*val s = getState(blockFrame)
         val b = getGraalBlock(blockFrame)
