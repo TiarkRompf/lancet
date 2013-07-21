@@ -704,7 +704,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       val saveDepth = getContext(mframe).length
 
       //if (debugMethods) 
-      emitString("// << " + method)
+      //emitString("// << " + method)
 
       val (mkey,mkeyid) = contextKeyId(mframe)
 
@@ -720,6 +720,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       // post dominators of current block
       var frontier: Set[BciBlockMapping.Block] = Set.empty 
+      var frontierX: BciBlockMapping.Block = null
 
       // *** entry point: main control transfer handler ***
       handler = { blockFrame =>
@@ -733,7 +734,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
         else if (d < saveDepth) { 
           handler = saveHandler
 
-          emitString("// >> " + method)
+          //emitString("// >> " + method)
 
           exec(blockFrame) // pass on to next handler
 
@@ -760,22 +761,24 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
         // TODO: do not exec past control flow joins (only up to post-dom frontier)
 
-        val safeFrontier = frontier
-
-        try {
-          emitString("{// >> gotoBlock "+contextKey(blockFrame))
-          val b = getGraalBlock(blockFrame)
-          if (frontier.contains(b)) {
-            emitString("// bail out: " + b + " in frontier " + frontier)
-          } else {
-            frontier = postDom(b)
+        val b = getGraalBlock(blockFrame)
+        if (frontierX == b) {
+          emitString("// bail out: " + b + " in frontier " + frontier)
+        } else {
+          val safeFrontier = frontier
+          val safeFrontierX = frontierX
+          try {
+            emitString("{// >> gotoBlock "+contextKey(blockFrame))
+            frontier = postDom(b) - b // TODO: loops?
+            frontierX = frontier.toList.sortBy(_.blockId).head
             emitString("// " + b + " --> " + frontier)
             execFoReal(blockFrame);
+          } finally {
+            emitString("}// << gotoBlock "+contextKey(blockFrame))
+            emitString("// continue: " + frontierX) 
+            frontier = safeFrontier
+            frontierX = safeFrontierX
           }
-        } finally {
-          emitString("}// << gotoBlock "+contextKey(blockFrame))
-          emitString("// remaining frontier: " + frontier) 
-          frontier = safeFrontier
         }
 
         /*val s = getState(blockFrame)
