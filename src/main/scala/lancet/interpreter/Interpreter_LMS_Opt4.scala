@@ -721,6 +721,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       // post dominators of current block
       var frontier: Set[BciBlockMapping.Block] = Set.empty 
       var frontierX: BciBlockMapping.Block = null
+      var frontierL: BciBlockMapping.Block = null
       var frontierY: InterpreterFrame = null
 
       // *** entry point: main control transfer handler ***
@@ -737,7 +738,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
           //emitString("// >> " + method)
 
-          exec(blockFrame) // pass on to next handler
+          exec(blockFrame) // pass on to next handler one level up
         } else {
           gotoBlock(blockFrame)
         }
@@ -749,17 +750,28 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
         //        mframe.getMethod + "\n" +
         //        blockFrame.getMethod})
 
-        // TODO: do not exec past control flow joins (only up to post-dom frontier)
+        // do not exec past control flow joins (only up to post-dom frontier)
 
         val b = getGraalBlock(blockFrame)
-        if (frontierX == b) {
+        if (b.isLoopHeader) {
+          println("XXX loop header " + b + "/" + postDom(b))
+        } else {
+          println("YYY normal      " + b + "/" + postDom(b))
+        }
+        if (frontierX == b) { // hit next block
           //emitString("// bail out: " + b + " in frontier " + frontier)
           if (frontierY != null)
             emitString("// XXX ignore previous lub data " + frontierY)
           frontierY = blockFrame // TODO: lub and backpatch
+        } else if (frontierL == b) {  // hit loop back-edge
+          //emitString("// bail out: " + b + " in frontier " + frontier)
+          //if (frontierY != null)
+            emitString("loop() // XXX continue")
+          //frontierY = blockFrame // TODO: lub and backpatch
         } else {
           val safeFrontier = frontier
           val safeFrontierX = frontierX
+          val safeFrontierL = frontierL
           try {
             //emitString("{// >> gotoBlock "+contextKey(blockFrame))
             frontier = postDom(b) - b // TODO: loops?
@@ -767,15 +779,26 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
               frontierX = frontier.toList.sortBy(_.blockID).head  // TODO: right order?
             else
               frontierX = null
+            println("frontierX = "+frontierX)
+            if (b.isLoopHeader) {
+              emitString("loop(); def loop() {")
+              frontierL = b
+            } else
+              frontierL = null
+            println("frontierL = "+frontierL)
             emitString("// " + b + " --> " + frontier)
             execFoReal(blockFrame);
           } finally {
+            if (b.isLoopHeader) {
+              emitString("}")
+            }
             //emitString("}// << gotoBlock "+contextKey(blockFrame))
             //emitString("// continue: " + frontierX + "/" + frontierY) 
             val next = frontierY
             frontierY = null // lub?
             frontier = safeFrontier
             frontierX = safeFrontierX
+            frontierL = safeFrontierL
             if (next != null) gotoBlock(next)
           }
         }
