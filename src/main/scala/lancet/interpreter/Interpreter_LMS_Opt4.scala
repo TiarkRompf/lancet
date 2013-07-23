@@ -809,6 +809,12 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       liftConst(())
     }
 
+    // need to override if we're using the post-dom version: since we're not using
+    // CPS, we need to compute joins after the conditional
+    override def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] = {
+      super.if_(x)(y)(z)
+    }
+
 
 
 
