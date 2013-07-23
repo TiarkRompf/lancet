@@ -794,17 +794,28 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
             }
             //emitString("}// << gotoBlock "+contextKey(blockFrame))
             //emitString("// continue: " + frontierX + "/" + frontierY) 
-            val next = frontierY
-            frontierY = null // lub?
             frontier = safeFrontier
             frontierX = safeFrontierX
             frontierL = safeFrontierL
-            if (next != null) gotoBlock(next)
+            if (frontierY != null) {
+              val next = frontierY
+              frontierY = null // lub?
+              gotoBlock(next)
+            }
           }
         }
       }
 
       gotoBlock(mframe)
+
+      /* why doesn't this work?? 
+
+      while (frontierY != null) {
+        val next = frontierY
+        frontierY = null // lub?
+        gotoBlock(next)
+      }
+      */
 
       liftConst(())
     }
