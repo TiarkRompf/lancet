@@ -263,5 +263,5 @@ permissive licensing may be available in the future.
 
 ### Disclaimers
 
-One of more authors are employees of Oracle Labs.
+One or more authors are employees of Oracle Labs.
 The views expressed here are their own and do not necessarily reflect the views of Oracle. 
