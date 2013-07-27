@@ -260,3 +260,8 @@ Get commit `7839:838293a77af7`.
 
 For the time being, Project Lancet is licensed under the [AGPLv3](http://www.gnu.org/licenses/agpl.html). More
 permissive licensing may be available in the future.
+
+### Disclaimers
+
+One or more authors are employees of Oracle Labs.
+The views expressed here are their own and do not necessarily reflect the views of Oracle. 
