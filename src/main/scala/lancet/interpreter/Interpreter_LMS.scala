@@ -62,6 +62,8 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
     var curResId = 0
     def RES = "RES" + curResId    
 
+    def globalVars: scala.collection.immutable.Set[String] // defined in Opt4 (bit of a hack)
+
     // ---------- high level execution loop ----------
 
     /* see test4
@@ -140,18 +142,9 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       val arg = fresh[A]
       val y = reify {
 
-        emitString("import sun.misc.Unsafe")
-        emitString("val unsafe = { val fld = classOf[Unsafe].getDeclaredField(\"theUnsafe\"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }")
-        emitString("type char = Char")
-        emitString("def WARN = assert(false, \"WARN\")")
-        emitString("def ERROR = assert(false, \"ERROR\")")
-
-        emitString("  var "+RES+" = null.asInstanceOf["+mbStr+"]")
-
-
         f(arg)
 
-        DynExp[B](RES)
+        ()
       }
 
       val codegen = createCodegen()
@@ -168,16 +161,39 @@ trait BytecodeInterpreter_LMS extends InterpreterUniverse_LMS with BytecodeInter
       val cst = VConstantPool
     
       val stream = new StringWriter
-      codegen.withStream(new PrintWriter(stream)) {
+      val out = new PrintWriter(stream)
+      codegen.withStream(out) {
 //        codegen.emitSource(List(arg),y,"Generated",codegen.stream)
 // XX OLD LMS
-        codegen.emitSource({ x:Rep[A] => reflect[Unit]("val "+quote(arg)+" = ",x); reflect[B](y) },"Generated",codegen.stream)
+        codegen.emitSource({ x:Rep[A] => 
+          emitString("import sun.misc.Unsafe")
+          emitString("val unsafe = { val fld = classOf[Unsafe].getDeclaredField(\"theUnsafe\"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }")
+          emitString("type char = Char")
+          emitString("def WARN = assert(false, \"WARN\")")
+          emitString("def ERROR = assert(false, \"ERROR\")")
+
+          emitString("  var "+RES+" = null.asInstanceOf["+mbStr+"]")
+
+          // emit var declarations 
+          // TODO: print only used ones, not all of globalDefs!!
+          // TODO: should be part of codegen, really
+
+          for (TP(sym,rhs) <- globalDefs) {
+            if (sym.tp != manifest[Unit])
+              emitString("var "+quote(sym)+": "+(sym.tp)+" = null.asInstanceOf["+(sym.tp)+"]")
+          }
+          globalVars.foreach(emitString)
+
+
+          reflect[Unit]("val "+quote(arg)+" = ",x)
+          reflect[Unit](y) 
+          DynExp[B](RES)
+        },"Generated",codegen.stream)
       }
 
 
       val source = stream.toString 
       printIndented(source)(Console.println)
-
 
       if (debugGlobalDefs) globalDefs.foreach(println)
 
