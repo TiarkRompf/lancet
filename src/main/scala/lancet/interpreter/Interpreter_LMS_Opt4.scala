@@ -93,7 +93,8 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
     object FrameLattice {
       type Elem = InterpreterFrame
 
-      def getFields(x: Elem) = getAllArgs(x).filter(_ != null)
+      def getFields(x: Elem) = if (x == null) Nil else 
+        getAllArgs(x).filter(_ != null)
 
       def lub(x0: Elem, y0: Elem): Elem = { // modifies y!
         if (x0 == null) return null
@@ -135,9 +136,14 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
         var condY = condX
         val go = reify { // start with 'this' state, make it match all others
           states foreach { case (f,s,e,c) => 
-            val (mkey, mkeyId) = contextKeyId(f)
-            curBlockId = mkeyId
-            FrameLattice.lub(f, frameY) 
+            if (f ne null) {
+              val (mkey, mkeyId) = contextKeyId(f)
+              curBlockId = mkeyId
+              FrameLattice.lub(f, frameY) 
+            } else {
+              if (curBlockId == -1)
+                curBlockId = 0
+            }
             storeY = StoreLattice.lub(s,storeY)
             exprY = ExprLattice.lub(e,exprY)
             condY = CondLattice.lub(c,condY)
@@ -151,8 +157,10 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
       }
       val (_,f02,s02,e02,c02) = gos(0)
       for ((_,fx,sx,ex,cx) <- gos) { // sanity check
-        assert(contextKey(f02) == contextKey(fx))
-        assert(getAllArgs(f02) == getAllArgs(fx))
+        if (fx ne null) {
+          assert(contextKey(f02) == contextKey(fx))
+          assert(getAllArgs(f02) == getAllArgs(fx))
+        } else assert(f02 eq null)
         assert(s02 == sx, s02+"!=="+sx)
         assert(e02 == ex, e02+"!=="+ex)
       }
@@ -693,12 +701,12 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       val graalBlocks = getGraalBlocks(method, 0)
       def getGraalBlock(fr: InterpreterFrame) = graalBlocks.blocks.find(_.startBci == fr.getBCI).get
 
-      emitString("/*")
       val postDom = postDominators(graalBlocks.blocks.toList)
+      /*emitString("/*")
       for (b <- graalBlocks.blocks) {
           emitString(b + " succ [" + postDom(b).map("B"+_.blockID).mkString(",") + "]")
       }
-      emitString("*/")
+      emitString("*/")*/
 
       val saveHandler = handler
       val saveDepth = getContext(mframe).length
@@ -755,18 +763,30 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
         val b = getGraalBlock(blockFrame)
         if (b.isLoopHeader) {
           println("XXX loop header " + b + "/" + postDom(b))
+          emitString("// XXX loop header " + b + "/" + postDom(b))
+          emitString("// new: " + getFields(getState(blockFrame)))
         } else {
           println("YYY normal      " + b + "/" + postDom(b))
         }
         if (frontierX == b) { // hit next block
-          //emitString("// bail out: " + b + " in frontier " + frontier)
-          if (frontierY != null)
+          // if we're in a loop this means we're exiting
+          if (frontierL != null) {
+            emitString("// break")
+            emitString("continue = false")
+          }
+          if (frontierY != null) {
             emitString("// XXX ignore previous lub data " + frontierY)
+            emitString("// old: " + getFields(getState(frontierY)))
+            emitString("// new: " + getFields(getState(blockFrame)))
+            //emitString("// old: " + getState(frontierY))
+            //emitString("// new: " + getState(blockFrame))
+          }
           frontierY = blockFrame // TODO: lub and backpatch
         } else if (frontierL == b) {  // hit loop back-edge
           //emitString("// bail out: " + b + " in frontier " + frontier)
           //if (frontierY != null)
-            emitString("loop() // XXX continue")
+            //emitString("loop() // XXX continue")
+          emitString("// continue")
           //frontierY = blockFrame // TODO: lub and backpatch
         } else {
           val safeFrontier = frontier
@@ -781,13 +801,20 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
               frontierX = null
             println("frontierX = "+frontierX)
             if (b.isLoopHeader) {
-              emitString("loop(); def loop() {")
+              emitString("var continue = true")
+              emitString("while (continue) {")
               frontierL = b
             } else
               frontierL = null
             println("frontierL = "+frontierL)
-            emitString("// " + b + " --> " + frontier)
+            //emitString("// " + b + " --> " + frontier)
             execFoReal(blockFrame);
+            if (b.isLoopHeader) {
+              emitString("// after loop body")
+              emitString("// frontierY: " + frontierY)
+              if (frontierY != null)
+                emitString("// new: " + getFields(getState(frontierY)))
+            }
           } finally {
             if (b.isLoopHeader) {
               emitString("}")
@@ -823,14 +850,43 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
     // need to override if we're using the post-dom version: since we're not using
     // CPS, we need to compute joins after the conditional
     override def if_[T:TypeRep](x: Rep[Boolean])(y: =>Rep[T])(z: =>Rep[T]): Rep[T] = {
-      super.if_(x) {
-        y
+      val st0 = getState0
+      var stTrue = st0
+      var stFalse = st0
+
+    def genVarDef(v: Rep[Any]): Rep[Unit] = reflect[Unit]("var v"+quote(v)+" = null.asInstanceOf["+v.typ+"]")
+    def genVarWrite(v: Rep[Any]): Rep[Unit] = reflect[Unit]("v"+quote(v)+" = "+quote(v))
+    def genVarRead(v: Rep[Any]): Rep[Unit] = reflect[Unit]("val "+quote(v)+" = v"+quote(v))
+
+      genGoto("PRE")
+
+      val r = super.if_(x) {
+        setState0(st0)
+        val ry = y
         // get state A, placeholder JA
+        stTrue = getState0
+        genGoto("TRUE")
+        ry
       } {
-        z
+        setState0(st0)
+        val rz = z
         // get state B, placeholder JB
+        stFalse = getState0
+        genGoto("FALSE")
+        rz
       }
       // set state lub(A,B), backpatch JA/JB
+      val (st1,List(blockTrue,blockFalse)) = allLubs(List(stTrue,stFalse))
+
+      val fields = getFields(st1)
+      genGotoDef("PRE", reify(fields.foreach(genVarDef)))
+
+      genGotoDef("TRUE",blockTrue)
+      genGotoDef("FALSE",blockFalse)
+
+      fields.foreach(genVarRead)
+      setState0(st1)
+      r
     }
 
 
