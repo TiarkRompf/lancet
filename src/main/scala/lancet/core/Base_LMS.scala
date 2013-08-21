@@ -129,14 +129,18 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
     stream.print("}")
   }}
 
-  override def emitValDef(sym: Sym[Any], rhs: String) = 
+
+  override def emitValDef(sym: Sym[Any], rhs: String) = {
     /*if (sym.tp == manifest[Unit]) stream.println(rhs+";")
-    else*/ super.emitValDef(sym,rhs+";")
+    else*/ //super.emitValDef(sym,rhs+";")
+    stream.println(quote(sym)+" = "+rhs+";")
+  }
 
   override def emitNode(sym: Sym[Any], rhs: Def[Any]) = rhs match {
     case Unstructured(xs) =>
         if (sym.tp != manifest[Unit])
-          stream.print("val "+quote(sym)+": "+remap(sym.tp)+" = ")
+          stream.print(quote(sym)+" = ")
+          //stream.print("val "+quote(sym)+": "+remap(sym.tp)+" = ")
         xs foreach {
           case b: Block[a] => 
             emitBlockFull(b)
@@ -460,6 +464,9 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
 
   def curBlockId: Int // defined in Opt4 (bit of a hack)
 
+  def reflectValDef(lhs: String, tpe: TypeRep[Any])(rhs: Any*) // defined in Opt4 (also a bit of a hack)
+
+
   object StoreLattice {
     type Elem = Map[String, Val[Any]]
     def bottom: Elem = Map.empty
@@ -508,9 +515,9 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
             case (Some(a),Some(b)) if a == b => a
             case (Some(Static(a)),Some(bb@Static(b))) => 
               val str = "LUB_b"+curBlockId+"_"+p+"_"+k
-              if (quote(b) != str)
-                emitString("val "+str+" = " + quote(b) + "; // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
               val tp = bb.typ.asInstanceOf[TypeRep[Any]]
+              if (quote(b) != str)
+                reflectValDef(str,tp)(b,"; // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
               val res = Dyn[Any](str)(tp)
               res.keyid = curBlockId
               res
@@ -522,9 +529,10 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
                 //if (b.get.toString != str && !y0.contains(b.get.toString)) {
                 //  emitString("// PROBLEMO "+b.get+" not in "+y0)
                 //}
+                val tp = b.get.typ.asInstanceOf[TypeRep[Any]]
                 if (quote(b.get) != str)
-                  emitString("val "+str+" = " + quote(b.get) + "; // Alias(" + a + "," + b + ")") // FIXME: kill in expr!
-                b.get.typ.asInstanceOf[TypeRep[Any]]
+                  reflectValDef(str,tp)(b.get,"; // Alias(" + a + "," + b + ")") // FIXME: kill in expr!
+                tp
               } else {                
                 val tp = a.get.typ.asInstanceOf[TypeRep[Any]]
                 // we don't have the b value in the store
@@ -539,9 +547,9 @@ trait Base_LMS_Opt extends Base_LMS_Abs with Base_LMS {
                   // FIXME: can't use emitString, need to maintain sym ref
 
                   if (quote(fld) != str)
-                    emitString("val "+str+" = " + quote(fld) + "; // XXX LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
+                    reflectValDef(str,tp)(fld, "; // XXX LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
                 } else 
-                  emitString("val "+str+" = " + quote(a.get) + "; // AAA Alias(" + a + "," + b + ")") // FIXME: kill in expr!
+                  reflectValDef(str,tp)(a.get, "; // AAA Alias(" + a + "," + b + ")") // FIXME: kill in expr!
                 tp
               }
               val res = Dyn[Any](str)(tp)

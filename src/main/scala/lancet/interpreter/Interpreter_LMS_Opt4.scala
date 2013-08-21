@@ -77,13 +77,16 @@ trait AbstractInterpreter_LMS extends AbstractInterpreterIntf_LMS with BytecodeI
     var curBlockId = -1 // FIXME: make less ad-hoc
 
 
+    def reflectValDef(lhs: String, tpe: TypeRep[Any])(rhs: Any*)
+
+
     // TODO: externalize
     // side-effect: may create definition phi_str = b
     def phi(str: String, a: Rep[Object], b: Rep[Object]) = if (a == b) b else {
       if (b == null)
-        reflect[Unit]("val "+str+" = null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
+        reflectValDef(str,a.typ)("null.asInstanceOf["+a.typ+"] // LUBC(" + a + "," + b + ")") // FIXME: kill in expr!
       else if (quote(b) != str)
-        reflect[Unit]("val "+str+" = ",b," // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
+        reflectValDef(str,a.typ)(b," // LUBC(" + (if(a==null)a else a + ":"+a.typ)+"," + b + ":"+b.typ+ ")") // FIXME: kill in expr!
       val tp = (if (b == null) a.typ else b.typ).asInstanceOf[TypeRep[AnyRef]] // NPE? should take a.typ in general?
       val res = Dyn[AnyRef](str)(tp)
       res.keyid = curBlockId
@@ -257,6 +260,18 @@ class BytecodeInterpreter_LMS_Opt4 extends AbstractInterpreter_LMS with Bytecode
 
     def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]) =
       reflect(BlockDef(key,keyid,fields,code))
+
+    var globalVars: Set[String] = Set.empty
+
+    def reflectValDef(lhs: String, tpe: TypeRep[Any])(rhs: Any*) = {
+      // variant 1: generate val def in place
+      //val params = Seq("val ",lhs," = ") ++ rhs
+      //reflect[Unit](params:_*)
+      // variant 2: generate var def up front and then assignments in place
+      globalVars += "var "+lhs+" = null.asInstanceOf["+tpe+"]"
+      val params = Seq(lhs," = ") ++ rhs
+      reflect[Unit](params:_*)
+    }
 
 
     def genVarDef(v: Rep[Any]): Rep[Unit] = reflect[Unit]("var v"+quote(v)+" = null.asInstanceOf["+v.typ+"]")
@@ -854,11 +869,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       var stTrue = st0
       var stFalse = st0
 
-    def genVarDef(v: Rep[Any]): Rep[Unit] = reflect[Unit]("var v"+quote(v)+" = null.asInstanceOf["+v.typ+"]")
-    def genVarWrite(v: Rep[Any]): Rep[Unit] = reflect[Unit]("v"+quote(v)+" = "+quote(v))
-    def genVarRead(v: Rep[Any]): Rep[Unit] = reflect[Unit]("val "+quote(v)+" = v"+quote(v))
-
-      genGoto("PRE")
+      //genGoto("PRE")
 
       val r = super.if_(x) {
         setState0(st0)
@@ -879,12 +890,12 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       val (st1,List(blockTrue,blockFalse)) = allLubs(List(stTrue,stFalse))
 
       val fields = getFields(st1)
-      genGotoDef("PRE", reify(fields.foreach(genVarDef)))
+      //genGotoDef("PRE", reify(fields.foreach(genVarDef)))
 
       genGotoDef("TRUE",blockTrue)
       genGotoDef("FALSE",blockFalse)
 
-      fields.foreach(genVarRead)
+      //fields.foreach(genVarRead)
       setState0(st1)
       r
     }
