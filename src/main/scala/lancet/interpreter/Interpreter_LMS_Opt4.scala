@@ -747,6 +747,8 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       var frontierL: BciBlockMapping.Block = null
       var frontierY: InterpreterFrame = null
 
+      var returns: List[InterpreterFrame] = Nil
+
       // *** entry point: main control transfer handler ***
       handler = { blockFrame =>
         val d = getContext(blockFrame).length
@@ -757,11 +759,12 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
         if (d > saveDepth) execMethodPostDom(blockFrame)
         else if (d < saveDepth) { 
-          handler = saveHandler
+          //handler = saveHandler
 
           //emitString("// >> " + method)
 
-          exec(blockFrame) // pass on to next handler one level up
+          //exec(blockFrame) // pass on to next handler one level up
+          returns = blockFrame :: returns
         } else {
           gotoBlock(blockFrame)
         }
@@ -865,6 +868,11 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       }
 
       gotoBlock(mframe)
+
+      handler = saveHandler
+
+      if (returns.nonEmpty) // TODO: lub
+        exec(returns.head)
 
       /* why doesn't this work?? 
 
