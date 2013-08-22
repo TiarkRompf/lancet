@@ -778,8 +778,8 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
         val b = getGraalBlock(blockFrame)
         if (b.isLoopHeader) {
           println("XXX loop header " + b + "/" + postDom(b))
-          emitString("// XXX loop header " + b + "/" + postDom(b))
-          emitString("// new: " + getFields(getState(blockFrame)))
+          //emitString("// XXX loop header " + b + "/" + postDom(b))
+          //emitString("// new: " + getFields(getState(blockFrame)))
         } else {
           println("YYY normal      " + b + "/" + postDom(b))
         }
@@ -829,6 +829,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
               emitString("// frontierY: " + frontierY)
               if (frontierY != null)
                 emitString("// new: " + getFields(getState(frontierY)))
+              // XXX why is frontierY null here ??
             }
           } finally {
             if (b.isLoopHeader) {
