@@ -802,7 +802,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
           }
           emitString("// set frontierY " + contextKey(blockFrame))
           emitString("// for frontierX " + frontierX)
-          frontierY = blockFrame // TODO: lub and backpatch
+          frontierY = freshFrameSimple(blockFrame) // TODO: lub and backpatch
         } else if (frontierL == b) {  // hit loop back-edge
           //emitString("// bail out: " + b + " in frontier " + frontier)
           //if (frontierY != null)
@@ -854,7 +854,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
             frontierL = safeFrontierL
             if (frontierY != null) {
               val next = frontierY
-              frontierY = null // lub?
+              frontierY = safeFrontierY // lub?
               println(nextb)
               println(contextKey(next))
               emitString("//discard  "+contextKey(safeFrontierY))
@@ -867,21 +867,23 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
         }
       }
 
-      gotoBlock(mframe)
+      //gotoBlock(mframe)
 
-      handler = saveHandler
+      frontierY = mframe
 
-      if (returns.nonEmpty) // TODO: lub
-        exec(returns.head)
-
-      /* why doesn't this work?? 
+      /* why doesn't this work?? */
 
       while (frontierY != null) {
         val next = frontierY
         frontierY = null // lub?
         gotoBlock(next)
       }
-      */
+
+      // all done, now return
+      handler = saveHandler
+
+      if (returns.nonEmpty) // TODO: lub
+        exec(returns.head)
 
       liftConst(())
     }
