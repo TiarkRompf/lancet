@@ -832,12 +832,11 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
               frontierL = null
             println("frontierL = "+frontierL)
             //emitString("// " + b + " --> " + frontier)
-            emitString("// " + contextKey(frontierY))
             execFoReal(blockFrame);
             if (b.isLoopHeader) {
               emitString("// after loop body")
               emitString("// frontierX: " + frontierX)
-              emitString("// frontierY: " + frontierY)
+              emitString("// frontierY: " + contextKey(frontierY))
               if (frontierY != null)
                 emitString("// new: " + getFields(getState(frontierY)))
               // XXX why is frontierY null here ??
@@ -857,7 +856,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
               frontierY = safeFrontierY // lub?
               println(nextb)
               println(contextKey(next))
-              emitString("//discard  "+contextKey(safeFrontierY))
+              emitString("//reset to "+contextKey(safeFrontierY))
               emitString("//continue "+contextKey(next))
               gotoBlock(next)
             } else {
