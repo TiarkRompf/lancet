@@ -745,7 +745,8 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
       var frontier: Set[BciBlockMapping.Block] = Set.empty 
       var frontierX: BciBlockMapping.Block = null
       var frontierL: BciBlockMapping.Block = null
-      var frontierY: InterpreterFrame = null
+      var frontierXstate: IState = null.asInstanceOf[IState]
+      var frontierLstate: IState = null.asInstanceOf[IState]
 
       var returns: List[InterpreterFrame] = Nil
 
@@ -785,48 +786,69 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
             emitString("// break")
             emitString("continue = false")
           }
-          if (frontierY != null) {
-            emitString("// XXX ignore previous lub data "+frontierX) 
-            emitString("// old: " + contextKey(frontierY))
-            emitString("// new: " + contextKey(blockFrame))
-            emitString("// old: " + getFields(getState(frontierY)))
-            emitString("// new: " + getFields(getState(blockFrame)))
+          if (frontierXstate != null) {
+            //emitString("// XXX ignore previous lub data "+frontierX) 
+            //emitString("// old: " + contextKey(frontierY))
+            //emitString("// new: " + contextKey(blockFrame))
+            //emitString("// old: " + getFields(getState(frontierY)))
+            //emitString("// new: " + getFields(getState(blockFrame)))
             //emitString("// old: " + getState(frontierY))
           }
-          emitString("// set frontierY " + contextKey(blockFrame))
-          emitString("// for frontierX " + frontierX)
-          frontierY = freshFrameSimple(blockFrame) // TODO: lub and backpatch
+          //emitString("// set frontierY " + contextKey(blockFrame))
+          //emitString("// for frontierX " + frontierX)
+          frontierXstate = getState(blockFrame) // TODO: lub and backpatch
         } else if (frontierL == b) {  // hit loop back-edge
           //emitString("// bail out: " + b + " in frontier " + frontier)
           //if (frontierY != null)
             //emitString("loop() // XXX continue")
           emitString("// continue")
-          //frontierY = blockFrame // TODO: lub and backpatch
+          frontierLstate = getState(blockFrame) // TODO: lub and backpatch
         } else {
           val safeFrontier = frontier
           val safeFrontierX = frontierX
           val safeFrontierL = frontierL
-          val safeFrontierY = frontierY
+          val safeFrontierXstate = frontierXstate
+          val safeFrontierLstate = frontierLstate
           try {
             frontier = postDom(b) - b
             frontierX = if (frontier.isEmpty) null else
               frontier.toList.sortBy(_.blockID).head  // TODO: right order?
-            frontierY = null
             frontierL = null
+            frontierXstate = null.asInstanceOf[IState]
+            frontierLstate = null.asInstanceOf[IState]
 
             if (b.isLoopHeader) {
               frontierL = b
+
+              var stateBefore = getState(blockFrame)
+              var body = reify(execFoReal(blockFrame))
+              var stateBeforeNext = frontierLstate
+
+              val (st1,List(blockBefore,blockBeforeNext)) = allLubs(List(stateBefore,stateBeforeNext))
+
+              if (statesDiffer(st1,stateBefore)) { // TODO: may need multiple iterations
+                emitString("// states differ!!")
+                reflect[Unit](blockBefore)
+                withState(st1) { bframe2 =>
+                  stateBefore = st1
+                  body = reify(execFoReal(bframe2))
+                  stateBeforeNext = frontierLstate
+                }
+              }
+
+
               emitString("// frontierX: "+frontierX)
               emitString("var continue = true")
               emitString("while (continue) {")
-              val stateZero = getState(blockFrame)
-              execFoReal(blockFrame);
-              emitString("// after loop body")
-              emitString("// frontierX: " + frontierX)
-              emitString("// frontierY: " + contextKey(frontierY))
 
-              emitString("// old: " + stateZero)
-              emitString("// new: " + getState(frontierY))
+              reflect[Unit](body)
+
+              //emitString("// after loop body")
+              //emitString("// frontierX: " + frontierX)
+              //emitString("// frontierY: " + contextKey(frontierXstate))
+
+              //emitString("// old: " + stateBefore)
+              //emitString("// new: " + stateAfter)
               emitString("}")
 
             } else {
@@ -837,24 +859,23 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
             frontier = safeFrontier
             frontierX = safeFrontierX
             frontierL = safeFrontierL
-            if (frontierY != null) {
-              val next = frontierY
-              frontierY = safeFrontierY // lub?
-              emitString("//reset to "+contextKey(safeFrontierY))
-              emitString("//continue "+contextKey(next))
-              gotoBlock(next)
-            } else {
-              frontierY = safeFrontierY
+            val next = frontierXstate
+            frontierXstate = safeFrontierXstate // lub?
+            frontierLstate = safeFrontierLstate // lub?
+            if (next != null) {
+              //emitString("//reset to "+contextKey(getFrame(safeFrontierXstate)))
+              //emitString("//continue "+contextKey(getFrame(next)))
+              gotoBlock(getFrame(next))
             }
           }
         }
       }
 
-      frontierY = mframe
-      while (frontierY != null) {
-        val next = frontierY
-        frontierY = null // lub?
-        gotoBlock(next)
+      frontierXstate = getState(mframe)
+      while (frontierXstate != null) {
+        val next = frontierXstate
+        frontierXstate = null.asInstanceOf[IState] // lub?
+        gotoBlock(getFrame(next))
       }
 
       // all done, now return
