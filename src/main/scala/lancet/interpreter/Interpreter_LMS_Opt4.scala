@@ -772,20 +772,13 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
       def gotoBlock(blockFrame: InterpreterFrame): Rep[Unit] = {
         // make sure we're still in the same method! --> catch external calls that don't reset handler
-        //assert(mframe.getMethod == blockFrame.getMethod, {"\n" +
-        //        mframe.getMethod + "\n" +
-        //        blockFrame.getMethod})
+        assert(mframe.getMethod == blockFrame.getMethod, {"\n" +
+                mframe.getMethod + "\n" +
+                blockFrame.getMethod})
 
         // do not exec past control flow joins (only up to post-dom frontier)
 
         val b = getGraalBlock(blockFrame)
-        if (b.isLoopHeader) {
-          println("XXX loop header " + b + "/" + postDom(b))
-          //emitString("// XXX loop header " + b + "/" + postDom(b))
-          //emitString("// new: " + getFields(getState(blockFrame)))
-        } else {
-          println("YYY normal      " + b + "/" + postDom(b))
-        }
         if (frontierX == b) { // hit next block
           // if we're in a loop this means we're exiting
           if (frontierL != null) {
@@ -815,38 +808,31 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
           val safeFrontierL = frontierL
           val safeFrontierY = frontierY
           try {
-            //emitString("{// >> gotoBlock "+contextKey(blockFrame))
-            frontier = postDom(b) - b // TODO: loops?
-            if (frontier.nonEmpty)
-              frontierX = frontier.toList.sortBy(_.blockID).head  // TODO: right order?
-            else
-              frontierX = null
-            println("frontierX = "+frontierX)
+            frontier = postDom(b) - b
+            frontierX = if (frontier.isEmpty) null else
+              frontier.toList.sortBy(_.blockID).head  // TODO: right order?
             frontierY = null
+            frontierL = null
+
             if (b.isLoopHeader) {
+              frontierL = b
               emitString("// frontierX: "+frontierX)
               emitString("var continue = true")
               emitString("while (continue) {")
-              frontierL = b
-            } else
-              frontierL = null
-            println("frontierL = "+frontierL)
-            //emitString("// " + b + " --> " + frontier)
-            execFoReal(blockFrame);
-            if (b.isLoopHeader) {
+              val stateZero = getState(blockFrame)
+              execFoReal(blockFrame);
               emitString("// after loop body")
               emitString("// frontierX: " + frontierX)
               emitString("// frontierY: " + contextKey(frontierY))
-              if (frontierY != null)
-                emitString("// new: " + getFields(getState(frontierY)))
-              // XXX why is frontierY null here ??
+
+              emitString("// old: " + stateZero)
+              emitString("// new: " + getState(frontierY))
+              emitString("}")
+
+            } else {
+              execFoReal(blockFrame);
             }
           } finally {
-            if (b.isLoopHeader) {
-              emitString("}")
-            }
-            //emitString("}// << gotoBlock "+contextKey(blockFrame))
-            //emitString("// continue: " + frontierX + "/" + frontierY) 
             val nextb = frontierX
             frontier = safeFrontier
             frontierX = safeFrontierX
@@ -854,8 +840,6 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
             if (frontierY != null) {
               val next = frontierY
               frontierY = safeFrontierY // lub?
-              println(nextb)
-              println(contextKey(next))
               emitString("//reset to "+contextKey(safeFrontierY))
               emitString("//continue "+contextKey(next))
               gotoBlock(next)
@@ -866,12 +850,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
         }
       }
 
-      //gotoBlock(mframe)
-
       frontierY = mframe
-
-      /* why doesn't this work?? */
-
       while (frontierY != null) {
         val next = frontierY
         frontierY = null // lub?
