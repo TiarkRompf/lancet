@@ -221,7 +221,7 @@ class TestAnalysis7 extends FileDiffSuite {
     case class Op1(o: OP, x: Exp) extends Exp
     case class Op2(o: OP, x: Exp, y: Exp) extends Exp
     case class Var(x: Ident) extends Exp
-    case class Lam(x: Ident, y: Exp) extends Exp
+    case class Lam(f: Ident, x: Ident, y: Exp) extends Exp
     case class Fix(x: Exp) extends Exp
     case class App(x: Exp, y: Exp) extends Exp
     case class Ifz(x: Exp, y: Exp, z: Exp) extends Exp
@@ -230,17 +230,91 @@ class TestAnalysis7 extends FileDiffSuite {
     type Env = Ident => Val
     type OP = String
 
-    def eval(x: Exp, e: Env): Val = x match {
+    def eval(xx: Exp, e: Env = { x => ??? }): Val = xx match {
       case Lit(x)       => x
       case Op1("!",x)   => !eval(x,e).asInstanceOf[Boolean]
       case Op1("-",x)   => -eval(x,e).asInstanceOf[Int]
-      case Op2("+",x,y) => eval(x,e).asInstanceOf[Int] + eval(x,e).asInstanceOf[Int]
-      case Op2("*",x,y) => eval(x,e).asInstanceOf[Int] * eval(x,e).asInstanceOf[Int]
+      case Op2("+",x,y) => eval(x,e).asInstanceOf[Int] + eval(y,e).asInstanceOf[Int]
+      case Op2("*",x,y) => eval(x,e).asInstanceOf[Int] * eval(y,e).asInstanceOf[Int]
       case Var(x)       => e(x)
-      case Lam(x,y)     => (z: Val) => eval(y, (k:Ident) => if (k == x) z else e(k))
-      case App(x,y)     => eval(x,e).asInstanceOf[Val=>Val](eval(y,e))
+      case Lam(f,x,y)   => (ff: Val, z: Val) => eval(y, (k:Ident) => if (k == x) z else if (k == f) ff else e(k))
+      case App(x,y)     => val f = eval(x,e).asInstanceOf[(Val,Val)=>Val]; f(f,eval(y,e))
+      case Ifz(c,x,y)   => if (eval(c,e).asInstanceOf[Int] == 0) eval(x,e) else eval(y,e)
     }
   }
+
+  object Test2b {
+
+    type Ident = String
+    abstract class Exp
+
+    case class Lit(x: Any) extends Exp
+    case class Op1(o: OP, x: Exp) extends Exp
+    case class Op2(o: OP, x: Exp, y: Exp) extends Exp
+    case class Var(x: Ident) extends Exp
+    case class Lam(f: Ident, x: Ident, y: Exp) extends Exp
+    case class Fix(x: Exp) extends Exp
+    case class App(x: Exp, y: Exp) extends Exp
+    case class Ifz(x: Exp, y: Exp, z: Exp) extends Exp
+
+    //type Val = Any
+    //type Env = Ident => Val
+    type OP = String
+
+    var nVars = 0
+    def fresh[A] = { nVars += 1; "x"+(nVars-1) }
+
+    var nLabels = 0
+    def label[A] = { nLabels += 1; "f"+(nLabels-1) }
+
+    def reflect[A](s: String) = { val x = fresh[A]; println(s"val $x = $s"); Val(x) }
+
+    case class Val(s: String) {
+      def asClosure(ff: Val, x: Val) = reflect(s"$s($ff,$x)")
+      override def toString = s
+    }
+
+    def mkBool(x: Boolean) = Val(x.toString)
+    def mkInt(x: Int) = Val(x.toString)
+
+    def mkFun(f: (Val,Val) => Val): Val = { 
+      val l = label
+      val env = (0 until nVars) map ("x"+_)
+      val ff = Val(fresh)
+      val xx = Val(fresh)
+      println(s"def $l(${env.mkString(",")})($ff,$xx) = {")
+      f(ff,xx)
+      println(s"}")
+      reflect(s"$l(${env.mkString(",")})")
+    }
+
+
+    trait Env {
+      def apply(x:Ident): Val
+    }
+
+    def mkEnv(f: Ident => Val): Env = new Env { def apply(x:Ident) = f(x) }
+
+    def intPlus(x:Val,y:Val) = reflect(s"$x+$y")
+    def intTimes(x:Val,y:Val) = reflect(s"$x*$y")
+
+    def eval(xx: Exp, e: Env = mkEnv { x => ??? }): Val = xx match {
+      case Lit(x:Boolean) => mkBool(x)
+      case Lit(x:Int)   => mkInt(x)
+      //case Op1("!",x)   => mkBool(!eval(x,e).asBool)
+      //case Op1("-",x)   => mkInt(-eval(x,e).asInt)
+      case Op2("+",x,y) => intPlus(eval(x,e), eval(y,e))
+      case Op2("*",x,y) => intTimes(eval(x,e), eval(y,e))
+      case Var(x)       => e(x)
+      case Lam(f,x,y)   => mkFun((ff: Val, z: Val) => eval(y, mkEnv((k:Ident) => if (k == x) z else if (k == f) ff else e(k))))
+      case App(x,y)     => val f = eval(x,e); f.asClosure(f,eval(y,e))
+      case Ifz(c,x,y)   => reflect(s"if (${eval(c,e)} == 0) ${eval(x,e)} else ${eval(y,e)}")
+    }
+  }
+
+
+
+
 
 
   // abstract env and primitives
@@ -415,6 +489,19 @@ class TestAnalysis7 extends FileDiffSuite {
     println(df(new PCF_String {}))
     println("----")
     println(Test1.run(df(new PCF_Env {})))
+  }
+
+  def testB = withOutFileChecked(prefix+"B") {
+    import Test2b._
+
+    def df() = {
+      val fac = Lam("fac","n",
+        Ifz(Var("n"), Lit(1), Op2("*", Var("n"), App(Var("fac"), Op2("+", Var("n"), Lit(-1)))))
+      )
+      App(fac,Lit(4))
+    }
+
+    printcheck(eval(df()),24)
   }
 
 
