@@ -1057,7 +1057,7 @@ class TestAnalysis4 extends FileDiffSuite {
               y1 = if (y0 < 0) y0-1 else y0+1
                  = if (0 < 0) 0-1 else 0+1
                  = 1
-              pick ŷ(i) so that it fits ŷ(0)=y0, ŷ(1)=y1 and extrapolate the rest
+              pick ŷ(i) so that it fits ŷ(0)=y0, ŷ(1)=y1 and extrapolate the rest 
                                                    ^ why 1, really?
 
                 ŷ(i) = if (0 < i) i else 0
@@ -1374,193 +1374,272 @@ class TestAnalysis4 extends FileDiffSuite {
       //store.printBounds
       println("----")
     }
+  }
 
-    // test some integer computations
+  // test some integer computations
 
-    val testProg1 = Block(List(
-      Assign("i", Const(0)),
-      Assign("y", Const(0)),
-      Assign("x", Const(8)),
-      While(Less(Ref("i"),Const(100)), Block(List(
-        Assign("x", Const(7)),
-        Assign("x", Plus(Ref("x"), Const(1))),
-        Assign("y", Plus(Ref("y"), Const(1))),
-        Assign("i", Plus(Ref("i"), Const(1)))
-      )))
-    ))
+  def testA = withOutFileChecked(prefix+"A") {
+    import Test1._
+    Test1.run {
+      Block(List(
+        Assign("i", Const(0)),
+        Assign("y", Const(0)),
+        Assign("x", Const(8)),
+        While(Less(Ref("i"),Const(100)), Block(List(
+          Assign("x", Const(7)),
+          Assign("x", Plus(Ref("x"), Const(1))),
+          Assign("y", Plus(Ref("y"), Const(1))),
+          Assign("i", Plus(Ref("i"), Const(1)))
+        )))
+      ))
+    }
+    
+    Test1.run {
+      Block(List(
+        Assign("x", Const(900)), // input
+        Assign("y", Const(0)),
+        Assign("z", Const(0)),
+        Assign("z2", Const(0)),
+        While(Less(Const(0), Ref("x")), Block(List(
+          Assign("z", Plus(Ref("z"), Ref("x"))),
+          Assign("z2", Plus(Ref("z2"), Plus(Times(Ref("x"),Const(3)), Const(5)))),
+          If(Less(Ref("y"),Const(17)), 
+            Block(List(
+              Assign("y", Plus(Ref("y"), Const(1)))
+            )),
+            Block(Nil)
+          ),
+          Assign("x", Plus(Ref("x"), Const(-1)))
+        ))),
+        Assign("r", Ref("x"))
+      ))
+    }
+  }
 
-    val testProg2 = Block(List(
-      Assign("x", Const(900)), // input
-      Assign("y", Const(0)),
-      Assign("z", Const(0)),
-      Assign("z2", Const(0)),
-      While(Less(Const(0), Ref("x")), Block(List(
-        Assign("z", Plus(Ref("z"), Ref("x"))),
-        Assign("z2", Plus(Ref("z2"), Plus(Times(Ref("x"),Const(3)), Const(5)))),
-        If(Less(Ref("y"),Const(17)), 
-          Block(List(
-            Assign("y", Plus(Ref("y"), Const(1)))
-          )),
-          Block(Nil)
-        ),
-        Assign("x", Plus(Ref("x"), Const(-1)))
-      ))),
-      Assign("r", Ref("x"))
-    ))
+  // test arrays / computed index access
 
-    // test arrays / computed index access
-
-    //   first, some unit tests
-    val testProgUnit1 = Block(List(
-      Assign("x", Const(0)), // "input"
-      Assign("a", New("A")),
-      Put(Ref("a"), Const("field"), Times(Ref("x"),Const(2))),
-      Assign("r", Ref("a"))
-    ))
-
-    val testProgUnit2 = Block(List(
-      Assign("x", Const(0)), // "input"
-      Assign("a", New("A")),
-      Put(Ref("a"), Ref("x"), Times(Ref("x"),Const(2))),
-      Assign("r", Ref("a"))
-    ))
-
-    val testProg1b = Block(List(
-      Assign("x", Const(0)),
-      Assign("a", New("A")),
-      Put(Ref("a"), Const("field"), Const(7)),
-      While(Less(Ref("x"),Const(100)), Block(List(
-        Put(Ref("a"), Const("field"), Const(7)),
-        Assign("x", Plus(Ref("x"), Const(1)))
-      ))),
-      Assign("r", Ref("a"))
-    ))
-
-    //   update array at loop index
-    val testProg1c = Block(List(
-      Assign("x", Const(0)),
-      Assign("y", Const(10)),
-      Assign("a", New("A")), 
-      While(Less(Ref("x"),Const(100)), Block(List(
+  //   first, some unit tests
+  def testA2 = withOutFileChecked(prefix+"A2") {
+    import Test1._
+    Test1.run {
+      Block(List(
+        Assign("x", Const(0)), // "input"
+        Assign("a", New("A")),
+        Put(Ref("a"), Const("field"), Times(Ref("x"),Const(2))),
+        Assign("r", Ref("a"))
+      ))
+    }
+    Test1.run {
+      Block(List(
+        Assign("x", Const(0)), // "input"
+        Assign("a", New("A")),
         Put(Ref("a"), Ref("x"), Times(Ref("x"),Const(2))),
-        Assign("x", Plus(Ref("x"), Const(1))),
-        Assign("y", Plus(Ref("y"), Const(1)))
-      ))),
-      Assign("r", Ref("a"))
-    ))
+        Assign("r", Ref("a"))
+      ))
+    }
+  }
 
-    // test store logic (1): build a linked list
+  def testA3 = withOutFileChecked(prefix+"A3") {
+    import Test1._
+    Test1.run {
+      Block(List(
+        Assign("x", Const(0)),
+        Assign("a", New("A")),
+        Put(Ref("a"), Const("field"), Const(7)),
+        While(Less(Ref("x"),Const(100)), Block(List(
+          Put(Ref("a"), Const("field"), Const(7)),
+          Assign("x", Plus(Ref("x"), Const(1)))
+        ))),
+        Assign("r", Ref("a"))
+      ))
+    }
+  }
 
-    val testProg3 = Block(List(
-      Assign("i", Const(0)),
-      Assign("z", New("A")),
-      Assign("x", Ref("z")),
-      While(Less(Ref("i"),Const(100)), Block(List(
+  //   update array at loop index
+  def testA4 = withOutFileChecked(prefix+"A4") {
+    import Test1._
+    Test1.run {
+      Block(List(
+        Assign("x", Const(0)),
+        Assign("y", Const(10)),
+        Assign("a", New("A")), 
+        While(Less(Ref("x"),Const(100)), Block(List(
+          Put(Ref("a"), Ref("x"), Times(Ref("x"),Const(2))),
+          Assign("x", Plus(Ref("x"), Const(1))),
+          Assign("y", Plus(Ref("y"), Const(1)))
+        ))),
+        Assign("r", Ref("a"))
+      ))
+    }
+  }
+
+  // test store logic (1): build a linked list
+
+  def testB = withOutFileChecked(prefix+"B") {
+    import Test1._
+    Test1.run { // test3
+      Block(List(
+        Assign("i", Const(0)),
+        Assign("z", New("A")),
+        Assign("x", Ref("z")),
+        While(Less(Ref("i"),Const(100)), Block(List(
+          Assign("y", New("B")),
+          Put(Ref("y"), Const("head"), Ref("i")),
+          Put(Ref("y"), Const("tail"), Ref("x")),
+          Assign("x", Ref("y")),
+          Assign("i", Plus(Ref("i"), Const(1)))
+        )))
+      ))
+    }
+
+  // back to simpler tests (compare to test3)
+  // 3 and 4 should be different: alloc within the loop vs before
+  
+    Test1.run { // test4
+      Block(List(
+        Assign("i", Const(0)),
+        Assign("z", New("A")),
+        Assign("x", Ref("z")),
         Assign("y", New("B")),
-        Put(Ref("y"), Const("head"), Ref("i")),
-        Put(Ref("y"), Const("tail"), Ref("x")),
-        Assign("x", Ref("y")),
-        Assign("i", Plus(Ref("i"), Const(1)))
-      )))
-    ))
+        While(Less(Ref("i"),Const(100)), Block(List(
+          Put(Ref("y"), Const("head"), Ref("i")),
+          Put(Ref("y"), Const("tail"), Ref("x")),
+          Assign("x", Ref("y")),
+          Assign("i", Plus(Ref("i"), Const(1)))
+        )))
+      ))
+    }
+
+    Test1.run { // test5
+      Block(List(
+        Assign("i", Const(0)),
+        Assign("z", New("A")),
+        Assign("x", Ref("z")),
+        While(Less(Ref("i"),Const(100)), Block(List(
+          Put(Ref("x"), Const("head"), Ref("i")),
+          Assign("i", Plus(Ref("i"), Const(1)))
+        )))
+      ))
+    }
+  }
 
 /*
-    var i = 0
-    var z = new A
-    var x = z
-    while (i < 100) {
-      var y = new B
-      y.head = i
-      y.tail = x
-      x = y
-      i = i + 1
-    }
+  var i = 0
+  var z = new A
+  var x = z
+  while (i < 100) {
+    var y = new B
+    y.head = i
+    y.tail = x
+    x = y
+    i = i + 1
+  }
 
-    Version 1: Optimistic rewriting, but flat stores. We obtain this code:
+  Version 1: Optimistic rewriting, but flat stores. We obtain this code:
 
-    val x7 = { x8 => 
+  val x7 = { x8 => 
+  if (0 < x8) 
+    x7(x8 + -1) 
+      + ("&y" -> Map("val" -> ("B",(1,x8)))) 
+      + (("B",(1,x8)) -> 
+          x7(x8 + -1)(("B",(1,x8))) 
+          + ("head" -> x7(x8 + -1)("&i")("val"))) 
+      + (("B",(1,x8)) -> 
+          x7(x8 + -1)(("B",(1,x8))) 
+          + ("head" -> x7(x8 + -1)("&i")("val")) 
+          + ("tail" -> x7(x8 + -1)("&x")("val"))) 
+      + ("&x" -> Map("val" -> ("B",(1,x8)))) 
+      + ("&i" -> Map("val" -> x7(x8 + -1)("&i")("val") + 1)) 
+  else 
+    Map("&i" -> Map("val" -> 0), "&z" -> Map("val" -> (A,1)), "&x" -> Map("val" -> (A,1)), "&y" -> Map("val" -> ("B",(1,x8)))) 
+      + (("B",(1,x8)) -> Map("head" -> 0)) 
+      + (("B",(1,x8)) -> Map("head" -> 0, "tail" -> (A,1))) 
+      + ("&x" -> Map("val" -> ("B",(1,x8)))) 
+      + ("&i" -> Map("val" -> 1)) 
+  }
+  x7(fixindex(x8 => x7(x8 + -1)("&i")("val") < 100))
+
+  The store can't be safely split into a Map because (("B",(1,x8))
+  is not a unique value. The idea is to make the store hierarchical: 
+  first address with "B", then (1,x8). Essentially this models
+  allocations inside loops as arrays, although the representation is
+  a little different from objects accessed as first class arrays 
+  (see testProg1c). In comparison, we remove a level of indirection (or
+  should we try to be completely uniform?). Store lookups will need to 
+  become hierarchy aware in general, too. If we do a lookup like store(x99), 
+  x99 could be either a tuple, or a flat address.
+
+  Version 2: Preliminary support for nested stores. We obtain:
+
+  val x7_&x_val = { x8 => ("B",(1,x8)) }
+  val x7_B = { x8 => 
     if (0 < x8) 
-      x7(x8 + -1) 
-        + ("&y" -> Map("val" -> ("B",(1,x8)))) 
-        + (("B",(1,x8)) -> 
-            x7(x8 + -1)(("B",(1,x8))) 
-            + ("head" -> x7(x8 + -1)("&i")("val"))) 
-        + (("B",(1,x8)) -> 
-            x7(x8 + -1)(("B",(1,x8))) 
-            + ("head" -> x7(x8 + -1)("&i")("val")) 
-            + ("tail" -> x7(x8 + -1)("&x")("val"))) 
-        + ("&x" -> Map("val" -> ("B",(1,x8)))) 
-        + ("&i" -> Map("val" -> x7(x8 + -1)("&i")("val") + 1)) 
+      x7_B(x8 + -1) 
+        + ((1,x8) -> 
+            x7_B(x8 + -1)((1,x8)) 
+            + ("head" -> x8 + -1)) 
+        + ((1,x8) -> 
+            x7_B(x8 + -1)((1,x8)) 
+            + ("head" -> x8 + -1) 
+            + ("tail" -> x7_&x_val(x8 + -1)))   <--- why not inlined? (call doesn't see rhs -- still in iteration mode)
     else 
-      Map("&i" -> Map("val" -> 0), "&z" -> Map("val" -> (A,1)), "&x" -> Map("val" -> (A,1)), "&y" -> Map("val" -> ("B",(1,x8)))) 
-        + (("B",(1,x8)) -> Map("head" -> 0)) 
-        + (("B",(1,x8)) -> Map("head" -> 0, "tail" -> (A,1))) 
-        + ("&x" -> Map("val" -> ("B",(1,x8)))) 
-        + ("&i" -> Map("val" -> 1)) 
-    }
-    x7(fixindex(x8 => x7(x8 + -1)("&i")("val") < 100))
-
-    The store can't be safely split into a Map because (("B",(1,x8))
-    is not a unique value. The idea is to make the store hierarchical: 
-    first address with "B", then (1,x8). Essentially this models
-    allocations inside loops as arrays, although the representation is
-    a little different from objects accessed as first class arrays 
-    (see testProg1c). In comparison, we remove a level of indirection (or
-    should we try to be completely uniform?). Store lookups will need to 
-    become hierarchy aware in general, too. If we do a lookup like store(x99), 
-    x99 could be either a tuple, or a flat address.
-
-    Version 2: Preliminary support for nested stores. We obtain:
-
-    val x7_&x_val = { x8 => ("B",(1,x8)) }
-    val x7_B = { x8 => 
-      if (0 < x8) 
-        x7_B(x8 + -1) 
-          + ((1,x8) -> 
-              x7_B(x8 + -1)((1,x8)) 
-              + ("head" -> x8 + -1)) 
-          + ((1,x8) -> 
-              x7_B(x8 + -1)((1,x8)) 
-              + ("head" -> x8 + -1) 
-              + ("tail" -> x7_&x_val(x8 + -1)))   <--- why not inlined? (call doesn't see rhs -- still in iteration mode)
-      else 
-        Map(1 ->
-          Map() 
-          + (x8 -> 
-              "undefined"((1,x8))       <--- accessing "undefined": base case? 
-              + ("head" -> x8 + -1)) 
-          + (x8 -> 
-              "undefined"((1,x8)) 
-              + ("head" -> x8 + -1) 
-              + ("tail" -> (A,1)))) 
-    }
-    
-    Map(
-      "&i" -> Map("val" -> 100), 
-      "B" -> x7_B(100), 
-      "&x" -> Map("val" -> (B,(1,100))), 
-      "&z" -> Map("val" -> (A,1)), 
-      "&y" -> Map("val" -> (B,(1,100))))
+      Map(1 ->
+        Map() 
+        + (x8 -> 
+            "undefined"((1,x8))       <--- accessing "undefined": base case? 
+            + ("head" -> x8 + -1)) 
+        + (x8 -> 
+            "undefined"((1,x8)) 
+            + ("head" -> x8 + -1) 
+            + ("tail" -> (A,1)))) 
+  }
+  
+  Map(
+    "&i" -> Map("val" -> 100), 
+    "B" -> x7_B(100), 
+    "&x" -> Map("val" -> (B,(1,100))), 
+    "&z" -> Map("val" -> (A,1)), 
+    "&y" -> Map("val" -> (B,(1,100))))
 
 
-    Version 3: Tweak it! Speculative loop peeling for tuple addresses 
-    removes x7_&x_val fundef; rewriting on 'update' ops removes dead stores. 
-    
-    val x7_B = { x8 => 
-      if (0 < x8) 
-        x7_B(x8 + -1) 
-          + ((1,x8) -> 
-              x7_B(x8 + -1)((1,x8)) 
-              + ("head" -> x8 + -1) 
-              + ("tail" -> ("B",(1,x8 + -1)))) 
-      else 
-        Map(1 -> 
-          Map() 
-          + (x8 -> 
-              "undefined"((1,x8)) 
-              + ("head" -> x8 + -1) 
-              + ("tail" -> (A,1)))) 
-    }
+  Version 3: Tweak it! Speculative loop peeling for tuple addresses 
+  removes x7_&x_val fundef; rewriting on 'update' ops removes dead stores. 
+  
+  val x7_B = { x8 => 
+    if (0 < x8) 
+      x7_B(x8 + -1) 
+        + ((1,x8) -> 
+            x7_B(x8 + -1)((1,x8)) 
+            + ("head" -> x8 + -1) 
+            + ("tail" -> ("B",(1,x8 + -1)))) 
+    else 
+      Map(1 -> 
+        Map() 
+        + (x8 -> 
+            "undefined"((1,x8)) 
+            + ("head" -> x8 + -1) 
+            + ("tail" -> (A,1)))) 
+  }
+
+  Map(
+    "&i" -> Map("val" -> 100), 
+    "B" -> x7_B(100), 
+    "&x" -> Map("val" -> (B,(1,100))), 
+    "&z" -> Map("val" -> (A,1)), 
+    "&y" -> Map("val" -> (B,(1,100)))
+  )
+
+  Version 4: (XXX tentative; rolled back for the time being)
+  fix 'undefined' access; explicit 0 case in fundef
+
+  val x7_B = { x8 => 
+    if (0 < x8) 
+      x7_B(x8 + -1) 
+        + ((1,x8) -> 
+            x7_B(x8 + -1)((1,x8)) 
+            + ("head" -> x8 + -1) 
+            + ("tail" -> ("B",(1,x8 + -1)))) 
+    else "undefined" }
 
     Map(
       "&i" -> Map("val" -> 100), 
@@ -1570,55 +1649,40 @@ class TestAnalysis4 extends FileDiffSuite {
       "&y" -> Map("val" -> (B,(1,100)))
     )
 
-    Version 4: (XXX tentative; rolled back for the time being)
-    fix 'undefined' access; explicit 0 case in fundef
+    FIXME: base case at index 0 should have 'tail' pointing to (A,1)
+    (question about base index again: value before or after iteration i?)
 
-    val x7_B = { x8 => 
-      if (0 < x8) 
-        x7_B(x8 + -1) 
-          + ((1,x8) -> 
-              x7_B(x8 + -1)((1,x8)) 
-              + ("head" -> x8 + -1) 
-              + ("tail" -> ("B",(1,x8 + -1)))) 
-      else "undefined" }
-
-      Map(
-        "&i" -> Map("val" -> 100), 
-        "B" -> x7_B(100), 
-        "&x" -> Map("val" -> (B,(1,100))), 
-        "&z" -> Map("val" -> (A,1)), 
-        "&y" -> Map("val" -> (B,(1,100)))
-      )
-
-      FIXME: base case at index 0 should have 'tail' pointing to (A,1)
-      (question about base index again: value before or after iteration i?)
-
-      TODO: recursive reference to previous value in 
-        x7_B(x8 + -1)((1,x8)) + ("head" -> ...) + ("tail" -> ...)
-      is not necessary. first, we know that x7_B only ever contains head 
-      and tail fields, which would be overridden here. second, we
-      know that key (1,x8) is undefined at index x8-1.
+    TODO: recursive reference to previous value in 
+      x7_B(x8 + -1)((1,x8)) + ("head" -> ...) + ("tail" -> ...)
+    is not necessary. first, we know that x7_B only ever contains head 
+    and tail fields, which would be overridden here. second, we
+    know that key (1,x8) is undefined at index x8-1.
 
 */
 
-    // test store logic (2): build and traverse a linked list
+  // test store logic (2): build and traverse a linked list
 
-    val testProg3a = Block(List(
-      Assign("i", Const(0)),
-      Assign("z", New("A")),
-      Assign("x", Ref("z")),
-      While(Less(Ref("i"),Const(100)), Block(List(
-        Assign("y", New("B")),
-        Put(Ref("y"), Const("head"), Ref("i")),
-        Put(Ref("y"), Const("tail"), Ref("x")),
-        Assign("x", Ref("y")),
-        Assign("i", Plus(Ref("i"), Const(1)))
-      ))),
-      Assign("s", Const(0)),
-      Assign("i", Get(Ref("x"), Const("head"))),
-      Assign("x", Get(Ref("x"), Const("tail"))),
-      Assign("s", Plus(Ref("s"), Ref("i")))
-    ))
+  def testB1 = withOutFileChecked(prefix+"B1") {
+  import Test1._
+    Test1.run { // test3a
+      Block(List(
+        Assign("i", Const(0)),
+        Assign("z", New("A")),
+        Assign("x", Ref("z")),
+        While(Less(Ref("i"),Const(100)), Block(List(
+          Assign("y", New("B")),
+          Put(Ref("y"), Const("head"), Ref("i")),
+          Put(Ref("y"), Const("tail"), Ref("x")),
+          Assign("x", Ref("y")),
+          Assign("i", Plus(Ref("i"), Const(1)))
+        ))),
+        Assign("s", Const(0)),
+        Assign("i", Get(Ref("x"), Const("head"))),
+        Assign("x", Get(Ref("x"), Const("tail"))),
+        Assign("s", Plus(Ref("s"), Ref("i")))
+      ))
+    }
+  }
 
 /* result:
 
@@ -1651,24 +1715,29 @@ Map(
 */
 
 
-    val testProg3b = Block(List(
-      Assign("i", Const(0)),
-      Assign("z", New("A")),
-      Assign("x", Ref("z")),
-      While(Less(Ref("i"),Const(100)), Block(List(
-        Assign("y", New("B")),
-        Put(Ref("y"), Const("head"), Ref("i")),
-        Put(Ref("y"), Const("tail"), Ref("x")),
-        Assign("x", Ref("y")),
-        Assign("i", Plus(Ref("i"), Const(1)))
-      ))),
-      Assign("s", Const(0)),
-      While(NotEqual(Ref("x"),Ref("z")), Block(List(
-        Assign("i", Get(Ref("x"), Const("head"))),
-        Assign("x", Get(Ref("x"), Const("tail"))),
-        Assign("s", Plus(Ref("s"), Ref("i")))
-      )))
-    ))
+  def testB2 = withOutFileChecked(prefix+"B2") {
+    import Test1._
+    Test1.run { //test3b
+      Block(List(
+        Assign("i", Const(0)),
+        Assign("z", New("A")),
+        Assign("x", Ref("z")),
+        While(Less(Ref("i"),Const(100)), Block(List(
+          Assign("y", New("B")),
+          Put(Ref("y"), Const("head"), Ref("i")),
+          Put(Ref("y"), Const("tail"), Ref("x")),
+          Assign("x", Ref("y")),
+          Assign("i", Plus(Ref("i"), Const(1)))
+        ))),
+        Assign("s", Const(0)),
+        While(NotEqual(Ref("x"),Ref("z")), Block(List(
+          Assign("i", Get(Ref("x"), Const("head"))),
+          Assign("x", Get(Ref("x"), Const("tail"))),
+          Assign("s", Plus(Ref("s"), Ref("i")))
+        )))
+      ))
+    }
+  }
 
 /* result:
 
@@ -1737,148 +1806,91 @@ Map("&i" -> Map("val" -> if (0 < fixindex(x103 => x102_&x_val(x103 + -1) != (A,1
     // function with defunctionalized continuations in store)
 
 
-    // back to simpler tests (compare to test3)
-
-    val testProg4 = Block(List(
-      Assign("i", Const(0)),
-      Assign("z", New("A")),
-      Assign("x", Ref("z")),
-      Assign("y", New("B")),
-      While(Less(Ref("i"),Const(100)), Block(List(
-        Put(Ref("y"), Const("head"), Ref("i")),
-        Put(Ref("y"), Const("tail"), Ref("x")),
-        Assign("x", Ref("y")),
-        Assign("i", Plus(Ref("i"), Const(1)))
-      )))
-    ))
-
-    val testProg5 = Block(List(
-      Assign("i", Const(0)),
-      Assign("z", New("A")),
-      Assign("x", Ref("z")),
-      While(Less(Ref("i"),Const(100)), Block(List(
-        Put(Ref("x"), Const("head"), Ref("i")),
-        Assign("i", Plus(Ref("i"), Const(1)))
-      )))
-    ))
 
     // modify stuff after a loop
 
-    val testProg6 = Block(List(
-      Assign("i", Const(0)),
-      Assign("z", New("A")),
-      Assign("x", Ref("z")),
-      Assign("y", New("B")),
-      While(Less(Ref("i"),Const(100)), Block(List(
-        Put(Ref("y"), Const("head"), Ref("i")),
-        Put(Ref("y"), Const("tail"), Ref("x")),
-        Assign("x", Ref("y")),
-        Assign("i", Plus(Ref("i"), Const(1)))
-      ))),
-      Put(Ref("y"), Const("tail"), Ref("z")),
-      Put(Ref("y"), Const("head"), Const(7))
-    ))
+  def testC = withOutFileChecked(prefix+"C") {
+    import Test1._
+    Test1.run { //test6
+      Block(List(
+        Assign("i", Const(0)),
+        Assign("z", New("A")),
+        Assign("x", Ref("z")),
+        Assign("y", New("B")),
+        While(Less(Ref("i"),Const(100)), Block(List(
+          Put(Ref("y"), Const("head"), Ref("i")),
+          Put(Ref("y"), Const("tail"), Ref("x")),
+          Assign("x", Ref("y")),
+          Assign("i", Plus(Ref("i"), Const(1)))
+        ))),
+        Put(Ref("y"), Const("tail"), Ref("z")),
+        Put(Ref("y"), Const("head"), Const(7))
+      ))
+    }
+  }
 
     // strong update for if
 
-    val testProg7 = Block(List(
-      Assign("x", New("A")),
-      If(Direct(vref("input")),
-        Block(List(
-          Put(Ref("x"), Const("a"), New("B")),
-          Put(Get(Ref("x"), Const("a")), Const("foo"), Const(5))
-        )),
-        Block(List(
-          Put(Ref("x"), Const("a"), New("C")),
-          Put(Get(Ref("x"), Const("a")), Const("bar"), Const(5))
-        ))
-      ),
-      Assign("foo", Get(Get(Ref("x"), Const("a")), Const("foo"))),
-      Assign("bar", Get(Get(Ref("x"), Const("a")), Const("bar")))
-    ))
-
-    val testProg8 = Block(List(
-      Assign("x", New("A")),
-      Put(Ref("x"), Const("a"), New("A2")),
-      Put(Get(Ref("x"), Const("a")), Const("baz"), Const(3)),
-      If(Direct(vref("input")),
-        Block(List(
-          Put(Ref("x"), Const("a"), New("B")), // strong update, overwrite
-          Put(Get(Ref("x"), Const("a")), Const("foo"), Const(5))
-        )),
-        Block(List(
-          Put(Ref("x"), Const("a"), New("C")), // strong update, overwrite
-          Put(Get(Ref("x"), Const("a")), Const("bar"), Const(5))
-        ))
-      ),
-      Put(Get(Ref("x"), Const("a")), Const("bar"), Const(7)), // this is not a strong update, because 1.a may be one of two allocs
-      Assign("xbar", Get(Get(Ref("x"), Const("a")), Const("bar"))) // should still yield 7!
-    ))
+  def testD = withOutFileChecked(prefix+"D") {
+    import Test1._
+    Test1.run { //test7
+      Block(List(
+        Assign("x", New("A")),
+        If(Direct(vref("input")),
+          Block(List(
+            Put(Ref("x"), Const("a"), New("B")),
+            Put(Get(Ref("x"), Const("a")), Const("foo"), Const(5))
+          )),
+          Block(List(
+            Put(Ref("x"), Const("a"), New("C")),
+            Put(Get(Ref("x"), Const("a")), Const("bar"), Const(5))
+          ))
+        ),
+        Assign("foo", Get(Get(Ref("x"), Const("a")), Const("foo"))),
+        Assign("bar", Get(Get(Ref("x"), Const("a")), Const("bar")))
+      ))
+    }
+    Test1.run { //test8
+      Block(List(
+        Assign("x", New("A")),
+        Put(Ref("x"), Const("a"), New("A2")),
+        Put(Get(Ref("x"), Const("a")), Const("baz"), Const(3)),
+        If(Direct(vref("input")),
+          Block(List(
+            Put(Ref("x"), Const("a"), New("B")), // strong update, overwrite
+            Put(Get(Ref("x"), Const("a")), Const("foo"), Const(5))
+          )),
+          Block(List(
+            Put(Ref("x"), Const("a"), New("C")), // strong update, overwrite
+            Put(Get(Ref("x"), Const("a")), Const("bar"), Const(5))
+          ))
+        ),
+        Put(Get(Ref("x"), Const("a")), Const("bar"), Const(7)), // this is not a strong update, because 1.a may be one of two allocs
+        Assign("xbar", Get(Get(Ref("x"), Const("a")), Const("bar"))) // should still yield 7!
+      ))
+    }
+  }
 
     // update stuff allocated in a loop
 
-    val testProg9 = Block(List(
-      Assign("x", New("X")),
-      Put(Ref("x"), Const("a"), New("A")),
-      Put(Get(Ref("x"), Const("a")), Const("baz"), Const(3)),
-      While(Direct(vref("input")),
-        Block(List(
-          Put(Ref("x"), Const("a"), New("B")), // strong update, overwrite
-          Put(Get(Ref("x"), Const("a")), Const("foo"), Const(5))
-        ))
-      ),
-      Put(Get(Ref("x"), Const("a")), Const("bar"), Const(7)), // this is not a strong update, because 1.a may be one of two allocs
-      Assign("xbar", Get(Get(Ref("x"), Const("a")), Const("bar"))) // should still yield 7!
-    ))
-
-  }
-
-  def testA = withOutFileChecked(prefix+"A") {
-    Test1.run(Test1.testProg1)
-    Test1.run(Test1.testProg2)
-  }
-
-  def testA2 = withOutFileChecked(prefix+"A2") {
-    Test1.run(Test1.testProgUnit1)
-    Test1.run(Test1.testProgUnit2)
-  }
-
-  def testA3 = withOutFileChecked(prefix+"A3") {
-    Test1.run(Test1.testProg1b)
-  }
-
-  def testA4 = withOutFileChecked(prefix+"A4") {
-    Test1.run(Test1.testProg1c)
-  }
-
-
-  def testB = withOutFileChecked(prefix+"B") {
-    Test1.run(Test1.testProg3)
-    Test1.run(Test1.testProg4) // 3 and 4 should be different: alloc within the loop vs before
-    Test1.run(Test1.testProg5)
-  }
-
-  def testB1 = withOutFileChecked(prefix+"B1") {
-    Test1.run(Test1.testProg3a)
-  }
-
-  def testB2 = withOutFileChecked(prefix+"B2") {
-    Test1.run(Test1.testProg3b)
-  }
-
-
-  def testC = withOutFileChecked(prefix+"C") {
-    Test1.run(Test1.testProg6)
-  }
-  def testD = withOutFileChecked(prefix+"D") {
-    Test1.run(Test1.testProg7)
-    Test1.run(Test1.testProg8)
-  }
   def testE = withOutFileChecked(prefix+"E") {
-    Test1.run(Test1.testProg9)
+    import Test1._
+    Test1.run { //test9
+      Block(List(
+        Assign("x", New("X")),
+        Put(Ref("x"), Const("a"), New("A")),
+        Put(Get(Ref("x"), Const("a")), Const("baz"), Const(3)),
+        While(Direct(vref("input")),
+          Block(List(
+            Put(Ref("x"), Const("a"), New("B")), // strong update, overwrite
+            Put(Get(Ref("x"), Const("a")), Const("foo"), Const(5))
+          ))
+        ),
+        Put(Get(Ref("x"), Const("a")), Const("bar"), Const(7)), // this is not a strong update, because 1.a may be one of two allocs
+        Assign("xbar", Get(Get(Ref("x"), Const("a")), Const("bar"))) // should still yield 7!
+      ))
+    }
   }
-
-
 
 }
 
