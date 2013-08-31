@@ -272,7 +272,8 @@ class TestAnalysis4 extends FileDiffSuite {
       }
 
       def printStm(p: (String,Def)) = println(s"val ${p._1} = ${p._2}")
-      def printTerm(p: GVal) = println(IRS_Term.scope(IRS_Term.pre(p)))
+      def termToString(p: GVal) = IRS_Term.scope(IRS_Term.pre(p))
+      def printTerm(p: GVal) = println(termToString(p))
 
       def dependsOn(a: GVal, b: GVal) = schedule(a).exists(p => GRef(p._1) == b || syms(p._2).contains(b.toString))
 
@@ -1353,7 +1354,9 @@ class TestAnalysis4 extends FileDiffSuite {
 
     // *** run and test
 
-    def run(testProg: Exp) = {
+    def run(testProg: Exp): Unit = runAndCheck(testProg)("")
+
+    def runAndCheck(testProg: Exp)(want: Any): Unit = {
       println("prog: " + testProg)
       store = store0
       itvec = itvec0
@@ -1369,7 +1372,13 @@ class TestAnalysis4 extends FileDiffSuite {
       println("sched:")
       sched.foreach(IR.printStm)
       println("term:")
-      IR.printTerm(store2)
+      val out = IR.termToString(store2)
+      println(out)
+
+      def clean(s: String) = s.replaceAll("\"","").replaceAll("\n","").replaceAll(" +","")
+
+      if (want != "")
+        expect(clean(want.toString))(clean(out)) //sanitize...
 
       //store.printBounds
       println("----")
@@ -1380,7 +1389,7 @@ class TestAnalysis4 extends FileDiffSuite {
 
   def testA = withOutFileChecked(prefix+"A") {
     import Test1._
-    Test1.run {
+    Test1.runAndCheck {
       Block(List(
         Assign("i", Const(0)),
         Assign("y", Const(0)),
@@ -1392,9 +1401,15 @@ class TestAnalysis4 extends FileDiffSuite {
           Assign("i", Plus(Ref("i"), Const(1)))
         )))
       ))
+    } {
+      """Map(
+        "&i" -> Map("val" -> 100), 
+        "&y" -> Map("val" -> 100), 
+        "&x" -> Map("val" -> 8)
+      )"""
     }
     
-    Test1.run {
+    Test1.runAndCheck {
       Block(List(
         Assign("x", Const(900)), // input
         Assign("y", Const(0)),
@@ -1413,6 +1428,14 @@ class TestAnalysis4 extends FileDiffSuite {
         ))),
         Assign("r", Ref("x"))
       ))
+    }{
+      """Map(
+        "&x" -> Map("val" -> 0), 
+        "&z" -> Map("val" -> 405450), 
+        "&y" -> Map("val" -> 17), 
+        "&r" -> Map("val" -> 0), 
+        "&z2" -> Map("val" -> 1220850)
+      )"""
     }
   }
 
