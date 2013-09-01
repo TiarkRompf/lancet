@@ -1444,22 +1444,36 @@ class TestAnalysis4 extends FileDiffSuite {
   //   first, some unit tests
   def testA2 = withOutFileChecked(prefix+"A2") {
     import Test1._
-    Test1.run {
+    Test1.runAndCheck {
       Block(List(
         Assign("x", Const(0)), // "input"
         Assign("a", New("A")),
         Put(Ref("a"), Const("field"), Times(Ref("x"),Const(2))),
         Assign("r", Ref("a"))
       ))
-    }
-    Test1.run {
+    }{
+      """Map(
+        "&x" -> Map("val" -> 0), 
+        "&a" -> Map("val" -> (A,1)), 
+        "A"  -> Map(1 -> "undefined"(1) + ("field" -> 0)),
+        "&r" -> Map("val" -> (A,1)))"""   
+        // XXX should not have "undefined" !!
+    }    
+    Test1.runAndCheck {
       Block(List(
         Assign("x", Const(0)), // "input"
         Assign("a", New("A")),
         Put(Ref("a"), Ref("x"), Times(Ref("x"),Const(2))),
         Assign("r", Ref("a"))
       ))
-    }
+    }{
+      """Map(
+        "&x" -> Map("val" -> 0), 
+        "&a" -> Map("val" -> (A,1)), 
+        "A" -> Map(1 -> "undefined"(1) + (0 -> 0)), 
+        "&r" -> Map("val" -> (A,1)))"""
+        // XXX should not have "undefined" !!
+    } 
   }
 
   def testA3 = withOutFileChecked(prefix+"A3") {
