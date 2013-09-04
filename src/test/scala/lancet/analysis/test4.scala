@@ -1478,7 +1478,7 @@ class TestAnalysis4 extends FileDiffSuite {
 
   def testA3 = withOutFileChecked(prefix+"A3") {
     import Test1._
-    Test1.run {
+    Test1.runAndCheck {
       Block(List(
         Assign("x", Const(0)),
         Assign("a", New("A")),
@@ -1489,7 +1489,14 @@ class TestAnalysis4 extends FileDiffSuite {
         ))),
         Assign("r", Ref("a"))
       ))
-    }
+    }{
+      """Map(
+        "&x" -> Map("val" -> 100), 
+        "&a" -> Map("val" -> (A,1)), 
+        "A" -> Map(1 -> "undefined"(1) + ("field" -> 7)), 
+        "&r" -> Map("val" -> (A,1)))"""
+        // XXX should not have "undefined" !!
+    } 
   }
 
   //   update array at loop index
