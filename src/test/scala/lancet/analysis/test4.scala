@@ -977,7 +977,7 @@ class TestAnalysis4 extends FileDiffSuite {
     // *** evaluator: Exp -> IR
 
     val store0 = IR.const(Map())
-    val itvec0 = IR.const(1)
+    val itvec0 = IR.const("top")
 
     var store: Val = store0
     var itvec: Val = itvec0
@@ -1454,9 +1454,9 @@ class TestAnalysis4 extends FileDiffSuite {
     }{
       """Map(
         "&x" -> Map("val" -> 0), 
-        "&a" -> Map("val" -> (A,1)), 
-        "A"  -> Map(1 -> "undefined"(1) + ("field" -> 0)),
-        "&r" -> Map("val" -> (A,1)))"""   
+        "&a" -> Map("val" -> (A,top)), 
+        "A"  -> Map(top -> "undefined"(top) + ("field" -> 0)),
+        "&r" -> Map("val" -> (A,top)))"""   
         // XXX should not have "undefined" !!
     }    
     Test1.runAndCheck {
@@ -1469,9 +1469,9 @@ class TestAnalysis4 extends FileDiffSuite {
     }{
       """Map(
         "&x" -> Map("val" -> 0), 
-        "&a" -> Map("val" -> (A,1)), 
-        "A" -> Map(1 -> "undefined"(1) + (0 -> 0)), 
-        "&r" -> Map("val" -> (A,1)))"""
+        "&a" -> Map("val" -> (A,top)), 
+        "A" -> Map(top -> "undefined"(top) + (0 -> 0)), 
+        "&r" -> Map("val" -> (A,top)))"""
         // XXX should not have "undefined" !!
     } 
   }
@@ -1492,9 +1492,9 @@ class TestAnalysis4 extends FileDiffSuite {
     }{
       """Map(
         "&x" -> Map("val" -> 100), 
-        "&a" -> Map("val" -> (A,1)), 
-        "A" -> Map(1 -> "undefined"(1) + ("field" -> 7)), 
-        "&r" -> Map("val" -> (A,1)))"""
+        "&a" -> Map("val" -> (A,top)), 
+        "A" -> Map(top -> "undefined"(top) + ("field" -> 7)), 
+        "&r" -> Map("val" -> (A,top)))"""
         // XXX should not have "undefined" !!
     } 
   }
