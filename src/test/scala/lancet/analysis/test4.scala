@@ -1249,7 +1249,7 @@ class TestAnalysis4 extends FileDiffSuite {
 
   def testB = withOutFileChecked(prefix+"B") {
     import Test1._
-    Test1.run { // test3
+    Test1.runAndCheck { // test3
       Block(List(
         Assign("i", Const(0)),
         Assign("z", New("A")),
@@ -1262,12 +1262,36 @@ class TestAnalysis4 extends FileDiffSuite {
           Assign("i", Plus(Ref("i"), Const(1)))
         )))
       ))
+    } {
+      // FIXME: why isn't this updating B below top???
+      """
+      val x8_B = { x9 => 
+        if (0 < x9) 
+          x8_B(x9 + -1) 
+          + (("top",x9) -> Map(
+              "head" -> x9 + -1, 
+              "tail" -> ("B",("top",x9 + -1))
+          ))
+        else 
+          Map(
+            "top" -> Map() + (x9 -> Map("head" -> x9 + -1, "tail" -> (A,top)))
+          )
+      }
+      Map(
+        "&i" -> Map("val" -> 100), 
+        "B"  -> x8_B(100), 
+        "A"  -> Map("top" -> Map()), 
+        "&x" -> Map("val" -> (B,(top,100))), 
+        "&z" -> Map("val" -> (A,top)), 
+        "&y" -> Map("val" -> (B,(top,100)))
+      )
+      """
     }
 
   // back to simpler tests (compare to test3)
   // 3 and 4 should be different: alloc within the loop vs before
   
-    Test1.run { // test4
+    Test1.runAndCheck { // test4
       Block(List(
         Assign("i", Const(0)),
         Assign("z", New("A")),
@@ -1280,9 +1304,32 @@ class TestAnalysis4 extends FileDiffSuite {
           Assign("i", Plus(Ref("i"), Const(1)))
         )))
       ))
+    }{
+      // FIXME: overwriting B.top
+      """
+      val x11_B_top = { x12 => 
+        if (0 < x12) 
+          x11_B_top(x12 + -1) 
+          + ("head" -> x12 + -1) 
+          + ("tail" -> (B,top)) 
+        else 
+          Map(
+            "head" -> x12 + -1, 
+            "tail" -> (A,top)
+          )
+      }
+      Map(
+        "&i" -> Map("val" -> 100), 
+        "B"  -> Map("top" -> x11_B_top(100)), 
+        "A"  -> Map("top" -> Map()), 
+        "&x" -> Map("val" -> (B,top)), 
+        "&z" -> Map("val" -> (A,top)), 
+        "&y" -> Map("val" -> (B,top))
+      )
+      """
     }
 
-    Test1.run { // test5
+    Test1.runAndCheck { // test5
       Block(List(
         Assign("i", Const(0)),
         Assign("z", New("A")),
@@ -1292,8 +1339,25 @@ class TestAnalysis4 extends FileDiffSuite {
           Assign("i", Plus(Ref("i"), Const(1)))
         )))
       ))
+    } {
+      """
+      val x8_A_top = { x9 => 
+        if (0 < x9) 
+          x8_A_top(x9 + -1) + ("head" -> x9 + -1) 
+        else 
+          Map("head" -> x9 + -1) 
+      }
+      Map(
+        "&i" -> Map("val" -> 100), 
+        "A"  -> Map("top" -> x8_A_top(100)), 
+        "&z" -> Map("val" -> (A,top)), 
+        "&x" -> Map("val" -> (A,top))
+      )
+      """
     }
   }
+
+
 
 /*
   var i = 0
@@ -1436,7 +1500,7 @@ class TestAnalysis4 extends FileDiffSuite {
 
   def testB1 = withOutFileChecked(prefix+"B1") {
   import Test1._
-    Test1.run { // test3a
+    Test1.runAndCheck { // test3a
       Block(List(
         Assign("i", Const(0)),
         Assign("z", New("A")),
@@ -1453,43 +1517,38 @@ class TestAnalysis4 extends FileDiffSuite {
         Assign("x", Get(Ref("x"), Const("tail"))),
         Assign("s", Plus(Ref("s"), Ref("i")))
       ))
+    }{
+      // FIXME: extract "top"
+      """
+        val x8_B = { x9 => 
+          if (0 < x9) 
+            x8_B(x9 + -1) 
+            + (("top",x9) -> Map(
+                "head" -> x9 + -1, 
+                "tail" -> ("B",("top",x9 + -1)))
+            )
+          else 
+            Map(
+              "top" -> Map() + (x9 -> Map("head" -> x9 + -1, "tail" -> (A,top)))
+            )
+        }
+        Map(
+          "&i" -> Map("val" -> x8_B(100)((top,100))("head")), 
+          "B"  -> x8_B(100), 
+          "&s" -> Map("val" -> x8_B(100)((top,100))("head")), 
+          "A"  -> Map("top" -> Map()), 
+          "&x" -> Map("val" -> x8_B(100)((top,100))("tail")), 
+          "&z" -> Map("val" -> (A,top)), 
+          "&y" -> Map("val" -> (B,(top,100)))
+        )
+      """
     }
   }
-
-/* result:
-
-val x8_B = { x9 => 
-  if (0 < x9) 
-    x8_B(x9 + -1) 
-    + ((1,x9) -> 
-        x8_B(x9 + -1)((1,x9)) 
-        + ("head" -> x9 + -1) 
-        + ("tail" -> ("B",(1,x9 + -1)))) 
-  else 
-    Map(1 -> 
-      Map() 
-      + (x9 -> 
-          "undefined"((1,x9)) 
-          + ("head" -> x9 + -1) 
-          + ("tail" -> (A,1)))) 
-  }
-
-Map(
-  "&i" -> Map("val" -> x8_B(100)((1,100))("head")), 
-  "B" -> x8_B(100), 
-  "&s" -> Map("val" -> x8_B(100)((1,100))("head")), 
-  "&x" -> Map("val" -> x8_B(100)((1,100))("tail")), 
-  "&z" -> Map("val" -> (A,1)), 
-  "&y" -> Map("val" -> (B,(1,100)))
-)
-
-
-*/
 
 
   def testB2 = withOutFileChecked(prefix+"B2") {
     import Test1._
-    Test1.run { //test3b
+    Test1.runAndCheck { //test3b
       Block(List(
         Assign("i", Const(0)),
         Assign("z", New("A")),
@@ -1508,70 +1567,76 @@ Map(
           Assign("s", Plus(Ref("s"), Ref("i")))
         )))
       ))
-    }
-  }
+    } {
+      """
+val x8_B = { x9 => if (0 < x9) 
+  x8_B(x9 + -1) + (("top",x9) -> 
+    Map("head" -> x9 + -1, "tail" -> ("B",("top",x9 + -1)))) 
+  else Map("top" -> Map() + (x9 -> Map("head" -> x9 + -1, "tail" -> (A,top))))
+}
 
-/* result:
-
-TODO: we need to figure out that inside the second loop, x only ever points to B!
-      (and to A afterwards)
-
-val x7_B = { x8 => if (0 < x8) 
-  x7_B(x8 + -1) + ((1,x8) -> 
-    x7_B(x8 + -1)((1,x8)) + ("head" -> x8 + -1) + ("tail" -> ("B",(1,x8 + -1)))) else Map(1 -> Map() + (x8 -> "undefined"((1,x8)) + ("head" -> x8 + -1) + ("tail" -> (A,1)))) }
-
-val x102_&x_val = { x103 => if (0 < x103) {
-  if (x102_&x_val(x103 + -1) == "&i") "undefined" else {
-    if (x102_&x_val(x103 + -1) == "&z") "undefined" else {
-      if (x102_&x_val(x103 + -1) == "B") x7_B(100)("tail") else {
-        if (x102_&x_val(x103 + -1) == "&y") "undefined" else {
-          if (x102_&x_val(x103 + -1) == "&s") "undefined" else {
-            if (x102_&x_val(x103 + -1) == "&x") "undefined" else 
-              "undefined"("tail")
+val x94_&x_val = { x95 => if (0 < x95) {
+  if (x94_&x_val(x95 + -1) == "A") "undefined" else {
+    if (x94_&x_val(x95 + -1) == "&i") "undefined" else {
+      if (x94_&x_val(x95 + -1) == "&z") "undefined" else {
+        if (x94_&x_val(x95 + -1) == "B") x8_B(100)("tail") else {
+          if (x94_&x_val(x95 + -1) == "&y") "undefined" else {
+            if (x94_&x_val(x95 + -1) == "&s") "undefined" else {
+              if (x94_&x_val(x95 + -1) == "&x") "undefined" else 
+                "undefined"("tail")
+            }
           }
         }
       }
     }
   }
-} else "undefined"("tail") }
-val x102_&s_val = { x103 => 
-  if (0 < x103) 
-    x102_&s_val(x103 + -1) + if (x102_&x_val(x103 + -1) == "&i") "undefined" 
-  else {
-  if (x102_&x_val(x103 + -1) == "&z") "undefined" else {
-    if (x102_&x_val(x103 + -1) == "B") x7_B(100)("head") else {
-      if (x102_&x_val(x103 + -1) == "&y") "undefined" else {
-        if (x102_&x_val(x103 + -1) == "&s") "undefined" else {
-          if (x102_&x_val(x103 + -1) == "&x") "undefined" else 
-            "undefined"("head")
-        }
-      }
-    }
-  }
-} else "undefined"("head") }
-Map("&i" -> Map("val" -> if (0 < fixindex(x103 => x102_&x_val(x103 + -1) != (A,1))) {
-  if (x102_&x_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)) + -1) == "&i") "undefined" else {
-    if (x102_&x_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)) + -1) == "&z") "undefined" else {
-      if (x102_&x_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)) + -1) == "B") x7_B(100)("head") else {
-        if (x102_&x_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)) + -1) == "&y") "undefined" else {
-          if (x102_&x_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)) + -1) == "&s") "undefined" else {
-            if (x102_&x_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)) + -1) == "&x") "undefined" else 
+} else x8_B(100)((top,100))("tail") }
+
+val x94_&s_val = { x95 => if (0 < x95) x94_&s_val(x95 + -1) + if (x94_&x_val(x95 + -1) == "A") "undefined" else {
+  if (x94_&x_val(x95 + -1) == "&i") "undefined" else {
+    if (x94_&x_val(x95 + -1) == "&z") "undefined" else {
+      if (x94_&x_val(x95 + -1) == "B") x8_B(100)("head") else {
+        if (x94_&x_val(x95 + -1) == "&y") "undefined" else {
+          if (x94_&x_val(x95 + -1) == "&s") "undefined" else {
+            if (x94_&x_val(x95 + -1) == "&x") "undefined" else 
               "undefined"("head")
           }
         }
       }
     }
   }
-} else "undefined"("head")), 
-"B" -> x7_B(100), 
-"&s" -> Map(
-  "val" -> x102_&s_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)))), 
-  "&x" -> Map("val" -> x102_&x_val(fixindex(x103 => x102_&x_val(x103 + -1) != (A,1)))), 
-  "&z" -> Map("val" -> (A,1)), 
-  "&y" -> Map("val" -> (B,(1,100)))
-)
+} else x8_B(100)((top,100))("head") }
 
-*/
+Map(
+  "&i" -> Map("val" -> if (0 < fixindex(x95 => x94_&x_val(x95 + -1) != (A,top))) {
+    if (x94_&x_val(fixindex(x95 => x94_&x_val(x95 + -1) != (A,top)) + -1) == "A") "undefined" else {
+      if (x94_&x_val(fixindex(x95 => x94_&x_val(x95 + -1) != (A,top)) + -1) == "&i") "undefined" else {
+        if (x94_&x_val(fixindex(x95 => x94_&x_val(x95 + -1) != (A,top)) + -1) == "&z") "undefined" else {
+          if (x94_&x_val(fixindex(x95 => x94_&x_val(x95 + -1) != (A,top)) + -1) == "B") x8_B(100)("head") else {
+            if (x94_&x_val(fixindex(x95 => x94_&x_val(x95 + -1) != (A,top)) + -1) == "&y") "undefined" else {
+              if (x94_&x_val(fixindex(x95 => x94_&x_val(x95 + -1) != (A,top)) + -1) == "&s") "undefined" else {
+                if (x94_&x_val(fixindex(x95 => x94_&x_val(x95 + -1) != (A,top)) + -1) == "&x") "undefined" else "undefined"("head")
+              }
+            }
+          }
+        }
+      }
+    }
+  } else x8_B(100)((top,100))("head")), 
+  "B" -> x8_B(100), 
+  "&s" -> Map(
+    "val" -> x94_&s_val(fixindex(x95 => x94_&x_val(x95 + -1) != (A,top)))), 
+    "A" -> Map("top" -> Map()), 
+    "&x" -> Map("val" -> x94_&x_val(fixindex(x95 => x94_&x_val(x95 + -1) != (A,top)))), 
+    "&z" -> Map("val" -> (A,top)), 
+    "&y" -> Map("val" -> (B,(top,100))
+  )
+)
+      """
+    }
+  }
+
+
 
 
     // (to try: fac, first as while loop, then as recursive
