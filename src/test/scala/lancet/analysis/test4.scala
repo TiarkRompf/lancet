@@ -1214,7 +1214,7 @@ class TestAnalysis4 extends FileDiffSuite {
   //   update array at loop index
   def testA4 = withOutFileChecked(prefix+"A4") {
     import Test1._
-    Test1.run {
+    Test1.runAndCheck {
       Block(List(
         Assign("x", Const(0)),
         Assign("y", Const(10)),
@@ -1226,6 +1226,22 @@ class TestAnalysis4 extends FileDiffSuite {
         ))),
         Assign("r", Ref("a"))
       ))
+    }{
+      """
+      val x9_A_top = { x10 => 
+        if (0 < x10) 
+          x9_A_top(x10 + -1) + (x10 + -1 -> x10 * 2 + -2) 
+        else 
+          Map() + (x10 + -1 -> x10 * 2 + -2) 
+      }
+      Map(
+        "&a" -> Map("val" -> (A,top)), 
+        "A" -> Map("top" -> x9_A_top(100)), 
+        "&x" -> Map("val" -> 100), 
+        "&y" -> Map("val" -> 110), 
+        "&r" -> Map("val" -> (A,top))
+      )
+      """
     }
   }
 
