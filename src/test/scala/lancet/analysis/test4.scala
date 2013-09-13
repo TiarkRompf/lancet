@@ -897,7 +897,8 @@ class TestAnalysis4 extends FileDiffSuite {
       case Direct(x)   => IR.const(x)
       case Ref(x)      => IR.select(IR.select(store,IR.const("&"+x)), IR.const("val"))
       case Assign(x,y) => 
-        store = IR.update(store, IR.const("&"+x), IR.update(IR.const(Map()), IR.const("val"), eval(y)))
+        val v = eval(y)
+        store = IR.update(store, IR.const("&"+x), IR.update(IR.const(Map()), IR.const("val"), v))
         IR.const(())
       case Plus(x,y)      => IR.plus(eval(x),eval(y))
       case Times(x,y)     => IR.times(eval(x),eval(y))
@@ -1168,10 +1169,9 @@ class TestAnalysis4 extends FileDiffSuite {
     }{
       """Map(
         "&x" -> Map("val" -> 0), 
+        "A"  -> Map(top -> Map("field" -> 0)),
         "&a" -> Map("val" -> (A,top)), 
-        "A"  -> Map(top -> "undefined"(top) + ("field" -> 0)),
         "&r" -> Map("val" -> (A,top)))"""   
-        // XXX should not have "undefined" !!
     }    
     Test1.runAndCheck {
       Block(List(
@@ -1183,10 +1183,9 @@ class TestAnalysis4 extends FileDiffSuite {
     }{
       """Map(
         "&x" -> Map("val" -> 0), 
+        "A" -> Map(top -> Map(0 -> 0)), 
         "&a" -> Map("val" -> (A,top)), 
-        "A" -> Map(top -> "undefined"(top) + (0 -> 0)), 
         "&r" -> Map("val" -> (A,top)))"""
-        // XXX should not have "undefined" !!
     } 
   }
 
@@ -1206,10 +1205,9 @@ class TestAnalysis4 extends FileDiffSuite {
     }{
       """Map(
         "&x" -> Map("val" -> 100), 
+        "A" -> Map(top -> Map("field" -> 7)), 
         "&a" -> Map("val" -> (A,top)), 
-        "A" -> Map(top -> "undefined"(top) + ("field" -> 7)), 
         "&r" -> Map("val" -> (A,top)))"""
-        // XXX should not have "undefined" !!
     } 
   }
 
