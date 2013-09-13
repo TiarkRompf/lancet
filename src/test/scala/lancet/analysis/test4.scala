@@ -277,6 +277,11 @@ class TestAnalysis4 extends FileDiffSuite {
 
       def dependsOn(a: GVal, b: GVal) = schedule(a).exists(p => GRef(p._1) == b || syms(p._2).contains(b.toString))
 
+      def mkey(f: GVal, x: GVal): GVal = x match {
+        case GConst(s) => GRef(f+"_"+s)
+        case GRef(s) => GRef(f+"_"+s)
+      }
+
       // evaluate with substitution, i.e. compute trans closure of subst
       def substTrans(env0: Map[GVal,GVal]): Map[GVal,GVal] = {
         var env = env0
@@ -359,10 +364,6 @@ class TestAnalysis4 extends FileDiffSuite {
           // the first iterations.
 
           // induction case: if zero iteration evaluates to a map, split function
-          def mkey(f: String, x: GVal) = x match {
-            case GConst(s) => f+"_"+s
-            case GRef(s) => f+"_"+s
-          }
 
           // replace all calls. TODO: handle isolated fixindex nodes?
           val xform = calls flatMap {
@@ -371,7 +372,7 @@ class TestAnalysis4 extends FileDiffSuite {
                 case Def(DMap(m)) =>
                   println("specializing for fields " + m.keys)
 
-                  def func(k: GVal) = GRef(mkey(f.toString,k))
+                  def func(k: GVal) = mkey(f,k)
                   def arg(k: GVal) = z match {
                     case Def(DFixIndex(x,`f`)) => fixindex(x, func(k)) // OLD
                     case _ => z
@@ -409,7 +410,7 @@ class TestAnalysis4 extends FileDiffSuite {
               case (a,DFun(f,x,z)) => 
                 zeros.toMap.apply(f.toString) match {
                   case Def(DMap(m)) =>
-                    def func(k: GVal) = GRef(mkey(f.toString,k))
+                    def func(k: GVal) = mkey(GRef(f),k)
                     def body(k: GVal) = select(xformSubst.getOrElse(z,z),k)
                     m foreach (kv => kv._1 -> fun(func(kv._1).toString,x,body(kv._1)))
                   case _ =>
@@ -904,6 +905,151 @@ class TestAnalysis4 extends FileDiffSuite {
           dreflect(f,next.fun(f,x,pre(y))) // reuse fun sym (don't call super)
       }
 
+
+      // *** lub computation for while loops
+
+      // a: value before loop. b0: value before iteration. b1: value after iteration. 
+      // returns: new values before,after
+      def lub(a: GVal, b0: GVal, b1: GVal)(fsym: GVal, n0: GVal): (GVal, GVal) = { println(s"lub_$fsym($a,$b0,$b1)"); (a,b0,b1) } match {
+        case (a,b0,b1) if a == b1 => (a,a)
+        case (Def(DMap(m0)), Def(DMap(m1)), Def(DMap(m2))) => 
+          val m = (m0.keys ++ m1.keys ++ m2.keys) map { k => (k, lub(select(a,k),select(b0,k),select(b1,k))(mkey(fsym,k),n0)) }
+          println(m)
+          (map(m.map(kv=>(kv._1,kv._2._1)).toMap), map(m.map(kv=>(kv._1,kv._2._2)).toMap))
+        case (a,Def(DIf(c0,x0,y0)),Def(DIf(c1,x1,y1))) if c0 == c1 && false /*disable*/=>
+          // loop unswitching: treat branches separately
+          // TODO: presumably the condition needs to fulfill some conditions for this to be valid - which?
+          // simplest case: c < n, n < c
+
+          print(s"break down if b0: "); IRD.printTerm(b0)
+          print(s"break down if b1: "); IRD.printTerm(b1)
+
+          val (zx0,zx1) = lub(a,x0,x1)(GRef(fsym.toString+"_+"+c1),n0)
+          val (zy0,zy1) = lub(a,y0,y1)(GRef(fsym.toString+"_-"+c1),n0)
+
+          (iff(c0, zx0, zy0), iff(c1, zx1, zy1))
+        case _ if !IRD.dependsOn(b1, n0) && false /*disable*/=> 
+          // value after the loop does not depend on loop index (but differs from val before loop).
+          // we're probably in the first iteration, with a and b constants.
+          // widen: assume a linear correspondence, with d = b - a
+          val d = plus(b1,times(b0,const(-1))) // TODO: proper diff operator
+          println(s"try iterative loop, d = $d")
+          //(iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a),
+          // iff(less(const(0), n0), plus(a,times(n0,d)), a))
+          (plus(a,times(plus(n0,const(-1)),d)),
+           plus(a,times(n0,d)))
+        case (a/*@Def(DPair(a1,a2))*/,b0/*@Def(DPair(b01,b02))*/,Def(DPair(_,_)) | GConst(_: Tuple2[_,_])) =>
+          // example: (A,1), (B,(1,i)) TODO: safe??
+          IRD.printTerm(a)
+          IRD.printTerm(b0)
+          IRD.printTerm(b1)
+          println(s"hit pair -- assume only 0 case differs (loop peeling)")
+          val b0X = subst(b1,n0,plus(n0,const(-1)))
+          (iff(less(const(0),n0),b0X,a), iff(less(const(0),n0),b1,a))
+        case _ =>
+          // value after the loop (b) does depend on loop index and differs from val before loop.
+
+          // TODO: case for alloc in loop -- x(0)=(A,1), x(i>0)=(B,(1,i))
+
+          // look at difference. see if symbolic values before/after are generalized in a corresponding way.
+          // widen: compute new symbolic val before from symbolic val after (e.g. closed form)
+          // if that's not possible, widen to explicit recursive form.
+          //val b0 = iff(less(const(0), n0), subst(subst(b,less(const(0),n0),const(1)),n0,plus(n0,const(-1))), a) // take from 'init'?
+          //val b1 = iff(less(const(0), n0), b, a)
+          val d1 = plus(b1,times(b0,const(-1)))
+
+          IRD.printTerm(b0)
+          IRD.printTerm(b1)
+          IRD.printTerm(d1)
+
+          def deriv(x: GVal): GVal = x match {
+            case GConst(_) => const(0)
+            case `n0` => const(1)
+            case Def(DPlus(a,b)) => plus(deriv(a),deriv(b))
+            case Def(DTimes(a,b)) => plus(times(a,deriv(b)),times(deriv(a),b)) // not accurate in discrete calculus?
+            case _ => GRef(s"d$x/d$n0")
+          }
+
+          def poly(x: GVal): List[GVal] = x match {
+            case `n0` => List(const(0),const(1))
+            case Def(DTimes(`n0`,y)) => 
+              val py = poly(y)
+              if (py.isEmpty) Nil else const(0)::py
+            case Def(DPlus(a,b)) => 
+              val (pa,pb) = (poly(a),poly(b))
+              if (pa.isEmpty || pb.isEmpty) Nil else {
+                val degree = pa.length max pb.length
+                (pa.padTo(degree,const(0)),pb.padTo(degree,const(0))).zipped.map(plus)
+                  .reverse.dropWhile(_ == const(0)).reverse // dropRightWhile
+              }
+            case _ if !IRD.dependsOn(x, n0) => List(x)
+            case _ => Nil // marker: not a simple polynomial
+          }
+
+          def wrapZero(x: GVal): GVal = iff(less(const(0), n0), x, a)
+
+          val (r0,r1) = d1 match {
+            // loop invariant stride, i.e. constant delta i.e. linear in loop index
+            case d if !IRD.dependsOn(d, n0) => 
+              println(s"confirmed iterative loop, d = $d")
+              (plus(a,times(plus(n0,const(-1)),d)),
+               plus(a,times(n0,d)))
+            // piece-wise linear, e.g. if (n < 18) 1 else 0
+            case Def(DIf(Def(DLess(`n0`, up)), dx, dy))
+              if !IRD.dependsOn(up, n0) && !IRD.dependsOn(dx, n0) && !IRD.dependsOn(dy, n0) => 
+              val (u0,u1) = 
+              (plus(a,times(plus(n0,const(-1)),dx)),
+               plus(a,times(n0,dx)))
+              val n0minusUp = plus(n0,times(up,const(-1)))
+              val (v0,v1) = 
+              (plus(times(plus(up,const(-1)),dx),times(plus(n0minusUp,const(-1)),dy)),
+               plus(times(plus(up,const(-1)),dx),times(n0minusUp,dy)))
+              (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1))
+            // no simple structure
+            case d =>
+
+              val pp = poly(d1)
+              println("poly: " + pp)
+              pp match {
+                case List(coeff0, coeff1) =>
+                  println(s"found 2nd order polynomial: f'($n0)=$coeff1*$n0+$coeff0 -> f($n0)=$coeff1*$n0/2($n0+1)+$coeff0*$n0")
+                  // c1 * n/2*(n+1) + c0 * n
+
+                  val r0 = plus(times(times(times(plus(n0,const(-1)),n0),const(0.5)), coeff1), times(plus(n0,const(-1)), coeff0))
+                  val r1 = plus(times(times(times(n0,plus(n0,const(1))),const(0.5)), coeff1), times(n0, coeff0))
+
+                  // sanity check that we get the same diff
+                  IRD.printTerm(r0)
+                  IRD.printTerm(r1)
+                  val dd = plus(r1,times(r0, const(-1)))
+                  IRD.printTerm(dd)
+                  val pp2 = poly(dd)
+                  println("poly2: " + pp2)
+                  assert(pp === pp2)
+
+                  (plus(a,r0),
+                   plus(a,r1))
+                case xx =>
+                  println(s"giving up: deriv $xx; recursive fun $fsym")
+                  (wrapZero(call(fsym,plus(n0,const(-1)))),
+                   wrapZero(call(fsym,n0)))
+              }
+          }
+
+          (r0,r1) //wrapZero?
+      }
+
+      def lubfun(a: GVal, b: GVal)(fsym: GVal, n0: GVal): GVal = (a,b) match {
+        case (a,b) if a == b => a
+        case (Def(DMap(m1)), Def(DMap(m2))) => 
+          val m = (m1.keys ++ m2.keys) map { k => k -> lubfun(select(a,k),select(b,k))(mkey(fsym,k),n0) }
+          map(m.toMap)
+        case _ => 
+          val b1 = b // iff(less(const(0),n0), b, a) // explicit zero case. needed??
+          fun(fsym.toString, n0.toString, b1) 
+          call(fsym,n0)
+      }
+
     }
 
 
@@ -1086,152 +1232,8 @@ class TestAnalysis4 extends FileDiffSuite {
 
         itvec = pair(itvec,n0)
 
-        def mkey(f: GVal, x: GVal): GVal = x match {
-          case GConst(s) => GRef(f+"_"+s)
-          case GRef(s) => GRef(f+"_"+s)
-        }
 
-        // a: value before loop. b0: value before iteration. b1: value after iteration. 
-        // returns: new values before,after
-        def lub(a: GVal, b0: GVal, b1: GVal)(fsym: GVal): (GVal, GVal) = { println(s"lub_$fsym($a,$b0,$b1)"); (a,b0,b1) } match {
-          case (a,b0,b1) if a == b1 => (a,a)
-          case (Def(DMap(m0)), Def(DMap(m1)), Def(DMap(m2))) => 
-            val m = (m0.keys ++ m1.keys ++ m2.keys) map { k => (k, lub(select(a,k),select(b0,k),select(b1,k))(mkey(fsym,k))) }
-            println(m)
-            (map(m.map(kv=>(kv._1,kv._2._1)).toMap), map(m.map(kv=>(kv._1,kv._2._2)).toMap))
-          case (a,Def(DIf(c0,x0,y0)),Def(DIf(c1,x1,y1))) if c0 == c1 && false /*disable*/=>
-            // loop unswitching: treat branches separately
-            // TODO: presumably the condition needs to fulfill some conditions for this to be valid - which?
-            // simplest case: c < n, n < c
 
-            print(s"break down if b0: "); IRD.printTerm(b0)
-            print(s"break down if b1: "); IRD.printTerm(b1)
-
-            val (zx0,zx1) = lub(a,x0,x1)(GRef(fsym.toString+"_+"+c1))
-            val (zy0,zy1) = lub(a,y0,y1)(GRef(fsym.toString+"_-"+c1))
-
-            (iff(c0, zx0, zy0), iff(c1, zx1, zy1))
-          case _ if !IRD.dependsOn(b1, n0) && false /*disable*/=> 
-            // value after the loop does not depend on loop index (but differs from val before loop).
-            // we're probably in the first iteration, with a and b constants.
-            // widen: assume a linear correspondence, with d = b - a
-            val d = plus(b1,times(b0,const(-1))) // TODO: proper diff operator
-            println(s"try iterative loop, d = $d")
-            //(iff(less(const(0), n0), plus(a,times(plus(n0,const(-1)),d)), a),
-            // iff(less(const(0), n0), plus(a,times(n0,d)), a))
-            (plus(a,times(plus(n0,const(-1)),d)),
-             plus(a,times(n0,d)))
-          case (a/*@Def(DPair(a1,a2))*/,b0/*@Def(DPair(b01,b02))*/,Def(DPair(_,_)) | GConst(_: Tuple2[_,_])) =>
-            // example: (A,1), (B,(1,i)) TODO: safe??
-            IRD.printTerm(a)
-            IRD.printTerm(b0)
-            IRD.printTerm(b1)
-            println(s"hit pair -- assume only 0 case differs (loop peeling)")
-            val b0X = subst(b1,n0,plus(n0,const(-1)))
-            (iff(less(const(0),n0),b0X,a), iff(less(const(0),n0),b1,a))
-          case _ =>
-            // value after the loop (b) does depend on loop index and differs from val before loop.
-
-            // TODO: case for alloc in loop -- x(0)=(A,1), x(i>0)=(B,(1,i))
-
-            // look at difference. see if symbolic values before/after are generalized in a corresponding way.
-            // widen: compute new symbolic val before from symbolic val after (e.g. closed form)
-            // if that's not possible, widen to explicit recursive form.
-            //val b0 = iff(less(const(0), n0), subst(subst(b,less(const(0),n0),const(1)),n0,plus(n0,const(-1))), a) // take from 'init'?
-            //val b1 = iff(less(const(0), n0), b, a)
-            val d1 = plus(b1,times(b0,const(-1)))
-
-            IRD.printTerm(b0)
-            IRD.printTerm(b1)
-            IRD.printTerm(d1)
-
-            def deriv(x: GVal): GVal = x match {
-              case GConst(_) => const(0)
-              case `n0` => const(1)
-              case Def(DPlus(a,b)) => plus(deriv(a),deriv(b))
-              case Def(DTimes(a,b)) => plus(times(a,deriv(b)),times(deriv(a),b)) // not accurate in discrete calculus?
-              case _ => GRef(s"d$x/d$n0")
-            }
-
-            def poly(x: GVal): List[GVal] = x match {
-              case `n0` => List(const(0),const(1))
-              case Def(DTimes(`n0`,y)) => 
-                val py = poly(y)
-                if (py.isEmpty) Nil else const(0)::py
-              case Def(DPlus(a,b)) => 
-                val (pa,pb) = (poly(a),poly(b))
-                if (pa.isEmpty || pb.isEmpty) Nil else {
-                  val degree = pa.length max pb.length
-                  (pa.padTo(degree,const(0)),pb.padTo(degree,const(0))).zipped.map(plus)
-                    .reverse.dropWhile(_ == const(0)).reverse // dropRightWhile
-                }
-              case _ if !IRD.dependsOn(x, n0) => List(x)
-              case _ => Nil // marker: not a simple polynomial
-            }
-
-            def wrapZero(x: GVal): GVal = iff(less(const(0), n0), x, a)
-
-            val (r0,r1) = d1 match {
-              // loop invariant stride, i.e. constant delta i.e. linear in loop index
-              case d if !IRD.dependsOn(d, n0) => 
-                println(s"confirmed iterative loop, d = $d")
-                (plus(a,times(plus(n0,const(-1)),d)),
-                 plus(a,times(n0,d)))
-              // piece-wise linear, e.g. if (n < 18) 1 else 0
-              case Def(DIf(Def(DLess(`n0`, up)), dx, dy))
-                if !IRD.dependsOn(up, n0) && !IRD.dependsOn(dx, n0) && !IRD.dependsOn(dy, n0) => 
-                val (u0,u1) = 
-                (plus(a,times(plus(n0,const(-1)),dx)),
-                 plus(a,times(n0,dx)))
-                val n0minusUp = plus(n0,times(up,const(-1)))
-                val (v0,v1) = 
-                (plus(times(plus(up,const(-1)),dx),times(plus(n0minusUp,const(-1)),dy)),
-                 plus(times(plus(up,const(-1)),dx),times(n0minusUp,dy)))
-                (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1))
-              // no simple structure
-              case d =>
-
-                val pp = poly(d1)
-                println("poly: " + pp)
-                pp match {
-                  case List(coeff0, coeff1) =>
-                    println(s"found 2nd order polynomial: f'($n0)=$coeff1*$n0+$coeff0 -> f($n0)=$coeff1*$n0/2($n0+1)+$coeff0*$n0")
-                    // c1 * n/2*(n+1) + c0 * n
-
-                    val r0 = plus(times(times(times(plus(n0,const(-1)),n0),const(0.5)), coeff1), times(plus(n0,const(-1)), coeff0))
-                    val r1 = plus(times(times(times(n0,plus(n0,const(1))),const(0.5)), coeff1), times(n0, coeff0))
-
-                    // sanity check that we get the same diff
-                    IRD.printTerm(r0)
-                    IRD.printTerm(r1)
-                    val dd = plus(r1,times(r0, const(-1)))
-                    IRD.printTerm(dd)
-                    val pp2 = poly(dd)
-                    println("poly2: " + pp2)
-                    assert(pp === pp2)
-
-                    (plus(a,r0),
-                     plus(a,r1))
-                  case xx =>
-                    println(s"giving up: deriv $xx; recursive fun $fsym")
-                    (wrapZero(call(fsym,plus(n0,const(-1)))),
-                     wrapZero(call(fsym,n0)))
-                }
-            }
-
-            (r0,r1) //wrapZero?
-        }
-
-        def lubfun(a: GVal, b: GVal)(fsym: GVal): GVal = (a,b) match {
-          case (a,b) if a == b => a
-          case (Def(DMap(m1)), Def(DMap(m2))) => 
-            val m = (m1.keys ++ m2.keys) map { k => k -> lubfun(select(a,k),select(b,k))(mkey(fsym,k)) }
-            map(m.toMap)
-          case _ => 
-            val b1 = b // iff(less(const(0),n0), b, a) // explicit zero case. needed??
-            fun(fsym.toString, n0.toString, b1) 
-            call(fsym,n0)
-        }
 
       var init = before
       var path = Nil: List[GVal]
@@ -1253,12 +1255,12 @@ class TestAnalysis4 extends FileDiffSuite {
 
         println(s"lub($before, $afterB) = ?")
 
-        val (gen,next) = lub(before, init, afterB)(loop)
+        val (gen,next) = lub(before, init, afterB)(loop,n0)
 
         println(s"lub($before, $afterB) = $gen")
         if (init != gen) { init = gen; iter } else {
 
-          store = lubfun(before, afterB)(loop)
+          store = lubfun(before, afterB)(loop,n0)
 
         // TODO: clarify intended semantics!
         // Is elem 0 the value after 0 iterations,
