@@ -427,6 +427,7 @@ class TestAnalysis4 extends FileDiffSuite {
         case _ => super.update(x,f,y)
       }
       override def select(x: From, f: From): From          = x match {
+        case GConst("undefined") => GConst("undefined")
         case Def(DMap(m)) => 
           f match {
             case GConst((u,v)) => select(select(x,const(u)),const(v))
@@ -1280,7 +1281,7 @@ class TestAnalysis4 extends FileDiffSuite {
             x8_B_top(x9 + -1) 
             + (x9 -> Map("head" -> x9 + -1, "tail" -> ("B",("top",x9 + -1)))) 
           else 
-            "undefined"("top") 
+            Map()
             + (x9 -> Map("head" -> x9 + -1, "tail" -> (A,top)))
         }
         Map(
