@@ -1648,7 +1648,7 @@ Map(
 
   def testC = withOutFileChecked(prefix+"C") {
     import Test1._
-    Test1.run { //test6
+    Test1.runAndCheck { //test6
       Block(List(
         Assign("i", Const(0)),
         Assign("z", New("A")),
@@ -1663,6 +1663,28 @@ Map(
         Put(Ref("y"), Const("tail"), Ref("z")),
         Put(Ref("y"), Const("head"), Const(7))
       ))
+    } {
+      """
+        val x11_B_top = { x12 => 
+          if (0 < x12) 
+            x11_B_top(x12 + -1) 
+            + ("head" -> x12 + -1) 
+            + ("tail" -> (B,top)) 
+          else 
+            Map("head" -> x12 + -1, "tail" -> (A,top)) 
+        }
+        Map(
+          "&i" -> Map("val" -> 100), 
+          "B"  -> Map("top" -> x11_B_top(100) 
+                               + ("tail" -> (A,top)) 
+                               + ("head" -> 7)
+                  ), 
+          "A"  -> Map("top" -> Map()), 
+          "&x" -> Map("val" -> (B,top)), 
+          "&z" -> Map("val" -> (A,top)), 
+          "&y" -> Map("val" -> (B,top))
+        )
+      """
     }
   }
 
