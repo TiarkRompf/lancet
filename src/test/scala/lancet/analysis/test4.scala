@@ -272,7 +272,7 @@ class TestAnalysis4 extends FileDiffSuite {
       }
 
       def printStm(p: (String,Def)) = println(s"val ${p._1} = ${p._2}")
-      def termToString(p: GVal) = IRS_Term.scope(IRS_Term.pre(p))
+      def termToString(p: GVal) = captureOutput(println(IRS_Term.scope(IRS_Term.pre(p))))
       def printTerm(p: GVal) = println(termToString(p))
 
       def dependsOn(a: GVal, b: GVal) = schedule(a).exists(p => GRef(p._1) == b || syms(p._2).contains(b.toString))
