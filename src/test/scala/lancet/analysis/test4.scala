@@ -1145,10 +1145,10 @@ class TestAnalysis4 extends FileDiffSuite {
       ))
     }{
       """Map(
-        "&x" -> Map("val" -> 0), 
-        "&z" -> Map("val" -> 405450), 
-        "&y" -> Map("val" -> 17), 
-        "&r" -> Map("val" -> 0), 
+        "&x"  -> Map("val" -> 0), 
+        "&z"  -> Map("val" -> 405450), 
+        "&y"  -> Map("val" -> 17), 
+        "&r"  -> Map("val" -> 0), 
         "&z2" -> Map("val" -> 1220850)
       )"""
     }
@@ -1183,7 +1183,7 @@ class TestAnalysis4 extends FileDiffSuite {
     }{
       """Map(
         "&x" -> Map("val" -> 0), 
-        "A" -> Map(top -> Map(0 -> 0)), 
+        "A"  -> Map(top -> Map(0 -> 0)), 
         "&a" -> Map("val" -> (A,top)), 
         "&r" -> Map("val" -> (A,top)))"""
     } 
@@ -1205,7 +1205,7 @@ class TestAnalysis4 extends FileDiffSuite {
     }{
       """Map(
         "&x" -> Map("val" -> 100), 
-        "A" -> Map(top -> Map("field" -> 7)), 
+        "A"  -> Map(top -> Map("field" -> 7)), 
         "&a" -> Map("val" -> (A,top)), 
         "&r" -> Map("val" -> (A,top)))"""
     } 
@@ -1236,7 +1236,7 @@ class TestAnalysis4 extends FileDiffSuite {
       }
       Map(
         "&a" -> Map("val" -> (A,top)), 
-        "A" -> Map("top" -> x9_A_top(100)), 
+        "A"  -> Map("top" -> x9_A_top(100)), 
         "&x" -> Map("val" -> 100), 
         "&y" -> Map("val" -> 110), 
         "&r" -> Map("val" -> (A,top))
