@@ -931,20 +931,6 @@ class TestAnalysis4 extends FileDiffSuite {
         //}
       case While(c,b) =>  
 
-        /*{println(s"def loop(store0, n0) = {")
-        val savest = store
-        store = "store0"
-        val saveit = itvec
-        itvec = itvec+"::n0"
-        val c0x = eval(c)
-        eval(b)
-        println(s"if ($c0x) loop($store,n0+1) else (store0,n0)")
-        println("}")
-        store = savest
-        itvec = saveit
-        val n = reflect(s"loop($store,0)._2 // count")}*/
-
-
         /* Example:
             var y = 0
             while (y < 100) {
@@ -997,67 +983,65 @@ class TestAnalysis4 extends FileDiffSuite {
         itvec = pair(itvec,n0)
 
 
+        var init = before
+        var path = Nil: List[GVal]
+        def iter: GVal = {
+          println(s"starting spec loop with $init")
+          assert(!path.contains(init), "hitting recursion: "+(init::path))
+          path = init::path
 
+          store = init
 
-      var init = before
-      var path = Nil: List[GVal]
-      def iter: GVal = {
-        println(s"starting spec loop with $init")
-        assert(!path.contains(init), "hitting recursion: "+(init::path))
-        path = init::path
+          val cv = eval(c)
 
-        store = init
+          val afterC = store
 
-        val cv = eval(c)
+          store = subst(afterC,cv,const(1)) // assertTrue
+          eval(b)
 
-        val afterC = store
+          val afterB = store
 
-        store = subst(afterC,cv,const(1)) // assertTrue
-        eval(b)
+          println(s"lub($before, $afterB) = ?")
 
-        val afterB = store
+          val (gen,next) = lub(before, init, afterB)(loop,n0)
 
-        println(s"lub($before, $afterB) = ?")
+          println(s"lub($before, $afterB) = $gen")
+          if (init != gen) { init = gen; iter } else {
 
-        val (gen,next) = lub(before, init, afterB)(loop,n0)
+            store = lubfun(before, afterB)(loop,n0)
 
-        println(s"lub($before, $afterB) = $gen")
-        if (init != gen) { init = gen; iter } else {
+            // TODO: clarify intended semantics!
+            // Is elem 0 the value after 0 iterations,
+            // or the value computed in iteration 0?
+            // The analogy of modeling values computed in
+            // loops as arrays indexed by iteration would
+            // suggest the meaning 'computed in iteration i'.
+            // But then the value before the loop has index -1.
+            // Need to investigate whether this is a problem.
+            // It seems like we can avoid referring to -1
+            // by proper index handling after the loop.
 
-          store = lubfun(before, afterB)(loop,n0)
+            // store at this point describes result *after* iteration i
+            //  1 + (if (0<x) f(x-1) else 0)  =   if (0<x) f(x-1) + 1 else 1
+            // but what we want for the function body:
+            //  if (0<x) f(x-1) + 1 else 0
+            // we rely on propagation of conditions to get there:
 
-        // TODO: clarify intended semantics!
-        // Is elem 0 the value after 0 iterations,
-        // or the value computed in iteration 0?
-        // The analogy of modeling values computed in
-        // loops as arrays indexed by iteration would
-        // suggest the meaning 'computed in iteration i'.
-        // But then the value before the loop has index -1.
-        // Need to investigate whether this is a problem.
-        // It seems like we can avoid referring to -1
-        // by proper index handling after the loop.
+            //store = iff(less(const(0), n0), store, before)
 
-        // store at this point describes result *after* iteration i
-        //  1 + (if (0<x) f(x-1) else 0)  =   if (0<x) f(x-1) + 1 else 1
-        // but what we want for the function body:
-        //  if (0<x) f(x-1) + 1 else 0
-        // we rely on propagation of conditions to get there:
-
-        //store = iff(less(const(0), n0), store, before)
-
-        // The alternative would be to make f(i) denote
-        // the computed element in iteration i, and then pick
-        // element n-1 after the loop.
-        // It may seem unintuitive that f(i) = i+1 for a
-        // simple counting loop and we might want to fix
-        // it up with rewriting.
-        // On the other hand, for dynamic allocations, 
-        // we get f(i) = new A_i, which makes a lot of
-        // sense.
-        //store = init
-        cv
+            // The alternative would be to make f(i) denote
+            // the computed element in iteration i, and then pick
+            // element n-1 after the loop.
+            // It may seem unintuitive that f(i) = i+1 for a
+            // simple counting loop and we might want to fix
+            // it up with rewriting.
+            // On the other hand, for dynamic allocations, 
+            // we get f(i) = new A_i, which makes a lot of
+            // sense.
+            //store = init
+            cv
+          }
         }
-      }
 
         val cv = iter
 
@@ -1072,42 +1056,6 @@ class TestAnalysis4 extends FileDiffSuite {
         store = subst(store,cv1,const(0)) // assertFalse
 
         itvec = saveit
-
-/*
-        VERSION (1) BELOW
-
-          val savevc = varCount
-          val savest = store
-          val saveit = itvec
-
-          // case i == 0
-          store = savest
-          itvec = IR.pair(itvec,IR.const(0))
-          //val c0 = eval(c) to eval or not to eval?
-          val afterC0 = store
-
-          // case i > 0
-          store = IR.call(loop,IR.plus(n0,IR.const(-1)))
-          itvec = IR.pair(itvec,n0)
-
-          val cX = eval(c)
-          val afterCX = store
-          eval(b)
-          val afterBX = store
-          val r0 = IR.iff(cX, afterBX, afterCX)
-          val r = IR.iff(IR.less(IR.const(0),n0), r0, afterC0)
-
-          store = savest
-          itvec = saveit
-
-        val xx = IR.fun(loop.toString, n0.toString, r)
-        assert(xx === loop)
-
-        val n = IR.fixindex(loop)
-        store = IR.call(loop,n)
-
-        eval(c) // once more (this one will fail)
-*/
         
         println(s"*** after loop $store ***")
 
