@@ -676,10 +676,17 @@ class TestAnalysis4 extends FileDiffSuite {
       // returns: new values before,after
       def lub(a: GVal, b0: GVal, b1: GVal)(fsym: GVal, n0: GVal): (GVal, GVal) = { println(s"lub_$fsym($a,$b0,$b1)"); (a,b0,b1) } match {
         case (a,b0,b1) if a == b1 => (a,a)
-        case (Def(DMap(m0)), Def(DMap(m1)), Def(DMap(m2))) => 
-          val m = (m0.keys ++ m1.keys ++ m2.keys) map { k => (k, lub(select(a,k),select(b0,k),select(b1,k))(mkey(fsym,k),n0)) }
+        case (_, _, Def(DMap(m2))) => 
+          val m = (m2.keys) map { k => (k, lub(select(a,k),select(b0,k),select(b1,k))(mkey(fsym,k),n0)) }
           println(m)
           (map(m.map(kv=>(kv._1,kv._2._1)).toMap), map(m.map(kv=>(kv._1,kv._2._2)).toMap))
+        case (a,b0, Def(DMap(m2))) if false /*disable*/=> // allocation!
+          IRD.printTerm(a)
+          IRD.printTerm(b0)
+          IRD.printTerm(b1)
+          println(s"hit map -- assume only 0 case differs (loop peeling)")
+          val b0X = subst(b1,n0,plus(n0,const(-1)))
+          (iff(less(const(0),n0),b0X,a), iff(less(const(0),n0),b1,a))
         case (a,Def(DIf(c0,x0,y0)),Def(DIf(c1,x1,y1))) if c0 == c1 && false /*disable*/=>
           // loop unswitching: treat branches separately
           // TODO: presumably the condition needs to fulfill some conditions for this to be valid - which?
@@ -710,10 +717,12 @@ class TestAnalysis4 extends FileDiffSuite {
           println(s"hit pair -- assume only 0 case differs (loop peeling)")
           val b0X = subst(b1,n0,plus(n0,const(-1)))
           (iff(less(const(0),n0),b0X,a), iff(less(const(0),n0),b1,a))
+          //(iff(less(const(0),n0),b0X,a), b1) XX FIXME?
         case _ =>
           // value after the loop (b) does depend on loop index and differs from val before loop.
 
           // TODO: case for alloc in loop -- x(0)=(A,1), x(i>0)=(B,(1,i))
+          // (trying to handle this one above...)
 
           // look at difference. see if symbolic values before/after are generalized in a corresponding way.
           // widen: compute new symbolic val before from symbolic val after (e.g. closed form)
@@ -803,10 +812,12 @@ class TestAnalysis4 extends FileDiffSuite {
           (r0,r1) //wrapZero?
       }
 
+      // generate function calls for recursive functions
+
       def lubfun(a: GVal, b: GVal)(fsym: GVal, n0: GVal): GVal = (a,b) match {
         case (a,b) if a == b => a
-        case (Def(DMap(m1)), Def(DMap(m2))) => 
-          val m = (m1.keys ++ m2.keys) map { k => k -> lubfun(select(a,k),select(b,k))(mkey(fsym,k),n0) }
+        case (_, Def(DMap(m2))) => 
+          val m = (m2.keys) map { k => k -> lubfun(select(a,k),select(b,k))(mkey(fsym,k),n0) }
           map(m.toMap)
         case _ => 
           val b1 = b // iff(less(const(0),n0), b, a) // explicit zero case. needed??
@@ -1305,7 +1316,7 @@ class TestAnalysis4 extends FileDiffSuite {
         )))
       ))
     }{
-      // FIXME: overwriting B.top
+      // FIXME: overwriting B.top, remove recursive dep
       """
       val x11_B_top = { x12 => 
         if (0 < x12) 
@@ -1608,7 +1619,8 @@ val x94_&s_val = { x95 => if (0 < x95) x94_&s_val(x95 + -1) + if (x94_&x_val(x95
 } else x8_B(100)((top,100))("head") }
 
 Map(
-  "&i" -> Map("val" -> if (0 < fixindex(x95 => x94_&x_val(x95 + -1) != (A,top))) {
+"&i" -> Map("val" -> 
+  if (0 < fixindex(x95 => x94_&x_val(x95 + -1) != (A,top))) {
     if (x94_&x_val(fixindex(x95 => x94_&x_val(x95 + -1) != (A,top)) + -1) == "A") "undefined" else {
       if (x94_&x_val(fixindex(x95 => x94_&x_val(x95 + -1) != (A,top)) + -1) == "&i") "undefined" else {
         if (x94_&x_val(fixindex(x95 => x94_&x_val(x95 + -1) != (A,top)) + -1) == "&z") "undefined" else {
