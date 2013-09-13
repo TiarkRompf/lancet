@@ -428,6 +428,7 @@ class TestAnalysis4 extends FileDiffSuite {
       }
       override def select(x: From, f: From): From          = x match {
         case GConst("undefined") => GConst("undefined")
+        case GConst(m:Map[_,_]) if m.isEmpty => GConst("undefined") // f may be non-const
         case Def(DMap(m)) => 
           f match {
             case GConst((u,v)) => select(select(x,const(u)),const(v))
