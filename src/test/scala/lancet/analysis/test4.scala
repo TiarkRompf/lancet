@@ -1274,28 +1274,23 @@ class TestAnalysis4 extends FileDiffSuite {
         )))
       ))
     } {
-      // FIXME: why isn't this updating B below top???
       """
-      val x8_B = { x9 => 
-        if (0 < x9) 
-          x8_B(x9 + -1) 
-          + (("top",x9) -> Map(
-              "head" -> x9 + -1, 
-              "tail" -> ("B",("top",x9 + -1))
-          ))
-        else 
-          Map(
-            "top" -> Map() + (x9 -> Map("head" -> x9 + -1, "tail" -> (A,top)))
-          )
-      }
-      Map(
-        "&i" -> Map("val" -> 100), 
-        "B"  -> x8_B(100), 
-        "A"  -> Map("top" -> Map()), 
-        "&x" -> Map("val" -> (B,(top,100))), 
-        "&z" -> Map("val" -> (A,top)), 
-        "&y" -> Map("val" -> (B,(top,100)))
-      )
+        val x8_B_top = { x9 => 
+          if (0 < x9) 
+            x8_B_top(x9 + -1) 
+            + (x9 -> Map("head" -> x9 + -1, "tail" -> ("B",("top",x9 + -1)))) 
+          else 
+            "undefined"("top") 
+            + (x9 -> Map("head" -> x9 + -1, "tail" -> (A,top)))
+        }
+        Map(
+          "&i" -> Map("val" -> 100), 
+          "B"  -> Map("top" -> x8_B_top(100)), 
+          "A"  -> Map("top" -> Map()), 
+          "&x" -> Map("val" -> (B,(top,100))), 
+          "&z" -> Map("val" -> (A,top)), 
+          "&y" -> Map("val" -> (B,(top,100)))
+        )
       """
     }
 
