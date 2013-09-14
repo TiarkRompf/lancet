@@ -727,96 +727,99 @@ class TestAnalysis4 extends FileDiffSuite {
           //(iff(less(const(0),n0),b0X,a), b1) XX FIXME?
         case _ =>
           // value after the loop (b) does depend on loop index and differs from val before loop.
-
+          // handle in
           // TODO: case for alloc in loop -- x(0)=(A,1), x(i>0)=(B,(1,i))
           // (trying to handle this one above...)
 
-          // look at difference. see if symbolic values before/after are generalized in a corresponding way.
+          // look at numeric difference. see if symbolic values before/after are generalized in a corresponding way.
           // widen: compute new symbolic val before from symbolic val after (e.g. closed form)
           // if that's not possible, widen to explicit recursive form.
           //val b0 = iff(less(const(0), n0), subst(subst(b,less(const(0),n0),const(1)),n0,plus(n0,const(-1))), a) // take from 'init'?
           //val b1 = iff(less(const(0), n0), b, a)
           val d1 = plus(b1,times(b0,const(-1)))
 
-          IRD.printTerm(b0)
-          IRD.printTerm(b1)
-          IRD.printTerm(d1)
+          if (d1 != const("undefined")) { // do we have an integer?
+            IRD.printTerm(b0)
+            IRD.printTerm(b1)
+            IRD.printTerm(d1)
 
-          def deriv(x: GVal): GVal = x match {
-            case GConst(_) => const(0)
-            case `n0` => const(1)
-            case Def(DPlus(a,b)) => plus(deriv(a),deriv(b))
-            case Def(DTimes(a,b)) => plus(times(a,deriv(b)),times(deriv(a),b)) // not accurate in discrete calculus?
-            case _ => GRef(s"d$x/d$n0")
-          }
+            def deriv(x: GVal): GVal = x match { // not used!
+              case GConst(_) => const(0)
+              case `n0` => const(1)
+              case Def(DPlus(a,b)) => plus(deriv(a),deriv(b))
+              case Def(DTimes(a,b)) => plus(times(a,deriv(b)),times(deriv(a),b)) // not accurate in discrete calculus?
+              case _ => GRef(s"d$x/d$n0")
+            }
 
-          def poly(x: GVal): List[GVal] = x match {
-            case `n0` => List(const(0),const(1))
-            case Def(DTimes(`n0`,y)) => 
-              val py = poly(y)
-              if (py.isEmpty) Nil else const(0)::py
-            case Def(DPlus(a,b)) => 
-              val (pa,pb) = (poly(a),poly(b))
-              if (pa.isEmpty || pb.isEmpty) Nil else {
-                val degree = pa.length max pb.length
-                (pa.padTo(degree,const(0)),pb.padTo(degree,const(0))).zipped.map(plus)
-                  .reverse.dropWhile(_ == const(0)).reverse // dropRightWhile
+            def poly(x: GVal): List[GVal] = x match {
+              case `n0` => List(const(0),const(1))
+              case Def(DTimes(`n0`,y)) => 
+                val py = poly(y)
+                if (py.isEmpty) Nil else const(0)::py
+              case Def(DPlus(a,b)) => 
+                val (pa,pb) = (poly(a),poly(b))
+                if (pa.isEmpty || pb.isEmpty) Nil else {
+                  val degree = pa.length max pb.length
+                  (pa.padTo(degree,const(0)),pb.padTo(degree,const(0))).zipped.map(plus)
+                    .reverse.dropWhile(_ == const(0)).reverse // dropRightWhile
+                }
+              case _ if !IRD.dependsOn(x, n0) => List(x)
+              case _ => Nil // marker: not a simple polynomial
+            }
+
+            d1 match {
+              // loop invariant stride, i.e. constant delta i.e. linear in loop index
+              case d if !IRD.dependsOn(d, n0) && d != const("undefined") => 
+                println(s"confirmed iterative loop, d = $d")
+                return (plus(a,times(plus(n0,const(-1)),d)),
+                 plus(a,times(n0,d)))
+              // piece-wise linear, e.g. if (n < 18) 1 else 0
+              case Def(DIf(Def(DLess(`n0`, up)), dx, dy))
+                if !IRD.dependsOn(up, n0) && !IRD.dependsOn(dx, n0) && !IRD.dependsOn(dy, n0) => 
+                val (u0,u1) = 
+                (plus(a,times(plus(n0,const(-1)),dx)),
+                 plus(a,times(n0,dx)))
+                val n0minusUp = plus(n0,times(up,const(-1)))
+                val (v0,v1) = 
+                (plus(times(plus(up,const(-1)),dx),times(plus(n0minusUp,const(-1)),dy)),
+                 plus(times(plus(up,const(-1)),dx),times(n0minusUp,dy)))
+                return (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1))
+              // no simple structure
+              case d =>
+
+                val pp = poly(d1)
+                println("poly: " + pp)
+                pp match {
+                  case List(coeff0, coeff1) =>
+                    println(s"found 2nd order polynomial: f'($n0)=$coeff1*$n0+$coeff0 -> f($n0)=$coeff1*$n0/2($n0+1)+$coeff0*$n0")
+                    // c1 * n/2*(n+1) + c0 * n
+
+                    val r0 = plus(times(times(times(plus(n0,const(-1)),n0),const(0.5)), coeff1), times(plus(n0,const(-1)), coeff0))
+                    val r1 = plus(times(times(times(n0,plus(n0,const(1))),const(0.5)), coeff1), times(n0, coeff0))
+
+                    // sanity check that we get the same diff
+                    IRD.printTerm(r0)
+                    IRD.printTerm(r1)
+                    val dd = plus(r1,times(r0, const(-1)))
+                    IRD.printTerm(dd)
+                    val pp2 = poly(dd)
+                    println("poly2: " + pp2)
+                    assert(pp === pp2)
+
+                    return (plus(a,r0), plus(a,r1))
+                  case xx =>
+                    println(s"giving up: deriv $xx")
+                }
               }
-            case _ if !IRD.dependsOn(x, n0) => List(x)
-            case _ => Nil // marker: not a simple polynomial
           }
+
+          // fall-through case
+          println(s"recursive fun $fsym")
 
           def wrapZero(x: GVal): GVal = iff(less(const(0), n0), x, a)
 
-          val (r0,r1) = d1 match {
-            // loop invariant stride, i.e. constant delta i.e. linear in loop index
-            case d if !IRD.dependsOn(d, n0) => 
-              println(s"confirmed iterative loop, d = $d")
-              (plus(a,times(plus(n0,const(-1)),d)),
-               plus(a,times(n0,d)))
-            // piece-wise linear, e.g. if (n < 18) 1 else 0
-            case Def(DIf(Def(DLess(`n0`, up)), dx, dy))
-              if !IRD.dependsOn(up, n0) && !IRD.dependsOn(dx, n0) && !IRD.dependsOn(dy, n0) => 
-              val (u0,u1) = 
-              (plus(a,times(plus(n0,const(-1)),dx)),
-               plus(a,times(n0,dx)))
-              val n0minusUp = plus(n0,times(up,const(-1)))
-              val (v0,v1) = 
-              (plus(times(plus(up,const(-1)),dx),times(plus(n0minusUp,const(-1)),dy)),
-               plus(times(plus(up,const(-1)),dx),times(n0minusUp,dy)))
-              (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1))
-            // no simple structure
-            case d =>
-
-              val pp = poly(d1)
-              println("poly: " + pp)
-              pp match {
-                case List(coeff0, coeff1) =>
-                  println(s"found 2nd order polynomial: f'($n0)=$coeff1*$n0+$coeff0 -> f($n0)=$coeff1*$n0/2($n0+1)+$coeff0*$n0")
-                  // c1 * n/2*(n+1) + c0 * n
-
-                  val r0 = plus(times(times(times(plus(n0,const(-1)),n0),const(0.5)), coeff1), times(plus(n0,const(-1)), coeff0))
-                  val r1 = plus(times(times(times(n0,plus(n0,const(1))),const(0.5)), coeff1), times(n0, coeff0))
-
-                  // sanity check that we get the same diff
-                  IRD.printTerm(r0)
-                  IRD.printTerm(r1)
-                  val dd = plus(r1,times(r0, const(-1)))
-                  IRD.printTerm(dd)
-                  val pp2 = poly(dd)
-                  println("poly2: " + pp2)
-                  assert(pp === pp2)
-
-                  (plus(a,r0),
-                   plus(a,r1))
-                case xx =>
-                  println(s"giving up: deriv $xx; recursive fun $fsym")
-                  (wrapZero(call(fsym,plus(n0,const(-1)))),
-                   wrapZero(call(fsym,n0)))
-              }
-          }
-
-          (r0,r1) //wrapZero?
+          (wrapZero(call(fsym,plus(n0,const(-1)))),
+           wrapZero(call(fsym,n0)))
       }
 
       // generate function calls for recursive functions
