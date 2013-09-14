@@ -1518,26 +1518,25 @@ class TestAnalysis4 extends FileDiffSuite {
         Assign("s", Plus(Ref("s"), Ref("i")))
       ))
     }{
-      // FIXME: extract "top"
       """
-        val x8_B = { x9 => 
+        val x8_B_top = { x9 => 
           if (0 < x9) 
-            x8_B(x9 + -1) 
-            + (("top",x9) -> Map(
-                "head" -> x9 + -1, 
-                "tail" -> ("B",("top",x9 + -1)))
-            )
+            x8_B_top(x9 + -1) 
+            + (x9 -> Map(
+                      "head" -> x9 + -1, 
+                      "tail" -> ("B",("top",x9 + -1)))) 
           else 
-            Map(
-              "top" -> Map() + (x9 -> Map("head" -> x9 + -1, "tail" -> (A,top)))
-            )
+            Map() 
+            + (x9 -> Map(
+                      "head" -> x9 + -1, 
+                      "tail" -> (A,top))) 
         }
         Map(
-          "&i" -> Map("val" -> x8_B(100)((top,100))("head")), 
-          "B"  -> x8_B(100), 
-          "&s" -> Map("val" -> x8_B(100)((top,100))("head")), 
+          "&i" -> Map("val" -> x8_B_top(100)(100)("head")), 
+          "B"  -> Map("top" -> x8_B_top(100)), 
+          "&s" -> Map("val" -> x8_B_top(100)(100)("head")), 
           "A"  -> Map("top" -> Map()), 
-          "&x" -> Map("val" -> x8_B(100)((top,100))("tail")), 
+          "&x" -> Map("val" -> x8_B_top(100)(100)("tail")), 
           "&z" -> Map("val" -> (A,top)), 
           "&y" -> Map("val" -> (B,(top,100)))
         )
