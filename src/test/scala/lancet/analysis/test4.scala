@@ -101,6 +101,7 @@ class TestAnalysis4 extends FileDiffSuite {
     case class DNotEqual(x: GVal, y: GVal) extends Def
     case class DPair(x: GVal, y: GVal) extends Def
     case class DIf(c: GVal, x: GVal, y: GVal) extends Def
+    case class DCollect(x: String, c: GVal) extends Def
     case class DFixIndex(x: String, c: GVal) extends Def
     case class DCall(f: GVal, x: GVal) extends Def
     case class DFun(f: String, x: String, y: GVal) extends Def
@@ -117,6 +118,7 @@ class TestAnalysis4 extends FileDiffSuite {
       case DNotEqual(x: GVal, y: GVal)        => dst.notequal(x,y)
       case DPair(x: GVal, y: GVal)            => dst.pair(x,y)
       case DIf(c: GVal, x: GVal, y: GVal)     => dst.iff(c,x,y)
+      case DCollect(x: String, c: GVal)       => dst.collect(x,c)
       case DFixIndex(x: String, c: GVal)      => dst.fixindex(x,c)
       case DCall(f: GVal, x: GVal)            => dst.call(f,x)
       case DFun(f: String, x: String, y: GVal)=> dst.fun(f,x,y)
@@ -136,6 +138,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def notequal(x: From, y: From): To
       def pair(x: From, y: From): To
       def iff(c: From, x: From, y: From): To
+      def collect(x: String, c: From): To
       def fixindex(x: String, c: From): To
       def call(f: From, x: From): To
       def fun(f: String, x: String, y: From): To
@@ -155,6 +158,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def notequal(x: From, y: From)        = s"$x != $y"
       def pair(x: From, y: From)            = s"($x,$y)"
       def iff(c: From, x: From, y: From)    = s"if ($c) $x else $y"
+      def collect(x: String, c: From)       = s"collect($x => $c)"
       def fixindex(x: String, c: From)      = s"fixindex($x => $c)"
       def call(f: From, x: From)            = s"$f($x)"
       def fun(f: String, x: String, y: From)= s"{ $x => $y }"
@@ -174,6 +178,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def notequal(x: From, y: From)        = DNotEqual(x,y)
       def pair(x: From, y: From)            = DPair(x,y)
       def iff(c: From, x: From, y: From)    = DIf(c,x,y)
+      def collect(x: String, c: From)       = DCollect(x,c)
       def fixindex(x: String, c: From)      = DFixIndex(x,c)
       def call(f: From, x: From)            = DCall(f,x)
       def fun(f: String, x: String, y: From)= DFun(f,x,y)
@@ -196,6 +201,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def notequal(x: From, y: From)        = post(next.notequal(pre(x),pre(y)))
       def pair(x: From, y: From)            = post(next.pair(pre(x),pre(y)))
       def iff(c: From, x: From, y: From)    = post(next.iff(pre(c),pre(x),pre(y)))
+      def collect(x: String, c: From)       = post(next.collect(x,pre(c)))
       def fixindex(x: String, c: From)      = post(next.fixindex(x,pre(c)))
       def call(f: From, x: From)            = post(next.call(pre(f),pre(x)))
       def fun(f: String, x: String, y: From)= post(next.fun(f,x,pre(y)))
