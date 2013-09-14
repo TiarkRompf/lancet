@@ -101,28 +101,28 @@ class TestAnalysis4 extends FileDiffSuite {
     case class DNotEqual(x: GVal, y: GVal) extends Def
     case class DPair(x: GVal, y: GVal) extends Def
     case class DIf(c: GVal, x: GVal, y: GVal) extends Def
-    case class DCollect(x: String, c: GVal) extends Def
+    case class DCollect(n: GVal, x: String, c: GVal) extends Def
     case class DFixIndex(x: String, c: GVal) extends Def
     case class DCall(f: GVal, x: GVal) extends Def
     case class DFun(f: String, x: String, y: GVal) extends Def
     case class DOther(s: String) extends Def
 
     def mirrorDef(d: Def, dst: DIntf { type From >: GVal }): dst.To = d match {
-      case DMap(m)                            => dst.map(m.asInstanceOf[Map[dst.From, dst.From]])
-      case DUpdate(x: GVal, f: GVal, y: GVal) => dst.update(x,f,y)
-      case DSelect(x: GVal, f: GVal)          => dst.select(x,f)
-      case DPlus(x: GVal, y: GVal)            => dst.plus(x,y)
-      case DTimes(x: GVal, y: GVal)           => dst.times(x,y)
-      case DLess(x: GVal, y: GVal)            => dst.less(x,y)
-      case DEqual(x: GVal, y: GVal)           => dst.equal(x,y)
-      case DNotEqual(x: GVal, y: GVal)        => dst.notequal(x,y)
-      case DPair(x: GVal, y: GVal)            => dst.pair(x,y)
-      case DIf(c: GVal, x: GVal, y: GVal)     => dst.iff(c,x,y)
-      case DCollect(x: String, c: GVal)       => dst.collect(x,c)
-      case DFixIndex(x: String, c: GVal)      => dst.fixindex(x,c)
-      case DCall(f: GVal, x: GVal)            => dst.call(f,x)
-      case DFun(f: String, x: String, y: GVal)=> dst.fun(f,x,y)
-      case DOther(s: String)                  => dst.other(s)
+      case DMap(m)                                  => dst.map(m.asInstanceOf[Map[dst.From, dst.From]])
+      case DUpdate(x: GVal, f: GVal, y: GVal)       => dst.update(x,f,y)
+      case DSelect(x: GVal, f: GVal)                => dst.select(x,f)
+      case DPlus(x: GVal, y: GVal)                  => dst.plus(x,y)
+      case DTimes(x: GVal, y: GVal)                 => dst.times(x,y)
+      case DLess(x: GVal, y: GVal)                  => dst.less(x,y)
+      case DEqual(x: GVal, y: GVal)                 => dst.equal(x,y)
+      case DNotEqual(x: GVal, y: GVal)              => dst.notequal(x,y)
+      case DPair(x: GVal, y: GVal)                  => dst.pair(x,y)
+      case DIf(c: GVal, x: GVal, y: GVal)           => dst.iff(c,x,y)
+      case DCollect(n: GVal, x: String, c: GVal)    => dst.collect(n,x,c)
+      case DFixIndex(x: String, c: GVal)            => dst.fixindex(x,c)
+      case DCall(f: GVal, x: GVal)                  => dst.call(f,x)
+      case DFun(f: String, x: String, y: GVal)      => dst.fun(f,x,y)
+      case DOther(s: String)                        => dst.other(s)
     }
 
     trait DIntf {
@@ -138,7 +138,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def notequal(x: From, y: From): To
       def pair(x: From, y: From): To
       def iff(c: From, x: From, y: From): To
-      def collect(x: String, c: From): To
+      def collect(n: From, x: String, c: From): To
       def fixindex(x: String, c: From): To
       def call(f: From, x: From): To
       def fun(f: String, x: String, y: From): To
@@ -148,41 +148,41 @@ class TestAnalysis4 extends FileDiffSuite {
     object DString extends DIntf {
       type From = Any
       type To = String
-      def map(m: Map[From,From])            = s"$m"
-      def update(x: From, f: From, y: From) = s"$x + ($f -> $y)"
-      def select(x: From, f: From)          = s"$x($f)"
-      def plus(x: From, y: From)            = s"$x + $y"
-      def times(x: From, y: From)           = s"$x * $y"
-      def less(x: From, y: From)            = s"$x < $y"
-      def equal(x: From, y: From)           = s"$x == $y"
-      def notequal(x: From, y: From)        = s"$x != $y"
-      def pair(x: From, y: From)            = s"($x,$y)"
-      def iff(c: From, x: From, y: From)    = s"if ($c) $x else $y"
-      def collect(x: String, c: From)       = s"collect($x => $c)"
-      def fixindex(x: String, c: From)      = s"fixindex($x => $c)"
-      def call(f: From, x: From)            = s"$f($x)"
-      def fun(f: String, x: String, y: From)= s"{ $x => $y }"
-      def other(s: String)                  = s
+      def map(m: Map[From,From])                   = s"$m"
+      def update(x: From, f: From, y: From)        = s"$x + ($f -> $y)"
+      def select(x: From, f: From)                 = s"$x($f)"
+      def plus(x: From, y: From)                   = s"$x + $y"
+      def times(x: From, y: From)                  = s"$x * $y"
+      def less(x: From, y: From)                   = s"$x < $y"
+      def equal(x: From, y: From)                  = s"$x == $y"
+      def notequal(x: From, y: From)               = s"$x != $y"
+      def pair(x: From, y: From)                   = s"($x,$y)"
+      def iff(c: From, x: From, y: From)           = s"if ($c) $x else $y"
+      def collect(n: From, x: String, c: From)     = s"collect($n) { $x => $c }"
+      def fixindex(x: String, c: From)             = s"fixindex { $x => $c }"
+      def call(f: From, x: From)                   = s"$f($x)"
+      def fun(f: String, x: String, y: From)       = s"{ $x => $y }"
+      def other(s: String)                         = s
     }
 
     object DDef extends DIntf {
       type From = GVal
       type To = Def
-      def map(m: Map[From,From])            = DMap(m)
-      def update(x: From, f: From, y: From) = DUpdate(x,f,y)
-      def select(x: From, f: From)          = DSelect(x,f)
-      def plus(x: From, y: From)            = DPlus(x,y)
-      def times(x: From, y: From)           = DTimes(x,y)
-      def less(x: From, y: From)            = DLess(x,y)
-      def equal(x: From, y: From)           = DEqual(x,y)
-      def notequal(x: From, y: From)        = DNotEqual(x,y)
-      def pair(x: From, y: From)            = DPair(x,y)
-      def iff(c: From, x: From, y: From)    = DIf(c,x,y)
-      def collect(x: String, c: From)       = DCollect(x,c)
-      def fixindex(x: String, c: From)      = DFixIndex(x,c)
-      def call(f: From, x: From)            = DCall(f,x)
-      def fun(f: String, x: String, y: From)= DFun(f,x,y)
-      def other(s: String)                  = DOther(s)
+      def map(m: Map[From,From])                   = DMap(m)
+      def update(x: From, f: From, y: From)        = DUpdate(x,f,y)
+      def select(x: From, f: From)                 = DSelect(x,f)
+      def plus(x: From, y: From)                   = DPlus(x,y)
+      def times(x: From, y: From)                  = DTimes(x,y)
+      def less(x: From, y: From)                   = DLess(x,y)
+      def equal(x: From, y: From)                  = DEqual(x,y)
+      def notequal(x: From, y: From)               = DNotEqual(x,y)
+      def pair(x: From, y: From)                   = DPair(x,y)
+      def iff(c: From, x: From, y: From)           = DIf(c,x,y)
+      def collect(n: From, x: String, c: From)     = DCollect(n,x,c)
+      def fixindex(x: String, c: From)             = DFixIndex(x,c)
+      def call(f: From, x: From)                   = DCall(f,x)
+      def fun(f: String, x: String, y: From)       = DFun(f,x,y)
+      def other(s: String)                         = DOther(s)
     }
 
     trait DXForm extends DIntf {
@@ -191,21 +191,21 @@ class TestAnalysis4 extends FileDiffSuite {
       val next: DIntf
       def pre(x: From): next.From
       def post(x: next.To): To
-      def map(m: Map[From,From])            = post(next.map(m.map(kv=>pre(kv._1)->pre(kv._2))))
-      def update(x: From, f: From, y: From) = post(next.update(pre(x),pre(f),pre(y)))
-      def select(x: From, f: From)          = post(next.select(pre(x),pre(f)))
-      def plus(x: From, y: From)            = post(next.plus(pre(x),pre(y)))
-      def times(x: From, y: From)           = post(next.times(pre(x),pre(y)))
-      def less(x: From, y: From)            = post(next.less(pre(x),pre(y)))
-      def equal(x: From, y: From)           = post(next.equal(pre(x),pre(y)))
-      def notequal(x: From, y: From)        = post(next.notequal(pre(x),pre(y)))
-      def pair(x: From, y: From)            = post(next.pair(pre(x),pre(y)))
-      def iff(c: From, x: From, y: From)    = post(next.iff(pre(c),pre(x),pre(y)))
-      def collect(x: String, c: From)       = post(next.collect(x,pre(c)))
-      def fixindex(x: String, c: From)      = post(next.fixindex(x,pre(c)))
-      def call(f: From, x: From)            = post(next.call(pre(f),pre(x)))
-      def fun(f: String, x: String, y: From)= post(next.fun(f,x,pre(y)))
-      def other(s: String)                  = post(next.other(s))
+      def map(m: Map[From,From])                   = post(next.map(m.map(kv=>pre(kv._1)->pre(kv._2))))
+      def update(x: From, f: From, y: From)        = post(next.update(pre(x),pre(f),pre(y)))
+      def select(x: From, f: From)                 = post(next.select(pre(x),pre(f)))
+      def plus(x: From, y: From)                   = post(next.plus(pre(x),pre(y)))
+      def times(x: From, y: From)                  = post(next.times(pre(x),pre(y)))
+      def less(x: From, y: From)                   = post(next.less(pre(x),pre(y)))
+      def equal(x: From, y: From)                  = post(next.equal(pre(x),pre(y)))
+      def notequal(x: From, y: From)               = post(next.notequal(pre(x),pre(y)))
+      def pair(x: From, y: From)                   = post(next.pair(pre(x),pre(y)))
+      def iff(c: From, x: From, y: From)           = post(next.iff(pre(c),pre(x),pre(y)))
+      def collect(n: From, x: String, c: From)     = post(next.collect(pre(n),x,pre(c)))
+      def fixindex(x: String, c: From)             = post(next.fixindex(x,pre(c)))
+      def call(f: From, x: From)                   = post(next.call(pre(f),pre(x)))
+      def fun(f: String, x: String, y: From)       = post(next.fun(f,x,pre(y)))
+      def other(s: String)                         = post(next.other(s))
     }
 
     object IRS extends DXForm {
@@ -401,7 +401,7 @@ class TestAnalysis4 extends FileDiffSuite {
         case Def(DNotEqual(x,y)) => notequal(subst(x,a,b),subst(y,a,b))
         case Def(DCall(f,y))     => call(subst(f,a,b),subst(y,a,b))
         case Def(DFun(f,x1,y))   => x//subst(y,a,b); x // binding??
-        case Def(DCollect(x,y))  => collect(x,subst(y,a,b))
+        case Def(DCollect(n,x,y))=> collect(subst(n,a,b),x,subst(y,a,b))
         case Def(DFixIndex(x,y)) => fixindex(x,subst(y,a,b))
         case Def(d)              => println("no subst: "+x+"="+d); x
         case _                   => x // TOOD
@@ -589,9 +589,9 @@ class TestAnalysis4 extends FileDiffSuite {
         }
       }
 
-      override def collect(x: String, c: From)       = c match {
+      override def collect(n: From, x: String, c: From) = c match {
         case _ =>
-          super.collect(x,subst(c,less(const(0),GRef(x)),const(1)))
+          super.collect(n,x,subst(c,less(const(0),GRef(x)),const(1)))
       }
 
       override def fixindex(x: String, c: From)       = c match {
@@ -707,7 +707,7 @@ class TestAnalysis4 extends FileDiffSuite {
           //use real index var !! 
           val x = mkey(fsym,n0)
           println(s"hit update at loop index -- assume collect")
-          val r = collect(x.toString, subst(y,n0,x))
+          val r = collect(n0, x.toString, subst(y,n0,x))
           (r, r)
         case (a,b0, Def(DMap(m2))) if false /*disable*/=> // allocation!
           IRD.printTerm(a)
@@ -1631,11 +1631,11 @@ class TestAnalysis4 extends FileDiffSuite {
       """
         Map(
           "&i" -> Map("val" -> 99), 
-          "B" -> Map("top" -> collect(x8_B_top_x9 => 
+          "B" -> Map("top" -> collect(100) { x8_B_top_x9 => 
             Map(
               "head" -> x8_B_top_x9 + -1, 
-              "tail" -> ("B",("top",x8_B_top_x9 + -1)))
-            ) 
+              "tail" -> ("B",("top",x8_B_top_x9 + -1))
+            ) }
             + (100 -> Map(
               "head" -> 99, 
               "tail" -> (B,(top,99)))
