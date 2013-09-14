@@ -401,6 +401,7 @@ class TestAnalysis4 extends FileDiffSuite {
         case Def(DNotEqual(x,y)) => notequal(subst(x,a,b),subst(y,a,b))
         case Def(DCall(f,y))     => call(subst(f,a,b),subst(y,a,b))
         case Def(DFun(f,x1,y))   => x//subst(y,a,b); x // binding??
+        case Def(DCollect(x,y))  => collect(x,subst(y,a,b))
         case Def(DFixIndex(x,y)) => fixindex(x,subst(y,a,b))
         case Def(d)              => println("no subst: "+x+"="+d); x
         case _                   => x // TOOD
@@ -578,7 +579,7 @@ class TestAnalysis4 extends FileDiffSuite {
           }
       }
 
-      // LowBound(lowVal,lowBound,highBound,highVal)
+      // LowBound(lowVal,lowBound,highBound,highVal) (not used!)
       object LowBound {
         def unapply(x: GVal): Option[(GVal,GVal,GVal,GVal)] = {
           x match {
@@ -586,6 +587,11 @@ class TestAnalysis4 extends FileDiffSuite {
             case _ => None
           }
         }
+      }
+
+      override def collect(x: String, c: From)       = c match {
+        case _ =>
+          super.collect(x,subst(c,less(const(0),GRef(x)),const(1)))
       }
 
       override def fixindex(x: String, c: From)       = c match {
