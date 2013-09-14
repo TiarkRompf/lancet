@@ -1625,6 +1625,26 @@ class TestAnalysis4 extends FileDiffSuite {
           "&y" -> Map("val" -> (B,(top,100)))
         )
       """
+/*
+  Map(
+    "&i" -> Map("val" -> if (0 < fixindex(x96 => 0)) "undefined" else 99), 
+    "B" -> Map("top" -> collect(x8_B_top_x9 => 
+      Map(
+        "head" -> x8_B_top_x9 + -1, 
+        "tail" -> ("B",("top",x8_B_top_x9 + -1))
+      ))
+      + (100 -> Map(
+        "head" -> 99, 
+        "tail" -> (B,(top,99))
+      ))), 
+      "&s" -> Map("val" -> if (0 < fixindex(x96 => 0)) "undefined" else 99), 
+      "A" -> Map("top" -> Map()), 
+      "&x" -> Map("val" -> if (0 < fixindex(x96 => 0)) "undefined" else (B,(top,99))), 
+      "&z" -> Map("val" -> (A,top)), 
+      "&y" -> Map("val" -> (B,(top,100)))
+    )
+*/
+
     }
   }
 
