@@ -461,6 +461,8 @@ class TestAnalysis4 extends FileDiffSuite {
         case (GConst(x:Double),GConst(y:Double)) => const(x+y)
         case (GConst(0),_) => y
         case (_,GConst(0)) => x
+        case (GConst("undefined"),_) => GConst("undefined")
+        case (_,GConst("undefined")) => GConst("undefined")
         case (Def(DIf(c,x,z)),_) => iff(c,plus(x,y),plus(z,y))
         // random simplifications ...
         case (GConst(c),b:GRef) => plus(b,const(c)) // CAVE: non-int consts!
@@ -483,6 +485,8 @@ class TestAnalysis4 extends FileDiffSuite {
         case (_,GConst(0)) => GConst(0)
         case (GConst(1),_) => y
         case (_,GConst(1)) => x
+        case (GConst("undefined"),_) => GConst("undefined")
+        case (_,GConst("undefined")) => GConst("undefined")
         case (Def(DIf(c,x,z)),_) => iff(c,times(x,y),times(z,y))
         // random simplifications ...
         case (GConst(c),b:GRef) => times(b,const(c)) // CAVE: non-int consts!
