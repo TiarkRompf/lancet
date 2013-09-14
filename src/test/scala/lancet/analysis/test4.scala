@@ -699,6 +699,13 @@ class TestAnalysis4 extends FileDiffSuite {
           val m = (m2.keys) map { k => (k, lub(select(a,k),select(b0,k),select(b1,k))(mkey(fsym,k),n0)) }
           println(m)
           (map(m.map(kv=>(kv._1,kv._2._1)).toMap), map(m.map(kv=>(kv._1,kv._2._2)).toMap))
+        case (a,b0, Def(DUpdate(bX, `n0`, y))) if bX == b0 || (bX == map(Map()) && b0 == const("undefined")) => // array creation
+          IRD.printTerm(a)
+          IRD.printTerm(b0)
+          IRD.printTerm(b1)
+          println(s"hit update at loop index -- assume collect")
+          val r = collect(n0.toString, y)
+          (r, r)
         case (a,b0, Def(DMap(m2))) if false /*disable*/=> // allocation!
           IRD.printTerm(a)
           IRD.printTerm(b0)
@@ -742,6 +749,12 @@ class TestAnalysis4 extends FileDiffSuite {
           // handle in
           // TODO: case for alloc in loop -- x(0)=(A,1), x(i>0)=(B,(1,i))
           // (trying to handle this one above...)
+
+          println("checky checky")
+          IRD.printTerm(a)
+          IRD.printTerm(b0)
+          IRD.printTerm(b1)
+
 
           // look at numeric difference. see if symbolic values before/after are generalized in a corresponding way.
           // widen: compute new symbolic val before from symbolic val after (e.g. closed form)
@@ -1697,7 +1710,7 @@ class TestAnalysis4 extends FileDiffSuite {
   }
 
     // update stuff allocated in a loop
-
+/*
   def testE = withOutFileChecked(prefix+"E") {
     import Test1._
     Test1.run { //test9
@@ -1716,6 +1729,7 @@ class TestAnalysis4 extends FileDiffSuite {
       ))
     }
   }
+*/
 
 }
 
