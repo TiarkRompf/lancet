@@ -1347,15 +1347,9 @@ class TestAnalysis4 extends FileDiffSuite {
       ))
     } {
       """
-      val x8_A_top = { x9 => 
-        if (0 < x9) 
-          x8_A_top(x9 + -1) + ("head" -> x9 + -1) 
-        else 
-          Map("head" -> x9 + -1) 
-      }
       Map(
         "&i" -> Map("val" -> 100), 
-        "A"  -> Map("top" -> x8_A_top(100)), 
+        "A"  -> Map("top" -> Map("head" -> 99)), 
         "&z" -> Map("val" -> (A,top)), 
         "&x" -> Map("val" -> (A,top))
       )
