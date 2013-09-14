@@ -1696,20 +1696,9 @@ Map(
       ))
     } {
       """
-        val x11_B_top = { x12 => 
-          if (0 < x12) 
-            x11_B_top(x12 + -1) 
-            + ("head" -> x12 + -1) 
-            + ("tail" -> (B,top)) 
-          else 
-            Map("head" -> x12 + -1, "tail" -> (A,top)) 
-        }
         Map(
           "&i" -> Map("val" -> 100), 
-          "B"  -> Map("top" -> x11_B_top(100) 
-                               + ("tail" -> (A,top)) 
-                               + ("head" -> 7)
-                  ), 
+          "B"  -> Map("top" -> Map("head" -> 7, "tail" -> (A,top))), 
           "A"  -> Map("top" -> Map()), 
           "&x" -> Map("val" -> (B,top)), 
           "&z" -> Map("val" -> (A,top)), 
