@@ -703,8 +703,10 @@ class TestAnalysis4 extends FileDiffSuite {
           IRD.printTerm(a)
           IRD.printTerm(b0)
           IRD.printTerm(b1)
+          //use real index var !! 
+          val x = mkey(fsym,n0)
           println(s"hit update at loop index -- assume collect")
-          val r = collect(n0.toString, y)
+          val r = collect(x.toString, subst(y,n0,x))
           (r, r)
         case (a,b0, Def(DMap(m2))) if false /*disable*/=> // allocation!
           IRD.printTerm(a)
