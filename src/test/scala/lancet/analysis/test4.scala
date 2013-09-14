@@ -1321,22 +1321,12 @@ class TestAnalysis4 extends FileDiffSuite {
         )))
       ))
     }{
-      // FIXME: overwriting B.top, remove recursive dep
       """
-      val x11_B_top = { x12 => 
-        if (0 < x12) 
-          x11_B_top(x12 + -1) 
-          + ("head" -> x12 + -1) 
-          + ("tail" -> (B,top)) 
-        else 
-          Map(
-            "head" -> x12 + -1, 
-            "tail" -> (A,top)
-          )
-      }
       Map(
         "&i" -> Map("val" -> 100), 
-        "B"  -> Map("top" -> x11_B_top(100)), 
+        "B"  -> Map("top" -> Map(
+                              "head" -> 99, 
+                              "tail" -> (B,top))), 
         "A"  -> Map("top" -> Map()), 
         "&x" -> Map("val" -> (B,top)), 
         "&z" -> Map("val" -> (A,top)), 
