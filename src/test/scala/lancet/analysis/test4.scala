@@ -1065,14 +1065,19 @@ class TestAnalysis4 extends FileDiffSuite {
 
           val afterB = store
 
+          val next = IR.iff(cv,afterB,afterC)
+
           println(s"lub($before, $afterB) = ?")
 
-          val (gen,next) = lub(before, init, afterB)(loop,n0)
+          val (initNew,nextNew) = lub(before, init, next)(loop,n0)
 
-          println(s"lub($before, $afterB) = $gen")
-          if (init != gen) { init = gen; iter } else {
+          println(s"lub($before, $next) = $initNew")
+          if (init != initNew) { init = initNew; iter } else {
 
-            store = lubfun(before, afterB)(loop,n0)
+            //store = lubfun(before, afterB)(loop,n0)
+            store = lubfun(before, nextNew)(loop,n0)
+            // XXX why not just nextNew ???
+            //store = nextNew
 
             // TODO: clarify intended semantics!
             // Is elem 0 the value after 0 iterations,
@@ -1116,8 +1121,8 @@ class TestAnalysis4 extends FileDiffSuite {
         println(s"fixindex: $nX")
 
         store = call(loop,nX)
-        val cv1 = eval(c)
-        store = subst(store,cv1,const(0)) // assertFalse
+        //val cv1 = eval(c)
+        //store = subst(store,cv1,const(0)) // assertFalse
 
         itvec = saveit
         
@@ -1186,7 +1191,15 @@ class TestAnalysis4 extends FileDiffSuite {
         "&x" -> Map("val" -> 8)
       )"""
     }
-    
+/*
+Map(
+  "&i" -> Map("val" -> 
+      if (0 < fixindex { x7 => if (0 < x7) x6_&i_val(x7 + -1) < 100 else 1 }) 
+        x6_&i_val(fixindex { x7 => if (0 < x7) x6_&i_val(x7 + -1) < 100 else 1 }) 
+      else 0), 
+  "&y" -> Map("val" -> if (0 < fixindex { x7 => if (0 < x7) x6_&i_val(x7 + -1) < 100 else 1 }) x6_&y_val(fixindex { x7 => if (0 < x7) x6_&i_val(x7 + -1) < 100 else 1 }) else 0), "&x" -> Map("val" -> 8))
+
+*/  
     Test1.runAndCheck {
       Block(List(
         Assign("x", Const(900)), // input
@@ -1345,6 +1358,21 @@ class TestAnalysis4 extends FileDiffSuite {
         )
       """
     }
+/*
+      Map(
+        "&i" -> Map("val" -> 100), 
+        "B" -> Map("top" -> collect(100) { x8_B_top_x9 => Map(
+            "head" -> x8_B_top_x9 + -1, 
+            "tail" -> ("B",("top",x8_B_top_x9 + -1))) 
+            } 
+            + (100 -> Map("head" -> 99, "tail" -> (B,(top,99))))), 
+        "A" -> Map("top" -> Map()), 
+        "&x" -> Map("val" -> (B,(top,100))), 
+        "&z" -> Map("val" -> (A,top)), 
+        "&y" -> Map("val" -> (B,(top,100))))
+
+*/
+
 
   // back to simpler tests (compare to test3)
   // 3 and 4 should be different: alloc within the loop vs before
