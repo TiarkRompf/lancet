@@ -798,6 +798,11 @@ class TestAnalysis4 extends FileDiffSuite {
               case _ => Nil // marker: not a simple polynomial
             }
 
+            /*
+            TODO: piecewise composition is too brittle. need to support multiple
+                  intervals.
+            */
+
             d1 match {
               // loop invariant stride, i.e. constant delta i.e. linear in loop index
               case d if !IRD.dependsOn(d, n0) && d != const("undefined") => 
