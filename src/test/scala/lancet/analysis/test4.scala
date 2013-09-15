@@ -591,7 +591,7 @@ class TestAnalysis4 extends FileDiffSuite {
 
       override def collect(n: From, x: String, c: From) = c match {
         case _ =>
-          super.collect(n,x,subst(c,less(const(0),GRef(x)),const(1)))
+          super.collect(n,x,c) //subst(c,less(const(0),GRef(x)),const(1)))
       }
 
       override def fixindex(x: String, c: From)       = c match {
@@ -600,7 +600,8 @@ class TestAnalysis4 extends FileDiffSuite {
         // it doesn't seem quite right but appears necessary
         case Def(DLess(GRef(`x`),u)) => plus(u,const(-1))
         case _ =>
-          super.fixindex(x,subst(c,less(const(0),GRef(x)),const(1)))
+          super.fixindex(x,c)
+          //super.fixindex(x,subst(c,less(const(0),GRef(x)),const(1)))
       }
 
       override def call(f: From, x: From)            = f match {
@@ -705,9 +706,9 @@ class TestAnalysis4 extends FileDiffSuite {
           IRD.printTerm(b0)
           IRD.printTerm(b1)
           //use real index var !! 
-          val x = mkey(fsym,n0)
+          val nX = mkey(fsym,n0)
           println(s"hit update at loop index -- assume collect")
-          val r = collect(n0, x.toString, subst(y,n0,x))
+          val r = collect(plus(n0,const(1)), nX.toString, subst(y,n0,nX))
           (r, r)
         case (a,b0, Def(DMap(m2))) if false /*disable*/=> // allocation!
           IRD.printTerm(a)
