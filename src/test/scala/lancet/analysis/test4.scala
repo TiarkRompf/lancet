@@ -575,6 +575,7 @@ class TestAnalysis4 extends FileDiffSuite {
                 return x
               }*/
               if (thenp == elsep) thenp
+              else if (thenp == const(1) && elsep == const(0)) c
               else super.iff(c,thenp,elsep)
           }
       }
