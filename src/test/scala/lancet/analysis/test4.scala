@@ -821,26 +821,38 @@ class TestAnalysis4 extends FileDiffSuite {
             TODO: piecewise composition is too brittle. need to support multiple
                   intervals.
             */
-            /*
-            def break(lo: Gval, d: Gval): GVal = d match {}
+            val fail = new Exception
+            def break(ulo: GVal, nlo: GVal, d: GVal): (GVal,GVal) = d match {
               // loop invariant stride, i.e. constant delta i.e. linear in loop index
               case d if !IRD.dependsOn(d, n0) && d != const("undefined") => 
                 println(s"confirmed iterative loop, d = $d")
-                return (plus(lo,times(plus(n0,const(-1)),d)),
-                 plus(lo,times(n0,d)))
+                (plus(ulo,times(plus(nlo,const(-1)),d)),
+                 plus(ulo,times(nlo,d)))
               // piece-wise linear, e.g. if (n < 18) 1 else 0
               case Def(DIf(Def(DLess(`n0`, up)), dx, dy))
                 if !IRD.dependsOn(up, n0) =>
-                ...
-                break(dx)
-                break(dy)
-
-                descent into dy needs to update lo bound
+                val n0minusUp = plus(n0,times(up,const(-1)))
+                val (u0,u1) = break(ulo,nlo,dx)
+                val (v0,v1) = break(up,n0minusUp,dy)
+                (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1))
+              case Def(DLess(`n0`, up)) // short cut
+                if !IRD.dependsOn(up, n0) =>
+                val n0minusUp = plus(n0,times(up,const(-1)))
+                val (u0,u1) = break(ulo,nlo,const(1))
+                val (v0,v1) = break(up,n0minusUp,const(0))
+                (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1))
               case _ => 
+                throw fail
             }
-            */
 
-            d1 match {
+            try { 
+              return break(a,n0,d1)
+            } catch {
+              case `fail` =>
+              println("giving up xxx")
+            }
+
+            if (false) d1 match {
               // loop invariant stride, i.e. constant delta i.e. linear in loop index
               case d if !IRD.dependsOn(d, n0) && d != const("undefined") => 
                 println(s"confirmed iterative loop, d = $d")
