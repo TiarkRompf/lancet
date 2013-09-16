@@ -802,6 +802,24 @@ class TestAnalysis4 extends FileDiffSuite {
             TODO: piecewise composition is too brittle. need to support multiple
                   intervals.
             */
+            /*
+            def break(lo: Gval, d: Gval): GVal = d match {}
+              // loop invariant stride, i.e. constant delta i.e. linear in loop index
+              case d if !IRD.dependsOn(d, n0) && d != const("undefined") => 
+                println(s"confirmed iterative loop, d = $d")
+                return (plus(lo,times(plus(n0,const(-1)),d)),
+                 plus(lo,times(n0,d)))
+              // piece-wise linear, e.g. if (n < 18) 1 else 0
+              case Def(DIf(Def(DLess(`n0`, up)), dx, dy))
+                if !IRD.dependsOn(up, n0) =>
+                ...
+                break(dx)
+                break(dy)
+
+                descent into dy needs to update lo bound
+              case _ => 
+            }
+            */
 
             d1 match {
               // loop invariant stride, i.e. constant delta i.e. linear in loop index
