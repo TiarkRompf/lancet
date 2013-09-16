@@ -101,6 +101,7 @@ class TestAnalysis4 extends FileDiffSuite {
     case class DNotEqual(x: GVal, y: GVal) extends Def
     case class DPair(x: GVal, y: GVal) extends Def
     case class DIf(c: GVal, x: GVal, y: GVal) extends Def
+    case class DSum(n: GVal, x: String, c: GVal) extends Def
     case class DCollect(n: GVal, x: String, c: GVal) extends Def
     case class DFixIndex(x: String, c: GVal) extends Def
     case class DCall(f: GVal, x: GVal) extends Def
@@ -118,6 +119,7 @@ class TestAnalysis4 extends FileDiffSuite {
       case DNotEqual(x: GVal, y: GVal)              => dst.notequal(x,y)
       case DPair(x: GVal, y: GVal)                  => dst.pair(x,y)
       case DIf(c: GVal, x: GVal, y: GVal)           => dst.iff(c,x,y)
+      case DSum(n: GVal, x: String, c: GVal)        => dst.sum(n,x,c)
       case DCollect(n: GVal, x: String, c: GVal)    => dst.collect(n,x,c)
       case DFixIndex(x: String, c: GVal)            => dst.fixindex(x,c)
       case DCall(f: GVal, x: GVal)                  => dst.call(f,x)
@@ -138,6 +140,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def notequal(x: From, y: From): To
       def pair(x: From, y: From): To
       def iff(c: From, x: From, y: From): To
+      def sum(n: From, x: String, c: From): To
       def collect(n: From, x: String, c: From): To
       def fixindex(x: String, c: From): To
       def call(f: From, x: From): To
@@ -158,6 +161,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def notequal(x: From, y: From)               = s"$x != $y"
       def pair(x: From, y: From)                   = s"($x,$y)"
       def iff(c: From, x: From, y: From)           = s"if ($c) $x else $y"
+      def sum(n: From, x: String, c: From)         = s"sum($n) { $x => $c }"
       def collect(n: From, x: String, c: From)     = s"collect($n) { $x => $c }"
       def fixindex(x: String, c: From)             = s"fixindex { $x => $c }"
       def call(f: From, x: From)                   = s"$f($x)"
@@ -178,6 +182,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def notequal(x: From, y: From)               = DNotEqual(x,y)
       def pair(x: From, y: From)                   = DPair(x,y)
       def iff(c: From, x: From, y: From)           = DIf(c,x,y)
+      def sum(n: From, x: String, c: From)         = DSum(n,x,c)
       def collect(n: From, x: String, c: From)     = DCollect(n,x,c)
       def fixindex(x: String, c: From)             = DFixIndex(x,c)
       def call(f: From, x: From)                   = DCall(f,x)
@@ -201,6 +206,7 @@ class TestAnalysis4 extends FileDiffSuite {
       def notequal(x: From, y: From)               = post(next.notequal(pre(x),pre(y)))
       def pair(x: From, y: From)                   = post(next.pair(pre(x),pre(y)))
       def iff(c: From, x: From, y: From)           = post(next.iff(pre(c),pre(x),pre(y)))
+      def sum(n: From, x: String, c: From)         = post(next.sum(pre(n),x,pre(c)))
       def collect(n: From, x: String, c: From)     = post(next.collect(pre(n),x,pre(c)))
       def fixindex(x: String, c: From)             = post(next.fixindex(x,pre(c)))
       def call(f: From, x: From)                   = post(next.call(pre(f),pre(x)))
@@ -401,6 +407,7 @@ class TestAnalysis4 extends FileDiffSuite {
         case Def(DNotEqual(x,y)) => notequal(subst(x,a,b),subst(y,a,b))
         case Def(DCall(f,y))     => call(subst(f,a,b),subst(y,a,b))
         case Def(DFun(f,x1,y))   => x//subst(y,a,b); x // binding??
+        case Def(DSum(n,x,y))    => sum(subst(n,a,b),x,subst(y,a,b))
         case Def(DCollect(n,x,y))=> collect(subst(n,a,b),x,subst(y,a,b))
         case Def(DFixIndex(x,y)) => fixindex(x,subst(y,a,b))
         case Def(d)              => println("no subst: "+x+"="+d); x
@@ -588,6 +595,11 @@ class TestAnalysis4 extends FileDiffSuite {
             case _ => None
           }
         }
+      }
+
+      override def sum(n: From, x: String, c: From) = c match {
+        case _ =>
+          super.sum(n,x,c) //subst(c,less(const(0),GRef(x)),const(1)))
       }
 
       override def collect(n: From, x: String, c: From) = c match {
@@ -797,6 +809,13 @@ class TestAnalysis4 extends FileDiffSuite {
               case _ if !IRD.dependsOn(x, n0) => List(x)
               case _ => Nil // marker: not a simple polynomial
             }
+
+            /*if (!IRD.dependsOn(d1, b0)) { // prevent self loops
+              val nX = mkey(fsym,n0)
+              println(s"assume sum")
+              val r = sum(n0, nX.toString, subst(d1,n0,nX))
+              return (r, r)
+            }*/
 
             /*
             TODO: piecewise composition is too brittle. need to support multiple
