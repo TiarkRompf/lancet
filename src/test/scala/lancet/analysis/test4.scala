@@ -1495,6 +1495,31 @@ class TestAnalysis4 extends FileDiffSuite {
       ))
     } {
       """
+    val x8_&x_val = { x9 => if (x9 < 100) ("B",("top",x9)) else x8_&x_val(x9 + -1) }
+    val x8_&y_val = { x9 => if (x9 < 100) ("B",("top",x9)) else x8_&y_val(x9 + -1) } 
+    val x8_B_top = { x9 => 
+      if (x9 < 100) {
+        if (0 < x9) 
+          x8_B_top(x9 + -1) 
+          + (x9 -> Map("head" -> x9, "tail" -> x8_&x_val(x9 + -1))) 
+        else 
+          Map() 
+          + (x9 -> Map("head" -> x9, "tail" -> (A,top)))
+      } 
+      else x8_B_top(x9 + -1)
+    }
+    Map(
+      "&i" -> Map("val" -> 100), 
+      "B"  -> Map("top" -> x8_B_top(99)), 
+      "A"  -> Map("top" -> Map()), 
+      "&x" -> Map("val" -> x8_&x_val(99)), 
+      "&z" -> Map("val" -> (A,top)), 
+      "&y" -> Map("val" -> x8_&y_val(99))
+    )
+      """
+    }
+
+/*
         val x8_B_top = { x9 => 
           if (0 < x9) 
             x8_B_top(x9 + -1) 
@@ -1513,6 +1538,7 @@ class TestAnalysis4 extends FileDiffSuite {
         )
       """
     }
+*/
 /*
       Map(
         "&i" -> Map("val" -> 100), 
