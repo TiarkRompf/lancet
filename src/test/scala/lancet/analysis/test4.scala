@@ -1266,15 +1266,30 @@ class TestAnalysis4 extends FileDiffSuite {
         "&x" -> Map("val" -> 8)
       )"""
     }
-/*
-Map(
-  "&i" -> Map("val" -> 
-      if (0 < fixindex { x7 => if (0 < x7) x6_&i_val(x7 + -1) < 100 else 1 }) 
-        x6_&i_val(fixindex { x7 => if (0 < x7) x6_&i_val(x7 + -1) < 100 else 1 }) 
-      else 0), 
-  "&y" -> Map("val" -> if (0 < fixindex { x7 => if (0 < x7) x6_&i_val(x7 + -1) < 100 else 1 }) x6_&y_val(fixindex { x7 => if (0 < x7) x6_&i_val(x7 + -1) < 100 else 1 }) else 0), "&x" -> Map("val" -> 8))
 
-*/  
+    Test1.runAndCheck {
+      Block(List(
+        Assign("x", Const(900)), // input
+        Assign("y", Const(0)),
+        While(Less(Const(0), Ref("x")), Block(List(
+          If(Less(Ref("y"),Const(17)), 
+            Block(List(
+              Assign("y", Plus(Ref("y"), Const(1)))
+            )),
+            Block(Nil)
+          ),
+          Assign("x", Plus(Ref("x"), Const(-1)))
+        ))),
+        Assign("r", Ref("x"))
+      ))
+    }{
+      """Map(
+        "&x"  -> Map("val" -> 0), 
+        "&y"  -> Map("val" -> 17), 
+        "&r"  -> Map("val" -> 0)
+      )"""
+    }
+
     Test1.runAndCheck {
       Block(List(
         Assign("x", Const(900)), // input
@@ -1282,14 +1297,14 @@ Map(
         Assign("z", Const(0)),
         Assign("z2", Const(0)),
         While(Less(Const(0), Ref("x")), Block(List(
-          //Assign("z", Plus(Ref("z"), Ref("x"))),
+          Assign("z", Plus(Ref("z"), Ref("x"))),
           //Assign("z2", Plus(Ref("z2"), Plus(Times(Ref("x"),Const(3)), Const(5)))),
-          If(Less(Ref("y"),Const(17)), 
+          /*If(Less(Ref("y"),Const(17)), 
             Block(List(
               Assign("y", Plus(Ref("y"), Const(1)))
             )),
             Block(Nil)
-          ),
+          ),*/
           Assign("x", Plus(Ref("x"), Const(-1)))
         ))),
         Assign("r", Ref("x"))
