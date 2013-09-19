@@ -931,7 +931,7 @@ class TestAnalysis4 extends FileDiffSuite {
           def wrapZero(x: GVal): GVal = iff(less(const(0), n0), x, a)
 
           (wrapZero(call(fsym,plus(n0,const(-1)))),
-           wrapZero(call(fsym,n0)))
+           b1)//wrapZero(call(fsym,n0)))
       }
 
       // generate function calls for recursive functions
