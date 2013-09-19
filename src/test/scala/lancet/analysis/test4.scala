@@ -389,6 +389,15 @@ class TestAnalysis4 extends FileDiffSuite {
                 // if (0 < x6) if (0 < x6 + -1) if (0 < x6 + -2) if (x6 < 102) if (x6 < 101) x100 + 1 
                 // else x100 else x100 else x100 + 1 else x100 + 1 else 0
 
+            case Def(p@DLess(`v`,s)) =>
+              // !(x9 < 100) && (0 < 100) --> !(0<x9)
+              // !(s,u)
+              if (less(u,s) == const(1) && b == const(0)) {
+                println(s"hit3: $v<$s=$b && $u<$s=${less(u,s)} --> $u<$v=0")
+                // !(s < u) && (s < v) ---> !(u < v)
+                return subst(y,a,b)
+              }
+
             case _ => 
           }
           iff(subst(c,a,b),subst(x,a,b),subst(y,a,b))
@@ -1170,7 +1179,7 @@ class TestAnalysis4 extends FileDiffSuite {
 
           eval(b)
 
-          store = subst(store,less(n0,const(0)),const(0)) // 0 <= i
+          //store = subst(store,less(n0,const(0)),const(0)) // 0 <= i
 
           val afterB = store
 
