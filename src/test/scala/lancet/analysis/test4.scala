@@ -867,13 +867,13 @@ class TestAnalysis4 extends FileDiffSuite {
                 pp match {
                   case List(coeff0, coeff1) =>
                     println(s"found 2nd order polynomial: f'($n0)=$coeff1*$n0+$coeff0 -> f($n0)=$coeff1*$n0/2($n0+1)+$coeff0*$n0")
-                    // c1 * n/2*(n+1) + c0 * n
 
+                    // f(n) = c1 * n/2*(n+1) + c0 * n
                     def eval(nX: GVal) = 
-                      plus(times(times(times(nX,plus(nX,const(1))),const(0.5)), coeff1), times(nX, coeff0))
+                      plus(times(times(times(nX,plus(nX,const(-1))),const(0.5)), coeff1), times(nX, coeff0))
 
-                    val r0 = eval(plus(n0,const(-1)))
-                    val r1 = eval(n0)
+                    val r0 = eval(n0)
+                    val r1 = eval(plus(n0,const(1)))
                     val rh = eval(nhi)
 
                     // sanity check that we get the same diff
@@ -883,7 +883,11 @@ class TestAnalysis4 extends FileDiffSuite {
                     IRD.printTerm(dd)
                     val pp2 = poly(dd)
                     println("poly2: " + pp2)
-                    assert(pp === pp2)
+                    if (pp != pp2) {
+                      println("FAIL")
+                      sys.error("GGG")
+                    }
+                    assert(pp == pp2)
 
                     (plus(ulo,r0), plus(ulo,r1), plus(ulo,rh))
 
@@ -900,6 +904,9 @@ class TestAnalysis4 extends FileDiffSuite {
             } catch {
               case `fail` =>
             }
+
+            println("failed ...")
+
 
             if (false) d1 match {
               // loop invariant stride, i.e. constant delta i.e. linear in loop index
