@@ -818,44 +818,51 @@ class TestAnalysis4 extends FileDiffSuite {
             }*/
 
             /*
-            TODO: piecewise composition is too brittle. need to support multiple
-                  intervals.
+              piecewise composition, multiple intervals.
+
+              input:
+                (value at start index, start index, end index, value increment)
+              output:
+                (value before iteration, value after iteration, value at end index)
+
+              current iteration is assumed to be between start and end index
             */
             val fail = new Exception
-            def break(ulo: GVal, nlo: GVal, d: GVal): (GVal,GVal) = d match {
+            def break(ulo: GVal, nlo: GVal, nhi: GVal, d: GVal): (GVal,GVal,GVal) = d match {
               // loop invariant stride, i.e. constant delta i.e. linear in loop index
               case d if !IRD.dependsOn(d, n0) && d != const("undefined") => 
                 println(s"confirmed iterative loop, d = $d")
                 // before: ul + n * d
                 // after:  ul + (n+1) * d
-                (plus(ulo,times(nlo,d)),
-                 plus(ulo,times(plus(nlo,const(1)),d)))
+                val dn = plus(n0,times(nlo,const(-1)))
+                val dh = plus(nhi,times(nlo,const(-1)))
+                (plus(ulo,times(dn,d)),
+                 plus(ulo,times(plus(dn,const(1)),d)),
+                 plus(ulo,times(dh,d)))
               // piece-wise linear, e.g. if (n < 18) 1 else 0
               case Def(DIf(Def(DLess(`n0`, up)), dx, dy))
-                if !IRD.dependsOn(up, n0) =>                
-                val n0minusUp = plus(n0,times(up,const(-1))) // nlo vs n0 ???
-                val nhi = plus(nlo,times(up,const(-1)))
-                val uhi = plus(ulo,times(up,dx))
-                println(s"split range of $n0 at $up: dx=$dx dy=$dy ulo=$ulo nlo=$nlo n0minusUp=$n0minusUp")
-                val (u0,u1) = break(ulo,nlo,dx)                
-                val (v0,v1) = break(uhi,uhi,dy)
+                if !IRD.dependsOn(up, n0) =>
+                val dn = plus(nhi,times(nlo,const(-1)))
+                println(s"split range of $n0 at $up: dx=$dx dy=$dy ulo=$ulo nlo=$nlo nhi=$nhi")
+                val (u0,u1,uhi) = break(ulo,nlo,up,dx)
+                val (v0,v1,vhi) = break(uhi,up,nhi,dy)
                 println(s"before ($u0,$v0), after ($u1,$v1)")
                 val (r0,r1) = (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1))
                 IRD.printTerm(r0)
                 IRD.printTerm(r1)
-                (r0,r1)
+                (r0,r1,vhi)
               case Def(DLess(`n0`, up)) // short cut
                 if !IRD.dependsOn(up, n0) =>
-                val n0minusUp = plus(n0,times(up,const(-1)))
-                val (u0,u1) = break(ulo,nlo,const(1))
-                val (v0,v1) = break(up,n0minusUp,const(0))
-                (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1))
+                val (u0,u1,uhi) = break(ulo,nlo,up,const(1))
+                val (v0,v1,vhi) = break(uhi,up,nhi,const(0))
+                (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1), vhi)
               case _ => 
                 throw fail
             }
 
             try { 
-              return break(a,n0,d1)
+              val (u0,u1,uhi) = break(a,const(0),n0,d1)
+              return (u0,u1)
             } catch {
               case `fail` =>
               println("giving up xxx")
