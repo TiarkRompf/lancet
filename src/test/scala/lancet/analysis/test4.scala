@@ -1261,14 +1261,14 @@ Map(
         Assign("z", Const(0)),
         Assign("z2", Const(0)),
         While(Less(Const(0), Ref("x")), Block(List(
-          Assign("z", Plus(Ref("z"), Ref("x"))),
-          Assign("z2", Plus(Ref("z2"), Plus(Times(Ref("x"),Const(3)), Const(5)))),
-          If(Less(Ref("y"),Const(17)), 
-            Block(List(
-              Assign("y", Plus(Ref("y"), Const(1)))
-            )),
-            Block(Nil)
-          ),
+          //Assign("z", Plus(Ref("z"), Ref("x"))),
+          //Assign("z2", Plus(Ref("z2"), Plus(Times(Ref("x"),Const(3)), Const(5)))),
+          //If(Less(Ref("y"),Const(17)), 
+            //Block(List(
+              //Assign("y", Plus(Ref("y"), Const(1)))
+            //)),
+            //Block(Nil)
+          //),
           Assign("x", Plus(Ref("x"), Const(-1)))
         ))),
         Assign("r", Ref("x"))
