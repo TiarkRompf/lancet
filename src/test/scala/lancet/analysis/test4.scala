@@ -856,7 +856,13 @@ class TestAnalysis4 extends FileDiffSuite {
                 val (u0,u1,uhi) = break(ulo,nlo,up,const(1))
                 val (v0,v1,vhi) = break(uhi,up,nhi,const(0))
                 (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1), vhi)
+              // lower bounded case, atm only (0 < n) 1 else 0
+              case Def(DIf(Def(DLess(GConst(0), `n0`)), dx, dy)) =>
+                // always true
+                break(ulo,nlo,nhi,dx)
               case _ => 
+                println("giving up for term:")
+                IRD.printTerm(d)
                 throw fail
             }
 
@@ -865,7 +871,6 @@ class TestAnalysis4 extends FileDiffSuite {
               return (u0,u1)
             } catch {
               case `fail` =>
-              println("giving up xxx")
             }
 
             if (false) d1 match {
@@ -926,7 +931,7 @@ class TestAnalysis4 extends FileDiffSuite {
           }
 
           // fall-through case
-          println(s"recursive fun $fsym")
+          println(s"recursive fun $fsym (init $a)")
 
           def wrapZero(x: GVal): GVal = iff(less(const(0), n0), x, a)
 
