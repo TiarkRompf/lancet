@@ -1333,6 +1333,25 @@ class TestAnalysis4 extends FileDiffSuite {
     Test1.runAndCheck {
       Block(List(
         Assign("x", Const(900)), // input
+        Assign("z", Const(0)),
+        While(Less(Const(0), Ref("x")), Block(List(
+          Assign("z", Plus(Ref("z"), Ref("x"))),
+          Assign("x", Plus(Ref("x"), Const(-1)))
+        ))),
+        Assign("r", Ref("x"))
+      ))
+    }{
+      """Map(
+        "&x"  -> Map("val" -> 0), 
+        "&z"  -> Map("val" -> 405450), 
+        "&r"  -> Map("val" -> 0)
+      )"""
+    }
+
+
+    Test1.runAndCheck {
+      Block(List(
+        Assign("x", Const(900)), // input
         Assign("y", Const(0)),
         Assign("z", Const(0)),
         Assign("z2", Const(0)),
