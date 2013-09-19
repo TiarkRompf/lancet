@@ -1126,12 +1126,17 @@ class TestAnalysis4 extends FileDiffSuite {
 
           store = init
 
+          //store = subst(store,less(n0,const(0)),const(0)) // 0 <= i
+
           val cv = eval(c)
+
+          //store = subst(store,cv,const(1)) // assertTrue
 
           val afterC = store
 
-          //store = subst(afterC,cv,const(1)) // assertTrue
           eval(b)
+
+          store = subst(store,less(n0,const(0)),const(0)) // 0 <= i
 
           val afterB = store
 
