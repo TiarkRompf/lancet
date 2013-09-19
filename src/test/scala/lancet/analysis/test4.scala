@@ -883,11 +883,7 @@ class TestAnalysis4 extends FileDiffSuite {
                     IRD.printTerm(dd)
                     val pp2 = poly(dd)
                     println("poly2: " + pp2)
-                    if (pp != pp2) {
-                      println("FAIL")
-                      sys.error("GGG")
-                    }
-                    assert(pp == pp2)
+                    assert(pp === pp2)
 
                     (plus(ulo,r0), plus(ulo,r1), plus(ulo,rh))
 
@@ -904,8 +900,6 @@ class TestAnalysis4 extends FileDiffSuite {
             } catch {
               case `fail` =>
             }
-
-            println("failed ...")
 
 
             if (false) d1 match {
