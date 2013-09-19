@@ -861,9 +861,37 @@ class TestAnalysis4 extends FileDiffSuite {
                 // always true
                 break(ulo,nlo,nhi,dx)
               case _ => 
-                println("giving up for term:")
-                IRD.printTerm(d)
-                throw fail
+
+                val pp = poly(d)
+                println("poly: " + pp)
+                pp match {
+                  case List(coeff0, coeff1) =>
+                    println(s"found 2nd order polynomial: f'($n0)=$coeff1*$n0+$coeff0 -> f($n0)=$coeff1*$n0/2($n0+1)+$coeff0*$n0")
+                    // c1 * n/2*(n+1) + c0 * n
+
+                    def eval(nX: GVal) = 
+                      plus(times(times(times(nX,plus(nX,const(1))),const(0.5)), coeff1), times(nX, coeff0))
+
+                    val r0 = eval(plus(n0,const(-1)))
+                    val r1 = eval(n0)
+                    val rh = eval(nhi)
+
+                    // sanity check that we get the same diff
+                    IRD.printTerm(r0)
+                    IRD.printTerm(r1)
+                    val dd = plus(r1,times(r0, const(-1)))
+                    IRD.printTerm(dd)
+                    val pp2 = poly(dd)
+                    println("poly2: " + pp2)
+                    assert(pp === pp2)
+
+                    (plus(ulo,r0), plus(ulo,r1), plus(ulo,rh))
+
+                  case _ =>
+                    println("giving up for term:")
+                    IRD.printTerm(d)
+                    throw fail
+                }
             }
 
             try { 
