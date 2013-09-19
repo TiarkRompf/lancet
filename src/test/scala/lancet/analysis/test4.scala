@@ -394,8 +394,8 @@ class TestAnalysis4 extends FileDiffSuite {
               // !(s,u)
               if (less(u,s) == const(1) && b == const(0)) {
                 println(s"hit3: $v<$s=$b && $u<$s=${less(u,s)} --> $u<$v=0")
-                // !(s < u) && (s < v) ---> !(u < v)
-                return subst(y,a,b)
+                // !(s < u) && (s < v) ---> (u < v)
+                return subst(x,a,b)
               }
 
             case _ => 
@@ -866,9 +866,9 @@ class TestAnalysis4 extends FileDiffSuite {
                 val (v0,v1,vhi) = break(uhi,up,nhi,const(0))
                 (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1), vhi)
               // lower bounded case, atm only (0 < n) 1 else 0
-              case Def(DIf(Def(DLess(GConst(0), `n0`)), dx, dy)) =>
+              //case Def(DIf(Def(DLess(GConst(0), `n0`)), dx, dy)) =>
                 // always true
-                break(ulo,nlo,nhi,dx)
+                //break(ulo,nlo,nhi,dx)
               case _ => 
 
                 val pp = poly(d)
@@ -1185,7 +1185,7 @@ class TestAnalysis4 extends FileDiffSuite {
 
           val next = IR.iff(cv,afterB,afterC)
 
-          println(s"lub($before, $afterB) = ?")
+          println(s"lub($before, $next) = ?")
 
           val (initNew,nextNew) = lub(before, init, next)(loop,n0)
 
@@ -1194,7 +1194,8 @@ class TestAnalysis4 extends FileDiffSuite {
 
             //store = lubfun(before, afterB)(loop,n0)
             store = lubfun(before, nextNew)(loop,n0)
-            // XXX why not just nextNew ???
+            // XXX why not just nextNew ??? 
+            // need to define functions that are called from nextNew
             //store = nextNew
 
             // TODO: clarify intended semantics!
@@ -1455,14 +1456,14 @@ class TestAnalysis4 extends FileDiffSuite {
         Assign("r", Ref("a"))
       ))
     }{
-      // Fixme: x10 >= 100 case looks wrong! should be x9_A_top(99)
+      // TODO: opt x10 >= 100 case to x9_A_top(99)
       """
       val x9_A_top = { x10 => 
         if (x10 < 100) {
           if (0 < x10)  x9_A_top(x10 + -1) + (x10 -> x10 * 2) 
           else          Map() + (x10 -> x10 * 2) 
         } else
-          Map()
+          x9_A_top(x10 + -1)
       }
       Map(
         "&a" -> Map("val" -> (A,top)), 
