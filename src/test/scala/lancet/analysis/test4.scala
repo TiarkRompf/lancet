@@ -1455,6 +1455,7 @@ class TestAnalysis4 extends FileDiffSuite {
         Assign("r", Ref("a"))
       ))
     }{
+      // Fixme: x10 >= 100 case looks wrong! should be x9_A_top(99)
       """
       val x9_A_top = { x10 => 
         if (x10 < 100) {
