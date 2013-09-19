@@ -611,7 +611,7 @@ class TestAnalysis4 extends FileDiffSuite {
         case GConst(0) => const(0)
         // Q: why exactly are we subtracting 1 ?
         // it doesn't seem quite right but appears necessary
-        case Def(DLess(GRef(`x`),u)) => plus(u,const(-1))
+        case Def(DLess(GRef(`x`),u)) => u //plus(u,const(-1))
         case _ =>
           super.fixindex(x,c)
           //super.fixindex(x,subst(c,less(const(0),GRef(x)),const(1)))
@@ -826,15 +826,24 @@ class TestAnalysis4 extends FileDiffSuite {
               // loop invariant stride, i.e. constant delta i.e. linear in loop index
               case d if !IRD.dependsOn(d, n0) && d != const("undefined") => 
                 println(s"confirmed iterative loop, d = $d")
-                (plus(ulo,times(plus(nlo,const(-1)),d)),
-                 plus(ulo,times(nlo,d)))
+                // before: ul + n * d
+                // after:  ul + (n+1) * d
+                (plus(ulo,times(nlo,d)),
+                 plus(ulo,times(plus(nlo,const(1)),d)))
               // piece-wise linear, e.g. if (n < 18) 1 else 0
               case Def(DIf(Def(DLess(`n0`, up)), dx, dy))
-                if !IRD.dependsOn(up, n0) =>
-                val n0minusUp = plus(n0,times(up,const(-1)))
-                val (u0,u1) = break(ulo,nlo,dx)
-                val (v0,v1) = break(up,n0minusUp,dy)
-                (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1))
+                if !IRD.dependsOn(up, n0) =>                
+                val n0minusUp = plus(n0,times(up,const(-1))) // nlo vs n0 ???
+                val nhi = plus(nlo,times(up,const(-1)))
+                val uhi = plus(ulo,times(up,dx))
+                println(s"split range of $n0 at $up: dx=$dx dy=$dy ulo=$ulo nlo=$nlo n0minusUp=$n0minusUp")
+                val (u0,u1) = break(ulo,nlo,dx)                
+                val (v0,v1) = break(uhi,uhi,dy)
+                println(s"before ($u0,$v0), after ($u1,$v1)")
+                val (r0,r1) = (iff(less(n0,up), u0, v0), iff(less(n0,up), u1, v1))
+                IRD.printTerm(r0)
+                IRD.printTerm(r1)
+                (r0,r1)
               case Def(DLess(`n0`, up)) // short cut
                 if !IRD.dependsOn(up, n0) =>
                 val n0minusUp = plus(n0,times(up,const(-1)))
@@ -1114,7 +1123,7 @@ class TestAnalysis4 extends FileDiffSuite {
 
           val afterC = store
 
-          store = subst(afterC,cv,const(1)) // assertTrue
+          //store = subst(afterC,cv,const(1)) // assertTrue
           eval(b)
 
           val afterB = store
@@ -1174,7 +1183,7 @@ class TestAnalysis4 extends FileDiffSuite {
         val nX = fixindex(n0.toString, cv) // TODO: check this ...
         println(s"fixindex: $nX")
 
-        store = call(loop,nX)
+        store = call(loop,plus(nX,const(-1)))
         //val cv1 = eval(c)
         //store = subst(store,cv1,const(0)) // assertFalse
 
