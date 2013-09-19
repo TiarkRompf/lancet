@@ -1455,16 +1455,13 @@ class TestAnalysis4 extends FileDiffSuite {
         Assign("r", Ref("a"))
       ))
     }{
-      // TODO: x10 >= 100 implies 0 < x10 (optimize away else branch)
       """
       val x9_A_top = { x10 => 
         if (x10 < 100) {
           if (0 < x10)  x9_A_top(x10 + -1) + (x10 -> x10 * 2) 
           else          Map() + (x10 -> x10 * 2) 
-        } else {
-          if (0 < x10)  x9_A_top(x10 + -1) 
-          else          Map()          
-        }
+        } else
+          Map()
       }
       Map(
         "&a" -> Map("val" -> (A,top)), 
