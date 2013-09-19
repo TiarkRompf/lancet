@@ -74,15 +74,58 @@ class TestAnalysis9 extends FileDiffSuite {
       involved store models later.
     - abstract control flow and state:
       this one is important. we need to execute
-      both conditional branches
+      both conditional branches for analysis.
 
   Abstract interpretation
 
+    TODO:
     - partial evaluation as abstract interpretation
     - supercompilation
 
-    - relational domain, use programs as
-      abstract domain
+    - we first show more or less classical
+      abstract interpretation. both if/else and
+      while loops use a single lub operator.
+    - the result is not very precise. we do
+      not have strong updates.
+
+
+  Precise analysis
+
+    - want to use a relational domain
+    - key new idea: use programs themselves as
+      abstract domain (relation to supercomp?)
+    - optimize abstract program using
+      rewriting: not for execution, but for
+      analysis
+
+    - like in gated SSA, if/else join operator
+      carries condition
+    - apply the same idea to loops: index
+      abstract values by loop trip count
+
+    - guiding principle: transform recursive
+      functions (loop carried deps) to closed
+      form
+
+    - integer recurrences -> polynomials
+
+    - introduce objects. addresses become
+      first class.
+
+    - closed form for array creation
+
+    - introduce dynamic allocations.
+      model (infinite) abstract address space
+      as arrays indexed by loop count.
+
+
+  Higher order languages
+
+    - TBD
+    - (first order) functions, recursion, stack
+      - model stack as linked list
+    - lambdas: defunctionalize?
+
 
 */
 
