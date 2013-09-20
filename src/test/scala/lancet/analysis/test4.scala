@@ -1768,6 +1768,43 @@ class TestAnalysis4 extends FileDiffSuite {
         )))
       ))
     } {
+      """
+        Map(
+          "&i" -> Map("val" -> 99), 
+          "B" -> Map("top" -> collect(100) { x8_B_top_x9 => 
+            Map(
+              "head" -> x8_B_top_x9 + -1, 
+              "tail" -> ("B",("top",x8_B_top_x9 + -1))
+            ) }
+            + (100 -> Map(
+              "head" -> 99, 
+              "tail" -> (B,(top,99)))
+          )), 
+          "&s" -> Map("val" -> 99), "A" -> Map("top" -> Map()), 
+          "&x" -> Map("val" -> (B,(top,99))), 
+          "&z" -> Map("val" -> (A,top)), 
+          "&y" -> Map("val" -> (B,(top,100)))
+        )
+      """
+/*
+val x94_&x_val = { x95 => if (0 < x95) "undefined" else (B,(top,98)) }
+
+Map(
+  "&i" -> Map("val" -> if (1 < fixindex { x95 => if (0 < x95) x94_&x_val(x95 + -1) != (A,top) else 1 }) "undefined" else 99), 
+
+  "B"  -> Map("top" -> collect(100) { x8_B_top_x9 => 
+    Map(
+      "head" -> x8_B_top_x9, 
+      "tail" -> if (0 < x8_B_top_x9) ("B",("top",x8_B_top_x9 + -1)) else (A,top)) }), 
+      "&s" -> Map("val" -> if (1 < fixindex { x95 => if (0 < x95) x94_&x_val(x95 + -1) != (A,top) else 1 }) "undefined" else 99), 
+      "A"  -> Map("top" -> Map()), 
+      "&x" -> Map("val" -> if (1 < fixindex { x95 => if (0 < x95) x94_&x_val(x95 + -1) != (A,top) else 1 }) "undefined" else (B,(top,98))), 
+      "&z" -> Map("val" -> (A,top)), 
+      "&y" -> Map("val" -> (B,(top,99))))
+
+*/
+
+
 /* old
       """
         val x8_B_top = { x9 => 
@@ -1801,24 +1838,6 @@ class TestAnalysis4 extends FileDiffSuite {
         )
       """
 */
-      """
-        Map(
-          "&i" -> Map("val" -> 99), 
-          "B" -> Map("top" -> collect(100) { x8_B_top_x9 => 
-            Map(
-              "head" -> x8_B_top_x9 + -1, 
-              "tail" -> ("B",("top",x8_B_top_x9 + -1))
-            ) }
-            + (100 -> Map(
-              "head" -> 99, 
-              "tail" -> (B,(top,99)))
-          )), 
-          "&s" -> Map("val" -> 99), "A" -> Map("top" -> Map()), 
-          "&x" -> Map("val" -> (B,(top,99))), 
-          "&z" -> Map("val" -> (A,top)), 
-          "&y" -> Map("val" -> (B,(top,100)))
-        )
-      """
     }
   }
 
