@@ -471,6 +471,7 @@ class TestAnalysis4 extends FileDiffSuite {
         case Def(DUpdate(x2,f2,y2)) => iff(equal(f2,f), y2, select(x2,f))
         case Def(DIf(c,x,y)) => iff(c,select(x,f),select(y,f))
         case Def(DPair(u,v)) => select(select(x,u),v)
+        case Def(DCollect(n,x,c)) => subst(c,GRef(x),f)// FIXME: check bounds!!
         case _ => super.select(x,f)
       }
       def const(x: Any) = x match {
