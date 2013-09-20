@@ -1491,64 +1491,23 @@ class TestAnalysis4 extends FileDiffSuite {
       ))
     } {
       """
-    val x8_&x_val = { x9 => if (x9 < 100) ("B",("top",x9)) else x8_&x_val(x9 + -1) }
-    val x8_&y_val = { x9 => if (x9 < 100) ("B",("top",x9)) else x8_&y_val(x9 + -1) } 
-    val x8_B_top = { x9 => 
-      if (x9 < 100) {
-        if (0 < x9) 
-          x8_B_top(x9 + -1) 
-          + (x9 -> Map("head" -> x9, "tail" -> x8_&x_val(x9 + -1))) 
-        else 
-          Map() 
-          + (x9 -> Map("head" -> x9, "tail" -> (A,top)))
-      } 
-      else x8_B_top(x9 + -1)
-    }
-    Map(
-      "&i" -> Map("val" -> 100), 
-      "B"  -> Map("top" -> x8_B_top(99)), 
-      "A"  -> Map("top" -> Map()), 
-      "&x" -> Map("val" -> x8_&x_val(99)), 
-      "&z" -> Map("val" -> (A,top)), 
-      "&y" -> Map("val" -> x8_&y_val(99))
-    )
-      """
-    }
-
-/*
-        val x8_B_top = { x9 => 
-          if (0 < x9) 
-            x8_B_top(x9 + -1) 
-            + (x9 -> Map("head" -> x9 + -1, "tail" -> ("B",("top",x9 + -1)))) 
-          else 
-            Map()
-            + (x9 -> Map("head" -> x9 + -1, "tail" -> (A,top)))
-        }
-        Map(
-          "&i" -> Map("val" -> 100), 
-          "B"  -> Map("top" -> x8_B_top(100)), 
-          "A"  -> Map("top" -> Map()), 
-          "&x" -> Map("val" -> (B,(top,100))), 
-          "&z" -> Map("val" -> (A,top)), 
-          "&y" -> Map("val" -> (B,(top,100)))
-        )
-      """
-    }
-*/
-/*
       Map(
         "&i" -> Map("val" -> 100), 
-        "B" -> Map("top" -> collect(100) { x8_B_top_x9 => Map(
-            "head" -> x8_B_top_x9 + -1, 
-            "tail" -> ("B",("top",x8_B_top_x9 + -1))) 
-            } 
-            + (100 -> Map("head" -> 99, "tail" -> (B,(top,99))))), 
-        "A" -> Map("top" -> Map()), 
-        "&x" -> Map("val" -> (B,(top,100))), 
+        "B"  -> Map("top" -> 
+          collect(100) { x8_B_top_x9 => 
+            Map(
+              "head" -> x8_B_top_x9, 
+              "tail" -> if (0 < x8_B_top_x9) ("B",("top",x8_B_top_x9 + -1)) 
+                        else                 (A,top)
+            ) 
+          }), 
+        "A"  -> Map("top" -> Map()), 
+        "&x" -> Map("val" -> (B,(top,99))), 
         "&z" -> Map("val" -> (A,top)), 
-        "&y" -> Map("val" -> (B,(top,100))))
-
-*/
+        "&y" -> Map("val" -> (B,(top,99)))
+      )
+      """
+    }
 
 
   // back to simpler tests (compare to test3)
