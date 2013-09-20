@@ -1183,7 +1183,10 @@ class TestAnalysis4 extends FileDiffSuite {
 
           val afterB = store
 
-          val next = IR.iff(cv,afterB,afterC)
+          //val next = IR.iff(cv,afterB,afterC)
+          // inside the loop we know the check succeeded.
+          // TODO: need to worry about boundary cases!
+          val next = subst(afterB,cv,const(1))
 
           println(s"lub($before, $next) = ?")
 
@@ -1239,6 +1242,7 @@ class TestAnalysis4 extends FileDiffSuite {
         val nX = fixindex(n0.toString, cv) // TODO: check this ...
         println(s"fixindex: $nX")
 
+        // TODO: if (0 < nX) !
         store = call(loop,plus(nX,const(-1)))
         //val cv1 = eval(c)
         //store = subst(store,cv1,const(0)) // assertFalse
