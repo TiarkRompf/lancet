@@ -1727,34 +1727,17 @@ class TestAnalysis4 extends FileDiffSuite {
     }{
       """
         Map(
-          "&i" -> Map(
-            "val" -> collect(100) { x8_B_top_x9 => 
-              Map(
-                "head" -> x8_B_top_x9, 
-                "tail" -> if (0 < x8_B_top_x9) ("B",("top",x8_B_top_x9 + -1)) else (A,top)
-              )
-            }(99)("head")), 
-          "B"  -> Map(
-            "top" -> collect(100) { x8_B_top_x9 => 
+          "&i" -> Map("val" -> 99), 
+          "B"  -> Map("top" -> 
+            collect(100) { x8_B_top_x9 => 
               Map(
                 "head" -> x8_B_top_x9, 
                 "tail" -> if (0 < x8_B_top_x9) ("B",("top",x8_B_top_x9 + -1)) else (A,top)
               ) 
             }), 
-          "&s" -> Map(
-            "val" -> collect(100) { x8_B_top_x9 => 
-              Map(
-                "head" -> x8_B_top_x9, 
-                "tail" -> if (0 < x8_B_top_x9) ("B",("top",x8_B_top_x9 + -1)) else (A,top)
-              )
-            }(99)("head")), 
+          "&s" -> Map("val" -> 99), 
           "A"  -> Map("top" -> Map()), 
-          "&x" -> Map(
-            "val" -> collect(100) { x8_B_top_x9 => 
-              Map(
-                "head" -> x8_B_top_x9, 
-                "tail" -> if (0 < x8_B_top_x9) ("B",("top",x8_B_top_x9 + -1)) else (A,top)
-              ) }(99)("tail")), 
+          "&x" -> Map("val" -> (B,(top,98))), 
           "&z" -> Map("val" -> (A,top)), 
           "&y" -> Map("val" -> (B,(top,99)))
         )
