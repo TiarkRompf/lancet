@@ -1460,18 +1460,10 @@ class TestAnalysis4 extends FileDiffSuite {
         Assign("r", Ref("a"))
       ))
     }{
-      // TODO: opt x10 >= 100 case to x9_A_top(99)
       """
-      val x9_A_top = { x10 => 
-        if (x10 < 100) {
-          if (0 < x10)  x9_A_top(x10 + -1) + (x10 -> x10 * 2) 
-          else          Map() + (x10 -> x10 * 2) 
-        } else
-          x9_A_top(x10 + -1)
-      }
       Map(
         "&a" -> Map("val" -> (A,top)), 
-        "A"  -> Map("top" -> x9_A_top(99)), 
+        "A"  -> Map("top" -> collect(100) { x9_A_top_x10 => x9_A_top_x10 * 2 }), 
         "&x" -> Map("val" -> 100), 
         "&y" -> Map("val" -> 110), 
         "&r" -> Map("val" -> (A,top))
