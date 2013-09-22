@@ -1205,7 +1205,11 @@ class TestAnalysis4 extends FileDiffSuite {
 
           eval(b)
 
-          //store = subst(store,less(n0,const(0)),const(0)) // 0 <= i
+          store = subst(store,less(n0,const(0)),const(0)) // 0 <= i
+          store = subst(store,less(fixindex(n0.toString, cv),n0),const(0)) // i <= n-1
+
+          println("trip count:")
+          IRD.printTerm(fixindex(n0.toString, cv))
 
           val afterB = store
 
