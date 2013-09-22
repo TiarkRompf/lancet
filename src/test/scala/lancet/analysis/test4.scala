@@ -1760,11 +1760,12 @@ class TestAnalysis4 extends FileDiffSuite {
           Assign("x", Ref("y")),
           Assign("i", Plus(Ref("i"), Const(1)))
         ))),
-        Assign("s", Const(0)),
+        //Assign("s", Const(0)),
+        Assign("i2", Ref("i")),
         While(NotEqual(Ref("x"),Ref("z")), Block(List(
-          Assign("i", Get(Ref("x"), Const("head"))),
+          Assign("i2", Get(Ref("x"), Const("head"))),
           Assign("x", Get(Ref("x"), Const("tail"))),
-          Assign("s", Plus(Ref("s"), Ref("i")))
+          //Assign("s", Plus(Ref("s"), Ref("i")))
         )))
       ))
     } {
