@@ -771,7 +771,8 @@ class TestAnalysis4 extends FileDiffSuite {
           // iff(less(const(0), n0), plus(a,times(n0,d)), a))
           (plus(a,times(plus(n0,const(-1)),d)),
            plus(a,times(n0,d)))
-        case (a/*@Def(DPair(a1,a2))*/,b0/*@Def(DPair(b01,b02))*/,Def(DPair(_,_)) | GConst(_: Tuple2[_,_])) =>
+        case (a/*@Def(DPair(a1,a2))*/,b0/*@Def(DPair(b01,b02))*/,Def(DPair(_,_)) | GConst(_: Tuple2[_,_])) 
+          if !plus(b1,times(b0,const(-1))).isInstanceOf[GConst] => // XXX diff op should take precedence
           // example: (A,1), (B,(1,i)) TODO: safe??
           IRD.printTerm(a)
           IRD.printTerm(b0)
