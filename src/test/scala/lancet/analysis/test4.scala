@@ -498,6 +498,10 @@ class TestAnalysis4 extends FileDiffSuite {
         case (Def(DTimes(a1,GConst(c1:Int))),Def(DTimes(a2,GConst(c2:Int)))) if a1 == a2 => times(a1,const(c1+c2)) // (a * c1) + (a * c2) --> a * (c1 + c2)
         case (Def(DTimes(a1,GConst(c1:Int))),Def(DPlus(Def(DTimes(a2,GConst(c2:Int))),r))) if a1 == a2 => plus(times(a1,const(c1+c2)),r) // (a * c1) + (a * c2) + r --> a * (c1 + c2) + r
         //case (Def(DTimes(a,GConst(-1))),GConst(c:Int)) => plus(a,GConst(-c)) //(-a+c)=-(-c+a)
+        // special case for address-tuples... HACK TODO: proper diff operator!!
+        case (Def(DPair(u1,u2)), Def(DPair(v1,v2))) => pair(plus(u1,v1),plus(u2,v2))
+        case (GConst((u1,u2)), GConst((v1,v2))) => pair(plus(const(u1),const(v1)),plus(const(u2),const(v2)))
+        case (Def(DPair(u1,u2)), GConst((v1,v2))) => pair(plus(u1,const(v1)),plus(u2,const(v2)))
         case _ => super.plus(x,y)
       }
       override def times(x: From, y: From)            = (x,y) match {
@@ -517,6 +521,10 @@ class TestAnalysis4 extends FileDiffSuite {
         case (Def(DTimes(a,b)),_) => times(a,times(b,y))
         case (Def(DPlus(a,b)),c) => plus(times(a,c), times(b,c))
         case (a,Def(DPlus(b,c))) => plus(times(a,b), times(a,c))
+        // special case for address-tuples... (u,v) * -1
+        case (Def(DPair(u1,u2)), y) => pair(times(u1,y),times(u2,y))
+        case (GConst((u1,u2)), y) => pair(times(const(u1),y),times(const(u2),y))
+        case (x,GConst((v1,v2))) => pair(times(x,const(v1)),times(x,const(v2)))
         case _ => super.times(x,y)
       }
       override def less(x: From, y: From)            = (x,y) match {
