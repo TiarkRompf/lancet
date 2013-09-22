@@ -557,6 +557,7 @@ class TestAnalysis4 extends FileDiffSuite {
         case (GConst(x:String),Def(DPair(_,_))) => const(1)
         case (Def(DPair(_,_)),GConst(x:Int)) => const(1)
         case (Def(DPair(_,_)),GConst(x:String)) => const(1)
+        case (Def(DPair(GConst(u1),_)),GConst((v1,v2))) if u1 != v1 => const(1) // generalize?
         case (Def(DIf(c,x,z)),_) => iff(c,notequal(x,y),notequal(z,y))
         case (_,Def(DIf(c,y,z))) => iff(c,notequal(x,y),notequal(x,z))
         case _ if x == y => const(0)
