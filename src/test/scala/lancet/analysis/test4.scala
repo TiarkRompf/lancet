@@ -781,6 +781,21 @@ class TestAnalysis4 extends FileDiffSuite {
           val b0X = subst(b1,n0,plus(n0,const(-1)))
           (iff(less(const(0),n0),b0X,a), iff(less(const(0),n0),b1,a))
           //(iff(less(const(0),n0),b0X,a), b1) XX FIXME?
+        case (a/*@Def(DPair(a1,a2))*/,b0/*@Def(DPair(b01,b02))*/,b1@Def(DIf(Def(DLess(`n0`,u1)),b10,b20)))
+          // dual example: (B,(1,i)),(A,1)
+          if !dependsOn(u1,n0) =>
+          IRD.printTerm(a)
+          IRD.printTerm(b0)
+          IRD.printTerm(b1)
+          println(s"hit if dual -- assume only last case differs")
+          val b10X = subst(b10,n0,plus(n0,const(-1)))
+          val b20X = subst(b20,n0,plus(n0,const(-1)))
+          (iff(less(plus(n0,const(-1)),u1),b10X,b20X), b1)
+          //(iff(less(const(0),n0),b0X,a), b1) XX FIXME?
+
+          // XXXXX FIXME / TODO
+          // PROBLEM: boundary may change with each iteration!!!
+
         case _ =>
           // value after the loop (b) does depend on loop index and differs from val before loop.
           // handle in
