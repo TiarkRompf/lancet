@@ -1900,7 +1900,7 @@ class TestAnalysis4 extends FileDiffSuite {
 
   def testD = withOutFileChecked(prefix+"D") {
     import Test1._
-    Test1.run { //test7
+    Test1.runAndCheck { //test7
       Block(List(
         Assign("x", New("A")),
         If(Direct(vref("input")),
@@ -1916,6 +1916,16 @@ class TestAnalysis4 extends FileDiffSuite {
         Assign("foo", Get(Get(Ref("x"), Const("a")), Const("foo"))),
         Assign("bar", Get(Get(Ref("x"), Const("a")), Const("bar")))
       ))
+    }{
+      """
+        Map(
+          "B" -> Map("top" -> Map("foo" -> 5)), 
+          "A" -> Map("top" -> Map("a" -> (B,top))), 
+          "&x" -> Map("val" -> (A,top)), 
+          "&bar" -> Map("val" -> "undefined"), 
+          "&foo" -> Map("val" -> 5)
+        )
+      """
     }
     Test1.run { //test8
       Block(List(
