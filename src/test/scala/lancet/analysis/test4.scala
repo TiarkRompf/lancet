@@ -1789,13 +1789,13 @@ class TestAnalysis4 extends FileDiffSuite {
           Assign("x", Ref("y")),
           Assign("i", Plus(Ref("i"), Const(1)))
         ))),
-        //Assign("s", Const(0)),
+        Assign("s", Const(0)),
         Assign("i2", Ref("i")),
         Assign("x2", Ref("x")),
         While(NotEqual(Ref("x2"),Ref("z")), Block(List(
           Assign("i2", Get(Ref("x2"), Const("head"))),
-          Assign("x2", Get(Ref("x2"), Const("tail")))
-          //Assign("s", Plus(Ref("s"), Ref("i")))
+          Assign("x2", Get(Ref("x2"), Const("tail"))),
+          Assign("s", Plus(Ref("s"), Ref("i2")))
         )))
       ))
     } {
@@ -1810,7 +1810,8 @@ class TestAnalysis4 extends FileDiffSuite {
                         "tail" -> if (0 < x8_B_top_x9) ("B",("top",x8_B_top_x9 + -1)) else (A,top)
                       ) 
                     }), 
-          "A"   -> Map("top" -> Map()), 
+          "&s" -> Map("val" -> 4950), 
+          "A"  -> Map("top" -> Map()), 
           "&x" -> Map("val" -> (B,(top,99))), 
           "&z" -> Map("val" -> (A,top)), 
           "&y" -> Map("val" -> (B,(top,99)))
