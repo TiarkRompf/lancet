@@ -1919,15 +1919,15 @@ class TestAnalysis4 extends FileDiffSuite {
     }{
       """
         Map(
-          "B" -> Map("top" -> Map("foo" -> 5)), 
-          "A" -> Map("top" -> Map("a" -> (B,top))), 
+          "B"  -> Map("top" -> Map("foo" -> 5)), 
+          "A"  -> Map("top" -> Map("a" -> (B,top))), 
           "&x" -> Map("val" -> (A,top)), 
           "&bar" -> Map("val" -> "undefined"), 
           "&foo" -> Map("val" -> 5)
         )
       """
     }
-    Test1.run { //test8
+    Test1.runAndCheck { //test8
       Block(List(
         Assign("x", New("A")),
         Put(Ref("x"), Const("a"), New("A2")),
@@ -1945,6 +1945,16 @@ class TestAnalysis4 extends FileDiffSuite {
         Put(Get(Ref("x"), Const("a")), Const("bar"), Const(7)), // this is not a strong update, because 1.a may be one of two allocs
         Assign("xbar", Get(Get(Ref("x"), Const("a")), Const("bar"))) // should still yield 7!
       ))
+    }{
+      """
+        Map(
+          "B"  -> Map("top" -> Map("foo" -> 5, "bar" -> 7)), 
+          "A2" -> Map("top" -> Map("baz" -> 3)), 
+          "A"  -> Map("top" -> Map("a" -> (B,top))), 
+          "&x" -> Map("val" -> (A,top)), 
+          "&xbar" -> Map("val" -> 7)
+        )
+      """
     }
   }
 
