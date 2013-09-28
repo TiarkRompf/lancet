@@ -1978,6 +1978,24 @@ class TestAnalysis4 extends FileDiffSuite {
       ))
     }
   }
+/*
+Map(
+  "B" -> Map("top" -> 
+                  if (1 < fixindex { x13 => "input" }) 
+                      collect(fixindex { x13 => "input" }) { x12_B_top_x13 => Map("foo" -> 5) } 
+                      + (fixindex { x13 => "input" } + -1 -> Map("foo" -> 5, "baz" -> "nil", "bar" -> 7)) 
+                  else 
+                      collect(fixindex { x13 => "input" }) { x12_B_top_x13 => Map("foo" -> 5) }), 
+  "X" -> Map("top" -> Map("a" -> 
+                  if (1 < fixindex { x13 => "input" }) ("B",("top",fixindex { x13 => "input" } + -1)) 
+                  else (A,top))), 
+  "A" -> Map("top" -> Map("baz" -> 3, "foo" -> "nil", "bar" -> 
+                  if (1 < fixindex { x13 => "input" }) "nil" else 7)), 
+  "&x" -> Map("val" -> (X,top)), 
+  "&xbar" -> Map("val" -> 7)
+)
+*/
+
 
 }
 
