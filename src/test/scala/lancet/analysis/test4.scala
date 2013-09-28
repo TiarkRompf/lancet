@@ -1959,7 +1959,7 @@ class TestAnalysis4 extends FileDiffSuite {
   }
 
     // update stuff allocated in a loop
-/*
+
   def testE = withOutFileChecked(prefix+"E") {
     import Test1._
     Test1.run { //test9
@@ -1978,7 +1978,6 @@ class TestAnalysis4 extends FileDiffSuite {
       ))
     }
   }
-*/
 
 }
 
