@@ -1964,13 +1964,15 @@ class TestAnalysis4 extends FileDiffSuite {
     import Test1._
     Test1.run { //test9
       Block(List(
+        Assign("i", Const(0)),
         Assign("x", New("X")),
         Put(Ref("x"), Const("a"), New("A")),
         Put(Get(Ref("x"), Const("a")), Const("baz"), Const(3)),
-        While(Direct(vref("input")),
+        While(Less(Ref("i"),Direct(vref("COUNT"))),
           Block(List(
             Put(Ref("x"), Const("a"), New("B")), // strong update, overwrite
-            Put(Get(Ref("x"), Const("a")), Const("foo"), Const(5))
+            Put(Get(Ref("x"), Const("a")), Const("foo"), Const(5)),
+            Assign("i", Plus(Ref("i"),Const(1)))
           ))
         ),
         Put(Get(Ref("x"), Const("a")), Const("bar"), Const(7)), // this is not a strong update, because 1.a may be one of two allocs
