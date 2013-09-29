@@ -1968,7 +1968,7 @@ class TestAnalysis4 extends FileDiffSuite {
         Assign("x", New("X")),
         Put(Ref("x"), Const("a"), New("A")),
         Put(Get(Ref("x"), Const("a")), Const("baz"), Const(3)),
-        While(Less(Ref("i"),Direct(vref("COUNT"))),
+        While(Less(Ref("i"),Direct(vref("input"))),
           Block(List(
             Put(Ref("x"), Const("a"), New("B")), // strong update, overwrite
             Put(Get(Ref("x"), Const("a")), Const("foo"), Const(5)),
@@ -1982,17 +1982,21 @@ class TestAnalysis4 extends FileDiffSuite {
   }
 /*
 Map(
-  "B" -> Map("top" -> 
-                  if (1 < fixindex { x13 => "input" }) 
-                      collect(fixindex { x13 => "input" }) { x12_B_top_x13 => Map("foo" -> 5) } 
-                      + (fixindex { x13 => "input" } + -1 -> Map("foo" -> 5, "baz" -> "nil", "bar" -> 7)) 
-                  else 
-                      collect(fixindex { x13 => "input" }) { x12_B_top_x13 => Map("foo" -> 5) }), 
+  "&i" -> Map("val" -> "input"), 
+  "B"  -> Map("top" -> 
+    if (1 < "input") 
+      collect("input") { x14_B_top_x15 => Map("foo" -> 5) } 
+      + ("input" + -1 -> Map("foo" -> 5, "baz" -> "nil", "bar" -> 7)) 
+    else 
+      collect("input") { x14_B_top_x15 => Map("foo" -> 5) }
+  ), 
   "X" -> Map("top" -> Map("a" -> 
-                  if (1 < fixindex { x13 => "input" }) ("B",("top",fixindex { x13 => "input" } + -1)) 
-                  else (A,top))), 
-  "A" -> Map("top" -> Map("baz" -> 3, "foo" -> "nil", "bar" -> 
-                  if (1 < fixindex { x13 => "input" }) "nil" else 7)), 
+    if (1 < "input") 
+      ("B",("top","input" + -1)) 
+    else 
+      (A,top)
+  )), 
+  "A" -> Map("top" -> Map("baz" -> 3, "foo" -> "nil", "bar" -> if (1 < "input") "nil" else 7)), 
   "&x" -> Map("val" -> (X,top)), 
   "&xbar" -> Map("val" -> 7)
 )
