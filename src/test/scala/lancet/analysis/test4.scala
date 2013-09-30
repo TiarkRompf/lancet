@@ -1962,7 +1962,7 @@ class TestAnalysis4 extends FileDiffSuite {
 
   def testE = withOutFileChecked(prefix+"E") {
     import Test1._
-    Test1.run { //test9
+    Test1.runAndCheck { //test9
       Block(List(
         Assign("i", Const(0)),
         Assign("x", New("X")),
@@ -1978,31 +1978,30 @@ class TestAnalysis4 extends FileDiffSuite {
         Put(Get(Ref("x"), Const("a")), Const("bar"), Const(7)), // this is not a strong update, because 1.a may be one of two allocs
         Assign("xbar", Get(Get(Ref("x"), Const("a")), Const("bar"))) // should still yield 7!
       ))
+    } {
+      """
+      Map(
+        "&i" -> Map("val" -> "input"), 
+        "B"  -> Map("top" -> 
+          if (1 < "input") 
+            collect("input") { x14_B_top_x15 => Map("foo" -> 5) } 
+            + ("input" + -1 -> Map("foo" -> 5, "baz" -> "nil", "bar" -> 7)) 
+          else 
+            collect("input") { x14_B_top_x15 => Map("foo" -> 5) }
+        ), 
+        "X" -> Map("top" -> Map("a" -> 
+          if (1 < "input") 
+            ("B",("top","input" + -1)) 
+          else 
+            (A,top)
+        )), 
+        "A" -> Map("top" -> Map("baz" -> 3, "foo" -> "nil", "bar" -> if (1 < "input") "nil" else 7)), 
+        "&x" -> Map("val" -> (X,top)), 
+        "&xbar" -> Map("val" -> 7)
+      )
+      """
     }
   }
-/*
-Map(
-  "&i" -> Map("val" -> "input"), 
-  "B"  -> Map("top" -> 
-    if (1 < "input") 
-      collect("input") { x14_B_top_x15 => Map("foo" -> 5) } 
-      + ("input" + -1 -> Map("foo" -> 5, "baz" -> "nil", "bar" -> 7)) 
-    else 
-      collect("input") { x14_B_top_x15 => Map("foo" -> 5) }
-  ), 
-  "X" -> Map("top" -> Map("a" -> 
-    if (1 < "input") 
-      ("B",("top","input" + -1)) 
-    else 
-      (A,top)
-  )), 
-  "A" -> Map("top" -> Map("baz" -> 3, "foo" -> "nil", "bar" -> if (1 < "input") "nil" else 7)), 
-  "&x" -> Map("val" -> (X,top)), 
-  "&xbar" -> Map("val" -> 7)
-)
-*/
-
-
 }
 
 
