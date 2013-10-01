@@ -1968,7 +1968,7 @@ class TestAnalysis4 extends FileDiffSuite {
         Assign("x", New("X")),
         Put(Ref("x"), Const("a"), New("A")),
         Put(Get(Ref("x"), Const("a")), Const("baz"), Const(3)),
-        While(Less(Ref("i"),Direct(vref("input"))),
+        While(Less(Ref("i"),Direct(vref("COUNT"))),
           Block(List(
             Put(Ref("x"), Const("a"), New("B")), // strong update, overwrite
             Put(Get(Ref("x"), Const("a")), Const("foo"), Const(5)),
@@ -1981,21 +1981,21 @@ class TestAnalysis4 extends FileDiffSuite {
     } {
       """
       Map(
-        "&i" -> Map("val" -> "input"), 
+        "&i" -> Map("val" -> "COUNT"), 
         "B"  -> Map("top" -> 
-          if (1 < "input") 
-            collect("input") { x14_B_top_x15 => Map("foo" -> 5) } 
-            + ("input" + -1 -> Map("foo" -> 5, "baz" -> "nil", "bar" -> 7)) 
+          if (1 < "COUNT") 
+            collect("COUNT") { x14_B_top_x15 => Map("foo" -> 5) } 
+            + ("COUNT" + -1 -> Map("foo" -> 5, "baz" -> "nil", "bar" -> 7)) 
           else 
-            collect("input") { x14_B_top_x15 => Map("foo" -> 5) }
+            collect("COUNT") { x14_B_top_x15 => Map("foo" -> 5) }
         ), 
-        "X" -> Map("top" -> Map("a" -> 
-          if (1 < "input") 
-            ("B",("top","input" + -1)) 
+        "X"  -> Map("top" -> Map("a" -> 
+          if (1 < "COUNT") 
+            ("B",("top","COUNT" + -1)) 
           else 
             (A,top)
         )), 
-        "A" -> Map("top" -> Map("baz" -> 3, "foo" -> "nil", "bar" -> if (1 < "input") "nil" else 7)), 
+        "A"  -> Map("top" -> Map("baz" -> 3, "foo" -> "nil", "bar" -> if (1 < "COUNT") "nil" else 7)), 
         "&x" -> Map("val" -> (X,top)), 
         "&xbar" -> Map("val" -> 7)
       )
