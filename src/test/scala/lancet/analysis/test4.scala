@@ -2002,6 +2002,29 @@ class TestAnalysis4 extends FileDiffSuite {
       """
     }
   }
+
+
+  // factorial
+   def testF1 = withOutFileChecked(prefix+"F1") {
+    import Test1._
+    Test1.runAndCheck {
+      Block(List(
+        Assign("n", Direct(vref("N"))),
+        Assign("r", Const(1)),
+        While(Less(Const(0),Ref("n")),
+          Block(List(
+            Assign("r", Times(Ref("r"),Ref("n"))),
+            Assign("n", Plus(Ref("n"),Const(-1)))
+          ))
+        )
+      ))
+    } {
+      """
+      Map(
+      )
+      """
+    }
+  }
 }
 
 
