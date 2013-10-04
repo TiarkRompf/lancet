@@ -2010,11 +2010,12 @@ class TestAnalysis4 extends FileDiffSuite {
     Test1.runAndCheck {
       Block(List(
         Assign("n", Direct(vref("N"))),
+        Assign("i", Const(1)),
         Assign("r", Const(1)),
-        While(Less(Const(0),Ref("n")),
+        While(Less(Ref("i"),Ref("n")),
           Block(List(
-            Assign("r", Times(Ref("r"),Ref("n"))),
-            Assign("n", Plus(Ref("n"),Const(-1)))
+            Assign("i", Plus(Ref("i"),Const(1))),
+            Assign("r", Times(Ref("r"),Ref("i")))
           ))
         )
       ))
