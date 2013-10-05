@@ -2021,7 +2021,11 @@ class TestAnalysis4 extends FileDiffSuite {
       ))
     } {
       """
-      Map(
+        val x6_&r_val = { x7 => if (0 < x7) x6_&r_val(x7 + -1) * x7 + x6_&r_val(x7 + -1) * 2 else x7 + 2 }
+        Map(
+          "&n" -> Map("val" -> "N"), 
+          "&i" -> Map("val" -> "N"), 
+          "&r" -> Map("val" -> x6_&r_val("N" + -2)))
       )
       """
     }
