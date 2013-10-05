@@ -2025,8 +2025,8 @@ class TestAnalysis4 extends FileDiffSuite {
         Map(
           "&n" -> Map("val" -> "N"), 
           "&i" -> Map("val" -> "N"), 
-          "&r" -> Map("val" -> x6_&r_val("N" + -2)))
-      )
+          "&r" -> Map("val" -> x6_&r_val("N" + -2))
+        )
       """
     }
   }
