@@ -2010,7 +2010,7 @@ class TestAnalysis4 extends FileDiffSuite {
     Test1.runAndCheck {
       Block(List(
         Assign("n", Direct(vref("N"))),
-        Assign("i", Const(1)),
+        Assign("i", Const(0)),
         Assign("r", Const(1)),
         While(Less(Ref("i"),Ref("n")),
           Block(List(
@@ -2021,11 +2021,11 @@ class TestAnalysis4 extends FileDiffSuite {
       ))
     } {
       """
-        val x6_&r_val = { x7 => if (0 < x7) x6_&r_val(x7 + -1) * x7 + x6_&r_val(x7 + -1) * 2 else x7 + 2 }
+        val x7_&r_val = { x8 => if (0 < x8) x7_&r_val(x8 + -1) * x8 + x7_&r_val(x8 + -1) else x8 + 1 }
         Map(
           "&n" -> Map("val" -> "N"), 
           "&i" -> Map("val" -> "N"), 
-          "&r" -> Map("val" -> x6_&r_val("N" + -2))
+          "&r" -> Map("val" -> x7_&r_val("N" + -1))
         )
       """
     }
