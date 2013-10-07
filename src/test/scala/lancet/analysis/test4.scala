@@ -2004,8 +2004,8 @@ class TestAnalysis4 extends FileDiffSuite {
   }
 
 
-  // factorial
-   def testF1 = withOutFileChecked(prefix+"F1") {
+  // factorial: direct
+  def testF1 = withOutFileChecked(prefix+"F1") {
     import Test1._
     Test1.runAndCheck {
       Block(List(
