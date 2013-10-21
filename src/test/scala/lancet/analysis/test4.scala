@@ -2044,4 +2044,22 @@ equivalent to:
 
 MC(n)= (n>100) n-10 else 91
 
+non-recursive version:
+
+ int mccarthy(int n)
+ {
+     int c;
+     for (c = 1; c != 0; ) {
+         if (n > 100) {
+             n = n - 10;
+             c--;
+         } else {
+             n = n + 11;
+             c++;
+         }
+     }
+     return n;
+ }
+
+
 */
