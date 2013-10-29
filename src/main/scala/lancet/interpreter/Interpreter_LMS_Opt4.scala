@@ -261,6 +261,10 @@ class BytecodeInterpreter_LMS_Opt4 extends AbstractInterpreter_LMS with Bytecode
     def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]) =
       reflect(BlockDef(key,keyid,fields,code))
 
+    def genLoopDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]) =
+      reflect(LoopDef(key,keyid,fields,code))
+
+
     var globalVars: Set[String] = Set.empty
 
     def reflectValDef(lhs: String, tpe: TypeRep[Any])(rhs: Any*) = {
@@ -405,6 +409,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
     def genGotoDef(key: String, rhs: Block[Unit]): Rep[Unit]
     def genBlockCall(keyid: Int, fields: List[Rep[Any]]): Rep[Unit]
     def genBlockDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]): Exp[Unit]
+    def genLoopDef(key: String, keyid: Int, fields: List[Rep[Any]], code: Block[Unit]): Exp[Unit]
     def genVarDef(v: Rep[Any]): Rep[Unit]
     def genVarWrite(v: Rep[Any]): Rep[Unit]
     def genVarRead(v: Rep[Any]): Rep[Unit]
@@ -706,7 +711,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
     }
 
 
-    var xxx = 100
+    var xxx = 1000
 
     def execMethodPostDom(mframe: InterpreterFrame): Rep[Unit] = {
       import scala.collection.JavaConversions._
@@ -831,17 +836,49 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
                 reflect[Unit](blockBefore)
                 withState(st1) { bframe2 =>
                   stateBefore = st1
-                  body = reify(execFoReal(bframe2))
+                  body = reify{
+                    //emitString("dep on: "+st1)
+                    execFoReal(bframe2)
+                    reflect[Unit](blockBeforeNext)
+                  }
+                  stateBeforeNext = frontierLstate
+                }
+              }
+
+              {
+                // XXXXX need to run twice so that blockBeforeNext picks up info from prev iteration
+                // (see test3-A2, y -= 1 would be removed)
+                val (st1,List(blockBefore,blockBeforeNext)) = allLubs(List(stateBefore,stateBeforeNext))
+                if (statesDiffer(st1,stateBefore)) { // TODO: may need multiple iterations
+                  emitString("// states differ STILL!! -- ERROR")
+                } else {
+                  emitString("// states converged")
+                }
+                reflect[Unit](blockBefore)
+                withState(st1) { bframe2 =>
+                  stateBefore = st1
+                  body = reify{
+                    //emitString("dep on: "+st1)
+                    execFoReal(bframe2)
+                    emitString("if (continue) {")
+                    reflect[Unit](blockBeforeNext)
+                    emitString("}")
+                  }
                   stateBeforeNext = frontierLstate
                 }
               }
 
 
-              emitString("// frontierX: "+frontierX)
-              emitString("var continue = true")
-              emitString("while (continue) {")
+              val fields = getFields(stateBefore)
+              val (key,keyid) = contextKeyId(getFrame(stateBefore))
 
-              reflect[Unit](body)
+              genLoopDef(key, keyid, fields, body)
+
+              //// emitString("// frontierX: "+frontierX)
+              //// emitString("var continue = true")
+              //// emitString("while (continue) {")
+
+              //reflect[Unit](body)
 
               //emitString("// after loop body")
               //emitString("// frontierX: " + frontierX)
@@ -849,7 +886,7 @@ trait BytecodeInterpreter_LMS_Opt4Engine extends AbstractInterpreterIntf_LMS wit
 
               //emitString("// old: " + stateBefore)
               //emitString("// new: " + stateAfter)
-              emitString("}")
+              //// emitString("}")
 
             } else {
               execFoReal(blockFrame);

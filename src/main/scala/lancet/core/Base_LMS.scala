@@ -41,6 +41,9 @@ trait IR_LMS_Base extends EffectExp {
   case class Patch(key: String, var block: Block[Unit]) extends Def[Unit]
   case class BlockDef(key: String, keyid: Int, params: List[Rep[Any]], body: Block[Unit]) extends Def[Unit]
 
+  case class LoopDef(key: String, keyid: Int, params: List[Rep[Any]], body: Block[Unit]) extends Def[Unit]
+
+
   // alternative idea: patches should not schedule stuff inside, but in
   // their parent scope. thus, do not override boundSyms for Patch,
   // but override effectsSyms to include effectSyms of all
@@ -53,6 +56,10 @@ trait IR_LMS_Base extends EffectExp {
       val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
       //println(s"boundSyms add accidental dependency $xs + $phiSym")
       effectSyms(body) ++ List(phiSym)
+    case LoopDef(key,keyid,xs,body) => 
+      val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
+      //println(s"boundSyms add accidental dependency $xs + $phiSym")
+      effectSyms(body) ++ List(phiSym)
     case _ => super.boundSyms(e)
   }
 
@@ -62,6 +69,15 @@ trait IR_LMS_Base extends EffectExp {
 
   override def tunnelSyms(e: Any): List[Sym[Any]] = e match {
     case BlockDef(key,keyid,xs,body) => 
+    // FIXME: here's a problem:
+    // xs may contains items like DynExp("PHI_3_6") on which stuff in the block depends.
+    // since these are not symbols we can't return them here....
+    // (and dependent nodes might be hoisted to the top or removed)
+    val phiSym = phiSyms.getOrElseUpdate(keyid, Sym(-keyid))
+    // FIXME: do we need to tunnel keyids of all parameters??
+    //println(s"tunnelSyms add accidental dependency $xs + $phiSym")
+    xs.collect { case s@Sym(n) => s }  ++ List(phiSym)//case d if d.toString.contains("PHI") => println(s"add accidental dependency $d: def x42"); phiSym }
+    case LoopDef(key,keyid,xs,body) => 
     // FIXME: here's a problem:
     // xs may contains items like DynExp("PHI_3_6") on which stuff in the block depends.
     // since these are not symbols we can't return them here....
@@ -99,6 +115,7 @@ trait IR_LMS_Base extends EffectExp {
     case d@Unstructured(xs)                   => Unstructured(xs.map{ case x: Exp[Any] =>f(x) case x => x})
     case d@Patch(key, block)                  => Patch(key,f(block))
     case d@BlockDef(key, keyid, params, body) => BlockDef(key,keyid,params.map(x=>f(x)),f(body))
+    case d@LoopDef(key, keyid, params, body)  => LoopDef(key,keyid,params.map(x=>f(x)),f(body))
     case _ => super.mirrorDef(d,f)
   }).asInstanceOf[Def[A]]
 
@@ -166,6 +183,16 @@ trait GEN_Scala_LMS_Base extends ScalaGenEffect {
       stream.print("): Unit = ")
       emitBlockFull(body)
       stream.println
+    case LoopDef(key, keyid, params, body) =>
+      if (debugBlockKeys) 
+        stream.println("// "+key+"\n")
+      stream.println("var continue = true")
+      stream.println("var xxx = 100")
+      stream.println("while (continue) {")
+      stream.println("xxx = xxx - 1")
+      stream.println("continue = continue && xxx > 0;")
+      emitBlockFull(body)
+      stream.println("}")
     case _ => super.emitNode(sym,rhs)
   }
 
