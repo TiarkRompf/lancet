@@ -10,7 +10,7 @@ def apply(ARG: Int): Int = { object BODY {
   val x0 = ARG
   val x1 = x0.asInstanceOf[Int]
   val x2 = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"))
-  unsafe.putInt(x2,16L, 7)
+  unsafe.putInt(x2,12L, 7)
   ;{
     val PHI_3_6 = x1 // LUBC(PHI_3_6:Int,x1:Int)
     val LUB_x2_intField = 7 // Alias(Some(LUB_x2_intField),Some(7))
@@ -22,7 +22,7 @@ def apply(ARG: Int): Int = { object BODY {
       (RES = LUB_x2_intField) // return to root
     } else {
       val x6 = 1 + LUB_x2_intField
-      unsafe.putInt(x2,16L, x6)
+      unsafe.putInt(x2,12L, x6)
       val x7 = -1 + PHI_3_6
       ;{
         val PHI_3_6 = x7 // LUBC(PHI_3_6:Int,x7:Int)

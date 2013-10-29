@@ -10,13 +10,13 @@ def apply(ARG: Int): Int = { object BODY {
   val x0 = ARG
   val x1 = x0.asInstanceOf[Int]
   val x2 = unsafe.allocateInstance(Class.forName("lancet.interpreter.BaseTestInterpreter3$Bar"))
-  unsafe.putInt(x2,16L, 7)
+  unsafe.putInt(x2,12L, 7)
   val x3 = 0 >= x1
   if (x3) {
     val LUB_x2_intField = 7 // Alias(Some(LUB_x2_intField),Some(7))
     BLOCK_12(LUB_x2_intField,x0,x1,x2,x3)
   } else {
-    unsafe.putInt(x2,16L, 9)
+    unsafe.putInt(x2,12L, 9)
     ;{
       val LUB_x2_intField = 9 // Alias(Some(LUB_x2_intField),Some(9))
       BLOCK_12(LUB_x2_intField,x0,x1,x2,x3)

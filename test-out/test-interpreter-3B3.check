@@ -1,4 +1,4 @@
-// constants: <function1>,lancet.interpreter.BaseTestInterpreter3$Bar@26e94ce9
+// constants: <function1>,lancet.interpreter.BaseTestInterpreter3$Bar@42fe329c
 class Generated0(CONST_0: lancet.interpreter.BaseTestInterpreter3$$anonfun$testB3$1$$anonfun$6,CONST_1: lancet.interpreter.BaseTestInterpreter3$Bar) extends (Int=>Int){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -11,11 +11,11 @@ def apply(ARG: Int): Int = { object BODY {
   val x1 = x0.asInstanceOf[Int]
   val x2 = 0 >= x1
   if (x2) {
-    val x9 = unsafe.getInt(CONST_1,16L)
+    val x9 = unsafe.getInt(CONST_1,12L)
     val LUB_CONST_1_intField = x9 // XXX LUBC(Some(LUB_CONST_1_intField),None)
     BLOCK_4(LUB_CONST_1_intField,x0,x1,x2)
   } else {
-    unsafe.putInt(CONST_1,16L, 9)
+    unsafe.putInt(CONST_1,12L, 9)
     ;{
       val LUB_CONST_1_intField = 9 // Alias(Some(LUB_CONST_1_intField),Some(9))
       BLOCK_4(LUB_CONST_1_intField,x0,x1,x2)
@@ -31,7 +31,7 @@ def apply(ARG: Int): Int = { object BODY {
       (RES = PHI_3_5) // return to root
     } else {
       val x7 = -1 + LUB_CONST_1_intField
-      unsafe.putInt(CONST_1,16L, x7)
+      unsafe.putInt(CONST_1,12L, x7)
       val x8 = 1 + PHI_3_5
       ;{
         val PHI_3_5 = x8 // LUBC(PHI_3_5:Int,x8:Int)
