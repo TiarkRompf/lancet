@@ -1,64 +1,64 @@
-Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
-    RootCall HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar> - HotSpotSignature<(I)I>
+Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar(int)>
+    RootCall HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar(int)> - HotSpotSignature<(I)I>
     0: getstatic
     3: new
     6: dup
     7: invokespecial
-      Call HotSpotMethod<StringBuilder.<init>> - HotSpotSignature<()V>
+      Call HotSpotMethod<StringBuilder.<init>()> - HotSpotSignature<()V>
       0: aload_0
       1: bipush
       3: ldc_w
       6: invokespecial
-        Call HotSpotMethod<StringBuilder.<init>> - HotSpotSignature<(ILjava/lang/String;)V>
+        Call HotSpotMethod<StringBuilder.<init>(int, String)> - HotSpotSignature<(ILjava/lang/String;)V>
         0: aload_0
         1: new
         4: dup
         5: aload_2
         6: invokevirtual
-          Call HotSpotMethod<String.length> - HotSpotSignature<()I>
+          Call HotSpotMethod<String.length()> - HotSpotSignature<()I>
           0: aload_0
           1: getfield
           4: arraylength
           5: ireturn
-          Ret HotSpotMethod<String.length> - HotSpotSignature<()I>
+          Ret HotSpotMethod<String.length()> - HotSpotSignature<()I>
         9: iload_1
         10: iadd
         11: invokespecial
-          Call HotSpotMethod<StringBuilder.<init>> - HotSpotSignature<(I)V>
+          Call HotSpotMethod<StringBuilder.<init>(int)> - HotSpotSignature<(I)V>
           0: aload_0
           1: iload_1
           2: invokespecial
-            Call HotSpotMethod<AbstractStringBuilder.<init>> - HotSpotSignature<(I)V>
+            Call HotSpotMethod<AbstractStringBuilder.<init>(int)> - HotSpotSignature<(I)V>
             0: aload_0
             1: invokespecial
-              Call HotSpotMethod<Object.<init>> - HotSpotSignature<()V>
+              Call HotSpotMethod<Object.<init>()> - HotSpotSignature<()V>
               0: return
-              Ret HotSpotMethod<Object.<init>> - HotSpotSignature<()V>
+              Ret HotSpotMethod<Object.<init>()> - HotSpotSignature<()V>
             4: aload_0
             5: iload_1
             6: newarray
             8: putfield
             11: return
-            Ret HotSpotMethod<AbstractStringBuilder.<init>> - HotSpotSignature<(I)V>
+            Ret HotSpotMethod<AbstractStringBuilder.<init>(int)> - HotSpotSignature<(I)V>
           5: return
-          Ret HotSpotMethod<StringBuilder.<init>> - HotSpotSignature<(I)V>
+          Ret HotSpotMethod<StringBuilder.<init>(int)> - HotSpotSignature<(I)V>
         14: aload_2
         15: invokevirtual
-          Call HotSpotMethod<StringBuilder.append> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/StringBuilder;>
+          Call HotSpotMethod<StringBuilder.append(String)> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/StringBuilder;>
           0: aload_0
           1: aload_1
           2: invokespecial
-            Call HotSpotMethod<AbstractStringBuilder.append> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;>
+            Call HotSpotMethod<AbstractStringBuilder.append(String)> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;>
             0: aload_1
             1: ifnonnull
             7: aload_1
             8: invokevirtual
-              Call HotSpotMethod<String.length> - HotSpotSignature<()I>
+              Call HotSpotMethod<String.length()> - HotSpotSignature<()I>
               0: aload_0
               1: getfield
               4: arraylength
               5: ireturn
-              Ret HotSpotMethod<String.length> - HotSpotSignature<()I>
+              Ret HotSpotMethod<String.length()> - HotSpotSignature<()I>
             11: istore_2
             12: aload_0
             13: aload_0
@@ -66,7 +66,7 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
             17: iload_2
             18: iadd
             19: invokespecial
-              Call HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal> - HotSpotSignature<(I)V>
+              Call HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal(int)> - HotSpotSignature<(I)V>
               0: iload_1
               1: aload_0
               2: getfield
@@ -74,7 +74,7 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
               6: isub
               7: ifle
               15: return
-              Ret HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal> - HotSpotSignature<(I)V>
+              Ret HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal(int)> - HotSpotSignature<(I)V>
             22: aload_1
             23: iconst_0
             24: iload_2
@@ -83,7 +83,7 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
             29: aload_0
             30: getfield
             33: invokevirtual
-              Call HotSpotMethod<String.getChars> - HotSpotSignature<(II[CI)V>
+              Call HotSpotMethod<String.getChars(int, int, char[], int)> - HotSpotSignature<(II[CI)V>
               0: iload_1
               1: ifge
               13: iload_2
@@ -103,9 +103,9 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
               56: iload_1
               57: isub
               58: invokestatic
-              Native HotSpotMethod<System.arraycopy> HotSpotMethod<String.getChars> - HotSpotSignature<(II[CI)V>
+              Native HotSpotMethod<System.arraycopy(Object, int, Object, int, int)> HotSpotMethod<String.getChars(int, int, char[], int)> - HotSpotSignature<(II[CI)V>
               61: return
-              Ret HotSpotMethod<String.getChars> - HotSpotSignature<(II[CI)V>
+              Ret HotSpotMethod<String.getChars(int, int, char[], int)> - HotSpotSignature<(II[CI)V>
             36: aload_0
             37: dup
             38: getfield
@@ -114,236 +114,236 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
             43: putfield
             46: aload_0
             47: areturn
-            Ret HotSpotMethod<AbstractStringBuilder.append> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;>
+            Ret HotSpotMethod<AbstractStringBuilder.append(String)> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;>
           5: pop
           6: aload_0
           7: areturn
-          Ret HotSpotMethod<StringBuilder.append> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/StringBuilder;>
+          Ret HotSpotMethod<StringBuilder.append(String)> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/StringBuilder;>
         18: invokespecial
-          Call HotSpotMethod<StringBuilder.<init>> - HotSpotSignature<(Ljava/lang/StringBuilder;)V>
+          Call HotSpotMethod<StringBuilder.<init>(StringBuilder)> - HotSpotSignature<(Ljava/lang/StringBuilder;)V>
           0: aload_0
           1: aload_1
           2: putfield
           5: aload_0
           6: invokespecial
-            Call HotSpotMethod<AbstractSeq.<init>> - HotSpotSignature<()V>
+            Call HotSpotMethod<AbstractSeq.<init>()> - HotSpotSignature<()V>
             0: aload_0
             1: invokespecial
-              Call HotSpotMethod<AbstractSeq.<init>> - HotSpotSignature<()V>
+              Call HotSpotMethod<AbstractSeq.<init>()> - HotSpotSignature<()V>
               0: aload_0
               1: invokespecial
-                Call HotSpotMethod<AbstractIterable.<init>> - HotSpotSignature<()V>
+                Call HotSpotMethod<AbstractIterable.<init>()> - HotSpotSignature<()V>
                 0: aload_0
                 1: invokespecial
-                  Call HotSpotMethod<AbstractTraversable.<init>> - HotSpotSignature<()V>
+                  Call HotSpotMethod<AbstractTraversable.<init>()> - HotSpotSignature<()V>
                   0: aload_0
                   1: invokespecial
-                    Call HotSpotMethod<Object.<init>> - HotSpotSignature<()V>
+                    Call HotSpotMethod<Object.<init>()> - HotSpotSignature<()V>
                     0: return
-                    Ret HotSpotMethod<Object.<init>> - HotSpotSignature<()V>
+                    Ret HotSpotMethod<Object.<init>()> - HotSpotSignature<()V>
                   4: aload_0
                   5: invokestatic
-                    Call HotSpotMethod<GenTraversableOnce$class.$init$> - HotSpotSignature<(Lscala/collection/GenTraversableOnce;)V>
+                    Call HotSpotMethod<GenTraversableOnce$class.$init$(GenTraversableOnce)> - HotSpotSignature<(Lscala/collection/GenTraversableOnce;)V>
                     0: return
-                    Ret HotSpotMethod<GenTraversableOnce$class.$init$> - HotSpotSignature<(Lscala/collection/GenTraversableOnce;)V>
+                    Ret HotSpotMethod<GenTraversableOnce$class.$init$(GenTraversableOnce)> - HotSpotSignature<(Lscala/collection/GenTraversableOnce;)V>
                   8: aload_0
                   9: invokestatic
-                    Call HotSpotMethod<TraversableOnce$class.$init$> - HotSpotSignature<(Lscala/collection/TraversableOnce;)V>
+                    Call HotSpotMethod<TraversableOnce$class.$init$(TraversableOnce)> - HotSpotSignature<(Lscala/collection/TraversableOnce;)V>
                     0: return
-                    Ret HotSpotMethod<TraversableOnce$class.$init$> - HotSpotSignature<(Lscala/collection/TraversableOnce;)V>
+                    Ret HotSpotMethod<TraversableOnce$class.$init$(TraversableOnce)> - HotSpotSignature<(Lscala/collection/TraversableOnce;)V>
                   12: aload_0
                   13: invokestatic
-                    Call HotSpotMethod<Parallelizable$class.$init$> - HotSpotSignature<(Lscala/collection/Parallelizable;)V>
+                    Call HotSpotMethod<Parallelizable$class.$init$(Parallelizable)> - HotSpotSignature<(Lscala/collection/Parallelizable;)V>
                     0: return
-                    Ret HotSpotMethod<Parallelizable$class.$init$> - HotSpotSignature<(Lscala/collection/Parallelizable;)V>
+                    Ret HotSpotMethod<Parallelizable$class.$init$(Parallelizable)> - HotSpotSignature<(Lscala/collection/Parallelizable;)V>
                   16: aload_0
                   17: invokestatic
-                    Call HotSpotMethod<TraversableLike$class.$init$> - HotSpotSignature<(Lscala/collection/TraversableLike;)V>
+                    Call HotSpotMethod<TraversableLike$class.$init$(TraversableLike)> - HotSpotSignature<(Lscala/collection/TraversableLike;)V>
                     0: return
-                    Ret HotSpotMethod<TraversableLike$class.$init$> - HotSpotSignature<(Lscala/collection/TraversableLike;)V>
+                    Ret HotSpotMethod<TraversableLike$class.$init$(TraversableLike)> - HotSpotSignature<(Lscala/collection/TraversableLike;)V>
                   20: aload_0
                   21: invokestatic
-                    Call HotSpotMethod<GenericTraversableTemplate$class.$init$> - HotSpotSignature<(Lscala/collection/generic/GenericTraversableTemplate;)V>
+                    Call HotSpotMethod<GenericTraversableTemplate$class.$init$(GenericTraversableTemplate)> - HotSpotSignature<(Lscala/collection/generic/GenericTraversableTemplate;)V>
                     0: return
-                    Ret HotSpotMethod<GenericTraversableTemplate$class.$init$> - HotSpotSignature<(Lscala/collection/generic/GenericTraversableTemplate;)V>
+                    Ret HotSpotMethod<GenericTraversableTemplate$class.$init$(GenericTraversableTemplate)> - HotSpotSignature<(Lscala/collection/generic/GenericTraversableTemplate;)V>
                   24: aload_0
                   25: invokestatic
-                    Call HotSpotMethod<GenTraversable$class.$init$> - HotSpotSignature<(Lscala/collection/GenTraversable;)V>
+                    Call HotSpotMethod<GenTraversable$class.$init$(GenTraversable)> - HotSpotSignature<(Lscala/collection/GenTraversable;)V>
                     0: return
-                    Ret HotSpotMethod<GenTraversable$class.$init$> - HotSpotSignature<(Lscala/collection/GenTraversable;)V>
+                    Ret HotSpotMethod<GenTraversable$class.$init$(GenTraversable)> - HotSpotSignature<(Lscala/collection/GenTraversable;)V>
                   28: aload_0
                   29: invokestatic
-                    Call HotSpotMethod<Traversable$class.$init$> - HotSpotSignature<(Lscala/collection/Traversable;)V>
+                    Call HotSpotMethod<Traversable$class.$init$(Traversable)> - HotSpotSignature<(Lscala/collection/Traversable;)V>
                     0: return
-                    Ret HotSpotMethod<Traversable$class.$init$> - HotSpotSignature<(Lscala/collection/Traversable;)V>
+                    Ret HotSpotMethod<Traversable$class.$init$(Traversable)> - HotSpotSignature<(Lscala/collection/Traversable;)V>
                   32: return
-                  Ret HotSpotMethod<AbstractTraversable.<init>> - HotSpotSignature<()V>
+                  Ret HotSpotMethod<AbstractTraversable.<init>()> - HotSpotSignature<()V>
                 4: aload_0
                 5: invokestatic
-                  Call HotSpotMethod<GenIterable$class.$init$> - HotSpotSignature<(Lscala/collection/GenIterable;)V>
+                  Call HotSpotMethod<GenIterable$class.$init$(GenIterable)> - HotSpotSignature<(Lscala/collection/GenIterable;)V>
                   0: return
-                  Ret HotSpotMethod<GenIterable$class.$init$> - HotSpotSignature<(Lscala/collection/GenIterable;)V>
+                  Ret HotSpotMethod<GenIterable$class.$init$(GenIterable)> - HotSpotSignature<(Lscala/collection/GenIterable;)V>
                 8: aload_0
                 9: invokestatic
-                  Call HotSpotMethod<IterableLike$class.$init$> - HotSpotSignature<(Lscala/collection/IterableLike;)V>
+                  Call HotSpotMethod<IterableLike$class.$init$(IterableLike)> - HotSpotSignature<(Lscala/collection/IterableLike;)V>
                   0: return
-                  Ret HotSpotMethod<IterableLike$class.$init$> - HotSpotSignature<(Lscala/collection/IterableLike;)V>
+                  Ret HotSpotMethod<IterableLike$class.$init$(IterableLike)> - HotSpotSignature<(Lscala/collection/IterableLike;)V>
                 12: aload_0
                 13: invokestatic
-                  Call HotSpotMethod<Iterable$class.$init$> - HotSpotSignature<(Lscala/collection/Iterable;)V>
+                  Call HotSpotMethod<Iterable$class.$init$(Iterable)> - HotSpotSignature<(Lscala/collection/Iterable;)V>
                   0: return
-                  Ret HotSpotMethod<Iterable$class.$init$> - HotSpotSignature<(Lscala/collection/Iterable;)V>
+                  Ret HotSpotMethod<Iterable$class.$init$(Iterable)> - HotSpotSignature<(Lscala/collection/Iterable;)V>
                 16: return
-                Ret HotSpotMethod<AbstractIterable.<init>> - HotSpotSignature<()V>
+                Ret HotSpotMethod<AbstractIterable.<init>()> - HotSpotSignature<()V>
               4: aload_0
               5: invokestatic
-                Call HotSpotMethod<Function1$class.$init$> - HotSpotSignature<(Lscala/Function1;)V>
+                Call HotSpotMethod<Function1$class.$init$(Function1)> - HotSpotSignature<(Lscala/Function1;)V>
                 0: return
-                Ret HotSpotMethod<Function1$class.$init$> - HotSpotSignature<(Lscala/Function1;)V>
+                Ret HotSpotMethod<Function1$class.$init$(Function1)> - HotSpotSignature<(Lscala/Function1;)V>
               8: aload_0
               9: invokestatic
-                Call HotSpotMethod<PartialFunction$class.$init$> - HotSpotSignature<(Lscala/PartialFunction;)V>
+                Call HotSpotMethod<PartialFunction$class.$init$(PartialFunction)> - HotSpotSignature<(Lscala/PartialFunction;)V>
                 0: return
-                Ret HotSpotMethod<PartialFunction$class.$init$> - HotSpotSignature<(Lscala/PartialFunction;)V>
+                Ret HotSpotMethod<PartialFunction$class.$init$(PartialFunction)> - HotSpotSignature<(Lscala/PartialFunction;)V>
               12: aload_0
               13: invokestatic
-                Call HotSpotMethod<GenSeqLike$class.$init$> - HotSpotSignature<(Lscala/collection/GenSeqLike;)V>
+                Call HotSpotMethod<GenSeqLike$class.$init$(GenSeqLike)> - HotSpotSignature<(Lscala/collection/GenSeqLike;)V>
                 0: return
-                Ret HotSpotMethod<GenSeqLike$class.$init$> - HotSpotSignature<(Lscala/collection/GenSeqLike;)V>
+                Ret HotSpotMethod<GenSeqLike$class.$init$(GenSeqLike)> - HotSpotSignature<(Lscala/collection/GenSeqLike;)V>
               16: aload_0
               17: invokestatic
-                Call HotSpotMethod<GenSeq$class.$init$> - HotSpotSignature<(Lscala/collection/GenSeq;)V>
+                Call HotSpotMethod<GenSeq$class.$init$(GenSeq)> - HotSpotSignature<(Lscala/collection/GenSeq;)V>
                 0: return
-                Ret HotSpotMethod<GenSeq$class.$init$> - HotSpotSignature<(Lscala/collection/GenSeq;)V>
+                Ret HotSpotMethod<GenSeq$class.$init$(GenSeq)> - HotSpotSignature<(Lscala/collection/GenSeq;)V>
               20: aload_0
               21: invokestatic
-                Call HotSpotMethod<SeqLike$class.$init$> - HotSpotSignature<(Lscala/collection/SeqLike;)V>
+                Call HotSpotMethod<SeqLike$class.$init$(SeqLike)> - HotSpotSignature<(Lscala/collection/SeqLike;)V>
                 0: return
-                Ret HotSpotMethod<SeqLike$class.$init$> - HotSpotSignature<(Lscala/collection/SeqLike;)V>
+                Ret HotSpotMethod<SeqLike$class.$init$(SeqLike)> - HotSpotSignature<(Lscala/collection/SeqLike;)V>
               24: aload_0
               25: invokestatic
-                Call HotSpotMethod<Seq$class.$init$> - HotSpotSignature<(Lscala/collection/Seq;)V>
+                Call HotSpotMethod<Seq$class.$init$(Seq)> - HotSpotSignature<(Lscala/collection/Seq;)V>
                 0: return
-                Ret HotSpotMethod<Seq$class.$init$> - HotSpotSignature<(Lscala/collection/Seq;)V>
+                Ret HotSpotMethod<Seq$class.$init$(Seq)> - HotSpotSignature<(Lscala/collection/Seq;)V>
               28: return
-              Ret HotSpotMethod<AbstractSeq.<init>> - HotSpotSignature<()V>
+              Ret HotSpotMethod<AbstractSeq.<init>()> - HotSpotSignature<()V>
             4: aload_0
             5: invokestatic
-              Call HotSpotMethod<Traversable$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/Traversable;)V>
+              Call HotSpotMethod<Traversable$class.$init$(Traversable)> - HotSpotSignature<(Lscala/collection/mutable/Traversable;)V>
               0: return
-              Ret HotSpotMethod<Traversable$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/Traversable;)V>
+              Ret HotSpotMethod<Traversable$class.$init$(Traversable)> - HotSpotSignature<(Lscala/collection/mutable/Traversable;)V>
             8: aload_0
             9: invokestatic
-              Call HotSpotMethod<Iterable$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/Iterable;)V>
+              Call HotSpotMethod<Iterable$class.$init$(Iterable)> - HotSpotSignature<(Lscala/collection/mutable/Iterable;)V>
               0: return
-              Ret HotSpotMethod<Iterable$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/Iterable;)V>
+              Ret HotSpotMethod<Iterable$class.$init$(Iterable)> - HotSpotSignature<(Lscala/collection/mutable/Iterable;)V>
             12: aload_0
             13: invokestatic
-              Call HotSpotMethod<Cloneable$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/Cloneable;)V>
+              Call HotSpotMethod<Cloneable$class.$init$(Cloneable)> - HotSpotSignature<(Lscala/collection/mutable/Cloneable;)V>
               0: return
-              Ret HotSpotMethod<Cloneable$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/Cloneable;)V>
+              Ret HotSpotMethod<Cloneable$class.$init$(Cloneable)> - HotSpotSignature<(Lscala/collection/mutable/Cloneable;)V>
             16: aload_0
             17: invokestatic
-              Call HotSpotMethod<SeqLike$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/SeqLike;)V>
+              Call HotSpotMethod<SeqLike$class.$init$(SeqLike)> - HotSpotSignature<(Lscala/collection/mutable/SeqLike;)V>
               0: return
-              Ret HotSpotMethod<SeqLike$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/SeqLike;)V>
+              Ret HotSpotMethod<SeqLike$class.$init$(SeqLike)> - HotSpotSignature<(Lscala/collection/mutable/SeqLike;)V>
             20: aload_0
             21: invokestatic
-              Call HotSpotMethod<Seq$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/Seq;)V>
+              Call HotSpotMethod<Seq$class.$init$(Seq)> - HotSpotSignature<(Lscala/collection/mutable/Seq;)V>
               0: return
-              Ret HotSpotMethod<Seq$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/Seq;)V>
+              Ret HotSpotMethod<Seq$class.$init$(Seq)> - HotSpotSignature<(Lscala/collection/mutable/Seq;)V>
             24: return
-            Ret HotSpotMethod<AbstractSeq.<init>> - HotSpotSignature<()V>
+            Ret HotSpotMethod<AbstractSeq.<init>()> - HotSpotSignature<()V>
           9: aload_0
           10: invokestatic
-            Call HotSpotMethod<IndexedSeqLike$class.$init$> - HotSpotSignature<(Lscala/collection/IndexedSeqLike;)V>
+            Call HotSpotMethod<IndexedSeqLike$class.$init$(IndexedSeqLike)> - HotSpotSignature<(Lscala/collection/IndexedSeqLike;)V>
             0: return
-            Ret HotSpotMethod<IndexedSeqLike$class.$init$> - HotSpotSignature<(Lscala/collection/IndexedSeqLike;)V>
+            Ret HotSpotMethod<IndexedSeqLike$class.$init$(IndexedSeqLike)> - HotSpotSignature<(Lscala/collection/IndexedSeqLike;)V>
           13: aload_0
           14: invokestatic
-            Call HotSpotMethod<IndexedSeq$class.$init$> - HotSpotSignature<(Lscala/collection/IndexedSeq;)V>
+            Call HotSpotMethod<IndexedSeq$class.$init$(IndexedSeq)> - HotSpotSignature<(Lscala/collection/IndexedSeq;)V>
             0: return
-            Ret HotSpotMethod<IndexedSeq$class.$init$> - HotSpotSignature<(Lscala/collection/IndexedSeq;)V>
+            Ret HotSpotMethod<IndexedSeq$class.$init$(IndexedSeq)> - HotSpotSignature<(Lscala/collection/IndexedSeq;)V>
           17: aload_0
           18: invokestatic
-            Call HotSpotMethod<IndexedSeqLike$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/IndexedSeqLike;)V>
+            Call HotSpotMethod<IndexedSeqLike$class.$init$(IndexedSeqLike)> - HotSpotSignature<(Lscala/collection/mutable/IndexedSeqLike;)V>
             0: return
-            Ret HotSpotMethod<IndexedSeqLike$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/IndexedSeqLike;)V>
+            Ret HotSpotMethod<IndexedSeqLike$class.$init$(IndexedSeqLike)> - HotSpotSignature<(Lscala/collection/mutable/IndexedSeqLike;)V>
           21: aload_0
           22: invokestatic
-            Call HotSpotMethod<IndexedSeq$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/IndexedSeq;)V>
+            Call HotSpotMethod<IndexedSeq$class.$init$(IndexedSeq)> - HotSpotSignature<(Lscala/collection/mutable/IndexedSeq;)V>
             0: return
-            Ret HotSpotMethod<IndexedSeq$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/IndexedSeq;)V>
+            Ret HotSpotMethod<IndexedSeq$class.$init$(IndexedSeq)> - HotSpotSignature<(Lscala/collection/mutable/IndexedSeq;)V>
           25: aload_0
           26: invokestatic
-            Call HotSpotMethod<IndexedSeqOptimized$class.$init$> - HotSpotSignature<(Lscala/collection/IndexedSeqOptimized;)V>
+            Call HotSpotMethod<IndexedSeqOptimized$class.$init$(IndexedSeqOptimized)> - HotSpotSignature<(Lscala/collection/IndexedSeqOptimized;)V>
             0: return
-            Ret HotSpotMethod<IndexedSeqOptimized$class.$init$> - HotSpotSignature<(Lscala/collection/IndexedSeqOptimized;)V>
+            Ret HotSpotMethod<IndexedSeqOptimized$class.$init$(IndexedSeqOptimized)> - HotSpotSignature<(Lscala/collection/IndexedSeqOptimized;)V>
           29: aload_0
           30: invokestatic
-            Call HotSpotMethod<Ordered$class.$init$> - HotSpotSignature<(Lscala/math/Ordered;)V>
+            Call HotSpotMethod<Ordered$class.$init$(Ordered)> - HotSpotSignature<(Lscala/math/Ordered;)V>
             0: return
-            Ret HotSpotMethod<Ordered$class.$init$> - HotSpotSignature<(Lscala/math/Ordered;)V>
+            Ret HotSpotMethod<Ordered$class.$init$(Ordered)> - HotSpotSignature<(Lscala/math/Ordered;)V>
           33: aload_0
           34: invokestatic
-            Call HotSpotMethod<StringLike$class.$init$> - HotSpotSignature<(Lscala/collection/immutable/StringLike;)V>
+            Call HotSpotMethod<StringLike$class.$init$(StringLike)> - HotSpotSignature<(Lscala/collection/immutable/StringLike;)V>
             0: return
-            Ret HotSpotMethod<StringLike$class.$init$> - HotSpotSignature<(Lscala/collection/immutable/StringLike;)V>
+            Ret HotSpotMethod<StringLike$class.$init$(StringLike)> - HotSpotSignature<(Lscala/collection/immutable/StringLike;)V>
           37: aload_0
           38: invokestatic
-            Call HotSpotMethod<Growable$class.$init$> - HotSpotSignature<(Lscala/collection/generic/Growable;)V>
+            Call HotSpotMethod<Growable$class.$init$(Growable)> - HotSpotSignature<(Lscala/collection/generic/Growable;)V>
             0: return
-            Ret HotSpotMethod<Growable$class.$init$> - HotSpotSignature<(Lscala/collection/generic/Growable;)V>
+            Ret HotSpotMethod<Growable$class.$init$(Growable)> - HotSpotSignature<(Lscala/collection/generic/Growable;)V>
           41: aload_0
           42: invokestatic
-            Call HotSpotMethod<Builder$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/Builder;)V>
+            Call HotSpotMethod<Builder$class.$init$(Builder)> - HotSpotSignature<(Lscala/collection/mutable/Builder;)V>
             0: return
-            Ret HotSpotMethod<Builder$class.$init$> - HotSpotSignature<(Lscala/collection/mutable/Builder;)V>
+            Ret HotSpotMethod<Builder$class.$init$(Builder)> - HotSpotSignature<(Lscala/collection/mutable/Builder;)V>
           45: return
-          Ret HotSpotMethod<StringBuilder.<init>> - HotSpotSignature<(Ljava/lang/StringBuilder;)V>
+          Ret HotSpotMethod<StringBuilder.<init>(StringBuilder)> - HotSpotSignature<(Ljava/lang/StringBuilder;)V>
         21: return
-        Ret HotSpotMethod<StringBuilder.<init>> - HotSpotSignature<(ILjava/lang/String;)V>
+        Ret HotSpotMethod<StringBuilder.<init>(int, String)> - HotSpotSignature<(ILjava/lang/String;)V>
       9: return
-      Ret HotSpotMethod<StringBuilder.<init>> - HotSpotSignature<()V>
+      Ret HotSpotMethod<StringBuilder.<init>()> - HotSpotSignature<()V>
     10: ldc
     12: invokevirtual
-      Call HotSpotMethod<StringBuilder.append> - HotSpotSignature<(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder;>
+      Call HotSpotMethod<StringBuilder.append(Object)> - HotSpotSignature<(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder;>
       0: aload_0
       1: invokespecial
-        Call HotSpotMethod<StringBuilder.underlying> - HotSpotSignature<()Ljava/lang/StringBuilder;>
+        Call HotSpotMethod<StringBuilder.underlying()> - HotSpotSignature<()Ljava/lang/StringBuilder;>
         0: aload_0
         1: getfield
         4: areturn
-        Ret HotSpotMethod<StringBuilder.underlying> - HotSpotSignature<()Ljava/lang/StringBuilder;>
+        Ret HotSpotMethod<StringBuilder.underlying()> - HotSpotSignature<()Ljava/lang/StringBuilder;>
       4: aload_1
       5: invokestatic
-        Call HotSpotMethod<String.valueOf> - HotSpotSignature<(Ljava/lang/Object;)Ljava/lang/String;>
+        Call HotSpotMethod<String.valueOf(Object)> - HotSpotSignature<(Ljava/lang/Object;)Ljava/lang/String;>
         0: aload_0
         1: ifnonnull
         9: aload_0
         10: invokevirtual
-          Call HotSpotMethod<String.toString> - HotSpotSignature<()Ljava/lang/String;>
+          Call HotSpotMethod<String.toString()> - HotSpotSignature<()Ljava/lang/String;>
           0: aload_0
           1: areturn
-          Ret HotSpotMethod<String.toString> - HotSpotSignature<()Ljava/lang/String;>
+          Ret HotSpotMethod<String.toString()> - HotSpotSignature<()Ljava/lang/String;>
         13: areturn
-        Ret HotSpotMethod<String.valueOf> - HotSpotSignature<(Ljava/lang/Object;)Ljava/lang/String;>
+        Ret HotSpotMethod<String.valueOf(Object)> - HotSpotSignature<(Ljava/lang/Object;)Ljava/lang/String;>
       8: invokevirtual
-        Call HotSpotMethod<StringBuilder.append> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/StringBuilder;>
+        Call HotSpotMethod<StringBuilder.append(String)> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/StringBuilder;>
         0: aload_0
         1: aload_1
         2: invokespecial
-          Call HotSpotMethod<AbstractStringBuilder.append> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;>
+          Call HotSpotMethod<AbstractStringBuilder.append(String)> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;>
           0: aload_1
           1: ifnonnull
           7: aload_1
           8: invokevirtual
-            Call HotSpotMethod<String.length> - HotSpotSignature<()I>
+            Call HotSpotMethod<String.length()> - HotSpotSignature<()I>
             0: aload_0
             1: getfield
             4: arraylength
             5: ireturn
-            Ret HotSpotMethod<String.length> - HotSpotSignature<()I>
+            Ret HotSpotMethod<String.length()> - HotSpotSignature<()I>
           11: istore_2
           12: aload_0
           13: aload_0
@@ -351,7 +351,7 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
           17: iload_2
           18: iadd
           19: invokespecial
-            Call HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal> - HotSpotSignature<(I)V>
+            Call HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal(int)> - HotSpotSignature<(I)V>
             0: iload_1
             1: aload_0
             2: getfield
@@ -359,7 +359,7 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
             6: isub
             7: ifle
             15: return
-            Ret HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal> - HotSpotSignature<(I)V>
+            Ret HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal(int)> - HotSpotSignature<(I)V>
           22: aload_1
           23: iconst_0
           24: iload_2
@@ -368,7 +368,7 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
           29: aload_0
           30: getfield
           33: invokevirtual
-            Call HotSpotMethod<String.getChars> - HotSpotSignature<(II[CI)V>
+            Call HotSpotMethod<String.getChars(int, int, char[], int)> - HotSpotSignature<(II[CI)V>
             0: iload_1
             1: ifge
             13: iload_2
@@ -388,9 +388,9 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
             56: iload_1
             57: isub
             58: invokestatic
-            Native HotSpotMethod<System.arraycopy> HotSpotMethod<String.getChars> - HotSpotSignature<(II[CI)V>
+            Native HotSpotMethod<System.arraycopy(Object, int, Object, int, int)> HotSpotMethod<String.getChars(int, int, char[], int)> - HotSpotSignature<(II[CI)V>
             61: return
-            Ret HotSpotMethod<String.getChars> - HotSpotSignature<(II[CI)V>
+            Ret HotSpotMethod<String.getChars(int, int, char[], int)> - HotSpotSignature<(II[CI)V>
           36: aload_0
           37: dup
           38: getfield
@@ -399,21 +399,21 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
           43: putfield
           46: aload_0
           47: areturn
-          Ret HotSpotMethod<AbstractStringBuilder.append> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;>
+          Ret HotSpotMethod<AbstractStringBuilder.append(String)> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;>
         5: pop
         6: aload_0
         7: areturn
-        Ret HotSpotMethod<StringBuilder.append> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/StringBuilder;>
+        Ret HotSpotMethod<StringBuilder.append(String)> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/StringBuilder;>
       11: pop
       12: aload_0
       13: areturn
-      Ret HotSpotMethod<StringBuilder.append> - HotSpotSignature<(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder;>
+      Ret HotSpotMethod<StringBuilder.append(Object)> - HotSpotSignature<(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder;>
     15: iload_1
     16: invokestatic
-      Call HotSpotMethod<BoxesRunTime.boxToInteger> - HotSpotSignature<(I)Ljava/lang/Integer;>
+      Call HotSpotMethod<BoxesRunTime.boxToInteger(int)> - HotSpotSignature<(I)Ljava/lang/Integer;>
       0: iload_0
       1: invokestatic
-        Call HotSpotMethod<Integer.valueOf> - HotSpotSignature<(I)Ljava/lang/Integer;>
+        Call HotSpotMethod<Integer.valueOf(int)> - HotSpotSignature<(I)Ljava/lang/Integer;>
         0: getstatic
         3: ifne
         22: iload_0
@@ -428,30 +428,30 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
         42: iadd
         43: aaload
         44: areturn
-        Ret HotSpotMethod<Integer.valueOf> - HotSpotSignature<(I)Ljava/lang/Integer;>
+        Ret HotSpotMethod<Integer.valueOf(int)> - HotSpotSignature<(I)Ljava/lang/Integer;>
       4: areturn
-      Ret HotSpotMethod<BoxesRunTime.boxToInteger> - HotSpotSignature<(I)Ljava/lang/Integer;>
+      Ret HotSpotMethod<BoxesRunTime.boxToInteger(int)> - HotSpotSignature<(I)Ljava/lang/Integer;>
     19: invokevirtual
-      Call HotSpotMethod<StringBuilder.append> - HotSpotSignature<(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder;>
+      Call HotSpotMethod<StringBuilder.append(Object)> - HotSpotSignature<(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder;>
       0: aload_0
       1: invokespecial
-        Call HotSpotMethod<StringBuilder.underlying> - HotSpotSignature<()Ljava/lang/StringBuilder;>
+        Call HotSpotMethod<StringBuilder.underlying()> - HotSpotSignature<()Ljava/lang/StringBuilder;>
         0: aload_0
         1: getfield
         4: areturn
-        Ret HotSpotMethod<StringBuilder.underlying> - HotSpotSignature<()Ljava/lang/StringBuilder;>
+        Ret HotSpotMethod<StringBuilder.underlying()> - HotSpotSignature<()Ljava/lang/StringBuilder;>
       4: aload_1
       5: invokestatic
-        Call HotSpotMethod<String.valueOf> - HotSpotSignature<(Ljava/lang/Object;)Ljava/lang/String;>
+        Call HotSpotMethod<String.valueOf(Object)> - HotSpotSignature<(Ljava/lang/Object;)Ljava/lang/String;>
         0: aload_0
         1: ifnonnull
         9: aload_0
         10: invokevirtual
-          Call HotSpotMethod<Integer.toString> - HotSpotSignature<()Ljava/lang/String;>
+          Call HotSpotMethod<Integer.toString()> - HotSpotSignature<()Ljava/lang/String;>
           0: aload_0
           1: getfield
           4: invokestatic
-            Call HotSpotMethod<Integer.toString> - HotSpotSignature<(I)Ljava/lang/String;>
+            Call HotSpotMethod<Integer.toString(int)> - HotSpotSignature<(I)Ljava/lang/String;>
             0: iload_0
             1: ldc
             3: if_icmpne
@@ -459,7 +459,7 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
             10: ifge
             23: iload_0
             24: invokestatic
-              Call HotSpotMethod<Integer.stringSize> - HotSpotSignature<(I)I>
+              Call HotSpotMethod<Integer.stringSize(int)> - HotSpotSignature<(I)I>
               0: iconst_0
               1: istore_1
               2: iload_0
@@ -471,7 +471,7 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
               12: iconst_1
               13: iadd
               14: ireturn
-              Ret HotSpotMethod<Integer.stringSize> - HotSpotSignature<(I)I>
+              Ret HotSpotMethod<Integer.stringSize(int)> - HotSpotSignature<(I)I>
             27: istore_1
             28: iload_1
             29: newarray
@@ -480,7 +480,7 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
             33: iload_1
             34: aload_2
             35: invokestatic
-              Call HotSpotMethod<Integer.getChars> - HotSpotSignature<(II[C)V>
+              Call HotSpotMethod<Integer.getChars(int, int, char[])> - HotSpotSignature<(II[C)V>
               0: iload_1
               1: istore
               3: iconst_0
@@ -521,18 +521,18 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
               116: iload
               118: ifeq
               130: return
-              Ret HotSpotMethod<Integer.getChars> - HotSpotSignature<(II[C)V>
+              Ret HotSpotMethod<Integer.getChars(int, int, char[])> - HotSpotSignature<(II[C)V>
             38: new
             41: dup
             42: aload_2
             43: iconst_1
             44: invokespecial
-              Call HotSpotMethod<String.<init>> - HotSpotSignature<([CZ)V>
+              Call HotSpotMethod<String.<init>(char[], boolean)> - HotSpotSignature<([CZ)V>
               0: aload_0
               1: invokespecial
-                Call HotSpotMethod<Object.<init>> - HotSpotSignature<()V>
+                Call HotSpotMethod<Object.<init>()> - HotSpotSignature<()V>
                 0: return
-                Ret HotSpotMethod<Object.<init>> - HotSpotSignature<()V>
+                Ret HotSpotMethod<Object.<init>()> - HotSpotSignature<()V>
               4: aload_0
               5: iconst_0
               6: putfield
@@ -540,29 +540,29 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
               10: aload_1
               11: putfield
               14: return
-              Ret HotSpotMethod<String.<init>> - HotSpotSignature<([CZ)V>
+              Ret HotSpotMethod<String.<init>(char[], boolean)> - HotSpotSignature<([CZ)V>
             47: areturn
-            Ret HotSpotMethod<Integer.toString> - HotSpotSignature<(I)Ljava/lang/String;>
+            Ret HotSpotMethod<Integer.toString(int)> - HotSpotSignature<(I)Ljava/lang/String;>
           7: areturn
-          Ret HotSpotMethod<Integer.toString> - HotSpotSignature<()Ljava/lang/String;>
+          Ret HotSpotMethod<Integer.toString()> - HotSpotSignature<()Ljava/lang/String;>
         13: areturn
-        Ret HotSpotMethod<String.valueOf> - HotSpotSignature<(Ljava/lang/Object;)Ljava/lang/String;>
+        Ret HotSpotMethod<String.valueOf(Object)> - HotSpotSignature<(Ljava/lang/Object;)Ljava/lang/String;>
       8: invokevirtual
-        Call HotSpotMethod<StringBuilder.append> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/StringBuilder;>
+        Call HotSpotMethod<StringBuilder.append(String)> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/StringBuilder;>
         0: aload_0
         1: aload_1
         2: invokespecial
-          Call HotSpotMethod<AbstractStringBuilder.append> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;>
+          Call HotSpotMethod<AbstractStringBuilder.append(String)> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;>
           0: aload_1
           1: ifnonnull
           7: aload_1
           8: invokevirtual
-            Call HotSpotMethod<String.length> - HotSpotSignature<()I>
+            Call HotSpotMethod<String.length()> - HotSpotSignature<()I>
             0: aload_0
             1: getfield
             4: arraylength
             5: ireturn
-            Ret HotSpotMethod<String.length> - HotSpotSignature<()I>
+            Ret HotSpotMethod<String.length()> - HotSpotSignature<()I>
           11: istore_2
           12: aload_0
           13: aload_0
@@ -570,7 +570,7 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
           17: iload_2
           18: iadd
           19: invokespecial
-            Call HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal> - HotSpotSignature<(I)V>
+            Call HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal(int)> - HotSpotSignature<(I)V>
             0: iload_1
             1: aload_0
             2: getfield
@@ -578,7 +578,7 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
             6: isub
             7: ifle
             15: return
-            Ret HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal> - HotSpotSignature<(I)V>
+            Ret HotSpotMethod<AbstractStringBuilder.ensureCapacityInternal(int)> - HotSpotSignature<(I)V>
           22: aload_1
           23: iconst_0
           24: iload_2
@@ -587,7 +587,7 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
           29: aload_0
           30: getfield
           33: invokevirtual
-            Call HotSpotMethod<String.getChars> - HotSpotSignature<(II[CI)V>
+            Call HotSpotMethod<String.getChars(int, int, char[], int)> - HotSpotSignature<(II[CI)V>
             0: iload_1
             1: ifge
             13: iload_2
@@ -607,9 +607,9 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
             56: iload_1
             57: isub
             58: invokestatic
-            Native HotSpotMethod<System.arraycopy> HotSpotMethod<String.getChars> - HotSpotSignature<(II[CI)V>
+            Native HotSpotMethod<System.arraycopy(Object, int, Object, int, int)> HotSpotMethod<String.getChars(int, int, char[], int)> - HotSpotSignature<(II[CI)V>
             61: return
-            Ret HotSpotMethod<String.getChars> - HotSpotSignature<(II[CI)V>
+            Ret HotSpotMethod<String.getChars(int, int, char[], int)> - HotSpotSignature<(II[CI)V>
           36: aload_0
           37: dup
           38: getfield
@@ -618,26 +618,26 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
           43: putfield
           46: aload_0
           47: areturn
-          Ret HotSpotMethod<AbstractStringBuilder.append> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;>
+          Ret HotSpotMethod<AbstractStringBuilder.append(String)> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;>
         5: pop
         6: aload_0
         7: areturn
-        Ret HotSpotMethod<StringBuilder.append> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/StringBuilder;>
+        Ret HotSpotMethod<StringBuilder.append(String)> - HotSpotSignature<(Ljava/lang/String;)Ljava/lang/StringBuilder;>
       11: pop
       12: aload_0
       13: areturn
-      Ret HotSpotMethod<StringBuilder.append> - HotSpotSignature<(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder;>
+      Ret HotSpotMethod<StringBuilder.append(Object)> - HotSpotSignature<(Ljava/lang/Object;)Lscala/collection/mutable/StringBuilder;>
     22: invokevirtual
-      Call HotSpotMethod<StringBuilder.toString> - HotSpotSignature<()Ljava/lang/String;>
+      Call HotSpotMethod<StringBuilder.toString()> - HotSpotSignature<()Ljava/lang/String;>
       0: aload_0
       1: invokespecial
-        Call HotSpotMethod<StringBuilder.underlying> - HotSpotSignature<()Ljava/lang/StringBuilder;>
+        Call HotSpotMethod<StringBuilder.underlying()> - HotSpotSignature<()Ljava/lang/StringBuilder;>
         0: aload_0
         1: getfield
         4: areturn
-        Ret HotSpotMethod<StringBuilder.underlying> - HotSpotSignature<()Ljava/lang/StringBuilder;>
+        Ret HotSpotMethod<StringBuilder.underlying()> - HotSpotSignature<()Ljava/lang/StringBuilder;>
       4: invokevirtual
-        Call HotSpotMethod<StringBuilder.toString> - HotSpotSignature<()Ljava/lang/String;>
+        Call HotSpotMethod<StringBuilder.toString()> - HotSpotSignature<()Ljava/lang/String;>
         0: new
         3: dup
         4: aload_0
@@ -646,12 +646,12 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
         9: aload_0
         10: getfield
         13: invokespecial
-          Call HotSpotMethod<String.<init>> - HotSpotSignature<([CII)V>
+          Call HotSpotMethod<String.<init>(char[], int, int)> - HotSpotSignature<([CII)V>
           0: aload_0
           1: invokespecial
-            Call HotSpotMethod<Object.<init>> - HotSpotSignature<()V>
+            Call HotSpotMethod<Object.<init>()> - HotSpotSignature<()V>
             0: return
-            Ret HotSpotMethod<Object.<init>> - HotSpotSignature<()V>
+            Ret HotSpotMethod<Object.<init>()> - HotSpotSignature<()V>
           4: aload_0
           5: iconst_0
           6: putfield
@@ -672,7 +672,7 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
           58: iload_3
           59: iadd
           60: invokestatic
-            Call HotSpotMethod<Arrays.copyOfRange> - HotSpotSignature<([CII)[C>
+            Call HotSpotMethod<Arrays.copyOfRange(char[], int, int)> - HotSpotSignature<([CII)[C>
             0: iload_2
             1: iload_1
             2: isub
@@ -692,81 +692,81 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
             52: isub
             53: iload_3
             54: invokestatic
-              Call HotSpotMethod<Math.min> - HotSpotSignature<(II)I>
+              Call HotSpotMethod<Math.min(int, int)> - HotSpotSignature<(II)I>
               0: iload_0
               1: iload_1
               2: if_icmpgt
               9: iload_1
               10: ireturn
-              Ret HotSpotMethod<Math.min> - HotSpotSignature<(II)I>
+              Ret HotSpotMethod<Math.min(int, int)> - HotSpotSignature<(II)I>
             57: invokestatic
-            Native HotSpotMethod<System.arraycopy> HotSpotMethod<Arrays.copyOfRange> - HotSpotSignature<([CII)[C>
+            Native HotSpotMethod<System.arraycopy(Object, int, Object, int, int)> HotSpotMethod<Arrays.copyOfRange(char[], int, int)> - HotSpotSignature<([CII)[C>
             60: aload
             62: areturn
-            Ret HotSpotMethod<Arrays.copyOfRange> - HotSpotSignature<([CII)[C>
+            Ret HotSpotMethod<Arrays.copyOfRange(char[], int, int)> - HotSpotSignature<([CII)[C>
           63: putfield
           66: return
-          Ret HotSpotMethod<String.<init>> - HotSpotSignature<([CII)V>
+          Ret HotSpotMethod<String.<init>(char[], int, int)> - HotSpotSignature<([CII)V>
         16: areturn
-        Ret HotSpotMethod<StringBuilder.toString> - HotSpotSignature<()Ljava/lang/String;>
+        Ret HotSpotMethod<StringBuilder.toString()> - HotSpotSignature<()Ljava/lang/String;>
       7: areturn
-      Ret HotSpotMethod<StringBuilder.toString> - HotSpotSignature<()Ljava/lang/String;>
+      Ret HotSpotMethod<StringBuilder.toString()> - HotSpotSignature<()Ljava/lang/String;>
     25: invokevirtual
-      Call HotSpotMethod<Predef$.println> - HotSpotSignature<(Ljava/lang/Object;)V>
+      Call HotSpotMethod<Predef$.println(Object)> - HotSpotSignature<(Ljava/lang/Object;)V>
       0: getstatic
       3: aload_1
       4: invokevirtual
-        Call HotSpotMethod<Console$.println> - HotSpotSignature<(Ljava/lang/Object;)V>
+        Call HotSpotMethod<Console$.println(Object)> - HotSpotSignature<(Ljava/lang/Object;)V>
         0: aload_0
         1: invokevirtual
-          Call HotSpotMethod<Console$.out> - HotSpotSignature<()Ljava/io/PrintStream;>
+          Call HotSpotMethod<Console$.out()> - HotSpotSignature<()Ljava/io/PrintStream;>
           0: aload_0
           1: invokespecial
-            Call HotSpotMethod<Console$.outVar> - HotSpotSignature<()Lscala/util/DynamicVariable;>
+            Call HotSpotMethod<Console$.outVar()> - HotSpotSignature<()Lscala/util/DynamicVariable;>
             0: aload_0
             1: getfield
             4: areturn
-            Ret HotSpotMethod<Console$.outVar> - HotSpotSignature<()Lscala/util/DynamicVariable;>
+            Ret HotSpotMethod<Console$.outVar()> - HotSpotSignature<()Lscala/util/DynamicVariable;>
           4: invokevirtual
-            Call HotSpotMethod<DynamicVariable.value> - HotSpotSignature<()Ljava/lang/Object;>
+            Call HotSpotMethod<DynamicVariable.value()> - HotSpotSignature<()Ljava/lang/Object;>
             0: aload_0
             1: invokespecial
-              Call HotSpotMethod<DynamicVariable.tl> - HotSpotSignature<()Ljava/lang/InheritableThreadLocal;>
+              Call HotSpotMethod<DynamicVariable.tl()> - HotSpotSignature<()Ljava/lang/InheritableThreadLocal;>
               0: aload_0
               1: getfield
               4: areturn
-              Ret HotSpotMethod<DynamicVariable.tl> - HotSpotSignature<()Ljava/lang/InheritableThreadLocal;>
+              Ret HotSpotMethod<DynamicVariable.tl()> - HotSpotSignature<()Ljava/lang/InheritableThreadLocal;>
             4: invokevirtual
-              Call HotSpotMethod<ThreadLocal.get> - HotSpotSignature<()Ljava/lang/Object;>
+              Call HotSpotMethod<ThreadLocal.get()> - HotSpotSignature<()Ljava/lang/Object;>
               0: invokestatic
-              Native HotSpotMethod<Thread.currentThread> HotSpotMethod<ThreadLocal.get> - HotSpotSignature<()Ljava/lang/Object;>
+              Native HotSpotMethod<Thread.currentThread()> HotSpotMethod<ThreadLocal.get()> - HotSpotSignature<()Ljava/lang/Object;>
               3: astore_1
               4: aload_0
               5: aload_1
               6: invokevirtual
-                Call HotSpotMethod<InheritableThreadLocal.getMap> - HotSpotSignature<(Ljava/lang/Thread;)Ljava/lang/ThreadLocal$ThreadLocalMap;>
+                Call HotSpotMethod<InheritableThreadLocal.getMap(Thread)> - HotSpotSignature<(Ljava/lang/Thread;)Ljava/lang/ThreadLocal$ThreadLocalMap;>
                 0: aload_1
                 1: getfield
                 4: areturn
-                Ret HotSpotMethod<InheritableThreadLocal.getMap> - HotSpotSignature<(Ljava/lang/Thread;)Ljava/lang/ThreadLocal$ThreadLocalMap;>
+                Ret HotSpotMethod<InheritableThreadLocal.getMap(Thread)> - HotSpotSignature<(Ljava/lang/Thread;)Ljava/lang/ThreadLocal$ThreadLocalMap;>
               9: astore_2
               10: aload_2
               11: ifnull
               14: aload_2
               15: aload_0
               16: invokestatic
-                Call HotSpotMethod<ThreadLocal$ThreadLocalMap.access$000> - HotSpotSignature<(Ljava/lang/ThreadLocal$ThreadLocalMap;Ljava/lang/ThreadLocal;)Ljava/lang/ThreadLocal$ThreadLocalMap$Entry;>
+                Call HotSpotMethod<ThreadLocal$ThreadLocalMap.access$000(ThreadLocal$ThreadLocalMap, ThreadLocal)> - HotSpotSignature<(Ljava/lang/ThreadLocal$ThreadLocalMap;Ljava/lang/ThreadLocal;)Ljava/lang/ThreadLocal$ThreadLocalMap$Entry;>
                 0: aload_0
                 1: aload_1
                 2: invokespecial
-                  Call HotSpotMethod<ThreadLocal$ThreadLocalMap.getEntry> - HotSpotSignature<(Ljava/lang/ThreadLocal;)Ljava/lang/ThreadLocal$ThreadLocalMap$Entry;>
+                  Call HotSpotMethod<ThreadLocal$ThreadLocalMap.getEntry(ThreadLocal)> - HotSpotSignature<(Ljava/lang/ThreadLocal;)Ljava/lang/ThreadLocal$ThreadLocalMap$Entry;>
                   0: aload_1
                   1: invokestatic
-                    Call HotSpotMethod<ThreadLocal.access$400> - HotSpotSignature<(Ljava/lang/ThreadLocal;)I>
+                    Call HotSpotMethod<ThreadLocal.access$400(ThreadLocal)> - HotSpotSignature<(Ljava/lang/ThreadLocal;)I>
                     0: aload_0
                     1: getfield
                     4: ireturn
-                    Ret HotSpotMethod<ThreadLocal.access$400> - HotSpotSignature<(Ljava/lang/ThreadLocal;)I>
+                    Ret HotSpotMethod<ThreadLocal.access$400(ThreadLocal)> - HotSpotSignature<(Ljava/lang/ThreadLocal;)I>
                   4: aload_0
                   5: getfield
                   8: arraylength
@@ -783,46 +783,46 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
                   21: ifnull
                   24: aload_3
                   25: invokevirtual
-                    Call HotSpotMethod<Reference.get> - HotSpotSignature<()Ljava/lang/Object;>
+                    Call HotSpotMethod<Reference.get()> - HotSpotSignature<()Ljava/lang/Object;>
                     0: aload_0
                     1: getfield
                     4: areturn
-                    Ret HotSpotMethod<Reference.get> - HotSpotSignature<()Ljava/lang/Object;>
+                    Ret HotSpotMethod<Reference.get()> - HotSpotSignature<()Ljava/lang/Object;>
                   28: aload_1
                   29: if_acmpne
                   32: aload_3
                   33: areturn
-                  Ret HotSpotMethod<ThreadLocal$ThreadLocalMap.getEntry> - HotSpotSignature<(Ljava/lang/ThreadLocal;)Ljava/lang/ThreadLocal$ThreadLocalMap$Entry;>
+                  Ret HotSpotMethod<ThreadLocal$ThreadLocalMap.getEntry(ThreadLocal)> - HotSpotSignature<(Ljava/lang/ThreadLocal;)Ljava/lang/ThreadLocal$ThreadLocalMap$Entry;>
                 5: areturn
-                Ret HotSpotMethod<ThreadLocal$ThreadLocalMap.access$000> - HotSpotSignature<(Ljava/lang/ThreadLocal$ThreadLocalMap;Ljava/lang/ThreadLocal;)Ljava/lang/ThreadLocal$ThreadLocalMap$Entry;>
+                Ret HotSpotMethod<ThreadLocal$ThreadLocalMap.access$000(ThreadLocal$ThreadLocalMap, ThreadLocal)> - HotSpotSignature<(Ljava/lang/ThreadLocal$ThreadLocalMap;Ljava/lang/ThreadLocal;)Ljava/lang/ThreadLocal$ThreadLocalMap$Entry;>
               19: astore_3
               20: aload_3
               21: ifnull
               24: aload_3
               25: getfield
               28: areturn
-              Ret HotSpotMethod<ThreadLocal.get> - HotSpotSignature<()Ljava/lang/Object;>
+              Ret HotSpotMethod<ThreadLocal.get()> - HotSpotSignature<()Ljava/lang/Object;>
             7: areturn
-            Ret HotSpotMethod<DynamicVariable.value> - HotSpotSignature<()Ljava/lang/Object;>
+            Ret HotSpotMethod<DynamicVariable.value()> - HotSpotSignature<()Ljava/lang/Object;>
           7: checkcast
           10: areturn
-          Ret HotSpotMethod<Console$.out> - HotSpotSignature<()Ljava/io/PrintStream;>
+          Ret HotSpotMethod<Console$.out()> - HotSpotSignature<()Ljava/io/PrintStream;>
         4: aload_1
         5: invokevirtual
-          Call HotSpotMethod<PrintStream.println> - HotSpotSignature<(Ljava/lang/Object;)V>
+          Call HotSpotMethod<PrintStream.println(Object)> - HotSpotSignature<(Ljava/lang/Object;)V>
           0: aload_1
           1: invokestatic
-            Call HotSpotMethod<String.valueOf> - HotSpotSignature<(Ljava/lang/Object;)Ljava/lang/String;>
+            Call HotSpotMethod<String.valueOf(Object)> - HotSpotSignature<(Ljava/lang/Object;)Ljava/lang/String;>
             0: aload_0
             1: ifnonnull
             9: aload_0
             10: invokevirtual
-              Call HotSpotMethod<String.toString> - HotSpotSignature<()Ljava/lang/String;>
+              Call HotSpotMethod<String.toString()> - HotSpotSignature<()Ljava/lang/String;>
               0: aload_0
               1: areturn
-              Ret HotSpotMethod<String.toString> - HotSpotSignature<()Ljava/lang/String;>
+              Ret HotSpotMethod<String.toString()> - HotSpotSignature<()Ljava/lang/String;>
             13: areturn
-            Ret HotSpotMethod<String.valueOf> - HotSpotSignature<(Ljava/lang/Object;)Ljava/lang/String;>
+            Ret HotSpotMethod<String.valueOf(Object)> - HotSpotSignature<(Ljava/lang/Object;)Ljava/lang/String;>
           4: astore_2
           5: aload_0
           6: dup
@@ -831,43 +831,43 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
           9: aload_0
           10: aload_2
           11: invokevirtual
-            Call HotSpotMethod<PrintStream.print> - HotSpotSignature<(Ljava/lang/String;)V>
+            Call HotSpotMethod<PrintStream.print(String)> - HotSpotSignature<(Ljava/lang/String;)V>
             0: aload_1
             1: ifnonnull
             7: aload_0
             8: aload_1
             9: invokespecial
-              Call HotSpotMethod<PrintStream.write> - HotSpotSignature<(Ljava/lang/String;)V>
+              Call HotSpotMethod<PrintStream.write(String)> - HotSpotSignature<(Ljava/lang/String;)V>
               0: aload_0
               1: dup
               2: astore_2
               3: monitorenter
               4: aload_0
               5: invokespecial
-                Call HotSpotMethod<PrintStream.ensureOpen> - HotSpotSignature<()V>
+                Call HotSpotMethod<PrintStream.ensureOpen()> - HotSpotSignature<()V>
                 0: aload_0
                 1: getfield
                 4: ifnonnull
                 17: return
-                Ret HotSpotMethod<PrintStream.ensureOpen> - HotSpotSignature<()V>
+                Ret HotSpotMethod<PrintStream.ensureOpen()> - HotSpotSignature<()V>
               8: aload_0
               9: getfield
               12: aload_1
               13: invokevirtual
-                Call HotSpotMethod<Writer.write> - HotSpotSignature<(Ljava/lang/String;)V>
+                Call HotSpotMethod<Writer.write(String)> - HotSpotSignature<(Ljava/lang/String;)V>
                 0: aload_0
                 1: aload_1
                 2: iconst_0
                 3: aload_1
                 4: invokevirtual
-                  Call HotSpotMethod<String.length> - HotSpotSignature<()I>
+                  Call HotSpotMethod<String.length()> - HotSpotSignature<()I>
                   0: aload_0
                   1: getfield
                   4: arraylength
                   5: ireturn
-                  Ret HotSpotMethod<String.length> - HotSpotSignature<()I>
+                  Ret HotSpotMethod<String.length()> - HotSpotSignature<()I>
                 7: invokevirtual
-                  Call HotSpotMethod<BufferedWriter.write> - HotSpotSignature<(Ljava/lang/String;II)V>
+                  Call HotSpotMethod<BufferedWriter.write(String, int, int)> - HotSpotSignature<(Ljava/lang/String;II)V>
                   0: aload_0
                   1: getfield
                   4: dup
@@ -875,12 +875,12 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
                   7: monitorenter
                   8: aload_0
                   9: invokespecial
-                    Call HotSpotMethod<BufferedWriter.ensureOpen> - HotSpotSignature<()V>
+                    Call HotSpotMethod<BufferedWriter.ensureOpen()> - HotSpotSignature<()V>
                     0: aload_0
                     1: getfield
                     4: ifnonnull
                     17: return
-                    Ret HotSpotMethod<BufferedWriter.ensureOpen> - HotSpotSignature<()V>
+                    Ret HotSpotMethod<BufferedWriter.ensureOpen()> - HotSpotSignature<()V>
                   12: iload_2
                   13: istore
                   15: iload_2
@@ -900,13 +900,13 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
                   39: iload
                   41: isub
                   42: invokespecial
-                    Call HotSpotMethod<BufferedWriter.min> - HotSpotSignature<(II)I>
+                    Call HotSpotMethod<BufferedWriter.min(int, int)> - HotSpotSignature<(II)I>
                     0: iload_1
                     1: iload_2
                     2: if_icmpge
                     7: iload_2
                     8: ireturn
-                    Ret HotSpotMethod<BufferedWriter.min> - HotSpotSignature<(II)I>
+                    Ret HotSpotMethod<BufferedWriter.min(int, int)> - HotSpotSignature<(II)I>
                   45: istore
                   47: aload_1
                   48: iload
@@ -918,7 +918,7 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
                   59: aload_0
                   60: getfield
                   63: invokevirtual
-                    Call HotSpotMethod<String.getChars> - HotSpotSignature<(II[CI)V>
+                    Call HotSpotMethod<String.getChars(int, int, char[], int)> - HotSpotSignature<(II[CI)V>
                     0: iload_1
                     1: ifge
                     13: iload_2
@@ -938,9 +938,9 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
                     56: iload_1
                     57: isub
                     58: invokestatic
-                    Native HotSpotMethod<System.arraycopy> HotSpotMethod<String.getChars> - HotSpotSignature<(II[CI)V>
+                    Native HotSpotMethod<System.arraycopy(Object, int, Object, int, int)> HotSpotMethod<String.getChars(int, int, char[], int)> - HotSpotSignature<(II[CI)V>
                     61: return
-                    Ret HotSpotMethod<String.getChars> - HotSpotSignature<(II[CI)V>
+                    Ret HotSpotMethod<String.getChars(int, int, char[], int)> - HotSpotSignature<(II[CI)V>
                   66: iload
                   68: iload
                   70: iadd
@@ -965,13 +965,13 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
                   104: monitorexit
                   105: goto
                   116: return
-                  Ret HotSpotMethod<BufferedWriter.write> - HotSpotSignature<(Ljava/lang/String;II)V>
+                  Ret HotSpotMethod<BufferedWriter.write(String, int, int)> - HotSpotSignature<(Ljava/lang/String;II)V>
                 10: return
-                Ret HotSpotMethod<Writer.write> - HotSpotSignature<(Ljava/lang/String;)V>
+                Ret HotSpotMethod<Writer.write(String)> - HotSpotSignature<(Ljava/lang/String;)V>
               16: aload_0
               17: getfield
               20: invokevirtual
-                Call HotSpotMethod<BufferedWriter.flushBuffer> - HotSpotSignature<()V>
+                Call HotSpotMethod<BufferedWriter.flushBuffer()> - HotSpotSignature<()V>
                 0: aload_0
                 1: getfield
                 4: dup
@@ -979,27 +979,27 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
                 6: monitorenter
                 7: aload_0
                 8: invokespecial
-                  Call HotSpotMethod<BufferedWriter.ensureOpen> - HotSpotSignature<()V>
+                  Call HotSpotMethod<BufferedWriter.ensureOpen()> - HotSpotSignature<()V>
                   0: aload_0
                   1: getfield
                   4: ifnonnull
                   17: return
-                  Ret HotSpotMethod<BufferedWriter.ensureOpen> - HotSpotSignature<()V>
+                  Ret HotSpotMethod<BufferedWriter.ensureOpen()> - HotSpotSignature<()V>
                 11: aload_0
                 12: getfield
                 15: ifne
                 18: aload_1
                 19: monitorexit
                 20: return
-                Ret HotSpotMethod<BufferedWriter.flushBuffer> - HotSpotSignature<()V>
+                Ret HotSpotMethod<BufferedWriter.flushBuffer()> - HotSpotSignature<()V>
               23: aload_0
               24: getfield
               27: invokevirtual
-                Call HotSpotMethod<OutputStreamWriter.flushBuffer> - HotSpotSignature<()V>
+                Call HotSpotMethod<OutputStreamWriter.flushBuffer()> - HotSpotSignature<()V>
                 0: aload_0
                 1: getfield
                 4: invokevirtual
-                  Call HotSpotMethod<StreamEncoder.flushBuffer> - HotSpotSignature<()V>
+                  Call HotSpotMethod<StreamEncoder.flushBuffer()> - HotSpotSignature<()V>
                   0: aload_0
                   1: getfield
                   4: dup
@@ -1007,34 +1007,34 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
                   6: monitorenter
                   7: aload_0
                   8: invokespecial
-                    Call HotSpotMethod<StreamEncoder.isOpen> - HotSpotSignature<()Z>
+                    Call HotSpotMethod<StreamEncoder.isOpen()> - HotSpotSignature<()Z>
                     0: aload_0
                     1: getfield
                     4: ireturn
-                    Ret HotSpotMethod<StreamEncoder.isOpen> - HotSpotSignature<()Z>
+                    Ret HotSpotMethod<StreamEncoder.isOpen()> - HotSpotSignature<()Z>
                   11: ifeq
                   14: aload_0
                   15: invokevirtual
-                    Call HotSpotMethod<StreamEncoder.implFlushBuffer> - HotSpotSignature<()V>
+                    Call HotSpotMethod<StreamEncoder.implFlushBuffer()> - HotSpotSignature<()V>
                     0: aload_0
                     1: getfield
                     4: invokevirtual
-                      Call HotSpotMethod<Buffer.position> - HotSpotSignature<()I>
+                      Call HotSpotMethod<Buffer.position()> - HotSpotSignature<()I>
                       0: aload_0
                       1: getfield
                       4: ireturn
-                      Ret HotSpotMethod<Buffer.position> - HotSpotSignature<()I>
+                      Ret HotSpotMethod<Buffer.position()> - HotSpotSignature<()I>
                     7: ifle
                     14: return
-                    Ret HotSpotMethod<StreamEncoder.implFlushBuffer> - HotSpotSignature<()V>
+                    Ret HotSpotMethod<StreamEncoder.implFlushBuffer()> - HotSpotSignature<()V>
                   18: goto
                   31: aload_1
                   32: monitorexit
                   33: goto
                   41: return
-                  Ret HotSpotMethod<StreamEncoder.flushBuffer> - HotSpotSignature<()V>
+                  Ret HotSpotMethod<StreamEncoder.flushBuffer()> - HotSpotSignature<()V>
                 7: return
-                Ret HotSpotMethod<OutputStreamWriter.flushBuffer> - HotSpotSignature<()V>
+                Ret HotSpotMethod<OutputStreamWriter.flushBuffer()> - HotSpotSignature<()V>
               30: aload_0
               31: getfield
               34: ifeq
@@ -1043,46 +1043,46 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
               55: goto
               63: goto
               82: return
-              Ret HotSpotMethod<PrintStream.write> - HotSpotSignature<(Ljava/lang/String;)V>
+              Ret HotSpotMethod<PrintStream.write(String)> - HotSpotSignature<(Ljava/lang/String;)V>
             12: return
-            Ret HotSpotMethod<PrintStream.print> - HotSpotSignature<(Ljava/lang/String;)V>
+            Ret HotSpotMethod<PrintStream.print(String)> - HotSpotSignature<(Ljava/lang/String;)V>
           14: aload_0
           15: invokespecial
-            Call HotSpotMethod<PrintStream.newLine> - HotSpotSignature<()V>
+            Call HotSpotMethod<PrintStream.newLine()> - HotSpotSignature<()V>
             0: aload_0
             1: dup
             2: astore_1
             3: monitorenter
             4: aload_0
             5: invokespecial
-              Call HotSpotMethod<PrintStream.ensureOpen> - HotSpotSignature<()V>
+              Call HotSpotMethod<PrintStream.ensureOpen()> - HotSpotSignature<()V>
               0: aload_0
               1: getfield
               4: ifnonnull
               17: return
-              Ret HotSpotMethod<PrintStream.ensureOpen> - HotSpotSignature<()V>
+              Ret HotSpotMethod<PrintStream.ensureOpen()> - HotSpotSignature<()V>
             8: aload_0
             9: getfield
             12: invokevirtual
-              Call HotSpotMethod<BufferedWriter.newLine> - HotSpotSignature<()V>
+              Call HotSpotMethod<BufferedWriter.newLine()> - HotSpotSignature<()V>
               0: aload_0
               1: aload_0
               2: getfield
               5: invokevirtual
-                Call HotSpotMethod<Writer.write> - HotSpotSignature<(Ljava/lang/String;)V>
+                Call HotSpotMethod<Writer.write(String)> - HotSpotSignature<(Ljava/lang/String;)V>
                 0: aload_0
                 1: aload_1
                 2: iconst_0
                 3: aload_1
                 4: invokevirtual
-                  Call HotSpotMethod<String.length> - HotSpotSignature<()I>
+                  Call HotSpotMethod<String.length()> - HotSpotSignature<()I>
                   0: aload_0
                   1: getfield
                   4: arraylength
                   5: ireturn
-                  Ret HotSpotMethod<String.length> - HotSpotSignature<()I>
+                  Ret HotSpotMethod<String.length()> - HotSpotSignature<()I>
                 7: invokevirtual
-                  Call HotSpotMethod<BufferedWriter.write> - HotSpotSignature<(Ljava/lang/String;II)V>
+                  Call HotSpotMethod<BufferedWriter.write(String, int, int)> - HotSpotSignature<(Ljava/lang/String;II)V>
                   0: aload_0
                   1: getfield
                   4: dup
@@ -1090,12 +1090,12 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
                   7: monitorenter
                   8: aload_0
                   9: invokespecial
-                    Call HotSpotMethod<BufferedWriter.ensureOpen> - HotSpotSignature<()V>
+                    Call HotSpotMethod<BufferedWriter.ensureOpen()> - HotSpotSignature<()V>
                     0: aload_0
                     1: getfield
                     4: ifnonnull
                     17: return
-                    Ret HotSpotMethod<BufferedWriter.ensureOpen> - HotSpotSignature<()V>
+                    Ret HotSpotMethod<BufferedWriter.ensureOpen()> - HotSpotSignature<()V>
                   12: iload_2
                   13: istore
                   15: iload_2
@@ -1115,13 +1115,13 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
                   39: iload
                   41: isub
                   42: invokespecial
-                    Call HotSpotMethod<BufferedWriter.min> - HotSpotSignature<(II)I>
+                    Call HotSpotMethod<BufferedWriter.min(int, int)> - HotSpotSignature<(II)I>
                     0: iload_1
                     1: iload_2
                     2: if_icmpge
                     7: iload_2
                     8: ireturn
-                    Ret HotSpotMethod<BufferedWriter.min> - HotSpotSignature<(II)I>
+                    Ret HotSpotMethod<BufferedWriter.min(int, int)> - HotSpotSignature<(II)I>
                   45: istore
                   47: aload_1
                   48: iload
@@ -1133,7 +1133,7 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
                   59: aload_0
                   60: getfield
                   63: invokevirtual
-                    Call HotSpotMethod<String.getChars> - HotSpotSignature<(II[CI)V>
+                    Call HotSpotMethod<String.getChars(int, int, char[], int)> - HotSpotSignature<(II[CI)V>
                     0: iload_1
                     1: ifge
                     13: iload_2
@@ -1153,9 +1153,9 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
                     56: iload_1
                     57: isub
                     58: invokestatic
-                    Native HotSpotMethod<System.arraycopy> HotSpotMethod<String.getChars> - HotSpotSignature<(II[CI)V>
+                    Native HotSpotMethod<System.arraycopy(Object, int, Object, int, int)> HotSpotMethod<String.getChars(int, int, char[], int)> - HotSpotSignature<(II[CI)V>
                     61: return
-                    Ret HotSpotMethod<String.getChars> - HotSpotSignature<(II[CI)V>
+                    Ret HotSpotMethod<String.getChars(int, int, char[], int)> - HotSpotSignature<(II[CI)V>
                   66: iload
                   68: iload
                   70: iadd
@@ -1180,15 +1180,15 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
                   104: monitorexit
                   105: goto
                   116: return
-                  Ret HotSpotMethod<BufferedWriter.write> - HotSpotSignature<(Ljava/lang/String;II)V>
+                  Ret HotSpotMethod<BufferedWriter.write(String, int, int)> - HotSpotSignature<(Ljava/lang/String;II)V>
                 10: return
-                Ret HotSpotMethod<Writer.write> - HotSpotSignature<(Ljava/lang/String;)V>
+                Ret HotSpotMethod<Writer.write(String)> - HotSpotSignature<(Ljava/lang/String;)V>
               8: return
-              Ret HotSpotMethod<BufferedWriter.newLine> - HotSpotSignature<()V>
+              Ret HotSpotMethod<BufferedWriter.newLine()> - HotSpotSignature<()V>
             15: aload_0
             16: getfield
             19: invokevirtual
-              Call HotSpotMethod<BufferedWriter.flushBuffer> - HotSpotSignature<()V>
+              Call HotSpotMethod<BufferedWriter.flushBuffer()> - HotSpotSignature<()V>
               0: aload_0
               1: getfield
               4: dup
@@ -1196,27 +1196,27 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
               6: monitorenter
               7: aload_0
               8: invokespecial
-                Call HotSpotMethod<BufferedWriter.ensureOpen> - HotSpotSignature<()V>
+                Call HotSpotMethod<BufferedWriter.ensureOpen()> - HotSpotSignature<()V>
                 0: aload_0
                 1: getfield
                 4: ifnonnull
                 17: return
-                Ret HotSpotMethod<BufferedWriter.ensureOpen> - HotSpotSignature<()V>
+                Ret HotSpotMethod<BufferedWriter.ensureOpen()> - HotSpotSignature<()V>
               11: aload_0
               12: getfield
               15: ifne
               18: aload_1
               19: monitorexit
               20: return
-              Ret HotSpotMethod<BufferedWriter.flushBuffer> - HotSpotSignature<()V>
+              Ret HotSpotMethod<BufferedWriter.flushBuffer()> - HotSpotSignature<()V>
             22: aload_0
             23: getfield
             26: invokevirtual
-              Call HotSpotMethod<OutputStreamWriter.flushBuffer> - HotSpotSignature<()V>
+              Call HotSpotMethod<OutputStreamWriter.flushBuffer()> - HotSpotSignature<()V>
               0: aload_0
               1: getfield
               4: invokevirtual
-                Call HotSpotMethod<StreamEncoder.flushBuffer> - HotSpotSignature<()V>
+                Call HotSpotMethod<StreamEncoder.flushBuffer()> - HotSpotSignature<()V>
                 0: aload_0
                 1: getfield
                 4: dup
@@ -1224,34 +1224,34 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
                 6: monitorenter
                 7: aload_0
                 8: invokespecial
-                  Call HotSpotMethod<StreamEncoder.isOpen> - HotSpotSignature<()Z>
+                  Call HotSpotMethod<StreamEncoder.isOpen()> - HotSpotSignature<()Z>
                   0: aload_0
                   1: getfield
                   4: ireturn
-                  Ret HotSpotMethod<StreamEncoder.isOpen> - HotSpotSignature<()Z>
+                  Ret HotSpotMethod<StreamEncoder.isOpen()> - HotSpotSignature<()Z>
                 11: ifeq
                 14: aload_0
                 15: invokevirtual
-                  Call HotSpotMethod<StreamEncoder.implFlushBuffer> - HotSpotSignature<()V>
+                  Call HotSpotMethod<StreamEncoder.implFlushBuffer()> - HotSpotSignature<()V>
                   0: aload_0
                   1: getfield
                   4: invokevirtual
-                    Call HotSpotMethod<Buffer.position> - HotSpotSignature<()I>
+                    Call HotSpotMethod<Buffer.position()> - HotSpotSignature<()I>
                     0: aload_0
                     1: getfield
                     4: ireturn
-                    Ret HotSpotMethod<Buffer.position> - HotSpotSignature<()I>
+                    Ret HotSpotMethod<Buffer.position()> - HotSpotSignature<()I>
                   7: ifle
                   14: return
-                  Ret HotSpotMethod<StreamEncoder.implFlushBuffer> - HotSpotSignature<()V>
+                  Ret HotSpotMethod<StreamEncoder.implFlushBuffer()> - HotSpotSignature<()V>
                 18: goto
                 31: aload_1
                 32: monitorexit
                 33: goto
                 41: return
-                Ret HotSpotMethod<StreamEncoder.flushBuffer> - HotSpotSignature<()V>
+                Ret HotSpotMethod<StreamEncoder.flushBuffer()> - HotSpotSignature<()V>
               7: return
-              Ret HotSpotMethod<OutputStreamWriter.flushBuffer> - HotSpotSignature<()V>
+              Ret HotSpotMethod<OutputStreamWriter.flushBuffer()> - HotSpotSignature<()V>
             29: aload_0
             30: getfield
             33: ifeq
@@ -1260,17 +1260,17 @@ Executing root method HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar>
             45: goto
             53: goto
             72: return
-            Ret HotSpotMethod<PrintStream.newLine> - HotSpotSignature<()V>
+            Ret HotSpotMethod<PrintStream.newLine()> - HotSpotSignature<()V>
           18: aload_3
           19: monitorexit
           20: goto
           30: return
-          Ret HotSpotMethod<PrintStream.println> - HotSpotSignature<(Ljava/lang/Object;)V>
+          Ret HotSpotMethod<PrintStream.println(Object)> - HotSpotSignature<(Ljava/lang/Object;)V>
         8: return
-        Ret HotSpotMethod<Console$.println> - HotSpotSignature<(Ljava/lang/Object;)V>
+        Ret HotSpotMethod<Console$.println(Object)> - HotSpotSignature<(Ljava/lang/Object;)V>
       7: return
-      Ret HotSpotMethod<Predef$.println> - HotSpotSignature<(Ljava/lang/Object;)V>
+      Ret HotSpotMethod<Predef$.println(Object)> - HotSpotSignature<(Ljava/lang/Object;)V>
     28: bipush
     30: ireturn
-    Ret HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar> - HotSpotSignature<(I)I>
+    Ret HotSpotMethod<TestInterpreter1$$anonfun$testA$1$Foo$1.bar(int)> - HotSpotSignature<(I)I>
 res: 9
