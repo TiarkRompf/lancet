@@ -1,4 +1,4 @@
-// constants: scala.collection.Seq$@30176ce7,public final native java.lang.Class java.lang.Object.getClass(),public abstract java.lang.reflect.Method scala.runtime.MethodCache.find(java.lang.Class),public boolean java.lang.reflect.AccessibleObject.isAccessible(),public void java.lang.reflect.AccessibleObject.setAccessible(boolean) throws java.lang.SecurityException,public abstract scala.runtime.MethodCache scala.runtime.MethodCache.add(java.lang.Class,java.lang.reflect.Method)
+// constants: scala.collection.Seq$@4df2876b,public final native java.lang.Class java.lang.Object.getClass(),public abstract java.lang.reflect.Method scala.runtime.MethodCache.find(java.lang.Class),public boolean java.lang.reflect.AccessibleObject.isAccessible(),public void java.lang.reflect.AccessibleObject.setAccessible(boolean) throws java.lang.SecurityException,public abstract scala.runtime.MethodCache scala.runtime.MethodCache.add(java.lang.Class,java.lang.reflect.Method)
 class Generated0(CONST_0: scala.collection.Seq$,CONST_1: java.lang.reflect.Method,CONST_2: java.lang.reflect.Method,CONST_3: java.lang.reflect.Method,CONST_4: java.lang.reflect.Method,CONST_5: java.lang.reflect.Method) extends (scala.collection.Seq[_]=>scala.collection.Seq[_]){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -13,9 +13,9 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
       var RES = null.asInstanceOf[Object]
       val x3 = x2.asInstanceOf[lancet.interpreter.TestInterpreter4$Person] // checkCast
       val x4 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$4$$anon$1"))
-      // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-      val x5 = unsafe.getInt(x3,16L)
-      unsafe.putInt(x4,16L, x5)
+      // unique method: HotSpotMethod<TestInterpreter4$Person.age()> TODO: guard
+      val x5 = unsafe.getInt(x3,12L)
+      unsafe.putInt(x4,12L, x5)
       (RES = x4) // return to root
       // (no return?)
       RES.asInstanceOf[Boolean]
@@ -26,7 +26,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
   val x65 = x8.asInstanceOf[Traversable[Object]].map { (x10:Object) => {
       var RES = null.asInstanceOf[Object]
       val x11 = CONST_1.invoke(x10).asInstanceOf[Object] // java.lang.Object.getClass
-      // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5.reflMethod$Method1>
+      // WARNING: multiple returns (2) in HotSpotMethod<TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5.reflMethod$Method1(Class)>
       ;{
         var vPHI_3_7 = null.asInstanceOf[Object]
         var vx0 = null.asInstanceOf[scala.collection.Seq[_]]
@@ -42,15 +42,15 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         var vx39 = null.asInstanceOf[Boolean]
         var vx8 = null.asInstanceOf[Object]
         var vx9 = null.asInstanceOf[Object]
-        val x12 = unsafe.getObject(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5"),208L)
-        // unique method: HotSpotMethod<SoftReference.get> TODO: guard
-        val x13 = unsafe.getObject(x12,16L)
+        val x12 = unsafe.getObject(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5"),140L)
+        // unique method: HotSpotMethod<SoftReference.get()> TODO: guard
+        val x13 = unsafe.getObject(x12,12L)
         val x14 = x13 eq null
         if (x14) {
           BLOCK_48(x0,x1,x10,x11,x12,x13,x14,x8,x9)
         } else {
-          val x15 = unsafe.getLong(x12,48L)
-          val x16 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),200L)
+          val x15 = unsafe.getLong(x12,32L)
+          val x16 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),136L)
           val x17 = x15 < x16
           val x20 = if (x17) {
             -1
@@ -67,9 +67,9 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
           if (x21) {
             BLOCK_48(x0,x1,x10,x11,x12,x13,x14,x8,x9)
           } else {
-            /* cse: WrappedArray(unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),200L)) = x16*/
+            /* cse: WrappedArray(unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),136L)) = x16*/
             val x22 = x16.toDouble
-            unsafe.putDouble(x12,48L, x22)
+            unsafe.putDouble(x12,32L, x22)
             ERROR // write to unknown: Top
             ;{
               BLOCK_48(x0,x1,x10,x11,x12,x13,x14,x8,x9)
@@ -84,28 +84,28 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
           } else {
             val x25 = unsafe.allocateInstance(Class.forName("java.lang.ref.SoftReference"))
             val x26 = unsafe.allocateInstance(Class.forName("scala.runtime.EmptyMethodCache"))
-            unsafe.putObject(x25,16L, x26)
-            val x27 = unsafe.getObject(Class.forName("java.lang.ref.ReferenceQueue"),200L)
-            unsafe.putObject(x25,24L, x27)
-            val x28 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),200L)
+            unsafe.putObject(x25,12L, x26)
+            val x27 = unsafe.getObject(Class.forName("java.lang.ref.ReferenceQueue"),136L)
+            unsafe.putObject(x25,16L, x27)
+            val x28 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),136L)
             val x29 = x28.toDouble
-            unsafe.putDouble(x25,48L, x29)
-            unsafe.putObject(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5"),208L, x25)
+            unsafe.putDouble(x25,32L, x29)
+            unsafe.putObject(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5"),140L, x25)
             ;{
               BLOCK_67(x0,x1,x10,x11,x12,x13,x14,x23,x24,x8,x9)
             }
           }
         }
         def BLOCK_67(x0:scala.collection.Seq[_],x1:Object,x10:Object,x11:Object,x12:Object,x13:Object,x14:Boolean,x23:Object,x24:Boolean,x8:Object,x9:Object): Unit = {
-          /* cse: WrappedArray(unsafe.getObject(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5"),208L)) = x12*/
-          // unique method: HotSpotMethod<SoftReference.get> TODO: guard
-          /* cse: WrappedArray(unsafe.getObject(x12,16L)) = x13*/
+          /* cse: WrappedArray(unsafe.getObject(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5"),140L)) = x12*/
+          // unique method: HotSpotMethod<SoftReference.get()> TODO: guard
+          /* cse: WrappedArray(unsafe.getObject(x12,12L)) = x13*/
           /* cse: WrappedArray(ObjectEqual(x13,null)) = x14*/
           if (x14) {
             BLOCK_73(x0,x1,x10,x11,x12,x13,x14,x23,x24,x8,x9)
           } else {
-            val x30 = unsafe.getLong(x12,48L)
-            val x31 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),200L)
+            val x30 = unsafe.getLong(x12,32L)
+            val x31 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),136L)
             val x32 = x30 < x31
             val x35 = if (x32) {
               -1
@@ -122,9 +122,9 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
             if (x36) {
               BLOCK_73(x0,x1,x10,x11,x12,x13,x14,x23,x24,x8,x9)
             } else {
-              /* cse: WrappedArray(unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),200L)) = x31*/
+              /* cse: WrappedArray(unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),136L)) = x31*/
               val x37 = x31.toDouble
-              unsafe.putDouble(x12,48L, x37)
+              unsafe.putDouble(x12,32L, x37)
               ERROR // write to unknown: Top
               ;{
                 BLOCK_73(x0,x1,x10,x11,x12,x13,x14,x23,x24,x8,x9)
@@ -154,7 +154,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
                 vx9 = x9
               };
             } else {
-              val x40 = unsafe.getObject(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5"),200L)
+              val x40 = unsafe.getObject(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5"),136L)
               val x41 = x11.asInstanceOf[Class[_]].getMethod("foo".asInstanceOf[String],x40.asInstanceOf[Class[_]])
               val x42 = CONST_3.invoke(x41).asInstanceOf[Boolean] // java.lang.reflect.AccessibleObject.isAccessible
               val x43 = if (x42) {
@@ -173,15 +173,15 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
               }
               def BLOCK_82(x0:scala.collection.Seq[_],x1:Object,x10:Object,x11:Object,x12:Object,x13:Object,x14:Boolean,x23:Object,x24:Boolean,x38:Object,x39:Boolean,x40:Object,x41:Object,x42:Boolean,x44:Boolean,x8:Object,x9:Object): Unit = {
                 val x45 = unsafe.allocateInstance(Class.forName("java.lang.ref.SoftReference"))
-                /* cse: WrappedArray(unsafe.getObject(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5"),208L)) = x12*/
-                // unique method: HotSpotMethod<SoftReference.get> TODO: guard
-                /* cse: WrappedArray(unsafe.getObject(x12,16L)) = x13*/
+                /* cse: WrappedArray(unsafe.getObject(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5"),140L)) = x12*/
+                // unique method: HotSpotMethod<SoftReference.get()> TODO: guard
+                /* cse: WrappedArray(unsafe.getObject(x12,12L)) = x13*/
                 /* cse: WrappedArray(ObjectEqual(x13,null)) = x14*/
                 if (x14) {
                   BLOCK_89(x0,x1,x10,x11,x12,x13,x14,x23,x24,x38,x39,x40,x41,x42,x44,x45,x8,x9)
                 } else {
-                  val x46 = unsafe.getLong(x12,48L)
-                  val x47 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),200L)
+                  val x46 = unsafe.getLong(x12,32L)
+                  val x47 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),136L)
                   val x48 = x46 < x47
                   val x51 = if (x48) {
                     -1
@@ -198,9 +198,9 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
                   if (x52) {
                     BLOCK_89(x0,x1,x10,x11,x12,x13,x14,x23,x24,x38,x39,x40,x41,x42,x44,x45,x8,x9)
                   } else {
-                    /* cse: WrappedArray(unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),200L)) = x47*/
+                    /* cse: WrappedArray(unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),136L)) = x47*/
                     val x53 = x47.toDouble
-                    unsafe.putDouble(x12,48L, x53)
+                    unsafe.putDouble(x12,32L, x53)
                     ERROR // write to unknown: Top
                     ;{
                       BLOCK_89(x0,x1,x10,x11,x12,x13,x14,x23,x24,x38,x39,x40,x41,x42,x44,x45,x8,x9)
@@ -210,13 +210,13 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
                 def BLOCK_89(x0:scala.collection.Seq[_],x1:Object,x10:Object,x11:Object,x12:Object,x13:Object,x14:Boolean,x23:Object,x24:Boolean,x38:Object,x39:Boolean,x40:Object,x41:Object,x42:Boolean,x44:Boolean,x45:Object,x8:Object,x9:Object): Unit = {
                   /* cse: WrappedArray(x13, .asInstanceOf[scala.runtime.MethodCache] // checkCast) = x23*/
                   val x54 = CONST_5.invoke(x23.asInstanceOf[AnyRef],x11.asInstanceOf[AnyRef],x41.asInstanceOf[AnyRef]).asInstanceOf[Object] // scala.runtime.MethodCache.add
-                  unsafe.putObject(x45,16L, x54)
-                  val x55 = unsafe.getObject(Class.forName("java.lang.ref.ReferenceQueue"),200L)
-                  unsafe.putObject(x45,24L, x55)
-                  val x56 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),200L)
+                  unsafe.putObject(x45,12L, x54)
+                  val x55 = unsafe.getObject(Class.forName("java.lang.ref.ReferenceQueue"),136L)
+                  unsafe.putObject(x45,16L, x55)
+                  val x56 = unsafe.getLong(Class.forName("java.lang.ref.SoftReference"),136L)
                   val x57 = x56.toDouble
-                  unsafe.putDouble(x45,48L, x57)
-                  unsafe.putObject(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5"),208L, x45)
+                  unsafe.putDouble(x45,32L, x57)
+                  unsafe.putObject(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test4$1$$anonfun$4$$anonfun$apply$5"),140L, x45)
                   /*R_42_13_0;*/;{
                     val PHI_3_7 = x41 // LUBC(x38:Object,x41:Object)
                     vPHI_3_7 = PHI_3_7
@@ -260,7 +260,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
           val x61 = x60 ne null
           if (x61) {
             val x62 = x60.asInstanceOf[java.lang.Integer] // checkCast
-            val x63 = unsafe.getInt(x62,16L)
+            val x63 = unsafe.getInt(x62,12L)
             ;{
               val PHI_4_4 = x63 // LUBC(PHI_4_4:Int,x63:Int)
               BLOCK_109(PHI_4_4,x0,x1,x10,x11,x12,x13,x14,x23,x24,x38,x39,x58,x59,x60,x61,x8,x9)

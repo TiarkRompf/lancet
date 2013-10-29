@@ -1,4 +1,4 @@
-// constants: <function1>,<function0>,lancet.interpreter.TestInterpreter4@2d46c9dd
+// constants: <function1>,<function0>,lancet.interpreter.TestInterpreter4@a9f3894
 class Generated0(CONST_0: lancet.interpreter.TestInterpreter4$$anonfun$test2$1$$anonfun$2,CONST_1: lancet.interpreter.TestInterpreter4$$anonfun$test2$1,CONST_2: lancet.interpreter.TestInterpreter4) extends (scala.collection.Seq[_]=>scala.collection.Seq[_]){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -9,12 +9,12 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
   var RES = null.asInstanceOf[scala.collection.Seq[_]]
   val x0 = ARG
   val x1 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test2$1$$anonfun$2$$anonfun$apply$2"))
-  unsafe.putObject(x1,16L, CONST_0)
+  unsafe.putObject(x1,12L, CONST_0)
   val x11 = x0.asInstanceOf[Traversable[Object]].filter { (x2:Object) => {
       var RES = null.asInstanceOf[Object]
       val x3 = x2.asInstanceOf[lancet.interpreter.TestInterpreter4$Person] // checkCast
-      // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-      val x4 = unsafe.getBoolean(x3,20L)
+      // unique method: HotSpotMethod<TestInterpreter4$Person.flag()> TODO: guard
+      val x4 = unsafe.getBoolean(x3,16L)
       val x5 = if (x4) {
         1
       } else {
@@ -25,8 +25,8 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         val PHI_4_5 = 1 // LUBC(PHI_4_5:Int,1:Int)
         BLOCK_25(PHI_4_5,x0,x1,x2,x3,x4,x6)
       } else {
-        // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-        val x7 = unsafe.getInt(x3,16L)
+        // unique method: HotSpotMethod<TestInterpreter4$Person.age()> TODO: guard
+        val x7 = unsafe.getInt(x3,12L)
         val x8 = 42 <= x7
         if (x8) {
           val PHI_4_5 = 0 // LUBC(PHI_4_5:Int,0:Int)

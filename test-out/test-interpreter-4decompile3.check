@@ -1,4 +1,4 @@
-// constants: <function1>,<function0>,lancet.interpreter.TestInterpreter4@438165f5
+// constants: <function1>,<function0>,lancet.interpreter.TestInterpreter4@a9f3894
 class Generated0(CONST_0: lancet.interpreter.TestInterpreter4$$anonfun$test3$1$$anonfun$3,CONST_1: lancet.interpreter.TestInterpreter4$$anonfun$test3$1,CONST_2: lancet.interpreter.TestInterpreter4) extends (scala.collection.Seq[_]=>scala.collection.Seq[_]){
 import sun.misc.Unsafe
 val unsafe = { val fld = classOf[Unsafe].getDeclaredField("theUnsafe"); fld.setAccessible(true); fld.get(classOf[Unsafe]).asInstanceOf[Unsafe]; }
@@ -9,7 +9,7 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
   var RES = null.asInstanceOf[scala.collection.Seq[_]]
   val x0 = ARG
   val x1 = unsafe.allocateInstance(Class.forName("lancet.interpreter.TestInterpreter4$$anonfun$test3$1$$anonfun$3$$anonfun$apply$3"))
-  unsafe.putObject(x1,16L, CONST_0)
+  unsafe.putObject(x1,12L, CONST_0)
   val x36 = x0.asInstanceOf[Traversable[Object]].filter { (x2:Object) => {
       var RES = null.asInstanceOf[Object]
       val x3 = x2.asInstanceOf[lancet.interpreter.TestInterpreter4$Person] // checkCast
@@ -20,10 +20,10 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
         val PHI_4_8 = null.asInstanceOf[Int] // LUBC(PHI_4_8,null)
         BLOCK_26(PHI_4_6,PHI_4_7,PHI_4_8,x0,x1,x2,x3,x4)
       } else {
-        // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-        val x5 = unsafe.getInt(x3,16L)
-        // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-        val x6 = unsafe.getBoolean(x3,20L)
+        // unique method: HotSpotMethod<TestInterpreter4$Person.age()> TODO: guard
+        val x5 = unsafe.getInt(x3,12L)
+        // unique method: HotSpotMethod<TestInterpreter4$Person.flag()> TODO: guard
+        val x6 = unsafe.getBoolean(x3,16L)
         val x7 = if (x6) {
           1
         } else {
@@ -77,10 +77,10 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
           val PHI_4_12 = null.asInstanceOf[Int] // LUBC(PHI_4_12,null)
           BLOCK_35(PHI_4_11,PHI_4_12,PHI_4_6,PHI_4_7,PHI_4_8,x0,x1,x2,x3,x4)
         } else {
-          // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-          val x10 = unsafe.getInt(x3,16L)
-          // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-          val x11 = unsafe.getBoolean(x3,20L)
+          // unique method: HotSpotMethod<TestInterpreter4$Person.age()> TODO: guard
+          val x10 = unsafe.getInt(x3,12L)
+          // unique method: HotSpotMethod<TestInterpreter4$Person.flag()> TODO: guard
+          val x11 = unsafe.getBoolean(x3,16L)
           val x12 = if (x11) {
             1
           } else {
@@ -123,10 +123,10 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
           val PHI_4_15 = null.asInstanceOf[Int] // LUBC(PHI_4_15,null)
           BLOCK_44(PHI_4_11,PHI_4_12,PHI_4_14,PHI_4_15,PHI_4_6,PHI_4_7,PHI_4_8,x0,x1,x2,x3,x4)
         } else {
-          // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-          val x14 = unsafe.getInt(x3,16L)
-          // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-          val x15 = unsafe.getBoolean(x3,20L)
+          // unique method: HotSpotMethod<TestInterpreter4$Person.age()> TODO: guard
+          val x14 = unsafe.getInt(x3,12L)
+          // unique method: HotSpotMethod<TestInterpreter4$Person.flag()> TODO: guard
+          val x15 = unsafe.getBoolean(x3,16L)
           val x16 = if (x15) {
             1
           } else {
@@ -167,10 +167,10 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
           val PHI_4_18 = null.asInstanceOf[Int] // LUBC(PHI_4_18,null)
           BLOCK_53(PHI_4_11,PHI_4_12,PHI_4_14,PHI_4_15,PHI_4_17,PHI_4_18,PHI_4_6,PHI_4_7,PHI_4_8,x0,x1,x2,x3,x4)
         } else {
-          // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-          val x18 = unsafe.getInt(x3,16L)
-          // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-          val x19 = unsafe.getBoolean(x3,20L)
+          // unique method: HotSpotMethod<TestInterpreter4$Person.age()> TODO: guard
+          val x18 = unsafe.getInt(x3,12L)
+          // unique method: HotSpotMethod<TestInterpreter4$Person.flag()> TODO: guard
+          val x19 = unsafe.getBoolean(x3,16L)
           val x20 = if (x19) {
             1
           } else {
@@ -209,10 +209,10 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
           val PHI_4_21 = null.asInstanceOf[Int] // LUBC(PHI_4_21,null)
           BLOCK_62(PHI_4_11,PHI_4_12,PHI_4_14,PHI_4_15,PHI_4_17,PHI_4_18,PHI_4_20,PHI_4_21,PHI_4_6,PHI_4_7,PHI_4_8,x0,x1,x2,x3,x4)
         } else {
-          // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-          val x22 = unsafe.getInt(x3,16L)
-          // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-          val x23 = unsafe.getBoolean(x3,20L)
+          // unique method: HotSpotMethod<TestInterpreter4$Person.age()> TODO: guard
+          val x22 = unsafe.getInt(x3,12L)
+          // unique method: HotSpotMethod<TestInterpreter4$Person.flag()> TODO: guard
+          val x23 = unsafe.getBoolean(x3,16L)
           val x24 = if (x23) {
             1
           } else {
@@ -249,10 +249,10 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
           val PHI_4_24 = null.asInstanceOf[Int] // LUBC(PHI_4_24,null)
           BLOCK_71(PHI_4_11,PHI_4_12,PHI_4_14,PHI_4_15,PHI_4_17,PHI_4_18,PHI_4_20,PHI_4_21,PHI_4_23,PHI_4_24,PHI_4_6,PHI_4_7,PHI_4_8,x0,x1,x2,x3,x4)
         } else {
-          // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-          val x26 = unsafe.getInt(x3,16L)
-          // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-          val x27 = unsafe.getBoolean(x3,20L)
+          // unique method: HotSpotMethod<TestInterpreter4$Person.age()> TODO: guard
+          val x26 = unsafe.getInt(x3,12L)
+          // unique method: HotSpotMethod<TestInterpreter4$Person.flag()> TODO: guard
+          val x27 = unsafe.getBoolean(x3,16L)
           val x28 = if (x27) {
             1
           } else {
@@ -287,10 +287,10 @@ def apply(ARG: scala.collection.Seq[_]): scala.collection.Seq[_] = { object BODY
           val PHI_4_27 = null.asInstanceOf[Int] // LUBC(PHI_4_27,null)
           BLOCK_80(PHI_4_11,PHI_4_12,PHI_4_14,PHI_4_15,PHI_4_17,PHI_4_18,PHI_4_20,PHI_4_21,PHI_4_23,PHI_4_24,PHI_4_26,PHI_4_27,PHI_4_6,PHI_4_7,PHI_4_8,x0,x1,x2,x3,x4)
         } else {
-          // unique method: HotSpotMethod<TestInterpreter4$Person.age> TODO: guard
-          val x30 = unsafe.getInt(x3,16L)
-          // unique method: HotSpotMethod<TestInterpreter4$Person.flag> TODO: guard
-          val x31 = unsafe.getBoolean(x3,20L)
+          // unique method: HotSpotMethod<TestInterpreter4$Person.age()> TODO: guard
+          val x30 = unsafe.getInt(x3,12L)
+          // unique method: HotSpotMethod<TestInterpreter4$Person.flag()> TODO: guard
+          val x31 = unsafe.getBoolean(x3,16L)
           val x32 = if (x31) {
             1
           } else {
