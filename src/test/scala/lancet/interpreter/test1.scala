@@ -36,73 +36,67 @@ class TestInterpreter1 extends FileDiffSuite {
   // interpret
   def testA = withOutFileChecked(prefix+"A") {
 
-    class Foo {
-      def bar(x: Int) = { println("hello: "+x); 9 }
-    }
 
-    val o = new Foo
+import lancet.interpreter._
 
-    val runtime = HotSpotGraalRuntime.graalRuntime().getRuntime();
+val it = new BytecodeInterpreter_Exec
 
-    val cls = o.getClass
-    val reflectMeth = cls.getDeclaredMethod("bar", classOf[Int])
-    val method = runtime.lookupJavaMethod(reflectMeth)
+it.initialize
 
-    val it = Lancet.newInterpreter
-    it.TRACE = true
-    it.TRACE_BYTE_CODE = true
+it.TRACE = true
 
-    val res = it.execute(method, Array[Object](o, 8:Integer))
-    
-    println("res: " + res)
+it.TRACE_BYTE_CODE = true
+
+def exec(body: () => Any): Any = { val m = body.getClass.getMethod("apply"); println(m); it.execute(m,Array[AnyRef](body)) }
+
+exec(() => println("foo"))
+
+exec { () => try { throw new Exception() } catch { case _ => println("foo") } }
+
+exec(() => throw new Exception)
+
+
+val sourceFile = new java.io.File("/Users/me/Desktop/tmpstuff/linz/graalvm-truffle/graal/com.oracle.truffle.js.test/src/benchmarks/v8-deltablue.js")
+
+import java.util.Scanner
+import java.io.File
+
+val scanner = new Scanner(sourceFile)
+
+val source = scanner.useDelimiter("\\A").next()
+
+import com.oracle.truffle._
+import com.oracle.truffle.js._
+import com.oracle.truffle.js.compiler._
+import com.oracle.truffle.js.nodes.ScriptNode;
+import com.oracle.truffle.js.nodes.control._
+import com.oracle.truffle.js.runtime._
+
+val globalContext = new JSContext();
+globalContext.getGlobalObject().setProperty("alert", globalContext.getGlobalObject().getProperty("print"));
+val scriptAst = JSParser.parse(source);
+scriptAst.debugPrint
+val script = JSCompiler.compileScript(globalContext, scriptAst);
+script.run
+
+it.TRACE = false
+it.TRACE_BYTE_CODE = false
+
+
+exec(() => script.run)
+
+// group by call target
+val red = it.rawlog.groupBy(x=>x) map { case (k,v) => (k,v.size) }
+
+val res24 = red.toSeq.groupBy { case ((next,cur),n) => cur.f }
+res24 foreach { x => println(x._1); println("  "+x._2.mkString("\n  ")) }
+
+// call targets per call site (disregard object ids)
+val noids = it.rawlog.map { case (p1,p2) => (p1.f,p2.f) }
+val res30 = noids.groupBy(_._2) map { case (k,v) => (k,v.groupBy(_._1).map{case (k,v) => (k,v.size)})}
+res30 foreach { x => println(x._1); println("  "+x._2.toSeq.sortBy(_._2).mkString("\n  ")) }
+
+
   }
-
-/*
-  // compile simple
-  def testB = withOutFileChecked(prefix+"B") {
-
-    final class Foo { // making class final -- Simple compiler can't resolve call otherwise 
-      def bar(x: Int) = { System.out.println("hello: "+x); 9 }
-    }
-
-    val o = new Foo
-    val it = Lancet.newCompilerSimple
-
-    val f = it.compile((x:Int) => o.bar(8))
-    println(f(7))
-
-  }
-*/
-  
-
-/*
-  this takes quite long. profiling data: 73s / 2013-01-30
-    total             73s
-    allLubs           23s
-    String.replace    19s
-    contextKey        10s
-    compile           7s
-*/
-
-/*
-  // TODO: revisit once we have a better handle on path dependent conditionals
-
-  // compile optimized
-  def testC = withOutFileChecked(prefix+"C") {
-    //assert(false) // crashes the vm at the moment
-
-    class Foo {
-      def bar(x: Int) = { System.out.println("hello: "+x); 9 }
-    }
-
-    val o = new Foo
-    val it = Lancet.newCompilerOpt
-
-    //it.emitControlFlow = false
-
-    val f = it.compile((x:Int) => o.bar(8))
-    println(f(7))
-  }
-*/
 
 }

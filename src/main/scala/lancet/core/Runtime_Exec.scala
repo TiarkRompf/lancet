@@ -58,7 +58,7 @@ class Runtime_Exec(metaProvider: MetaAccessProvider) extends Runtime {
       //System.out.println("invoking: " + m + " " + args.mkString("(",",",")") + "//" + args.length)
       //System.out.println("types: " + m.getParameterTypes.mkString(",") + "//" + m.getParameterTypes.length)
 
-      val static = Modifier.isStatic(method.getModifiers)
+      val static = Modifier.isStatic(method.accessFlags)
 
       if (static)
         m.invoke(null, args:_*)
@@ -326,7 +326,7 @@ class Runtime_Exec(metaProvider: MetaAccessProvider) extends Runtime {
         if (arrayType == null) {
             return;
         }
-        val typ: ResolvedJavaType = metaProvider.lookupJavaType(array.getClass()).getComponentType();
+        val typ: ResolvedJavaType = metaProvider.getResolvedJavaType(array.getClass()).componentType();
         if (!typ.toJava().isAssignableFrom(arrayType)) {
             throw new ArrayStoreException(arrayType.getName());
         }
@@ -334,8 +334,8 @@ class Runtime_Exec(metaProvider: MetaAccessProvider) extends Runtime {
 
     def checkArray(array: Object, index: Long): Unit = {
         nullCheck(array);
-        val typ: ResolvedJavaType = metaProvider.lookupJavaType(array.getClass());
-        if (!typ.isArray()) {
+        val typ: ResolvedJavaType = metaProvider.getResolvedJavaType(array.getClass());
+        if (!typ.isArrayClass()) {
             throw new ArrayStoreException(array.getClass().getName());
         }
         if (index < 0 || index >= arrayLength(array)) {
@@ -349,7 +349,7 @@ class Runtime_Exec(metaProvider: MetaAccessProvider) extends Runtime {
     }
 
     def isVolatile(field: ResolvedJavaField): Boolean = {
-        return Modifier.isVolatile(field.getModifiers());
+        return Modifier.isVolatile(field.accessFlags());
     }
 
     def resolveOffset(field: ResolvedJavaField): Long = {
@@ -359,7 +359,7 @@ class Runtime_Exec(metaProvider: MetaAccessProvider) extends Runtime {
     def resolveBase(base: Object, field: ResolvedJavaField): Object = {
         var accessorBase = base;
         if (accessorBase == null) {
-            accessorBase = field.getDeclaringClass().toJava();
+            accessorBase = field.holder().toJava();
         }
         return accessorBase;
     }

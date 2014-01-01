@@ -240,7 +240,7 @@ object InterpreterFrame {
 
 
 class InterpreterFrame_Exec1(var method: ResolvedJavaMethod, parent: InterpreterFrame, additionalStackSpace: Int) 
-extends Frame_Exec1(method.getMaxLocals() + method.getMaxStackSize() + InterpreterFrame.BASE_LENGTH + additionalStackSpace, parent) 
+extends Frame_Exec1(method.maxLocals() + method.maxStackSize() + InterpreterFrame.BASE_LENGTH + additionalStackSpace, parent) 
 with InterpreterFrame {
 
     import Frame._
@@ -268,10 +268,10 @@ with InterpreterFrame {
         val frame = new InterpreterFrame_Exec1(method, this, additionalStackSpace);
 
         if (useParentArguments) {
-            val length = method.getSignature().getParameterSlots(hasReceiver);
+            val length = method.signature().argumentSlots(hasReceiver);
             assert(length >= 0);
 
-            frame.pushVoid(method.getMaxLocals());
+            frame.pushVoid(method.maxLocals());
             if (length > 0) {
                 copyArguments(frame, length);
                 popVoid(length);
@@ -298,7 +298,7 @@ with InterpreterFrame {
     }
 
     def stackTos(): Int = {
-        return BASE_LENGTH + getMethod().getMaxLocals();
+        return BASE_LENGTH + getMethod().maxLocals();
     }
 
     private def copyArguments(dest: InterpreterFrame_Exec1, length: Int): Unit = {
@@ -327,7 +327,7 @@ with InterpreterFrame {
     }
 
     def peekReceiver(method: ResolvedJavaMethod): Object = {
-        return getObject(tosSingle(method.getSignature().getParameterSlots(false)));
+        return getObject(tosSingle(method.signature().argumentSlots(false)));
     }
 
     def pushBoth(oValue: Object, intValue: Int): Unit = {
@@ -614,7 +614,7 @@ with InterpreterFrame {
 
     override def toString(): String = {
         val method = getMethod();
-        val b = new StringBuilder(getMethod().asStackTraceElement(getBCI()).toString());
+        val b = new StringBuilder(getMethod().toStackTraceElement(getBCI()).toString());
         for (i <- 0 until tos) {
             val obj = getObject(tosSingle(i));
             val primitive = getLong(tosSingle(i));
@@ -633,7 +633,7 @@ with InterpreterFrame {
                 typeString = "bci";
             } else if (index == PARENT_FRAME_SLOT) {
                 typeString = "parent";
-            } else if (index < BASE_LENGTH + method.getMaxLocals()) {
+            } else if (index < BASE_LENGTH + method.maxLocals()) {
                 typeString = "local " + (index - BASE_LENGTH);
             } else {
                 typeString = "stack";
@@ -654,7 +654,7 @@ with InterpreterFrame {
 }
 
 class InterpreterFrame_Exec(var method: ResolvedJavaMethod, parent: InterpreterFrame, additionalStackSpace: Int) 
-extends Frame_Exec(method.getMaxLocals() + method.getMaxStackSize() + InterpreterFrame.BASE_LENGTH + additionalStackSpace, parent) 
+extends Frame_Exec(method.maxLocals() + method.maxStackSize() + InterpreterFrame.BASE_LENGTH + additionalStackSpace, parent) 
 with InterpreterFrame {
 
     import Frame._
@@ -682,10 +682,10 @@ with InterpreterFrame {
         val frame = new InterpreterFrame_Exec(method, this, additionalStackSpace);
 
         if (useParentArguments) {
-            val length = method.getSignature().getParameterSlots(hasReceiver);
+            val length = method.signature().argumentSlots(hasReceiver);
             assert(length >= 0);
 
-            frame.pushVoid(method.getMaxLocals());
+            frame.pushVoid(method.maxLocals());
             if (length > 0) {
                 copyArguments(frame, length);
                 popVoid(length);
@@ -712,7 +712,7 @@ with InterpreterFrame {
     }
 
     def stackTos(): Int = {
-        return BASE_LENGTH + getMethod().getMaxLocals();
+        return BASE_LENGTH + getMethod().maxLocals();
     }
 
     private def copyArguments(dest: InterpreterFrame_Exec, length: Int): Unit = {
@@ -741,7 +741,7 @@ with InterpreterFrame {
     }
 
     def peekReceiver(method: ResolvedJavaMethod): Object = {
-        return getObject(tosSingle(method.getSignature().getParameterSlots(false)));
+        return getObject(tosSingle(method.signature().argumentSlots(false)));
     }
 
     /*def pushBoth(oValue: Object, intValue: Int): Unit = {
@@ -1047,7 +1047,7 @@ with InterpreterFrame {
 
     override def toString(): String = {
         val method = getMethod();
-        val b = new StringBuilder(getMethod().asStackTraceElement(getBCI()).toString());
+        val b = new StringBuilder(getMethod().toStackTraceElement(getBCI()).toString());
         for (i <- 0 until tos) {
             val obj = getObject(tosSingle(i));
             //val primitive = getLong(tosSingle(i));
@@ -1067,7 +1067,7 @@ with InterpreterFrame {
                 typeString = "bci";
             } else if (index == PARENT_FRAME_SLOT) {
                 typeString = "parent";
-            } else if (index < BASE_LENGTH + method.getMaxLocals()) {
+            } else if (index < BASE_LENGTH + method.maxLocals()) {
                 typeString = "local " + (index - BASE_LENGTH);
             } else {
                 typeString = "stack";

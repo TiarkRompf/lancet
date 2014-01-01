@@ -38,7 +38,7 @@ libraryDependencies += "stanford-ppl" %% "optiml" % "0.1-SNAPSHOT"
 libraryDependencies += "com.google.protobuf" % "protobuf-java" % "2.4.1"
 
 
-libraryDependencies += "junit" % "junit" % "4.8.1" % "test"
+libraryDependencies += "junit" % "junit" % "4.8.1" // % "test"
 
 retrieveManaged := true
 

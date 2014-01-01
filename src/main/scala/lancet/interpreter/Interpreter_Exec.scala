@@ -48,9 +48,9 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
     def execute(method: ResolvedJavaMethod, boxedArguments: Array[Object]): Object = {// throws Throwable {
         try {
             val receiver: Boolean = hasReceiver(method);
-            val signature: Signature = method.getSignature();
+            val signature: Signature = method.signature();
             assert(boxedArguments != null);
-            assert(signature.getParameterCount(receiver) == boxedArguments.length);
+            assert(signature.argumentCount(receiver) == boxedArguments.length);
 
             if (TRACE) {
                 //if (nativeFrame == null) {
@@ -63,7 +63,7 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
 
             var rootFrame: InterpreterFrame_Exec = null // nativeFrame
             if (rootFrame == null) {
-              rootFrame = new InterpreterFrame_Exec(rootMethod, signature.getParameterSlots(true));
+              rootFrame = new InterpreterFrame_Exec(rootMethod, signature.argumentSlots(true));
               rootFrame.pushObject(this);
               rootFrame.pushObject(method);
               rootFrame.pushObject(boxedArguments);
@@ -83,7 +83,7 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
                 }
             }*/
 
-            return popAsObject(rootFrame, signature.getReturnKind());
+            return popAsObject(rootFrame, signature.returnKind());
         } catch {
             case e: Exception =>
             // TODO (chaeubl): remove this exception handler (only used for debugging)
@@ -95,7 +95,7 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
 
     def initializeLocals(rootFrame: InterpreterFrame, method: ResolvedJavaMethod, boxedArguments: Array[Object]) {
         val receiver: Boolean = hasReceiver(method);
-        val signature: Signature = method.getSignature();
+        val signature: Signature = method.signature();
         var index = 0;
         if (receiver) {
             pushAsObject(rootFrame, Kind.Object, boxedArguments(index));
@@ -104,7 +104,7 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
 
         var i = 0
         while (index < boxedArguments.length) {
-            pushAsObject(rootFrame, signature.getParameterKind(i), boxedArguments(index));
+            pushAsObject(rootFrame, signature.argumentKindAt(i), boxedArguments(index));
             i += 1
             index += 1
         }
@@ -113,11 +113,11 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
     }
 
     def execute(javaMethod: Method, boxedArguments: Array[Object]): Object = {// throws Throwable {
-        return execute(metaAccessProvider.lookupJavaMethod(javaMethod), boxedArguments);
+        return execute(metaAccessProvider.getResolvedJavaMethod(javaMethod), boxedArguments);
     }
 
     def hasReceiver(method: ResolvedJavaMethod): Boolean = {
-        return !Modifier.isStatic(method.getModifiers());
+        return !Modifier.isStatic(method.accessFlags());
     }
 
     def executeRoot(root: InterpreterFrame, frame: InterpreterFrame): Unit = { // throws Throwable {
@@ -141,12 +141,62 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
 
     private def loop(root: InterpreterFrame): Unit = {// throws Throwable {
       while (globalFrame != root) {
-        val bs = new BytecodeStream(globalFrame.getMethod.getCode())
+        val bs = new BytecodeStream(globalFrame.getMethod.code())
         //bs.setBCI(globalFrame.getBCI())
-        executeBlock(globalFrame, bs, globalFrame.getBCI())
+        try { 
+            executeBlock(globalFrame, bs, globalFrame.getBCI())
+        } catch { case t: Throwable =>
+            if (TRACE) {
+                traceOp(globalFrame, "Exception " + t.toString());                
+            }
+            println("XXXX")
+            //updateBackTrace(globalFrame, t);
+
+            // frame bci needs to be in sync when handling exceptions
+            globalFrame.setBCI(bs.currentBCI());
+
+            val handlerFrame = handleThrowable(root, globalFrame, t);
+            if (handlerFrame == null) {
+                // matched root we just throw it again.
+                throw t;
+            } else {
+                if (TRACE) {
+                    traceOp(globalFrame, "Handler found " + handlerFrame.getMethod() + ":" + handlerFrame.getBCI());
+                }
+
+                // update bci from frame
+                /*if (handlerFrame != globalFrame) {
+                    bs = new BytecodeStream(handlerFrame.getMethod().code());
+                }
+                bs.setBCI(handlerFrame.getBCI());
+                */
+                // continue execution on the found frame
+                globalFrame = handlerFrame;
+            }
+
+        }
       }
     }
 
+/*
+    def updateBackTrace(frame: InterpreterFrame, t: Throwable) {
+        if (!isBacktraceTouched(frame, t)) {
+            setBackTrace(frame, t)
+            touchBacktrace(frame, t)
+        }
+    }
+
+    def isBacktraceTouched(frame: InterpreterFrame, t: Throwable) {
+        val stackTraceField = findThrowableField(frame, "stackTrace");
+        val throwableContents = runtimeInterface.getFieldObject(t, stackTraceField);
+        val unassignedStack = getStaticThrowableFieldValue("UNASSIGNED_STACK");
+        return throwableContents != unassignedStack;
+    }
+
+    def touchBacktrace(frame: InterpreterFrame, t: Throwable) {
+        runtimeInterface.setFieldObject(null, t, findThrowableField(frame, "stackTrace"));
+    }
+*/    
 
 /*
 
@@ -278,7 +328,7 @@ final class BytecodeInterpreter_Exec extends InterpreterUniverse_Exec with Bytec
     def resolveAndInvoke(parent: InterpreterFrame, m: ResolvedJavaMethod): InterpreterFrame = {// throws Throwable {
         val receiver: Object = nullCheck(parent.peekReceiver(m));
 
-        val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethod(m);
+        val method: ResolvedJavaMethod = resolveType(parent, receiver.getClass()).resolveMethodImpl(m);
 
         if (method == null) {
             throw new AbstractMethodError();
