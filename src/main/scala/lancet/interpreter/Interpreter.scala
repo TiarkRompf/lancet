@@ -212,7 +212,8 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
 
   case class Call(f:String,x:Long)
 
-  type Rec = (Call,Call)
+  //type Rec = (Call,Call)
+  type Rec = String//Call
 
   var rawlog = new scala.collection.mutable.ArrayBuffer[Rec]
 
@@ -226,7 +227,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
           //frame.setBCI(bs.nextBCI());
 
           //XXX
-
+          /*
           val meth = nextFrame.getMethod()
           if (Modifier.isStatic(meth.accessFlags())) {
 
@@ -241,6 +242,7 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
             rawlog += ((f2s(nextFrame),f2s(frame)))
             System.out.println(f2s(nextFrame)+"//"+f2s(frame));
           }
+          */
           //XXX
 
           if (TRACE) {
@@ -299,6 +301,15 @@ trait BytecodeInterpreter_Abstract extends BytecodeInterpreter { self =>
   }*/
 
   def executeBlock(frame: InterpreterFrame, bs: BytecodeStream, bci: Int): Rep[Unit] = {
+    //XXX
+    {
+      val m = frame.getMethod.toString+":"+bci
+      System.out.println(m)
+      rawlog += m.intern//Call(m,bci)
+    }
+    //XXX
+
+
     //println("-- exec block bci "+bci)
     bs.setBCI(bci)
     var ctrl: Control = null

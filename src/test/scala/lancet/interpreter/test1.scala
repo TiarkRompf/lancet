@@ -85,6 +85,19 @@ it.TRACE_BYTE_CODE = false
 
 exec(() => script.run)
 
+
+val hotspots = it.rawlog.groupBy(x=>x).map{ case (k,v)=>(k,v.length) }.toSeq.sortBy(-_._2)
+
+hotspots.take(10).foreach(println)
+
+def splitWhere[T](xs: Seq[T])(f: T => Boolean): List[Seq[T]] = { val i = xs.indexWhere(f); if (i < 0) List(xs) else { val (h,t) = xs.splitAt(i+1); h::splitWhere(t)(f) } }
+
+val hottraces = splitWhere(it.rawlog.toList)(_ == hotspots.head._1).groupBy(x=>x).map{case(k,v)=>(k,v.length)}.toSeq.sortBy(-_._2)
+
+hottraces.take(5).foreach{case(t,c)=>println("---"+c);t.foreach(println)}
+
+
+/*
 // group by call target
 val red = it.rawlog.groupBy(x=>x) map { case (k,v) => (k,v.size) }
 
@@ -95,7 +108,7 @@ res24 foreach { x => println(x._1); println("  "+x._2.mkString("\n  ")) }
 val noids = it.rawlog.map { case (p1,p2) => (p1.f,p2.f) }
 val res30 = noids.groupBy(_._2) map { case (k,v) => (k,v.groupBy(_._1).map{case (k,v) => (k,v.size)})}
 res30 foreach { x => println(x._1); println("  "+x._2.toSeq.sortBy(_._2).mkString("\n  ")) }
-
+*/
 
   }
 
