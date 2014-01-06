@@ -90,9 +90,29 @@ val hotspots = it.rawlog.groupBy(x=>x).map{ case (k,v)=>(k,v.length) }.toSeq.sor
 
 hotspots.take(10).foreach(println)
 
-def splitWhere[T](xs: Seq[T])(f: T => Boolean): List[Seq[T]] = { val i = xs.indexWhere(f); if (i < 0) List(xs) else { val (h,t) = xs.splitAt(i+1); h::splitWhere(t)(f) } }
+// def splitWhere[T](xs: Seq[T])(f: T => Boolean): List[Seq[T]] = { val i = xs.indexWhere(f); if (i < 0) List(xs) else { val (h,t) = xs.splitAt(i+1); h::splitWhere(t)(f) } }
 
-val hottraces = splitWhere(it.rawlog.toList)(_ == hotspots.head._1).groupBy(x=>x).map{case(k,v)=>(k,v.length)}.toSeq.sortBy(-_._2)
+def splitWhere[T](xs0: Seq[T])(f: T => Boolean): List[Seq[T]] = { 
+  val buf = new scala.collection.mutable.ListBuffer[Seq[T]]
+  var xs = xs0
+  while (true) {
+    val i = xs.indexWhere(f) 
+    if (i < 0) {
+      buf += xs
+      return buf.result
+    } else { 
+      val (h,t) = xs.splitAt(i+1)
+      buf += h
+      xs = t
+    } 
+  }
+  throw new Exception
+}
+splitWhere(List(1,2,3,4,5,6,7,8,9))(_ % 4 == 0)
+
+val traces = splitWhere(rawlog)(_ == hotspots.head._1)
+
+val hottraces = traces.groupBy(x=>x).map{case(k,v)=>(k,v.length)}.toSeq.sortBy(-_._2)
 
 hottraces.take(5).foreach{case(t,c)=>println("---"+c);t.foreach(println)}
 
