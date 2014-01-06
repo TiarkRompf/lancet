@@ -85,6 +85,7 @@ it.TRACE_BYTE_CODE = false
 
 exec(() => script.run)
 
+val rawlog = it.rawlog.toList
 
 val hotspots = it.rawlog.groupBy(x=>x).map{ case (k,v)=>(k,v.length) }.toSeq.sortBy(-_._2)
 
@@ -115,6 +116,33 @@ val traces = splitWhere(rawlog)(_ == hotspots.head._1)
 val hottraces = traces.groupBy(x=>x).map{case(k,v)=>(k,v.length)}.toSeq.sortBy(-_._2)
 
 hottraces.take(5).foreach{case(t,c)=>println("---"+c);t.foreach(println)}
+
+
+// trace multiple levels
+
+def trace1(ppoints0: Seq[Any], norm: Boolean = true) = new {
+  val points = ppoints0
+  val uniqueMap = points.distinct.toSeq.zipWithIndex.toMap
+  val normPoints = if (!norm) points else points map uniqueMap // OOM for points=rawlog if norm=true
+
+  val hotPoints = normPoints.groupBy(x=>x).map{ case (k,v)=>(k,v.length) }.toSeq.sortBy(-_._2)
+
+  val traces = splitWhere(normPoints)(_ == hotPoints.head._1)
+}
+
+
+
+
+
+
+// edges/successors in dynamic call graph
+
+val follow = rawlog.zip(rawlog.tail).distinct.groupBy(_._1).map{case(k,v)=>(k,v.map(_._2))}
+
+follow.toSeq.sortBy(-_._2.length).take(100).foreach{x=>println(x._1+"--->");x._2.foreach(y=>println("  "+y))}
+
+
+
 
 
 /*
