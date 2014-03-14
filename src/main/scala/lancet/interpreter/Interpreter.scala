@@ -1326,7 +1326,10 @@ trait BytecodeInterpreter_Common extends BytecodeInterpreter_Abstract {
         //if (this.runtimeInterface == null) {
         //    throw new UnsupportedOperationException("The provided graal runtime does not support the required capability " + RuntimeInterpreterInterface.class.getName() + ".");
         //}
-        this.metaAccessProvider = runtime.getCapability(classOf[MetaAccessProvider]);
+        
+        this.metaAccessProvider = Graal.getRequiredCapability(classOf[com.oracle.graal.runtime.RuntimeProvider]).getHostBackend().getProviders().getMetaAccess();
+        //this.metaAccessProvider = runtime.getCapability(classOf[MetaAccessProvider]);
+
         if (this.metaAccessProvider == null) {
             throw new UnsupportedOperationException("The provided graal runtime does not support the required capability " + classOf[MetaAccessProvider].getName() + ".");
         }

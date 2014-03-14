@@ -229,7 +229,7 @@ environment variables.
 
 3. Download and build the Graal VM anywhere on your file system. Follow the
 instructions on the [Graal website](http://openjdk.java.net/projects/graal/).
-Get commit `7839:838293a77af7`.
+Get commit `13489:780d53499ca2`.
 
 4. Set `JAVA_HOME` and `JAVA_OPTS` environment variables.
 

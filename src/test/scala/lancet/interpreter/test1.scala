@@ -3,6 +3,8 @@ package interpreter
 
 import lancet.api._
 
+import com.oracle.graal._
+import com.oracle.graal.api.runtime._
 import com.oracle.graal.api.meta._      // ResolvedJavaMethod
 import com.oracle.graal.hotspot._
 import com.oracle.graal.hotspot.meta._  // HotSpotRuntime
@@ -20,7 +22,7 @@ class TestInterpreter1 extends FileDiffSuite {
 
     val o = new Foo
 
-    val runtime = HotSpotGraalRuntime.graalRuntime().getRuntime();
+    val runtime = Graal.getRequiredCapability(classOf[com.oracle.graal.runtime.RuntimeProvider]).getHostBackend().getProviders().getMetaAccess();
 
     val cls = o.getClass
     val reflectMeth = cls.getDeclaredMethod("bar", classOf[Int])
