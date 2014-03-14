@@ -20,7 +20,7 @@ class TestInterpreter1 extends FileDiffSuite {
 
     val o = new Foo
 
-    val runtime = HotSpotGraalRuntime.getInstance().getRuntime();
+    val runtime = HotSpotGraalRuntime.graalRuntime().getRuntime();
 
     val cls = o.getClass
     val reflectMeth = cls.getDeclaredMethod("bar", classOf[Int])

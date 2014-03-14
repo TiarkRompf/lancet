@@ -15,7 +15,7 @@ scalacOptions += "-Yvirtualize"
 // tests are not thread safe
 parallelExecution in Test := false
 
-resolvers += "Dropbox" at "http://dl.dropbox.com/u/1186811/scala-virtualized"
+//resolvers += "Dropbox" at "http://dl.dropbox.com/u/1186811/scala-virtualized"
 
 libraryDependencies += "org.scala-lang.virtualized" % "scala-compiler" % "2.10.0"
 
