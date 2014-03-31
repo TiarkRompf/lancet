@@ -18,7 +18,7 @@ library developers to supply domain-specific compiler optimizations.
 A draft paper with more information and experimental results
 is available here: 
 
-- [Project Lancet: Surgical Precision JIT Compilers](http://lamp.epfl.ch/~rompf/lancet_130329.pdf)
+- [Project Lancet: Surgical Precision JIT Compilers](http://lampwww.epfl.ch/~rompf/pldi2014.pdf)
 
 
 Examples
